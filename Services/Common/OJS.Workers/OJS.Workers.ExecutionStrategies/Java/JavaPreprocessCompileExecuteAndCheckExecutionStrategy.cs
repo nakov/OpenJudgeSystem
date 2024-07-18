@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Java
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -27,8 +28,9 @@
             IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
             if (!File.Exists(this.Settings.JavaExecutablePath))
             {
@@ -313,8 +315,8 @@ class _$SandboxSecurityManager extends SecurityManager {
                     executionContext.MemoryLimit,
                     executionArguments,
                     null,
-                    false,
-                    true);
+                    useProcessTime: false,
+                    useSystemEncoding: true);
 
             UpdateExecutionTime(
                 timeMeasurementFilePath,

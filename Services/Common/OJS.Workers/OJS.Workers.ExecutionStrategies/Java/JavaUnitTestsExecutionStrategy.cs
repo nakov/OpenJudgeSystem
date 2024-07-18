@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Java
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -36,8 +37,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
             IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
             => this.TestNames = new List<string>();
 
         protected string JUnitTestRunnerSourceFilePath =>
@@ -246,7 +248,7 @@ public class _$TestRunner {{
                     executionContext.MemoryLimit,
                     arguments,
                     this.WorkingDirectory,
-                    true);
+                    useProcessTime: true);
 
                 JavaStrategiesHelper.ValidateJvmInitialization(processExecutionResult.ReceivedOutput);
 

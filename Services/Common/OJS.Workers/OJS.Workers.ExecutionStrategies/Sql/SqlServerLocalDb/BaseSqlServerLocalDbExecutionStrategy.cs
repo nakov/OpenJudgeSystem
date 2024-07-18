@@ -1,6 +1,7 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb
 {
     using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using System;
     using System.Data;
@@ -17,8 +18,9 @@
 
         protected BaseSqlServerLocalDbExecutionStrategy(
             IOjsSubmission submission,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
         {
         }
 

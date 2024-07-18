@@ -1,6 +1,7 @@
 #nullable disable
 namespace OJS.Workers.ExecutionStrategies.Python
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -33,8 +34,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
         public PythonDjangoOrmExecutionStrategy(
             IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
         }
 
@@ -228,8 +230,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 executionContext.MemoryLimit,
                 arguments,
                 this.WorkingDirectory,
-                false,
-                true);
+                useProcessTime: false,
+                useSystemEncoding: true);
     }
 
     public record PythonDjangoOrmExecutionStrategySettings(

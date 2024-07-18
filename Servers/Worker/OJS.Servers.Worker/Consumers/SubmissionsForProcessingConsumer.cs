@@ -38,17 +38,17 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
             WorkerName = this.hostInfoService.GetHostIp(),
         };
 
-        this.logger.LogInformation("Starting processing submission with id: {SubmissionId} on worker: {WorkerName}", message.Id, result.WorkerName);
+        this.logger.LogInformation("Starting processing submission #{SubmissionId} on worker: {WorkerName}", message.Id, result.WorkerName);
         var submission = message.Map<SubmissionServiceModel>();
         var startedExecutionOn = DateTime.UtcNow;
 
         try
         {
-            this.logger.LogInformation("Executing submission with id: {SubmissionId}", submission.Id);
+            this.logger.LogInformation("Executing submission #{SubmissionId}", submission.Id);
             var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
-            this.logger.LogDebug("Execution result for submission with id: {SubmissionId}: {@ExecutionResult}", submission.Id, executionResult);
+            this.logger.LogDebug("Execution result for submission #{SubmissionId}: {@ExecutionResult}", submission.Id, executionResult);
 
-            this.logger.LogInformation("Mapping execution result for submission with id: {SubmissionId}", submission.Id);
+            this.logger.LogInformation("Mapping execution result for submission #{SubmissionId}", submission.Id);
             result.SetExecutionResult(executionResult.Map<ExecutionResultServiceModel>());
         }
         catch (Exception ex)

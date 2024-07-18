@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -21,8 +22,9 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         public NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy(
             IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider) // TODO: make this modular by getting requires from test
-            : base(submission, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger) // TODO: make this modular by getting requires from test
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
             if (!Directory.Exists(this.Settings.JsDomModulePath))
             {

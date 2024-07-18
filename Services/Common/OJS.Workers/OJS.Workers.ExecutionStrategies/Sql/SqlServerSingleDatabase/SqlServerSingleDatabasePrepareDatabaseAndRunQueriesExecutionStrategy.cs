@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.ExecutionStrategies.Models;
 
@@ -8,8 +9,9 @@
     {
         public SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy(
             IOjsSubmission submission,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
         {
         }
 

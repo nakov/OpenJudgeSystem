@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Java
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,6 +11,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -28,8 +30,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
             IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
             => this.UserClassNames = new List<string>();
 
         protected List<string> UserClassNames { get; }
@@ -323,7 +326,7 @@ public class _$TestRunner {{
                 executionContext.MemoryLimit,
                 arguments,
                 this.WorkingDirectory,
-                true);
+                useProcessTime: true);
 
             if (!string.IsNullOrWhiteSpace(processExecutionResult.ErrorOutput))
             {

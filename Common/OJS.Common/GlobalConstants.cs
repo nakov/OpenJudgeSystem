@@ -24,6 +24,12 @@ namespace OJS.Common
         public const string NewLineWin = "\r\n";
         public const string ClassDelimiterWin = $"~~!!!==#==!!!~~{NewLineWin}";
 
+        public static class BackgroundJobs
+        {
+            public const string AdministrationQueueName = "administration";
+            public const string UiQueueName = "ui";
+        }
+
         public static class ApplicationDateFormats
         {
             public const string GlobalShortDatePatternFormat = "dd/MM/yyyy";

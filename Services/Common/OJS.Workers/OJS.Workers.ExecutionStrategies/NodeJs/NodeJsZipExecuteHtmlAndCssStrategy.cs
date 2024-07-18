@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common.Extensions;
     using System;
     using System.Collections.Generic;
@@ -24,8 +25,9 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         public NodeJsZipExecuteHtmlAndCssStrategy(
             IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
             if (!Directory.Exists(this.Settings.JsDomModulePath))
             {
