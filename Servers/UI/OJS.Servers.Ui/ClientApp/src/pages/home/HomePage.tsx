@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import { ContestCategories } from '../../components/contests/contest-categories/ContestCategories';
@@ -15,11 +15,11 @@ import styles from './HomePage.module.scss';
 
 const HomePage = () => {
     const location = useLocation();
-    const [ searchParams ] = useSearchParams();
+    const { categoryId } = useParams();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (!searchParams.get('category')) {
+        if (!categoryId) {
             /**
              * Clear contest details and breadcrumb items when no category is selected
              * so categories tree is collapsed properly (as it depends on category in the store)
@@ -27,7 +27,7 @@ const HomePage = () => {
             dispatch(setContestDetails({ contest: null }));
             dispatch(clearContestCategoryBreadcrumbItems());
         }
-    }, [ searchParams, dispatch ]);
+    }, [ categoryId, dispatch ]);
 
     return (
         <div>

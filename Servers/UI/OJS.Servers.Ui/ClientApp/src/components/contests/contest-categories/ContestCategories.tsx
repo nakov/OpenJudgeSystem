@@ -4,7 +4,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem2 } from '@mui/x-tree-view/TreeItem2';
@@ -36,7 +36,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     const { breadcrumbItems } = useAppSelector((state) => state.contests);
 
     const dispatch = useAppDispatch();
-    const [ searchParams ] = useSearchParams();
+    const { categoryId } = useParams();
     const { themeColors, getColorClassName, isDarkMode } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
@@ -47,7 +47,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
         error: categoriesError,
     } = useGetContestCategoriesQuery();
 
-    const selectedId = useMemo(() => Number(searchParams.get('category')), [ searchParams ]);
+    const selectedId = useMemo(() => Number(categoryId), [ categoryId ]);
 
     useEffect(() => {
         dispatch(setContestCategories({ contestCategories: contestCategories || [] }));
@@ -76,10 +76,10 @@ const ContestCategories = (props: IContestCategoriesProps) => {
 
     useEffect(() => {
         // If no category is selected, we want to collapse all categories
-        if (!searchParams.get('category')) {
+        if (!categoryId) {
             setExpandedItems([]);
         }
-    }, [ searchParams ]);
+    }, [ categoryId ]);
 
     const handleExpandedItemsChange = (
         event: SyntheticEvent,
