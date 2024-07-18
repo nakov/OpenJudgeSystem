@@ -6,16 +6,16 @@ import {
     IContestsSolutionSubmitPageUrlParams,
 } from '../app-url-types';
 import { ContestParticipationType, ContestResultType } from '../constants';
-import { createUrlFriendlyString } from '../contest-helpers';
+import { createUrlFriendlyPath } from '../contest-helpers';
 
 import { CONTESTS_PATH } from './client-urls';
 
 const getContestsResultsPageUrl = ({
-    slug,
+    contestName,
     contestId,
     participationType,
     isSimple,
-}: IContestsResultsPageUrlParams) => `/contests/${createUrlFriendlyString(slug)}/${contestId}/${participationType}/results/${isSimple
+}: IContestsResultsPageUrlParams) => `/contests${createUrlFriendlyPath(contestName)}/${contestId}/${participationType}/results/${isSimple
     ? ContestResultType.Simple
     : ContestResultType.Full}`;
 
@@ -25,7 +25,7 @@ const getAllContestsPageUrl = ({
     categoryId,
 } : IAllContestsPageUrlParams) => {
     const slug = categoryName
-        ? `/${createUrlFriendlyString(categoryName)}`
+        ? `${createUrlFriendlyPath(categoryName)}`
         : '';
 
     const categoryPath = categoryId
@@ -49,7 +49,7 @@ const getContestsSolutionSubmitPageUrl = ({
     contestId,
     contestName,
     problemId,
-}: IContestsSolutionSubmitPageUrlParams) => `/${CONTESTS_PATH}/${createUrlFriendlyString(contestName)}/${contestId}/${isCompete
+}: IContestsSolutionSubmitPageUrlParams) => `/${CONTESTS_PATH}${createUrlFriendlyPath(contestName)}/${contestId}/${isCompete
     ? ContestParticipationType.Compete
     : ContestParticipationType.Practice}${problemId
     ? `#${problemId}`
@@ -58,13 +58,13 @@ const getContestsSolutionSubmitPageUrl = ({
 const getContestsDetailsPageUrl = ({
     contestId,
     contestName,
-}: IContestsDetailsPageUrlParams) => `/contests/${createUrlFriendlyString(contestName)}/${contestId}`;
+}: IContestsDetailsPageUrlParams) => `/contests${createUrlFriendlyPath(contestName)}/${contestId}`;
 
 const getContestsRegisterPageUrl = ({
     isCompete,
     contestId,
     contestName,
-}: IContestsRegisterPageUrlParams) => `/contests/${createUrlFriendlyString(contestName)}/${contestId}/${isCompete
+}: IContestsRegisterPageUrlParams) => `/contests${createUrlFriendlyPath(contestName)}/${contestId}/${isCompete
     ? ContestParticipationType.Compete
     : ContestParticipationType.Practice}/register`;
 

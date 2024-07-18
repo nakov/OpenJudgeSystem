@@ -4,7 +4,7 @@
 /* eslint-disable promise/always-return */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
 import Popover from '@mui/material/Popover';
 import moment from 'moment';
@@ -53,6 +53,7 @@ import styles from './ContestSolutionSubmitPage.module.scss';
 
 const ContestSolutionSubmitPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType, slug } = useParams();
@@ -72,6 +73,10 @@ const ContestSolutionSubmitPage = () => {
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
+
+    const participation = participationType || (location.pathname.includes(ContestParticipationType.Compete)
+        ? ContestParticipationType.Compete
+        : ContestParticipationType.Practice);
 
     const [ submitSolution, {
         // isSuccess: submitSolutionSuccess,
@@ -97,7 +102,7 @@ const ContestSolutionSubmitPage = () => {
     ] = useLazyGetSubmissionResultsByProblemQuery();
 
     const isModalOpen = Boolean(anchorEl);
-    const isCompete = participationType === ContestParticipationType.Compete;
+    const isCompete = participation === ContestParticipationType.Compete;
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -232,6 +237,7 @@ const ContestSolutionSubmitPage = () => {
                 setRemainingTimeForCompete(formattedTime);
             } else {
                 setRemainingTimeForCompete(null);
+                setRemainingTimeForCompete(null);
             }
         });
 
@@ -248,12 +254,12 @@ const ContestSolutionSubmitPage = () => {
         }
         if (((!isRegisteredParticipant && !isActiveParticipant) && !isError) || isInvalidated) {
             navigate(getContestsRegisterPageUrl({
-                isCompete: participationType === ContestParticipationType.Compete,
+                isCompete: participation === ContestParticipationType.Compete,
                 contestId,
                 contestName: slug,
             }), { replace: true });
         }
-    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, slug, isInvalidated ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participation, navigate, slug, isInvalidated ]);
 
     useEffect(() => {
         setSubmissionCode('');
@@ -302,7 +308,7 @@ const ContestSolutionSubmitPage = () => {
         isActiveParticipant,
         isRegisteredParticipant,
         selectedContestDetailsProblem,
-        participationType,
+        participation,
         getSubmissionsData,
         selectedSubmissionsPage,
         isCompete,
@@ -669,9 +675,9 @@ const ContestSolutionSubmitPage = () => {
                 <div
                   className={styles.allResultsLink}
                   onClick={() => navigate(getContestsResultsPageUrl({
-                      slug,
+                      contestName: contest?.name,
                       contestId: contest?.id,
-                      participationType: participationType === ContestParticipationType.Compete
+                      participationType: participation === ContestParticipationType.Compete
                           ? ContestParticipationType.Compete
                           : ContestParticipationType.Practice,
                       isSimple: true,
@@ -755,5 +761,5 @@ const ContestSolutionSubmitPage = () => {
 
 export default makePrivate(setLayout(withTitle(
     ContestSolutionSubmitPage,
-    (params) => `${capitalizeFirstLetter(params.participationType!)} #${params.contestId}`,
+    (params) => `${capitalizeFirstLetter(params.participationType || 'Participate')} #${params.contestId}`,
 )));

@@ -106,8 +106,15 @@ const App = () => {
                     path: 'contests/:contestId',
                     element: <ContestDetailsPage />,
                 },
+                // static routes for participationType (compete/practice) without slug,
+                // because /contests/:slug/:contestId takes precedence if
+                // :participationType is dynamic for these paths
                 {
-                    path: 'contests/:contestId/:participationType',
+                    path: 'contests/:contestId/compete',
+                    element: <ContestSolutionSubmitPage />,
+                },
+                {
+                    path: 'contests/:contestId/practice',
                     element: <ContestSolutionSubmitPage />,
                 },
                 {
