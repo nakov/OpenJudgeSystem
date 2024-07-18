@@ -97,7 +97,7 @@ public class _$TestRunner {{
             }}
 
             if (testMethodCount > 1) {{
-                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", testMethodCount, testClasses[i].getSimpleName());
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test. Please contact an administrator.%n"", testMethodCount, testClasses[i].getSimpleName());
                 continue;
             }}
 
@@ -196,7 +196,7 @@ public class _$TestRunner {{
             }}
 
             if (testMethodCount > 1) {{
-                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", testMethodCount, testClasses[i].getSimpleName());
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test. Please contact an administrator.%n"", testMethodCount, testClasses[i].getSimpleName());
                 continue;
             }}
 
@@ -398,6 +398,16 @@ public class _$TestRunner {{
                 testNumber++;
             }
 
+            var duplicateTest = this.TestNames
+                .GroupBy(t => t)
+                .Select(g => new { TestName = g.Key, Count = g.Count() })
+                .FirstOrDefault(g => g.Count > 1);
+
+            if (duplicateTest is not null)
+            {
+                throw new InvalidOperationException($"There are multiple tests ({duplicateTest.Count}) with the same name: {duplicateTest.TestName}. Please contact an administrator.");
+            }
+
             FileHelpers.AddFilesToZipArchive(submissionZipFilePath, string.Empty, filePaths);
             FileHelpers.DeleteFiles(filePaths);
         }
@@ -447,16 +457,6 @@ public class _$TestRunner {{
             var errorsByFiles = new Dictionary<string, string>();
             var output = new StringReader(receivedOutput);
             var testResultRegex = new Regex(this.testResultRegexPattern);
-
-            var duplicateTest = this.TestNames
-                .GroupBy(t => t)
-                .Select(g => new { TestName = g.Key, Count = g.Count() })
-                .FirstOrDefault(g => g.Count > 1);
-
-            if (duplicateTest is not null)
-            {
-                throw new InvalidOperationException($"There are multiple tests ({duplicateTest.Count}) with the same name: {duplicateTest.TestName}");
-            }
 
             foreach (var testName in this.TestNames)
             {
