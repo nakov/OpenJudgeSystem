@@ -74,9 +74,18 @@ const ContestSolutionSubmitPage = () => {
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
-    const participation = participationType || (location.pathname.includes(ContestParticipationType.Compete)
-        ? ContestParticipationType.Compete
-        : ContestParticipationType.Practice);
+    // Get the participationType type from route params or path (if not in params)
+    const getParticipationType = () => {
+        if (participationType) {
+            return participationType === ContestParticipationType.Compete
+                ? ContestParticipationType.Compete
+                : ContestParticipationType.Practice;
+        }
+
+        return location.pathname.includes(`/${ContestParticipationType.Compete}`)
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice;
+    };
 
     const [ submitSolution, {
         // isSuccess: submitSolutionSuccess,
@@ -102,7 +111,7 @@ const ContestSolutionSubmitPage = () => {
     ] = useLazyGetSubmissionResultsByProblemQuery();
 
     const isModalOpen = Boolean(anchorEl);
-    const isCompete = participation === ContestParticipationType.Compete;
+    const isCompete = getParticipationType() === ContestParticipationType.Compete;
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -254,12 +263,12 @@ const ContestSolutionSubmitPage = () => {
         }
         if (((!isRegisteredParticipant && !isActiveParticipant) && !isError) || isInvalidated) {
             navigate(getContestsRegisterPageUrl({
-                isCompete: participation === ContestParticipationType.Compete,
+                isCompete,
                 contestId,
                 contestName: slug,
             }), { replace: true });
         }
-    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participation, navigate, slug, isInvalidated ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, isCompete, navigate, slug, isInvalidated ]);
 
     useEffect(() => {
         setSubmissionCode('');
@@ -308,7 +317,6 @@ const ContestSolutionSubmitPage = () => {
         isActiveParticipant,
         isRegisteredParticipant,
         selectedContestDetailsProblem,
-        participation,
         getSubmissionsData,
         selectedSubmissionsPage,
         isCompete,
@@ -677,9 +685,7 @@ const ContestSolutionSubmitPage = () => {
                   onClick={() => navigate(getContestsResultsPageUrl({
                       contestName: contest?.name,
                       contestId: contest?.id,
-                      participationType: participation === ContestParticipationType.Compete
-                          ? ContestParticipationType.Compete
-                          : ContestParticipationType.Practice,
+                      participationType: getParticipationType(),
                       isSimple: true,
                   }))}
                 >
