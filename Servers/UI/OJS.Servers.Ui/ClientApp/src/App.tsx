@@ -20,6 +20,11 @@ import SearchPage from './pages/search/SearchPage';
 import SubmissionDetailsPage from './pages/submissions/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from './pages/submissions/SubmissionsPage';
 import store, { persistor } from './redux/store';
+import {
+    validateIntegerParam,
+    validateParticipationType,
+    validateResultType,
+} from './utils/router-utils';
 
 const App = () => {
     const router = createBrowserRouter([
@@ -31,6 +36,7 @@ const App = () => {
                 {
                     path: '/',
                     element: <HomePage />,
+                    errorElement: <NotFoundPage />,
                     children: [
                         {
                             path: '/',
@@ -43,10 +49,18 @@ const App = () => {
                         {
                             path: 'contests/by-category/:slug/:categoryId',
                             element: <ContestsPage />,
+                            loader: ({ params }) => {
+                                validateIntegerParam(params.categoryId);
+                                return null;
+                            },
                         },
                         {
                             path: 'contests/by-category/:categoryId', // without slug (have to be last)
                             element: <ContestsPage />,
+                            loader: ({ params }) => {
+                                validateIntegerParam(params.categoryId);
+                                return null;
+                            },
                         },
                     ],
                 },
@@ -79,32 +93,71 @@ const App = () => {
                 {
                     path: 'submissions/:submissionId/details',
                     element: <SubmissionDetailsPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.submissionId);
+                        return null;
+                    },
                 },
                 {
                     path: 'submissions/retest/:submissionId',
                     element: <SubmissionRetestPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.submissionId);
+                        return null;
+                    },
                 },
                 // Contest Routes
                 {
                     path: 'contests/:slug/:contestId',
                     element: <ContestDetailsPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        return null;
+                    },
                 },
                 {
                     path: 'contests/:slug/:contestId/:participationType',
                     element: <ContestSolutionSubmitPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        validateParticipationType(params.participationType);
+                        return null;
+                    },
                 },
                 {
                     path: 'contests/:slug/:contestId/:participationType/register',
                     element: <ContestRegister />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        validateParticipationType(params.participationType);
+                        return null;
+                    },
                 },
                 {
                     path: 'contests/:slug/:contestId/:participationType/results/:resultType',
                     element: <ContestResultsPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        validateParticipationType(params.participationType);
+                        validateResultType(params.resultType);
+                        return null;
+                    },
                 },
                 // Contest Routes without slug (have to be last)
                 {
                     path: 'contests/:contestId',
                     element: <ContestDetailsPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        return null;
+                    },
                 },
                 // static routes for participationType (compete/practice) without slug,
                 // because /contests/:slug/:contestId takes precedence if
@@ -112,18 +165,41 @@ const App = () => {
                 {
                     path: 'contests/:contestId/compete',
                     element: <ContestSolutionSubmitPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        return null;
+                    },
                 },
                 {
                     path: 'contests/:contestId/practice',
                     element: <ContestSolutionSubmitPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        return null;
+                    },
                 },
                 {
                     path: 'contests/:contestId/:participationType/register',
                     element: <ContestRegister />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        validateParticipationType(params.participationType);
+                        return null;
+                    },
                 },
                 {
                     path: 'contests/:contestId/:participationType/results/:resultType',
                     element: <ContestResultsPage />,
+                    errorElement: <NotFoundPage />,
+                    loader: ({ params }) => {
+                        validateIntegerParam(params.contestId);
+                        validateParticipationType(params.participationType);
+                        validateResultType(params.resultType);
+                        return null;
+                    },
                 },
                 // Catch-All Route
                 {

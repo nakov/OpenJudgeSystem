@@ -11,12 +11,9 @@ const getEnumMemberName = <T extends object>(enumObj: T, enumMember: T[keyof T] 
 
 const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-const isInteger = (value: string | undefined) => value && /^\d+$/.test(value.trim());
-
 export {
     splitByCapitalLetter,
     toLowerCase,
     getEnumMemberName,
     capitalizeFirstLetter,
-    isInteger,
 };
