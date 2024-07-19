@@ -4,10 +4,6 @@ import isNil from 'lodash/isNil';
 import { ContestParticipationType } from './constants';
 import { IIndexContestsType } from './types';
 
-const isParticipationTypeValid =
-    (participationType: ContestParticipationType) => participationType === ContestParticipationType.Compete ||
-        participationType === ContestParticipationType.Practice;
-
 const contestParticipationType =
     (isOfficial: boolean) => isOfficial
         ? ContestParticipationType.Compete
@@ -55,8 +51,9 @@ const createUrlFriendlyPath = (inputString: string | undefined | null): string =
         : `/${result}`;
 };
 
-export { isParticipationTypeValid,
+export {
     contestParticipationType,
     getCompeteResultsAreVisible,
     getPracticeResultsAreVisible,
-    createUrlFriendlyPath };
+    createUrlFriendlyPath,
+};
