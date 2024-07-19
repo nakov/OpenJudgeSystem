@@ -12,19 +12,19 @@ const isResultTypeValid = (resultType: string | undefined) => resultType === Con
 
 const validateIntegerParam = (param: string | undefined) => {
     if (!isIntegerParam(param)) {
-        throw json({ message: `${param} is not a valid integer`, status: 404 });
+        throw json(null, { status: 404, statusText: `${param} is not a valid integer` });
     }
 };
 
 const validateParticipationType = (participationType: string | undefined) => {
     if (!isParticipationTypeValid(participationType)) {
-        throw json({ message: `${participationType} is not a valid participation type`, status: 404 });
+        throw json(null, { status: 404, statusText: `${participationType} is not a valid participation type` });
     }
 };
 
 const validateResultType = (resultType: string | undefined) => {
     if (!isResultTypeValid(resultType)) {
-        throw json({ message: `${resultType} is not a valid result type`, status: 404 });
+        throw json(null, { status: 404, statusText: `${resultType} is not a valid result type` });
     }
 };
 

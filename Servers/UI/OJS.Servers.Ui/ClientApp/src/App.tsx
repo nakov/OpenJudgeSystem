@@ -12,6 +12,7 @@ import ContestDetailsPage from './pages/contests/contest-details/ContestDetailsP
 import ContestRegister from './pages/contests/contest-register/ContestRegister';
 import ContestSolutionSubmitPage from './pages/contests/contest-solution-submit/ContestSolutionSubmitPage';
 import ContestsPage from './pages/contests/ContestsPage';
+import ErrorPage from './pages/error/ErrorPage';
 import HomeInfoPage from './pages/home/HomeInfoPage';
 import HomePage from './pages/home/HomePage';
 import NotFoundPage from './pages/not-found/NotFoundPage';
@@ -36,7 +37,7 @@ const App = () => {
                 {
                     path: '/',
                     element: <HomePage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     children: [
                         {
                             path: '/',
@@ -93,7 +94,7 @@ const App = () => {
                 {
                     path: 'submissions/:submissionId/details',
                     element: <SubmissionDetailsPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.submissionId);
                         return null;
@@ -102,7 +103,7 @@ const App = () => {
                 {
                     path: 'submissions/retest/:submissionId',
                     element: <SubmissionRetestPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.submissionId);
                         return null;
@@ -112,7 +113,7 @@ const App = () => {
                 {
                     path: 'contests/:slug/:contestId',
                     element: <ContestDetailsPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         return null;
@@ -121,7 +122,7 @@ const App = () => {
                 {
                     path: 'contests/:slug/:contestId/:participationType',
                     element: <ContestSolutionSubmitPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         validateParticipationType(params.participationType);
@@ -131,7 +132,7 @@ const App = () => {
                 {
                     path: 'contests/:slug/:contestId/:participationType/register',
                     element: <ContestRegister />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         validateParticipationType(params.participationType);
@@ -141,7 +142,7 @@ const App = () => {
                 {
                     path: 'contests/:slug/:contestId/:participationType/results/:resultType',
                     element: <ContestResultsPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         validateParticipationType(params.participationType);
@@ -153,7 +154,7 @@ const App = () => {
                 {
                     path: 'contests/:contestId',
                     element: <ContestDetailsPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         return null;
@@ -165,7 +166,7 @@ const App = () => {
                 {
                     path: 'contests/:contestId/compete',
                     element: <ContestSolutionSubmitPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         return null;
@@ -174,7 +175,7 @@ const App = () => {
                 {
                     path: 'contests/:contestId/practice',
                     element: <ContestSolutionSubmitPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         return null;
@@ -183,7 +184,7 @@ const App = () => {
                 {
                     path: 'contests/:contestId/:participationType/register',
                     element: <ContestRegister />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         validateParticipationType(params.participationType);
@@ -193,7 +194,7 @@ const App = () => {
                 {
                     path: 'contests/:contestId/:participationType/results/:resultType',
                     element: <ContestResultsPage />,
-                    errorElement: <NotFoundPage />,
+                    errorElement: <ErrorPage />,
                     loader: ({ params }) => {
                         validateIntegerParam(params.contestId);
                         validateParticipationType(params.participationType);
