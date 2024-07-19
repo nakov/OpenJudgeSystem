@@ -1,11 +1,8 @@
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from './constants';
 import { IIndexContestsType } from './types';
-
-const isParticipationTypeValid =
-    (participationType: ContestParticipationType) => participationType === ContestParticipationType.Compete ||
-        participationType === ContestParticipationType.Practice;
 
 const contestParticipationType =
     (isOfficial: boolean) => isOfficial
@@ -25,7 +22,7 @@ const getPracticeResultsAreVisible = (
 ) => (loggedInUserCanAccessAdministration || (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed))) &&
     contest.practiceResults > 0;
 
-const createUrlFriendlyString = (inputString: string | undefined | null): string => {
+const createUrlFriendlyPath = (inputString: string | undefined | null): string => {
     let resultString = '';
     let isLastCharacterDash = false;
 
@@ -48,11 +45,15 @@ const createUrlFriendlyString = (inputString: string | undefined | null): string
         }
     }
 
-    return resultString.replace(/^-+|-+$/g, '');
+    const result = resultString.replace(/^-+|-+$/g, '');
+    return isEmpty(result)
+        ? ''
+        : `/${result}`;
 };
 
-export { isParticipationTypeValid,
+export {
     contestParticipationType,
     getCompeteResultsAreVisible,
     getPracticeResultsAreVisible,
-    createUrlFriendlyString };
+    createUrlFriendlyPath,
+};
