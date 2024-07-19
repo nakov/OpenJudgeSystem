@@ -10,21 +10,25 @@ const isParticipationTypeValid = (participationType: string | undefined) => part
 const isResultTypeValid = (resultType: string | undefined) => resultType === ContestResultType.Simple ||
     resultType === ContestResultType.Full;
 
+const toIsoString = (text: string | undefined) => text
+    ? encodeURI(text)
+    : '';
+
 const validateIntegerParam = (param: string | undefined) => {
     if (!isIntegerParam(param)) {
-        throw json(null, { status: 404, statusText: `${param} is not a valid integer` });
+        throw json(null, { status: 404, statusText: `${toIsoString(param)} is not a valid integer` });
     }
 };
 
 const validateParticipationType = (participationType: string | undefined) => {
     if (!isParticipationTypeValid(participationType)) {
-        throw json(null, { status: 404, statusText: `${participationType} is not a valid participation type` });
+        throw json(null, { status: 404, statusText: `${toIsoString(participationType)} is not a valid participation type` });
     }
 };
 
 const validateResultType = (resultType: string | undefined) => {
     if (!isResultTypeValid(resultType)) {
-        throw json(null, { status: 404, statusText: `${resultType} is not a valid result type` });
+        throw json(null, { status: 404, statusText: `${toIsoString(resultType)} is not a valid result type` });
     }
 };
 
