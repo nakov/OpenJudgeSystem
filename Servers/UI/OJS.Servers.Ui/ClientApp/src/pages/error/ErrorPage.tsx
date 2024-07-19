@@ -16,7 +16,7 @@ const ErrorPage = () => {
 
     if (isRouteErrorResponse(error)) {
         if (error.status === 404) {
-            return <NotFoundPage message={error.statusText} />;
+            return <NotFoundPage message={decodeURIComponent(error.statusText)} />;
         }
     }
 
