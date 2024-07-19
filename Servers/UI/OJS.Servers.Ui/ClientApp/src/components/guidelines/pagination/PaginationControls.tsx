@@ -29,21 +29,23 @@ const PaginationControls = ({
     }));
     const classes = useStyles();
 
-    return (
-        <Pagination
-          count={count}
-          siblingCount={PAGE_SIBLING_COUNT}
-          boundaryCount={PAGE_BOUNDARY_COUNT}
-          onChange={(ev, value) => {
-              onChange(value);
-          }}
-          page={page}
-          className={paginationClassNames}
-          classes={{ ul: classes.ul }}
-          showFirstButton
-          showLastButton
-        />
-    );
+    return count > 1
+        ? (
+            <Pagination
+              count={count}
+              siblingCount={PAGE_SIBLING_COUNT}
+              boundaryCount={PAGE_BOUNDARY_COUNT}
+              onChange={(ev, value) => {
+                  onChange(value);
+              }}
+              page={page}
+              className={paginationClassNames}
+              classes={{ ul: classes.ul }}
+              showFirstButton
+              showLastButton
+            />
+        )
+        : null;
 };
 
 export default PaginationControls;

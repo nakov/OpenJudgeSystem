@@ -615,6 +615,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             }
 
             var submissions = await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, 1);
+
             return new PagedResult<TServiceModel>
             {
                 Items = submissions.Items,

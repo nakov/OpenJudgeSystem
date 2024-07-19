@@ -29,7 +29,17 @@ const ExecutionResult = ({
     const { getColorClassName, themeColors } = useTheme();
 
     const renderTestRunIcons = useCallback(
-        (runs: ITestRunType[]) => runs.map((testRun) => <TestRunIcon key={`t-r-i-${testRun.id}`} testRun={testRun} />),
+        (runs: ITestRunType[]) => runs
+            .slice()
+            .sort((a, b) => {
+                if (a.isTrialTest === b.isTrialTest) {
+                    return a.id - b.id;
+                }
+                return a.isTrialTest
+                    ? -1
+                    : 1;
+            })
+            .map((testRun) => <TestRunIcon key={`t-r-i-${testRun.id}`} testRun={testRun} />),
         [],
     );
 

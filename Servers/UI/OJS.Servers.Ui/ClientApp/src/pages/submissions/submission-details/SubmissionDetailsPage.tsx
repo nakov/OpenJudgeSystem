@@ -382,6 +382,11 @@ const SubmissionDetailsPage = () => {
                             >
                                 {contestName}
                             </Link>
+                            <div className={styles.pointsResult}>
+                                {points}
+                                /
+                                {maxPoints}
+                            </div>
                         </div>
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}
