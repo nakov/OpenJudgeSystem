@@ -11,7 +11,7 @@ const isResultTypeValid = (resultType: string | undefined) => resultType === Con
     resultType === ContestResultType.Full;
 
 const toIsoString = (text: string | undefined) => text
-    ? encodeURI(text)
+    ? encodeURIComponent(text)
     : '';
 
 const validateIntegerParam = (param: string | undefined) => {
