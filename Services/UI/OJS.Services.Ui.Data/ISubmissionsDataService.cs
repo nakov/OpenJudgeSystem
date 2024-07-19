@@ -14,7 +14,9 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage);
 
-    Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber);
+    Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(
+        int submissionsPerPage,
+        int pageNumber);
 
     Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(
         IEnumerable<int?> userParticipantsIds,
