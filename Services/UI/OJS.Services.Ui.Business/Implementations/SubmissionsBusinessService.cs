@@ -653,6 +653,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     ExecutionComment = testResult.ExecutionComment,
                     ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
                     UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    IsTrialTest = testResult.IsTrialTest,
                     TimeUsed = testResult.TimeUsed,
                     MemoryUsed = testResult.MemoryUsed,
                     SubmissionId = submission.Id,
