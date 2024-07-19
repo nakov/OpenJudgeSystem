@@ -7,7 +7,11 @@ import image from './page-not-found.png';
 
 import styles from './NotFoundPage.module.scss';
 
-const NotFoundPage = () => (
+interface INotFoundPageProps {
+    message?: string;
+}
+
+const NotFoundPage = ({ message }: INotFoundPageProps) => (
     <div className={styles.container}>
         <img
           className={styles.image}
@@ -17,6 +21,7 @@ const NotFoundPage = () => (
         <div className={styles.paragraphAndBtnContainer}>
             <p className={styles.httpCodeParagraph}>404</p>
             <Heading type={HeadingType.secondary}>Page Not Found</Heading>
+            {message && <Heading type={HeadingType.small} className={styles.message}>{message}</Heading>}
             <LinkButton
               to="/"
               text="Back to Home"

@@ -16,7 +16,7 @@ const ErrorPage = () => {
 
     if (isRouteErrorResponse(error)) {
         if (error.status === 404) {
-            return <NotFoundPage />;
+            return <NotFoundPage message={error.statusText} />;
         }
     }
 
@@ -37,8 +37,7 @@ const ErrorPage = () => {
             />
             <div className={styles.paragraphAndBtnContainer}>
                 <Heading type={HeadingType.secondary}>Unexpected error occured</Heading>
-                <Heading type={HeadingType.small}>{`${errorMessage}`}</Heading>
-                <br />
+                <Heading type={HeadingType.small} className={styles.message}>{errorMessage}</Heading>
                 <LinkButton
                   to="/"
                   text="Back to Home"
