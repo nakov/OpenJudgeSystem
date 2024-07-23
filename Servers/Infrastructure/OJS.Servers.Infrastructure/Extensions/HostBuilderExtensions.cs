@@ -1,45 +1,44 @@
 namespace OJS.Servers.Infrastructure.Extensions;
 
+using Elastic.Ingest.Elasticsearch;
+using Elastic.Ingest.Elasticsearch.DataStreams;
+using Elastic.Serilog.Sinks;
 using Microsoft.Extensions.Hosting;
-using OJS.Common.Extensions;
 using OJS.Services.Infrastructure.Configurations;
 using Serilog;
-using Serilog.Events;
-using System.IO;
+using System;
+using System.Linq;
 
 public static class HostBuilderExtensions
 {
-    public static IHostBuilder UseFileLogger<TStartup>(this IHostBuilder builder)
+    public static IHostBuilder UseElasticsearchLogger(
+        this IHostBuilder builder,
+        IHostEnvironment environment)
         => builder.UseSerilog((hostingContext, configuration) =>
         {
-            var loggerFilePath = hostingContext.Configuration
-                .GetSectionValueWithValidation<ApplicationConfig, string>(
-                    nameof(ApplicationConfig.LoggerFilesFolderPath));
+            var elasticSearchNodes =
+                hostingContext.Configuration
+                    .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.ElasticsearchEndpoints))
+                    .Split(',')
+                    .Select(x => new Uri(x))
+                    .ToArray();
 
-            var projectLogsDirectoryPath = Path.Combine(loggerFilePath, typeof(TStartup).GetProjectName());
-            var filePath = Path.Combine(projectLogsDirectoryPath, "log.txt");
-            var errorFilePath = Path.Combine(projectLogsDirectoryPath, "error.txt");
+            var dataSetName = environment.EnvironmentName.ToLower();
+
+            // Data stream namespace is the application name without the "ojs.servers." prefix
+            var dataStreamNamespace = environment.ApplicationName
+                .ToLower()
+                .Replace("ojs.", string.Empty)
+                .Replace("servers.", string.Empty);
 
             configuration
-                .ReadFrom
-                .Configuration(hostingContext.Configuration)
-                .Enrich
-                .FromLogContext()
-                .WriteTo
-                .Console()
-                .WriteTo
-                .File(
-                    filePath,
-                    rollingInterval: RollingInterval.Day,
-                    rollOnFileSizeLimit: true,
-                    retainedFileCountLimit: null)
-                .WriteTo
-                .Logger(l => l.Filter.ByIncludingOnly(e => e.Level is LogEventLevel.Error or LogEventLevel.Fatal)
-                    .WriteTo
-                    .File(
-                        errorFilePath,
-                        rollingInterval: RollingInterval.Day,
-                        rollOnFileSizeLimit: true,
-                        retainedFileCountLimit: null));
+                .ReadFrom.Configuration(hostingContext.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(elasticSearchNodes, opts =>
+                {
+                    opts.DataStream = new DataStreamName("logs", dataSetName, dataStreamNamespace);
+                    opts.BootstrapMethod = BootstrapMethod.Failure;
+                });
         });
 }
