@@ -27,6 +27,7 @@ public static class HostBuilderExtensions
 
             // Data stream namespace is the application name without the "ojs.servers." prefix
             var dataStreamNamespace = environment.ApplicationName
+                .Split(',')[0]
                 .ToLower()
                 .Replace("ojs.", string.Empty)
                 .Replace("servers.", string.Empty);

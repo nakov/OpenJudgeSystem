@@ -31,14 +31,13 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
         => this.GetQuery(sfp => !sfp.Processed && sfp.Processing);
 
-    public async Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails)
+    public async Task<SubmissionForProcessing> Add(int submissionId)
     {
         var submissionForProcessing = new SubmissionForProcessing
         {
             SubmissionId = submissionId,
             Processed = false,
             Processing = false,
-            SerializedExecutionDetails = serializedExecutionDetails,
         };
 
         await this.Add(submissionForProcessing);
@@ -46,9 +45,9 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         return submissionForProcessing;
     }
 
-    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails)
+    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
     {
-        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId, serializedExecutionDetails);
+        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId);
 
         entity.Processing = false;
         entity.Processed = false;
@@ -104,14 +103,10 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
                 Processed = false,
             });
 
-    public void MarkProcessed(
-        SubmissionForProcessing submissionForProcessing,
-        SerializedSubmissionExecutionResultServiceModel submissionExecutionResult)
+    public void MarkProcessed(SubmissionForProcessing submissionForProcessing)
     {
         submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;
-        submissionForProcessing.SerializedException = submissionExecutionResult.SerializedException;
-        submissionForProcessing.SerializedExecutionResult = submissionExecutionResult.SerializedExecutionResult;
 
         this.Update(submissionForProcessing);
     }

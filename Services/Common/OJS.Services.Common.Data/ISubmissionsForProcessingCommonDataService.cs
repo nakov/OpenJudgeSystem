@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Models.Submissions;
 
 public interface ISubmissionsForProcessingCommonDataService : IDataService<SubmissionForProcessing>
 {
@@ -16,9 +15,9 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
 
     IQueryable<SubmissionForProcessing> GetAllProcessing();
 
-    Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails);
+    Task<SubmissionForProcessing> Add(int submissionId);
 
-    Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails);
+    Task<SubmissionForProcessing> AddOrUpdate(int submissionId);
 
     Task AddOrUpdateMany(ICollection<int> submissionIds);
 
@@ -28,5 +27,5 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
 
     Task MarkMultipleForProcessing(ICollection<int> submissionIds);
 
-    void MarkProcessed(SubmissionForProcessing submissionForProcessing, SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
+    void MarkProcessed(SubmissionForProcessing submissionForProcessing);
 }

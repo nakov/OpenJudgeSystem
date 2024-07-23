@@ -8,6 +8,7 @@ using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
 using OJS.PubSub.Worker.Models.Submissions;
+using OJS.Services.Common.Extensions;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 
@@ -45,7 +46,7 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
 
         try
         {
-            this.logger.LogInformation("Executing submission #{SubmissionId}: {@Submission}", submission.Id, submission);
+            this.logger.LogInformation("Executing submission #{SubmissionId}: {@Submission}", submission.Id, submission.TrimDetails());
             var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
             this.logger.LogInformation("Produced execution result for submission #{SubmissionId}: {@ExecutionResult}", submission.Id, executionResult);
 

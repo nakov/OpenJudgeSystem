@@ -14,12 +14,6 @@ public class SubmissionsForProcessingAdministrationServiceModel : BaseAdministra
 
     public bool Processed { get; set; }
 
-    public string? SerializedExecutionDetails { get; set; }
-
-    public string? SerializedExecutionResult { get; set; }
-
-    public string? SerializedException { get; set; }
-
     public DateTime CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
