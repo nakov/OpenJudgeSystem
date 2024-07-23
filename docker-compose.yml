@@ -17,9 +17,11 @@ services:
     extra_hosts:
       - "db:host-gateway"
     links:
+      - elasticsearch
       - mq
       - redis
     depends_on:
+      - elasticsearch
       - mq
       - redis
   fe:
@@ -57,9 +59,11 @@ services:
     extra_hosts:
       - "db:host-gateway"
     links:
+      - elasticsearch
       - mq
       - redis
     depends_on:
+      - elasticsearch
       - mq
       - redis
   worker:
@@ -78,11 +82,13 @@ services:
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
       - /var/run/docker.sock:/var/run/docker.sock
     links:
+      - elasticsearch
       - mq
       - sql_server
       - mysql
       - postgres
     depends_on:
+      - elasticsearch
       - mq
       - sql_server
       - mysql
@@ -139,8 +145,6 @@ services:
       - discovery.type=single-node
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-      - elastic
   kibana:
     image: docker.elastic.co/kibana/kibana:8.14.3
     container_name: kibana_instance
@@ -149,14 +153,10 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - elasticsearch.ssl.verificationMode=none
-    networks:
-      - elastic
+    links:
+      - elasticsearch
     depends_on:
       - elasticsearch
-
-networks:
-    elastic:
-        driver: bridge
 
 volumes:
   rabbitmq_data:
