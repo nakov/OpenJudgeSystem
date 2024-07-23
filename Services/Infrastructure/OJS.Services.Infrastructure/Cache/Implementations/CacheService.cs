@@ -1,236 +1,207 @@
-namespace OJS.Services.Infrastructure.Cache.Implementations
+namespace OJS.Services.Infrastructure.Cache.Implementations;
+
+using OJS.Services.Infrastructure.Exceptions;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using FluentExtensions.Extensions;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using OJS.Common.Extensions.Strings;
+using OJS.Services.Infrastructure.Configurations;
+using OJS.Services.Infrastructure.Constants;
+using OJS.Services.Infrastructure.Emails;
+using Polly;
+using Polly.CircuitBreaker;
+using Polly.Registry;
+using StackExchange.Redis;
+
+public class CacheService : ICacheService
 {
-    using System;
-    using System.IO;
-    using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
-    using Microsoft.Extensions.Caching.Distributed;
-    using Microsoft.Extensions.Caching.Memory;
-    using Microsoft.Extensions.Options;
-    using OJS.Common.Extensions.Strings;
-    using OJS.Services.Infrastructure.Configurations;
-    using OJS.Services.Infrastructure.Constants;
-    using OJS.Services.Infrastructure.Emails;
-    using StackExchange.Redis;
+    private readonly int memoryCacheExpirationInSeconds = 10 * 60;
+    private readonly IDistributedCache cache;
+    private readonly IDatesService dates;
+    private readonly IMemoryCache memoryCache;
+    private readonly IEmailService emailService;
+    private readonly EmailServiceConfig emailConfig;
+    private readonly IConnectionMultiplexer redisConnection;
+    private readonly ResiliencePipeline circuitBreaker;
 
-    public class CacheService : ICacheService
+    public CacheService(
+        IDistributedCache cache,
+        IDatesService dates,
+        IMemoryCache memoryCache,
+        IEmailService emailService,
+        IOptions<EmailServiceConfig> emailConfig,
+        IConnectionMultiplexer redisConnection,
+        ResiliencePipelineProvider<string> pipelineProvider)
     {
-        private readonly int memoryCacheExpirationInSeconds = 10 * 60;
-        private readonly IDistributedCache cache;
-        private readonly IDatesService dates;
-        private readonly IMemoryCache memoryCache;
-        private readonly IEmailService emailService;
-        private readonly EmailServiceConfig emailConfig;
-        private readonly IConnectionMultiplexer redisConnection;
+        this.cache = cache;
+        this.dates = dates;
+        this.memoryCache = memoryCache;
+        this.emailService = emailService;
+        this.redisConnection = redisConnection;
+        this.emailConfig = emailConfig.Value;
+        this.circuitBreaker = pipelineProvider.GetPipeline("RedisCircuitBreaker");
+    }
 
-        public CacheService(
-            IDistributedCache cache,
-            IDatesService dates,
-            IMemoryCache memoryCache,
-            IEmailService emailService,
-            IOptions<EmailServiceConfig> emailConfig,
-            IConnectionMultiplexer redisConnection)
-        {
-            this.cache = cache;
-            this.dates = dates;
-            this.memoryCache = memoryCache;
-            this.emailService = emailService;
-            this.redisConnection = redisConnection;
-            this.emailConfig = emailConfig.Value;
-        }
-
-        public T Get<T>(string cacheId, Func<T> getItemCallback, DateTime absoluteExpiration) =>
-            this.GetItemResult(
-                () =>
-                {
-                    try
-                    {
-                        this.VerifyValueInCache(
-                                cacheId,
-                                () => Task.FromResult(getItemCallback),
-                                absoluteExpiration)
-                            .Wait();
-
-                        return ParseValue<T>(this.cache.Get(cacheId)!);
-                    }
-                    catch (RedisConnectionException ex)
-                    {
-                        this.SendEmailMessage(ex);
-
-                        return getItemCallback();
-                    }
-                },
-                getItemCallback);
-
-        public async Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, DateTime absoluteExpiration) =>
-            await this.GetItemResultAsync(
-                async () =>
-                {
-                    try
-                    {
-                        await this.VerifyValueInCache(
-                            cacheId,
-                            getItemCallback,
-                            absoluteExpiration);
-
-                        return ParseValue<T>((await this.cache.GetAsync(cacheId))!);
-                    }
-                    catch (RedisConnectionException ex)
-                    {
-                        this.SendEmailMessage(ex);
-
-                        return await getItemCallback();
-                    }
-                },
-                getItemCallback);
-
-        public T Get<T>(string cacheId, Func<T> getItemCallback)
-            => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
-
-        public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback)
-            => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
-
-        public T Get<T>(string cacheId, Func<T> getItemCallback, int cacheSeconds)
-            => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
-
-        public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds)
-            => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
-
-        public void Remove(string cacheId)
-        {
-            if (!this.IsRedisConnected())
+    public async Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, DateTime absoluteExpiration)
+        => await this.ExecuteWithCircuitBreaker(
+            async (_) =>
             {
-                this.emailService.SendEmail(
-                    this.emailConfig.DevEmail,
-                    EmailConstants.RedisSubject,
-                    EmailConstants.RedisBody);
-            }
-
-            try
-            {
-                this.cache.Remove(cacheId);
-            }
-            catch (RedisCommandException ex)
-            {
-                this.emailService.SendEmail(this.emailConfig.DevEmail, GetExceptionTypeAsString(ex), ex.Message);
-            }
-        }
-
-        private static T ParseValue<T>(byte[] valueAsByteArray)
-            => new StreamReader(new MemoryStream(valueAsByteArray))
-                .ReadToEnd()
-                .FromJson<T>();
-
-        private static byte[] ParseValue<T>(T obj)
-            => obj!
-                .ToJson()
-                .ToByteArray();
-
-        private static string GetExceptionTypeAsString(Exception exception) => exception.GetType().ToString();
-
-        private DateTime GetAbsoluteExpirationByCacheSeconds(int cacheSeconds)
-            => this.dates
-                .GetUtcNow()
-                .AddSeconds(cacheSeconds);
-
-        private async Task VerifyValueInCache<T>(
-            string cacheId,
-            Func<Task<T>> getItemCallback,
-            DateTime absoluteExpiration)
-        {
-            var value = await this.cache.GetAsync(cacheId);
-            if (value.IsNull())
-            {
-                var options = new DistributedCacheEntryOptions()
-                    .SetAbsoluteExpiration(absoluteExpiration);
-
-                var result = await getItemCallback();
-                await this.cache.SetAsync(
+                await this.VerifyValueInCache(
                     cacheId,
-                    ParseValue(result),
-                    options);
-            }
-        }
+                    getItemCallback,
+                    absoluteExpiration);
 
-        private async Task<T> GetItemResultAsync<T>(Func<Task<T>> resultAction, Func<Task<T>> fallbackResultAction)
-        {
-            if (!this.IsRedisConnected())
+                return ParseValue<T>((await this.cache.GetAsync(cacheId))!);
+            },
+            getItemCallback,
+            $"Get_{cacheId}");
+
+    public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback)
+        => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
+
+    public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds)
+        => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
+
+    public async Task Remove(string cacheId)
+        => await this.ExecuteWithCircuitBreaker(
+            async (_) =>
             {
-                if (this.ShouldSendExceptionEmail(EmailConstants.RedisSubject, EmailConstants.RedisBody))
+                await this.cache.RemoveAsync(cacheId);
+                return Task.CompletedTask;
+            },
+            () => Task.FromResult(Task.CompletedTask),
+            $"Remove_{cacheId}");
+
+    private static async Task<T> ExecuteWithResilienceContext<T>(Func<ResilienceContext, Task<T>> action)
+    {
+        var context = ResilienceContextPool.Shared.Get();
+        try
+        {
+            return await action(context);
+        }
+        finally
+        {
+            ResilienceContextPool.Shared.Return(context);
+        }
+    }
+
+    private static T ParseValue<T>(byte[] valueAsByteArray)
+        => new StreamReader(new MemoryStream(valueAsByteArray))
+            .ReadToEnd()
+            .FromJson<T>();
+
+    private static byte[] ParseValue<T>(T obj)
+        => obj!
+            .ToJson()
+            .ToByteArray();
+
+    private async Task<T> ExecuteWithCircuitBreaker<T>(
+        Func<ResilienceContext, Task<T>> action,
+        Func<Task<T>> fallbackAction,
+        string operationKey)
+        => await ExecuteWithResilienceContext(async (context) =>
+        {
+            context.Properties.Set(new ResiliencePropertyKey<string>("OperationKey"), operationKey);
+
+            var outcome = await this.circuitBreaker.ExecuteOutcomeAsync(
+                async (_, _) =>
                 {
-                    await this.emailService.SendEmailAsync(
-                        this.emailConfig.DevEmail,
-                        EmailConstants.RedisSubject,
-                        EmailConstants.RedisBody);
+                    if (!this.IsRedisConnected())
+                    {
+                        throw new RedisConnectionException(ConnectionFailureType.UnableToConnect, "Connection to Redis failed. Please check if the Redis server is running and accessible.");
+                    }
+
+                    return Outcome.FromResult(await action(context));
+                },
+                context,
+                operationKey);
+
+            if (outcome.Exception is BrokenCircuitException)
+            {
+                return await fallbackAction();
+            }
+
+            if (outcome.Exception is RedisConnectionException)
+            {
+                if (this.ShouldSendExceptionEmail(nameof(RedisConnectionException), outcome.Exception.Message))
+                {
+                    await this.SendEmailAsync(outcome.Exception);
                 }
 
-                return await fallbackResultAction();
+                // If the circuit is not yet open, we want to display an error message to the user. For example: the contest's compete / practice page.
+                throw new CircuitBreakerNotOpenException("Temporary connectivity issue with the data server. The system is attempting to recover. Please try again in a few moments.");
             }
 
-            try
+            if (outcome.Exception is RedisCommandException)
             {
-                return await resultAction();
-            }
-            catch (RedisConnectionException ex)
-            {
-                await this.emailService.SendEmailAsync(this.emailConfig.DevEmail, ex.GetType().ToString(), ex.Message);
-                return await fallbackResultAction();
-            }
-        }
-
-        private T GetItemResult<T>(Func<T> resultAction, Func<T> fallbackResultAction)
-        {
-            if (!this.IsRedisConnected())
-            {
-                if (this.ShouldSendExceptionEmail(EmailConstants.RedisSubject, EmailConstants.RedisBody))
+                if (this.ShouldSendExceptionEmail(nameof(RedisCommandException), outcome.Exception.Message))
                 {
-                    this.emailService.SendEmail(
-                        this.emailConfig.DevEmail,
-                        EmailConstants.RedisSubject,
-                        EmailConstants.RedisBody);
+                    await this.SendEmailAsync(outcome.Exception);
                 }
-
-                return fallbackResultAction();
             }
 
-            try
+            if (outcome.Exception is not null)
             {
-                return resultAction();
+                throw outcome.Exception;
             }
-            catch (RedisConnectionException ex)
-            {
-                this.emailService.SendEmail(this.emailConfig.DevEmail, ex.GetType().ToString(), ex.Message);
-                return fallbackResultAction();
-            }
-        }
 
-        private bool IsRedisConnected() => this.redisConnection is { IsConnecting: false, IsConnected: true };
+            return outcome.Result!;
+        });
 
-        private bool ShouldSendExceptionEmail(string exceptionName, string exceptionValue)
+    private DateTime GetAbsoluteExpirationByCacheSeconds(int cacheSeconds)
+        => this.dates
+            .GetUtcNow()
+            .AddSeconds(cacheSeconds);
+
+    private async Task VerifyValueInCache<T>(
+        string cacheId,
+        Func<Task<T>> getItemCallback,
+        DateTime absoluteExpiration)
+    {
+        var value = await this.cache.GetAsync(cacheId);
+        if (value.IsNull())
         {
-            if (this.memoryCache.TryGetValue(exceptionName, out string? cacheValue))
-            {
-                return false;
-            }
+            var options = new DistributedCacheEntryOptions()
+                .SetAbsoluteExpiration(absoluteExpiration);
 
-            this.memoryCache.Set(
+            var result = await getItemCallback();
+            await this.cache.SetAsync(
+                cacheId,
+                ParseValue(result),
+                options);
+        }
+    }
+
+    private bool IsRedisConnected() => this.redisConnection is { IsConnecting: false, IsConnected: true };
+
+    private async Task SendEmailAsync(Exception exception)
+    {
+        var exceptionName = exception.GetType().Name;
+        if (this.ShouldSendExceptionEmail(exceptionName, exception.Message))
+        {
+            await this.emailService.SendEmailAsync(
+                this.emailConfig.DevEmail,
                 exceptionName,
-                exceptionValue,
-                this.GetAbsoluteExpirationByCacheSeconds(this.memoryCacheExpirationInSeconds));
-
-            return true;
+                exception.Message);
         }
+    }
 
-        private void SendEmailMessage(RedisConnectionException ex)
+    private bool ShouldSendExceptionEmail(string exceptionName, string exceptionValue)
+    {
+        if (this.memoryCache.TryGetValue(exceptionName, out string? cacheValue))
         {
-            var exceptionTypeAsString = GetExceptionTypeAsString(ex);
-
-            if (this.ShouldSendExceptionEmail(
-                    exceptionTypeAsString,
-                    ex.Message))
-            {
-                this.emailService.SendEmail(this.emailConfig.DevEmail, exceptionTypeAsString, ex.Message);
-            }
+            return false;
         }
+
+        this.memoryCache.Set(
+            exceptionName,
+            exceptionValue,
+            this.GetAbsoluteExpirationByCacheSeconds(this.memoryCacheExpirationInSeconds));
+
+        return true;
     }
 }
