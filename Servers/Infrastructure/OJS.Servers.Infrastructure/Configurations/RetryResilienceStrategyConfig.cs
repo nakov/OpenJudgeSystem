@@ -45,14 +45,7 @@ public class RetryResilienceStrategyConfig : BaseConfig
 
     private class ValidBackoffDelayTypeAttribute : ValidationAttribute
     {
-        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
-        {
-            if (value is DelayBackoffType backoffType && Enum.IsDefined(typeof(DelayBackoffType), backoffType))
-            {
-                return ValidationResult.Success!;
-            }
-
-            return new ValidationResult($"Invalid BackoffDelayType value. The possible values are: {string.Join(", ", Enum.GetNames(typeof(DelayBackoffType)))}");
-        }
+        public override bool IsValid(object? value)
+            => value is DelayBackoffType backoffType && Enum.IsDefined(typeof(DelayBackoffType), backoffType);
     }
 }
