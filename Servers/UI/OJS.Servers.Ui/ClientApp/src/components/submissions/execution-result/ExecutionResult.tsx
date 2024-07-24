@@ -72,6 +72,7 @@ const ExecutionResult = ({
                     {points}
                     {' '}
                     /
+                    {' '}
                     {maxPoints}
                 </span>
             </div>
