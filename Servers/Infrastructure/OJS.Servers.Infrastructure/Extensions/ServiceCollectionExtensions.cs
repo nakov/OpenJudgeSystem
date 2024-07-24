@@ -3,7 +3,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Servers.Infrastructure.Configurations;
     using Hangfire;
     using Hangfire.SqlServer;
-    using OJS.Servers.Infrastructure.Listeners;
     using MassTransit;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -36,6 +35,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using OJS.Services.Infrastructure.ResilienceStrategies.Listeners;
     using Polly;
     using Polly.CircuitBreaker;
     using Polly.Retry;
@@ -52,6 +52,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
+    using static OJS.Services.Infrastructure.Constants.ResilienceStrategyConstants.Common;
 
     public static class ServiceCollectionExtensions
     {
@@ -65,9 +66,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
                 .AddOptionsWithValidation<ApplicationConfig>()
-                .AddOptionsWithValidation<HealthCheckConfig>()
-                .AddOptionsWithValidation<CircuitBreakerResilienceStrategyConfig>()
-                .AddOptionsWithValidation<RetryResilienceStrategyConfig>();
+                .AddOptionsWithValidation<HealthCheckConfig>();
 
             var maxRequestLimit = configuration.GetSectionWithValidation<HttpConfig>().MaxRequestSizeLimit;
             services.Configure<KestrelServerOptions>(options =>
@@ -287,48 +286,57 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddResiliencePipelines(this IServiceCollection services)
         {
-            services.AddResiliencePipeline("RedisCircuitBreaker", (builder, context) =>
-            {
-                var circuitBreakerConfig = context.ServiceProvider.GetRequiredService<IOptions<CircuitBreakerResilienceStrategyConfig>>().Value;
-                var retryConfig = context.ServiceProvider.GetRequiredService<IOptions<RetryResilienceStrategyConfig>>().Value;
-                var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddProvider(new SerilogLoggerProvider()));
-                var logger = loggerFactory.CreateLogger<ResiliencePipeline>();
+            services
+                .AddOptionsWithValidation<CircuitBreakerResilienceStrategyConfig>()
+                .AddOptionsWithValidation<RetryResilienceStrategyConfig>()
+                .AddResiliencePipeline("RedisCircuitBreaker", (builder, context) =>
+                {
+                    var circuitBreakerConfig = context.ServiceProvider.GetRequiredService<IOptions<CircuitBreakerResilienceStrategyConfig>>().Value;
+                    var retryConfig = context.ServiceProvider.GetRequiredService<IOptions<RetryResilienceStrategyConfig>>().Value;
+                    var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddProvider(new SerilogLoggerProvider()));
+                    var logger = loggerFactory.CreateLogger<ResiliencePipeline>();
 
-                var handleRedisExceptions = new PredicateBuilder()
-                    .Handle<RedisConnectionException>()
-                    .Handle<RedisCommandException>();
+                    var handleRedisExceptions = new PredicateBuilder()
+                        .Handle<RedisConnectionException>()
+                        .Handle<RedisCommandException>();
 
-                var handleAllExceptions = new PredicateBuilder()
-                    .Handle<Exception>();
+                    var handleAllExceptions = new PredicateBuilder()
+                        .Handle<Exception>();
 
-                builder
-                    .AddCircuitBreaker(new CircuitBreakerStrategyOptions
-                    {
-                        FailureRatio = circuitBreakerConfig.FailureRatio,
-                        MinimumThroughput = circuitBreakerConfig.MinimumThroughput,
-                        SamplingDuration = circuitBreakerConfig.SamplingDuration,
-                        BreakDuration = circuitBreakerConfig.DurationOfBreak,
-                        ShouldHandle = handleRedisExceptions,
-                    })
-                    .AddRetry(new RetryStrategyOptions
-                    {
-                        MaxRetryAttempts = retryConfig.MaxRetryAttempts,
-                        Delay = retryConfig.Delay,
-                        BackoffType = retryConfig.BackoffType,
-                        UseJitter = retryConfig.UseJitter,
-                        ShouldHandle = handleAllExceptions,
-                        OnRetry = (args) =>
+                    builder
+                        .AddCircuitBreaker(new CircuitBreakerStrategyOptions
                         {
-                          logger.LogWarning($"Retry attempt #{args.AttemptNumber}. Operation: Retry_{args.Context.Properties.GetValue(new ResiliencePropertyKey<string>("OperationKey"), string.Empty)} Result: {args.Outcome.Result ?? "No result."}, Exception: {(args.Outcome.Exception is not null ? args.Outcome.Exception.Message : "null")}, Duration: {args.Duration.Milliseconds}ms, Retry Delay: {args.RetryDelay.Milliseconds}ms");
-                          return default;
-                        },
-                    })
-                    .ConfigureTelemetry(new TelemetryOptions
-                    {
-                        LoggerFactory = loggerFactory,
-                    })
-                    .TelemetryListener = new RedisCircuitBreakerListener(logger);
-            });
+                            FailureRatio = circuitBreakerConfig.FailureRatio,
+                            MinimumThroughput = circuitBreakerConfig.MinimumThroughput,
+                            SamplingDuration = circuitBreakerConfig.SamplingDuration,
+                            BreakDuration = circuitBreakerConfig.DurationOfBreak,
+                            ShouldHandle = handleRedisExceptions,
+                        })
+                        .AddRetry(new RetryStrategyOptions
+                        {
+                            MaxRetryAttempts = retryConfig.MaxRetryAttempts,
+                            Delay = retryConfig.Delay,
+                            BackoffType = retryConfig.BackoffType,
+                            UseJitter = retryConfig.UseJitter,
+                            ShouldHandle = handleAllExceptions,
+                            OnRetry = (args) =>
+                            {
+                              logger.LogWarning(
+                                  "Retry attempt #{RetryAttempt}. Operation: Retry_{OperationKey} Outcome: [{ResilienceOutcome}]. Duration: {RetryDuration}ms. Delay: {RetryDelay}ms.",
+                                  args.AttemptNumber + 1,
+                                  args.Context.Properties.GetValue(new ResiliencePropertyKey<string>(OperationKey), string.Empty),
+                                  args.Outcome.Exception?.Message ?? (args.Outcome.Result ?? "No result."),
+                                  args.Duration.Milliseconds,
+                                  args.RetryDelay.Milliseconds);
+                              return default;
+                            },
+                        })
+                        .ConfigureTelemetry(new TelemetryOptions
+                        {
+                            LoggerFactory = loggerFactory,
+                        })
+                        .TelemetryListener = new RedisCircuitBreakerListener(logger);
+                });
 
             return services;
         }
