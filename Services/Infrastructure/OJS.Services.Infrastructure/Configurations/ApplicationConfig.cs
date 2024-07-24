@@ -6,6 +6,9 @@ public class ApplicationConfig : BaseConfig
 {
     public override string SectionName => "ApplicationSettings";
 
+    [Required]
+    public string LoggerFilesFolderPath { get; set; } = string.Empty;
+
     /// <summary>
     /// Gets or sets the Elasticsearch node endpoints separated by comma.
     /// </summary>

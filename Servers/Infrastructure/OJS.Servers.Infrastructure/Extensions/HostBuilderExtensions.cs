@@ -6,16 +6,24 @@ using Elastic.Serilog.Sinks;
 using Microsoft.Extensions.Hosting;
 using OJS.Services.Infrastructure.Configurations;
 using Serilog;
+using Serilog.Events;
 using System;
+using System.IO;
 using System.Linq;
 
 public static class HostBuilderExtensions
 {
-    public static IHostBuilder UseElasticsearchLogger(
+    public static IHostBuilder UseLogger(
         this IHostBuilder builder,
         IHostEnvironment environment)
         => builder.UseSerilog((hostingContext, configuration) =>
         {
+            var applicationName = environment.GetShortApplicationName();
+            var loggerFilePath = hostingContext.Configuration
+                .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.LoggerFilesFolderPath));
+            var projectLogsDirectoryPath = Path.Combine(loggerFilePath, applicationName);
+            var errorLogFilePath = Path.Combine(projectLogsDirectoryPath, "error.log");
+
             var elasticSearchNodes =
                 hostingContext.Configuration
                     .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.ElasticsearchEndpoints))
@@ -23,23 +31,23 @@ public static class HostBuilderExtensions
                     .Select(x => new Uri(x))
                     .ToArray();
 
-            var dataSetName = environment.EnvironmentName.ToLower();
-
-            // Data stream namespace is the application name without the "ojs.servers." prefix
-            var dataStreamNamespace = environment.ApplicationName
-                .Split(',')[0]
-                .ToLower()
-                .Replace("ojs.", string.Empty)
-                .Replace("servers.", string.Empty);
-
             configuration
                 .ReadFrom.Configuration(hostingContext.Configuration)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
+                .WriteTo.File(
+                    errorLogFilePath,
+                    rollingInterval: RollingInterval.Day,
+                    rollOnFileSizeLimit: true,
+                    restrictedToMinimumLevel: LogEventLevel.Error)
                 .WriteTo.Elasticsearch(elasticSearchNodes, opts =>
                 {
-                    opts.DataStream = new DataStreamName("logs", dataSetName, dataStreamNamespace);
-                    opts.BootstrapMethod = BootstrapMethod.Failure;
+                    opts.DataStream = new DataStreamName(
+                        type: "logs",
+                        dataSet: environment.EnvironmentName.ToLower(),
+                        @namespace: applicationName.ToLower());
+                    // Silent mode is used to avoid exceptions when the elasticsearch is not available.
+                    opts.BootstrapMethod = BootstrapMethod.Silent;
                 });
         });
 }
