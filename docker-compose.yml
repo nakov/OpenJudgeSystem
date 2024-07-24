@@ -153,6 +153,8 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - elasticsearch.ssl.verificationMode=none
+    volumes:
+        - kibana_data:/usr/share/kibana/data
     links:
       - elasticsearch
     depends_on:
@@ -161,3 +163,4 @@ services:
 volumes:
   rabbitmq_data:
   elasticsearch_data:
+  kibana_data:
