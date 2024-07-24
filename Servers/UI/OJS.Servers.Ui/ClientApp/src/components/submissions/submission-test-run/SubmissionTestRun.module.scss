@@ -56,6 +56,11 @@
     }
   }
 
+  .zeroTestsInfoMessage {
+    font-style: italic;
+    margin-bottom: spacings.$sp-8;
+  }
+
   .outputWrapper {
     margin-top: spacings.$sp-12;
   }
