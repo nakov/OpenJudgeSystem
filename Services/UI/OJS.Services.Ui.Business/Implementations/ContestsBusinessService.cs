@@ -23,7 +23,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Submissions;
-    using static OJS.Services.Common.PaginationConstants.Contests;
+    using static OJS.Services.Common.Constants.PaginationConstants.Contests;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
