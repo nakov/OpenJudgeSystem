@@ -1,3 +1,5 @@
+import { ITestRunType } from '../hooks/submissions/types';
+
 import { TestRunResultType } from './constants';
 
 const getTestResultColorId = (resultType: string) => {
@@ -33,8 +35,19 @@ const getResultTypeText = (resType: string) => {
     }
 };
 
+const sortTestRunsByTrialTest = (a: ITestRunType, b: ITestRunType) => {
+    if (a.isTrialTest && !b.isTrialTest) {
+        return -1;
+    }
+    if (!a.isTrialTest && b.isTrialTest) {
+        return 1;
+    }
+    return 0;
+};
+
 // eslint-disable-next-line import/prefer-default-export
 export {
     getTestResultColorId,
     getResultTypeText,
+    sortTestRunsByTrialTest,
 };

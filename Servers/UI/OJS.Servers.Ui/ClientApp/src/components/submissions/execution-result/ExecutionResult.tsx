@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 
+import { sortTestRunsByTrialTest } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
@@ -31,14 +32,7 @@ const ExecutionResult = ({
     const renderTestRunIcons = useCallback(
         (runs: ITestRunType[]) => runs
             .slice()
-            .sort((a, b) => {
-                if (a.isTrialTest === b.isTrialTest) {
-                    return a.id - b.id;
-                }
-                return a.isTrialTest
-                    ? -1
-                    : 1;
-            })
+            .sort(sortTestRunsByTrialTest)
             .map((testRun) => <TestRunIcon key={`t-r-i-${testRun.id}`} testRun={testRun} />),
         [],
     );
@@ -72,6 +66,7 @@ const ExecutionResult = ({
                     {points}
                     {' '}
                     /
+                    {' '}
                     {maxPoints}
                 </span>
             </div>

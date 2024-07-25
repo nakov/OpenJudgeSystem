@@ -176,7 +176,14 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                 </div>
 
             </div>
-            { isTrialTest && <div>The zero tests are not included in the final result</div>}
+            { isTrialTest && (
+                <div
+                  style={{ color: themeColors.baseColor100 }}
+                  className={styles.zeroTestsInfoMessage}
+                >
+                    The zero tests are not included in the final result
+                </div>
+            )}
             {testShowInput && (
                 <>
                     <div>Test input:</div>
