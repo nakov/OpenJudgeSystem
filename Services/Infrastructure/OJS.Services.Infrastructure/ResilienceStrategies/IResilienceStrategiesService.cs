@@ -5,9 +5,9 @@ using Polly;
 using System;
 using System.Threading.Tasks;
 
-public interface IResilienceStrategiesService : IService
+public interface IResilienceStrategiesService : ISingletonService
 {
-    Task<T> ExecuteWithCircuitBreaker<T>(
+    Task<T> ExecuteRedisWithCircuitBreaker<T>(
         Func<ResilienceContext, Task<T>> action,
         Func<Task<T>> fallbackAction,
         string operationKey);
