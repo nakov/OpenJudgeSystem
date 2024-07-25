@@ -15,16 +15,16 @@ public static class ConfigurationExtensions
         var section = configuration.GetSection<TConfig>();
         var value = section.GetValue<TValue>(key);
         var config = section.Get<TConfig>();
-        ValidateConfigProperty(config.SectionName, config, key, value);
-        return value;
+        ValidateConfigProperty(config, key, value);
+        return value!;
     }
 
     public static TConfig GetSectionWithValidation<TConfig>(this IConfiguration configuration)
         where TConfig : BaseConfig
     {
         var config = configuration.GetSection<TConfig>().Get<TConfig>();
-        ValidateConfig(config.SectionName, config);
-        return config;
+        ValidateConfig(config?.SectionName ?? "Configuration", config);
+        return config!;
     }
 
     private static IConfigurationSection GetSection<TSection>(this IConfiguration configuration)
@@ -64,7 +64,6 @@ public static class ConfigurationExtensions
     }
 
     private static void ValidateConfigProperty(
-        string configName,
         object? configInstance,
         string propertyName,
         object? propertyValue)
@@ -73,7 +72,7 @@ public static class ConfigurationExtensions
         {
             throw new ArgumentNullException(
                 nameof(configInstance),
-                $"{configName} cannot be null. Ensure it is added to the appSettings or environment variables.");
+                $"{propertyName} cannot be null. Ensure it is added to the appSettings or environment variables.");
         }
 
         var validationResults = new List<ValidationResult>();
@@ -91,9 +90,9 @@ public static class ConfigurationExtensions
             return;
         }
 
-        var message = $"Invalid configuration value for {configName}:"
+        var message = $"Invalid configuration value for {propertyName}:"
             + string.Join(string.Empty, validationResults.Select(r => Environment.NewLine + r.ErrorMessage));
 
-        throw new ArgumentException(message, configName);
+        throw new ArgumentException(message, propertyName);
     }
 }

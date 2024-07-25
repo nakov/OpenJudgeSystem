@@ -1,19 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="ClosedXML" Version="0.102.0" />
-      <PackageReference Include="Core.Fluent.Extensions" Version="1.0.1" />
-      <PackageReference Include="FluentValidation" Version="11.9.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-      <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.102.0" />
+    <PackageReference Include="Core.Fluent.Extensions" Version="1.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+  </ItemGroup>
 </Project>

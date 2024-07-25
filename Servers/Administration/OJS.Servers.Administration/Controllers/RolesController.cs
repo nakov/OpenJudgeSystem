@@ -1,28 +1,66 @@
-namespace OJS.Servers.Administration.Controllers;
+﻿namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using OJS.Common.Enumerations;
+using OJS.Common.Extensions;
 using OJS.Data.Models.Users;
-using OJS.Services.Administration.Models;
-using System.Collections.Generic;
-using static OJS.Common.GlobalConstants.Roles;
+using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.Roles;
+using OJS.Services.Administration.Business.Roles.GridData;
+using OJS.Services.Administration.Business.Roles.Permissions;
+using OJS.Services.Administration.Business.Roles.Validators;
+using OJS.Services.Administration.Models.Roles;
+using System.Threading.Tasks;
 
-[Authorize(Roles = Administrator)]
-public class RolesController : BaseAutoCrudAdminController<Role>
+public class RolesController : BaseAdminApiController<Role, string, RoleInListModel, RoleAdministrationModel>
 {
-    public RolesController(IOptions<ApplicationConfig> appConfigOptions)
-        : base(appConfigOptions)
+    private readonly IRolesBusinessService rolesBusinessService;
+    private readonly UserToRoleModelValidator userToRoleModelValidator;
+
+    public RolesController(
+       IRoleGridDataService gridDataService,
+       IRolesBusinessService rolesBusinessService,
+       RoleAdministrationModelValidator validator,
+       UserToRoleModelValidator userToRoleModelValidator)
+        : base(
+        gridDataService,
+        rolesBusinessService,
+        validator)
     {
+        this.rolesBusinessService = rolesBusinessService;
+        this.userToRoleModelValidator = userToRoleModelValidator;
     }
 
-    protected override IEnumerable<GridAction> CustomActions
-        => new GridAction[] { new() { Name = "Users", Action = nameof(this.UsersInRole) }, };
+    [ProtectedEntityAction("model", typeof(UserToRolePermissionService))]
+    [HttpPost]
+    public async Task<IActionResult> AddUserToRole(UserToRoleModel model)
+    {
+        model.OperationType = CrudOperationType.Create;
+        var validationResult = await this.userToRoleModelValidator.ValidateAsync(model).ToExceptionResponseAsync();
 
-    public IActionResult UsersInRole(IDictionary<string, string> complexId)
-        => this.RedirectToActionWithStringFilter(
-            nameof(UserRolesController),
-            UserRolesController.RoleIdKey,
-            this.GetEntityIdFromQuery<string>(complexId));
+        if (!validationResult.IsValid)
+        {
+            return this.UnprocessableEntity(validationResult.Errors);
+        }
+
+        await this.rolesBusinessService.AddToRole(model);
+        return this.Ok("User was successfully added to role.");
+    }
+
+    [ProtectedEntityAction("roleId", typeof(RoleIdPermissionService))]
+    [HttpDelete]
+    public async Task<IActionResult> RemoveFromRole([FromQuery] string userId, [FromQuery] string roleId)
+    {
+        var model = new UserToRoleModel { RoleId = roleId, UserId = userId, OperationType = CrudOperationType.Delete };
+
+        var validationResult = await this.userToRoleModelValidator.ValidateAsync(model).ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
+        {
+            return this.UnprocessableEntity(validationResult.Errors);
+        }
+
+        await this.rolesBusinessService.RemoveFromRole(model);
+        return this.Ok("User was successfully removed from role.");
+    }
 }

@@ -68,7 +68,7 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.AddUsersToExamGroup(examGroup, users);
 
             var externalUsernames = usernames
-                .Except(users.Select(u => u.UserName), StringComparer.OrdinalIgnoreCase)
+                .Except(users.Select(u => u.UserName!), StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
             if (externalUsernames.Any())

@@ -1,20 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
-      <ProjectReference Include="..\..\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
-      <ProjectReference Include="..\..\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="ClosedXML" Version="0.104.0-preview2" />
-      <PackageReference Include="SixLabors.Fonts" Version="2.0.3" />
-      <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="6.13.0" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
+    <ProjectReference Include="..\..\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.0-preview2" />
+    <PackageReference Include="SixLabors.Fonts" Version="2.0.3" />
+    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="8.103.0" />
+  </ItemGroup>
 </Project>

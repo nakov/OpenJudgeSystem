@@ -14,6 +14,7 @@ using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
@@ -79,6 +80,10 @@ public class SubmissionsController : BaseApiController
     /// <returns>The file to download.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(FileContentResult), Status200OK)]
+    [SuppressMessage(
+        "Usage",
+        "ASP0023:Route conflict detected between controller actions",
+        Justification = "Base API controller Route handles different actions names.")]
     public IActionResult Download(int id)
     {
         var submissionDownloadServiceModel = this.submissionsBusiness.GetSubmissionFile(id);
@@ -96,6 +101,10 @@ public class SubmissionsController : BaseApiController
     [HttpGet("{problemId:int}")]
     [Authorize]
     [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
+    [SuppressMessage(
+        "Usage",
+        "ASP0023:Route conflict detected between controller actions",
+        Justification = "Base API controller Route handles different actions names.")]
     public async Task<IActionResult> GetUserSubmissionsByProblem(
         int problemId,
         [FromQuery] bool isOfficial,
@@ -113,6 +122,10 @@ public class SubmissionsController : BaseApiController
     /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{submissionId:int}")]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionResultsResponseModel>), Status200OK)]
+    [SuppressMessage(
+        "Usage",
+        "ASP0023:Route conflict detected between controller actions",
+        Justification = "Base API controller Route handles different actions names.")]
     public async Task<IActionResult> GetSubmissionResults(
         int submissionId,
         [FromQuery] int page)

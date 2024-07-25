@@ -28,6 +28,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
+                .Include(p => p.User)
                 .Include(p => p.Contest)
                     .ThenInclude(c => c.Category)
                 .Include(p => p.Contest)

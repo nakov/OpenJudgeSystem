@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Administration.Controllers.Api;
+﻿namespace OJS.Servers.Administration.Controllers;
 
 using OJS.Data.Models;
 using OJS.Services.Administration.Business.Settings;

@@ -33,6 +33,6 @@
                 .ForMember(
                     nameof(this.OutputResult),
                     opt => opt.MapFrom(src => ((src as ExecutionResult<OutputResult>)!).Results.FirstOrDefault()))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(nameof(this.Id), opt => opt.Ignore());
     }
 }

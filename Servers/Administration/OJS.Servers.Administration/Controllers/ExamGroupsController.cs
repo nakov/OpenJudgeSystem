@@ -1,113 +1,83 @@
-namespace OJS.Servers.Administration.Controllers;
+﻿namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.Extensions;
-using AutoCrudAdmin.Models;
-using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using OJS.Common.Extensions;
 using OJS.Data.Models.Contests;
-using OJS.Services.Administration.Business.Validation.Factories;
-using OJS.Services.Administration.Business.Validation.Helpers;
-using OJS.Services.Administration.Models;
+using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.ExamGroups;
+using OJS.Services.Administration.Business.ExamGroups.GridData;
+using OJS.Services.Administration.Business.ExamGroups.Permissions;
+using OJS.Services.Administration.Business.ExamGroups.Validators;
 using OJS.Services.Administration.Models.ExamGroups;
-using OJS.Services.Common;
-using OJS.Services.Common.Validation;
-using OJS.Services.Infrastructure.Extensions;
-using System;
-using System.Linq.Expressions;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
+public class ExamGroupsController : BaseAdminApiController<ExamGroup, int, ExamGroupInListModel, ExamGroupAdministrationModel>
 {
-    private const string ContestName = nameof(ExamGroup.Contest);
-
-    private readonly IContestsValidationHelper contestsValidationHelper;
-    private readonly IValidatorsFactory<ExamGroup> examGroupValidatorsFactory;
-    private readonly IValidationService<ExamGroupDeleteValidationServiceModel> examGroupsDeleteValidation;
-    private readonly IContestsActivityService contestsActivity;
+    private readonly IExamGroupsBusinessService operationService;
+    private readonly UserToExamGroupValidator userToExamGroupValidator;
+    private readonly MultipleUsersToExamGroupModelValidator multipleUsersToExamGroupModelValidator;
 
     public ExamGroupsController(
-        IContestsValidationHelper contestsValidationHelper,
-        IValidatorsFactory<ExamGroup> examGroupValidatorsFactory,
-        IValidationService<ExamGroupDeleteValidationServiceModel> examGroupsDeleteValidation,
-        IContestsActivityService contestsActivity,
-        IOptions<ApplicationConfig> appConfigOptions)
-        : base(appConfigOptions)
+       IExamGroupsGridDataService gridDataService,
+       IExamGroupsBusinessService operationService,
+       ExamGroupAdministrationModelValidator validator,
+       UserToExamGroupValidator userToExamGroupValidator,
+       MultipleUsersToExamGroupModelValidator multipleUsersToExamGroupModelValidator)
+        : base(gridDataService, operationService, validator)
     {
-        this.contestsValidationHelper = contestsValidationHelper;
-        this.examGroupValidatorsFactory = examGroupValidatorsFactory;
-        this.examGroupsDeleteValidation = examGroupsDeleteValidation;
-        this.contestsActivity = contestsActivity;
+        this.operationService = operationService;
+        this.userToExamGroupValidator = userToExamGroupValidator;
+        this.multipleUsersToExamGroupModelValidator = multipleUsersToExamGroupModelValidator;
     }
 
-    protected override Expression<Func<ExamGroup, bool>>? MasterGridFilter
-        => this.GetMasterGridFilter();
-
-    protected override IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, ValidatorResult>> EntityValidators
-        => this.examGroupValidatorsFactory.GetValidators();
-
-    protected override IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, Task<ValidatorResult>>>
-        AsyncEntityValidators
-        => this.examGroupValidatorsFactory.GetAsyncValidators();
-
-    protected override IEnumerable<GridAction> CustomActions
-        => new GridAction[]
-        {
-            new() { Action = nameof(this.Users) },
-        };
-
-    public IActionResult Users([FromQuery] IDictionary<string, string> complexId)
-        => this.RedirectToActionWithNumberFilter(
-            nameof(UsersInExamGroupsController),
-            UsersInExamGroupsController.ExamGroupIdKey,
-            this.GetEntityIdFromQuery<int>(complexId));
-
-    protected override Task BeforeGeneratingForm(
-        ExamGroup entity,
-        EntityAction action,
-        IDictionary<string, string> entityDict)
-        => this.ValidateContestPermissions(entity);
-
-    protected override async Task BeforeEntitySaveAsync(ExamGroup entity, AdminActionContext actionContext)
+    [HttpPost]
+    [ProtectedEntityAction("model", typeof(UserToExamGroupPermissionService))]
+    public async Task<IActionResult> AddToExamGroup(UserToExamGroupModel model)
     {
-        await base.BeforeEntitySaveAsync(entity, actionContext);
-        await this.ValidateContestPermissions(entity);
-    }
+        var validationResult = await this.userToExamGroupValidator
+            .ValidateAsync(model)
+            .ToExceptionResponseAsync();
 
-    protected override async Task BeforeEntitySaveOnDeleteAsync(ExamGroup entity, AdminActionContext actionContext)
-    {
-        if (!entity.ContestId.HasValue)
+        if (!validationResult.IsValid)
         {
-            return;
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        var validationModel = entity.Map<ExamGroupDeleteValidationServiceModel>();
-
-        validationModel.ContestIsActive = await this.contestsActivity.IsContestActive(entity.ContestId.Value);
-
-        this.examGroupsDeleteValidation
-            .GetValidationResult(validationModel)
-            .VerifyResult();
+        await this.operationService.AddUserToExamGroup(model);
+        return this.Ok("User successfully added to exam group");
     }
 
-    protected override Expression<Func<ExamGroup, bool>>? GetMasterGridFilter()
+    [HttpPost]
+    [ProtectedEntityAction("model", typeof(MultipleUsersToExamGroupPermissionService))]
+    public async Task<IActionResult> AddMultipleUsersToExamGroup(MultipleUsersToExamGroupModel model)
     {
-        if (this.TryGetEntityIdForStringColumnFilter(ContestName, out var contestName))
+        var validationResult = await this.multipleUsersToExamGroupModelValidator
+            .ValidateAsync(model)
+            .ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
         {
-            return eg => eg.Contest != null && eg.Contest.Name == contestName;
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        return base.MasterGridFilter;
+        await this.operationService.AddMultipleUsersToExamGroup(model);
+        return this.Ok("Users successfully added to exam group");
     }
 
-    private async Task ValidateContestPermissions(ExamGroup entity)
+    [HttpPost]
+    [ProtectedEntityAction("model", typeof(UserToExamGroupPermissionService))]
+    public async Task<IActionResult> RemoveUserFromExamGroup(UserToExamGroupModel model)
     {
-        if (entity.ContestId.HasValue)
+        var validationResult = await this.userToExamGroupValidator
+            .ValidateAsync(model)
+            .ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
         {
-            await this.contestsValidationHelper
-                .ValidatePermissionsOfCurrentUser(entity.ContestId)
-                .VerifyResult();
+            return this.UnprocessableEntity(validationResult.Errors);
         }
+
+        await this.operationService.RemoveUserFromExamGroup(model);
+        return this.Ok("User successfully removed from exam group");
     }
 }

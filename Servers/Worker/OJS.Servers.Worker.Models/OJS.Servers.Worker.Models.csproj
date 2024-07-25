@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <RootNamespace>OJS.Servers.Worker.Models</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
     <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
     <ProjectReference Include="..\..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
     <ProjectReference Include="..\..\..\Services\Common\OJS.Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj" />
-    
   </ItemGroup>
-
 </Project>

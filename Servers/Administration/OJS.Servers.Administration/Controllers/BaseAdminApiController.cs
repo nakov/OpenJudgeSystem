@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Administration.Controllers.Api;
+﻿namespace OJS.Servers.Administration.Controllers;
 
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;

@@ -7,12 +7,10 @@ using OJS.Services.Infrastructure.Models.Mapping;
 using System.ComponentModel.DataAnnotations;
 using Resource = OJS.Common.Resources.CopyProblem;
 
-public class CopyAllToAnotherContestViewModel : IMapFrom<ContestCopyProblemsValidationServiceModel>
+public class CopyAllToAnotherContestViewModel : IMapExplicitly
 {
-    [IgnoreMap]
     public int FromContestId { get; set; }
 
-    [IgnoreMap]
     public SelectList? ContestsToCopyTo { get; set; }
 
     [Display(Name = Resource.BulkCopyContestLabel)]
@@ -20,4 +18,10 @@ public class CopyAllToAnotherContestViewModel : IMapFrom<ContestCopyProblemsVali
     public int? Id { get; set; }
 
     public string? Name { get; set; }
+
+    public void RegisterMappings(IProfileExpression configuration)
+        => configuration
+            .CreateMap<ContestCopyProblemsValidationServiceModel, CopyAllToAnotherContestViewModel>()
+            .ForMember(d => d.FromContestId, opt => opt.Ignore())
+            .ForMember(d => d.ContestsToCopyTo, opt => opt.Ignore());
 }

@@ -1,350 +1,145 @@
-namespace OJS.Servers.Administration.Controllers
+﻿namespace OJS.Servers.Administration.Controllers;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
+using OJS.Common.Extensions;
+using OJS.Data.Models.Contests;
+using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Administration.Business.Contests.GridData;
+using OJS.Services.Administration.Business.Contests.Permissions;
+using OJS.Services.Administration.Business.Contests.Validators;
+using OJS.Services.Administration.Business.Similarity;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Data.Excel;
+using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Administration.Models.Submissions;
+using OJS.Services.Common.Models.Users;
+using OJS.Services.Administration.Models.Similarity;
+using OJS.Services.Infrastructure.Extensions;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
-    using AutoCrudAdmin.Extensions;
-    using AutoCrudAdmin.Models;
-    using AutoCrudAdmin.ViewModels;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Options;
-    using OJS.Common.Extensions;
-    using OJS.Data.Models;
-    using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Problems;
-    using OJS.Services.Administration.Business;
-    using OJS.Services.Administration.Business.Extensions;
-    using OJS.Services.Administration.Business.Validation.Factories;
-    using OJS.Services.Administration.Business.Validation.Helpers;
-    using OJS.Services.Administration.Data;
-    using OJS.Services.Administration.Models;
-    using OJS.Services.Administration.Models.Contests;
-    using OJS.Services.Administration.Models.Submissions;
-    using OJS.Services.Common.Validation.Helpers;
-    using OJS.Services.Infrastructure.Extensions;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
-    using AdminResource = OJS.Common.Resources.AdministrationGeneral;
-    using Resource = OJS.Common.Resources.ContestsControllers;
+    private readonly IContestsBusinessService contestsBusinessService;
+    private readonly ContestAdministrationModelValidator validator;
+    private readonly ContestSimilarityModelValidator similarityModelValidator;
+    private readonly ContestTransferParticipantsModelValidator contestTransferParticipantsModelValidator;
+    private readonly IContestsDataService contestsData;
+    private readonly ISimilarityService similarityService;
+    private readonly IExcelService excelService;
 
-    public class ContestsController : BaseAutoCrudAdminController<Contest>
+    public ContestsController(
+        IContestsBusinessService contestsBusinessService,
+        ContestAdministrationModelValidator validator,
+        ContestSimilarityModelValidator similarityModelValidator,
+        ContestTransferParticipantsModelValidator contestTransferParticipantsModelValidator,
+        IContestsGridDataService contestGridDataService,
+        IContestsDataService contestsData,
+        ISimilarityService similarityService,
+        IExcelService excelService)
+    : base(
+        contestGridDataService,
+        contestsBusinessService,
+        validator)
     {
-        private const string ContestCategoryName = nameof(Contest.Category);
+        this.contestsBusinessService = contestsBusinessService;
+        this.validator = validator;
+        this.similarityModelValidator = similarityModelValidator;
+        this.contestTransferParticipantsModelValidator = contestTransferParticipantsModelValidator;
+        this.contestsData = contestsData;
+        this.similarityService = similarityService;
+        this.excelService = excelService;
+    }
 
-        private readonly IIpsDataService ipsData;
-        private readonly IParticipantsDataService participantsData;
-        private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
-        private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
-        private readonly IContestCategoriesValidationHelper categoriesValidationHelper;
-        private readonly IContestsValidationHelper contestsValidationHelper;
-        private readonly IProblemGroupsDataService problemGroupsData;
-        private readonly IContestsDataService contestsDataService;
-        private readonly IIpsDataService ipsDataService;
-        private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
+    [HttpGet]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> GetAllForProblem(string? searchString)
+    {
+        var contests =
+            await this.contestsData
+                .GetQueryForUser(
+                    this.User.Map<UserInfoModel>(),
+                    contest => contest.Name!.Contains(searchString ?? string.Empty))
+                .MapCollection<ContestCopyProblemsValidationServiceModel>()
+                .Take(20)
+                .ToListAsync();
+        return this.Ok(contests);
+    }
 
-        public ContestsController(
-            IIpsDataService ipsData,
-            IParticipantsDataService participantsData,
-            ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
-            IValidatorsFactory<Contest> contestValidatorsFactory,
-            IContestCategoriesValidationHelper categoriesValidationHelper,
-            INotDefaultValueValidationHelper notDefaultValueValidationHelper,
-            IOptions<ApplicationConfig> appConfigOptions,
-            IContestsValidationHelper contestsValidationHelper,
-            IProblemGroupsDataService problemGroupsData,
-            IContestsDataService contestsDataService,
-            IIpsDataService ipsDataService)
-            : base(appConfigOptions)
+    [HttpPost]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> DownloadSubmissions(DownloadSubmissionsModel model)
+    {
+        var file = await this.contestsBusinessService.DownloadSubmissions(model);
+
+        return this.File(file.Content!, file.MimeType!, file.FileName);
+    }
+
+    [HttpGet]
+    [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
+    public async Task<IActionResult> Activity(int contestId)
+    {
+        var validationResult = await this.validator
+            .ValidateAsync(new ContestAdministrationModel { Id = contestId, OperationType = CrudOperationType.Read })
+            .ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
         {
-            this.ipsData = ipsData;
-            this.participantsData = participantsData;
-            this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
-            this.contestValidatorsFactory = contestValidatorsFactory;
-            this.contestsValidationHelper = contestsValidationHelper;
-            this.categoriesValidationHelper = categoriesValidationHelper;
-            this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
-            this.problemGroupsData = problemGroupsData;
-            this.contestsDataService = contestsDataService;
-            this.ipsDataService = ipsDataService;
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        protected override Expression<Func<Contest, bool>>? MasterGridFilter
-            => this.GetMasterGridFilter();
+        var result = await this.contestsBusinessService.GetContestActivity(contestId);
+        return this.Ok(result);
+    }
 
-        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
-            => this.contestValidatorsFactory.GetValidators();
+    [HttpPost]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
+    {
+        var file = await this.contestsBusinessService.ExportResults(model);
+        return this.File(file.Content!, file.MimeType!, file.FileName);
+    }
 
-        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
-            AsyncEntityValidators
-            => this.contestValidatorsFactory.GetAsyncValidators();
+    [HttpPost]
+    [ProtectedEntityAction("model", typeof(ContestSimilarityPermissionService))]
+    public async Task<ActionResult> CheckSimilarity(SimillarityCheckModel model)
+    {
+        var validationResult = await this.similarityModelValidator
+            .ValidateAsync(model)
+            .ToExceptionResponseAsync();
 
-        protected override IEnumerable<GridAction> CustomActions
-            => new[]
-            {
-                new GridAction { Action = nameof(this.DownloadSubmissions) },
-                new GridAction { Action = nameof(this.ExportResults) },
-                new GridAction { Action = nameof(this.Problems) },
-                new GridAction { Action = nameof(this.CreateProblem) },
-                new GridAction { Action = nameof(this.Participants) },
-                new GridAction { Action = nameof(this.Submissions) },
-            };
-
-        // TODO: make it as a popup window
-        [HttpGet]
-        public IActionResult DownloadSubmissions([FromQuery] IDictionary<string, string> complexId)
+        if (!validationResult.IsValid)
         {
-            var model = new DownloadSubmissionsModel
-            {
-                ContestId = this.GetEntityIdFromQuery<int>(complexId),
-            };
-
-            return this.View(model);
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        [HttpGet]
-        public IActionResult ExportResults([FromQuery] IDictionary<string, string> complexId)
-        {
-            var model = new ContestResultsExportRequestModel
-            {
-                Id = this.GetEntityIdFromQuery<int>(complexId),
-            };
+        var result = await this.similarityService.GetSubmissionSimilarities(model);
 
-            return this.View(model);
+        var file = this.excelService.ExportResults(result);
+        return this.File(file.Content!, file.MimeType!, $"{nameof(this.CheckSimilarity)}.xls");
+    }
+
+    [HttpPatch]
+    [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
+    public async Task<IActionResult> TransferParticipants(int contestId)
+    {
+        var model = new ContestTransferParticipantsModel { ContestId = contestId };
+
+        var validationResult = await this.contestTransferParticipantsModelValidator
+            .ValidateAsync(model)
+            .ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
+        {
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        [HttpGet]
-        public IActionResult CreateProblem([FromQuery] IDictionary<string, string> complexId)
-            => this.RedirectToAction("Create", "Problems", new { ContestId = complexId.Values.First() });
-
-        public IActionResult Participants([FromQuery] IDictionary<string, string> complexId)
-            => this.RedirectToActionWithNumberFilter(
-                nameof(ParticipantsController),
-                ParticipantsController.ContestIdKey,
-                this.GetEntityIdFromQuery<int>(complexId));
-
-        public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
-            => this.RedirectToActionWithNumberFilter(
-                nameof(SubmissionsController),
-                SubmissionsController.ContestIdKey,
-                this.GetEntityIdFromQuery<int>(complexId));
-
-        public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
-            => this.RedirectToActionWithNumberFilter(
-                nameof(ProblemsController),
-                ProblemsController.ContestIdKey,
-                this.GetEntityIdFromQuery<int>(complexId));
-
-        protected override async Task BeforeGeneratingForm(
-            Contest entity,
-            EntityAction action,
-            IDictionary<string, string> entityDict)
-        {
-            if (action == EntityAction.Create)
-            {
-                return;
-            }
-
-            await this.contestsValidationHelper
-                .ValidatePermissionsOfCurrentUser(entity.Id)
-                .VerifyResult();
-        }
-
-        protected override async Task BeforeEntitySaveAsync(Contest entity, AdminActionContext actionContext)
-        {
-            await base.BeforeEntitySaveAsync(entity, actionContext);
-
-            if (actionContext.Action != EntityAction.Create)
-            {
-                await this.contestsValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.Id)
-                    .VerifyResult();
-            }
-
-            this.notDefaultValueValidationHelper
-                .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
-                .VerifyResult();
-
-            var oldContest = await this.contestsDataService
-                .OneById(entity.Id);
-
-            if (oldContest != null && oldContest!.CategoryId != entity.CategoryId)
-            {
-                // If a lecturer tries to update the category of a contest
-                // he should be able to do it only for categories he has lecturer rights for.
-                // Otherwise if the category is not changed, even though the lecturer does not have rights for it,
-                // no error should be thrown.
-                await this.categoriesValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.CategoryId)
-                    .VerifyResult();
-            }
-
-            if (!entity.IsOnlineExam && entity.Duration != null)
-            {
-                entity.Duration = null;
-            }
-        }
-
-        protected override async Task BeforeEntitySaveOnCreateAsync(
-            Contest contest,
-            AdminActionContext actionContext)
-        {
-            AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
-            await this.AddIpsToContest(contest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
-        }
-
-        protected override async Task BeforeEntitySaveOnEditAsync(
-            Contest existingContest,
-            Contest newContest,
-            AdminActionContext actionContext)
-        {
-            newContest.ProblemGroups = this.problemGroupsData
-                .GetAllByContest(newContest.Id)
-                .ToList();
-
-            await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
-                existingContest, newContest).VerifyResult();
-
-            if (newContest.IsOnlineExam && newContest.ProblemGroups.Count == 0)
-            {
-                AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
-            }
-
-            if (!newContest.IsOnlineExam && newContest.Duration != null)
-            {
-                newContest.Duration = null;
-            }
-
-            var ipsInContests = this.GetContestIps(existingContest.Id);
-
-            if (ipsInContests.Any())
-            {
-                await this.ipsDataService.DeleteIps(ipsInContests);
-            }
-
-            await this.AddIpsToContest(newContest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
-        }
-
-        protected override async Task AfterEntitySaveOnEditAsync(
-            Contest oldContest,
-            Contest contest,
-            AdminActionContext actionContext)
-        {
-            var originalContestPassword = oldContest.ContestPassword;
-            var originalPracticePassword = oldContest.PracticePassword;
-
-            await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, contest);
-        }
-
-        protected override async Task BeforeEntitySaveOnDeleteAsync(
-            Contest existingContest, AdminActionContext actionContext)
-            => await this.contestsValidationHelper.ValidateContestIsNotActive(existingContest).VerifyResult();
-
-        protected override IEnumerable<FormControlViewModel> GenerateFormControls(
-            Contest entity,
-            EntityAction action,
-            IDictionary<string, string> entityDict,
-            IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
-            Type autocompleteType)
-        {
-            var userIsLecturerOnly = !this.User.IsAdmin() && this.User.IsLecturer();
-
-            if (userIsLecturerOnly)
-            {
-                // Lecturers should be able to create contests only for allowed categories
-                complexOptionFilters.Add(
-                    new KeyValuePair<string, Expression<Func<object, bool>>>(
-                        nameof(entity.Category),
-                        category => ((ContestCategory)category)
-                            .LecturersInContestCategories
-                            .Any(lg => lg.LecturerId == this.User.GetId()) ||
-                        ((ContestCategory)category)
-                        .Contests
-                        .Any(cc => !cc.IsDeleted && cc.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()))));
-            }
-
-            var ipsInContests = this.GetContestIps(entity.Id);
-
-            if (ipsInContests.Any())
-            {
-                entity.IpsInContests = ipsInContests.ToList();
-            }
-
-            return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
-                .Concat(new[]
-                {
-                    new FormControlViewModel
-                    {
-                        Name = AdditionalFormFields.AllowedIps.ToString(),
-                        Type = typeof(string),
-                        Value = string.Join(", ", entity.IpsInContests.Select(x => x.Ip.Value)),
-                    },
-                });
-        }
-
-        protected override Expression<Func<Contest, bool>>? GetMasterGridFilter()
-        {
-            var filterExpressions = new List<Expression<Func<Contest, bool>>>();
-
-            var filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService.GetContestUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-            filterExpressions.Add(filterByLecturerRightsExpression);
-
-            if (this.TryGetEntityIdForStringColumnFilter(ContestCategoryName, out var categoryName))
-            {
-                filterExpressions.Add(c => c.Category != null && c.Category.Name == categoryName);
-            }
-
-            return filterExpressions.CombineMultiple();
-        }
-
-        private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
-        {
-            for (var i = 1; i <= problemGroupsCount; i++)
-            {
-                contest.ProblemGroups.Add(new ProblemGroup
-                {
-                    OrderBy = i,
-                });
-            }
-        }
-
-        private async Task AddIpsToContest(Contest contest, string? mergedIps)
-        {
-            if (!string.IsNullOrWhiteSpace(mergedIps))
-            {
-                var ipValues = mergedIps.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var ipValue in ipValues)
-                {
-                    var ip = await this.ipsData.GetByValue(ipValue) ?? new Ip { Value = ipValue };
-
-                    contest.IpsInContests.Add(new IpInContest { Ip = ip, IsOriginallyAllowed = true });
-                }
-            }
-        }
-
-        private IEnumerable<IpInContest> GetContestIps(int id)
-            => this.contestsDataService
-                .GetContestWithIps(id)
-                .SelectMany(c => c.IpsInContests);
-
-        private async Task InvalidateParticipants(
-            string? originalContestPassword,
-            string? originalPracticePassword,
-            Contest contest)
-        {
-            if (originalContestPassword != contest.ContestPassword &&
-                !string.IsNullOrWhiteSpace(contest.ContestPassword))
-            {
-                await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: true);
-            }
-
-            if (originalPracticePassword != contest.PracticePassword &&
-                !string.IsNullOrWhiteSpace(contest.PracticePassword))
-            {
-                await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
-            }
-        }
+        await this.contestsBusinessService.TransferParticipantsToPracticeById(model.ContestId);
+        return this.Ok("The participants were transferred successfully.");
     }
 }

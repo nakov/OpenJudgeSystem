@@ -10,7 +10,7 @@ namespace OJS.Services.Administration.Models.Participants
             p => new ParticipantModel
             {
                 Id = p.Id,
-                UserName = p.User.UserName,
+                UserName = p.User.UserName!,
                 FirstName = p.User.UserSettings.FirstName,
                 LastName = p.User.UserSettings.LastName,
             };

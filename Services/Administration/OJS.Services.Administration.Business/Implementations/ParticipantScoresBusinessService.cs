@@ -73,7 +73,7 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
         {
             await this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                 submission,
-                participant.UserName,
+                participant.UserName!,
                 participant.IsOfficial,
                 participant.Participant);
 

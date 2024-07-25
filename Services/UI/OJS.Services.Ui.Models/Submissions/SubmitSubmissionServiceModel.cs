@@ -38,5 +38,27 @@ public class SubmitSubmissionServiceModel : IMapExplicitly
                     s.FileExtension == null
                         ? null
                         : s.FileExtension))
-            .ForAllOtherMembers(opt => opt.Ignore());
+            .ForMember(m => m.ParticipantId, opt => opt.Ignore())
+            .ForMember(m => m.Participant, opt => opt.Ignore())
+            .ForMember(m => m.Problem, opt => opt.Ignore())
+            .ForMember(m => m.SubmissionType, opt => opt.Ignore())
+            .ForMember(m => m.SolutionSkeleton, opt => opt.Ignore())
+            .ForMember(m => m.StartedExecutionOn, opt => opt.Ignore())
+            .ForMember(m => m.CompletedExecutionOn, opt => opt.Ignore())
+            .ForMember(m => m.IpAddress, opt => opt.Ignore())
+            .ForMember(m => m.WorkerName, opt => opt.Ignore())
+            .ForMember(m => m.ContentAsString, opt => opt.Ignore())
+            .ForMember(m => m.IsCompiledSuccessfully, opt => opt.Ignore())
+            .ForMember(m => m.CompilerComment, opt => opt.Ignore())
+            .ForMember(m => m.IsPublic, opt => opt.Ignore())
+            .ForMember(m => m.TestRuns, opt => opt.Ignore())
+            .ForMember(m => m.TestRunsCache, opt => opt.Ignore())
+            .ForMember(m => m.Processed, opt => opt.Ignore())
+            .ForMember(m => m.ProcessingComment, opt => opt.Ignore())
+            .ForMember(m => m.Points, opt => opt.Ignore())
+            .ForMember(m => m.IsDeleted, opt => opt.Ignore())
+            .ForMember(m => m.DeletedOn, opt => opt.Ignore())
+            .ForMember(m => m.CreatedOn, opt => opt.Ignore())
+            .ForMember(m => m.ModifiedOn, opt => opt.Ignore())
+            .ForMember(m => m.Id, opt => opt.Ignore());
 }

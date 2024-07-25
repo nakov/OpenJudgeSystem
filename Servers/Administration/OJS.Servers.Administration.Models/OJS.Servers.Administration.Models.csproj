@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
-      <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
+    <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj" />
+  </ItemGroup>
 </Project>

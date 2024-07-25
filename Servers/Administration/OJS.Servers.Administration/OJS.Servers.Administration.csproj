@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Business\OJS.Services.Administration.Business.csproj" />
-      <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Data\OJS.Services.Administration.Data.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
-      <ProjectReference Include="..\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj" />
-    </ItemGroup>
-    
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Business\OJS.Services.Administration.Business.csproj" />
+    <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Data\OJS.Services.Administration.Data.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
+    <ProjectReference Include="..\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot" />
+  </ItemGroup>
 </Project>

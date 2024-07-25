@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business
 {
+    using OJS.Data.Models.Participants;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
@@ -14,7 +15,7 @@ namespace OJS.Services.Ui.Business
 
         Task NormalizeAllPointsThatExceedAllowedLimit();
 
-        Task SaveForSubmission(Submission submission);
+        Task SaveForSubmission(Participant participant, Submission submission);
 
         Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(int problemId, bool isOfficial);
 

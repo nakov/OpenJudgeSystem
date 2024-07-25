@@ -76,7 +76,7 @@
 
             var allUsersQueryable = this.usersProfileData
                 .GetAll()
-                .Where(u => u.UserName.Contains(model.SearchTerm!));
+                .Where(u => u.UserName!.Contains(model.SearchTerm!));
 
             var searchUsers = await allUsersQueryable
                 .MapCollection<UserSearchServiceModel>()
@@ -133,7 +133,7 @@
                 .AsNoTracking()
                 .Select(user => new UserProfileServiceModel
                 {
-                    UserName = user.UserName,
+                    UserName = user.UserName!,
                     Id = user.Id,
                 })
                 .FirstOrDefaultAsync();

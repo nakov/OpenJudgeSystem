@@ -1,34 +1,26 @@
 ﻿namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.ViewModels;
-using System.Collections.Generic;
-using System.Linq;
+using FluentValidation;
 using OJS.Data.Models.Submissions;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using OJS.Common;
-using OJS.Servers.Administration.Extensions;
-using Microsoft.Extensions.Options;
-using OJS.Services.Administration.Models;
+using OJS.Services.Administration.Business.SubmissionsForProcessing;
+using OJS.Services.Administration.Business.SubmissionsForProcessing.Validation;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.SubmissionsForProcessing;
 
-public class SubmissionsForProcessingController : BaseAutoCrudAdminController<SubmissionForProcessing>
+public class SubmissionsForProcessingController : BaseAdminApiController<
+    SubmissionForProcessing,
+    int,
+    SubmissionsForProcessingAdministrationServiceModel,
+    SubmissionsForProcessingAdministrationServiceModel>
 {
-    public SubmissionsForProcessingController(IOptions<ApplicationConfig> appConfigOptions)
-        : base(appConfigOptions)
+    public SubmissionsForProcessingController(
+        IGridDataService<SubmissionForProcessing> submissionsGridDataService,
+        ISubmissionsForProcessingBusinessService submissionsForProcessingBusinessService,
+        SubmissionsForProcessingAdministrationModelValidator validator)
+        : base(
+            submissionsGridDataService,
+            submissionsForProcessingBusinessService,
+            validator)
     {
     }
-
-    protected override IEnumerable<GridAction> CustomActions
-        => new[] { new GridAction { Action = nameof(this.Details) } };
-
-    protected override IEnumerable<GridAction> DefaultActions
-        => Enumerable.Empty<GridAction>();
-
-    public override Task<IActionResult> PostEdit(IDictionary<string, string> complexId, FormFilesContainer files)
-    {
-        this.TempData.AddDangerMessage(Resources.AdministrationGeneral.CannotEditSubmissionForProcessing);
-        return Task.FromResult<IActionResult>(this.RedirectToAction("Index", "SubmissionsForProcessing"));
-    }
-
-    public Task<IActionResult> Details([FromQuery] IDictionary<string, string> complexId) => this.Edit(complexId, nameof(this.PostEdit));
 }

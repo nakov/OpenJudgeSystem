@@ -81,7 +81,7 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
     {
          var roleName = await this.roleDataService!
             .GetByIdQuery(model.RoleId!)
-            .Select(x => x.Name)
+            .Select(x => x.Name!)
             .FirstAsync();
 
          var user = await this.usersDataService

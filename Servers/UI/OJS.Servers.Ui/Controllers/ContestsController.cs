@@ -9,6 +9,7 @@ using OJS.Servers.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
@@ -38,6 +39,10 @@ public class ContestsController : BaseApiController
     /// <returns>Model containing information about the contest.</returns>
     [HttpGet("{problemId:int}")]
     [ProducesResponseType(typeof(ContestServiceModel), Status200OK)]
+    [SuppressMessage(
+        "Usage",
+        "ASP0023:Route conflict detected between controller actions",
+        Justification = "Base API controller Route handles different actions names.")]
     public async Task<IActionResult> GetByProblem(int problemId)
         => await this.contestsBusinessService
             .GetContestByProblem(problemId)

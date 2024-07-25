@@ -1,36 +1,28 @@
-namespace OJS.Servers.Administration.Controllers;
+﻿namespace OJS.Servers.Administration.Controllers;
 
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Checkers;
-using AutoCrudAdmin.Enumerations;
-using AutoCrudAdmin.ViewModels;
-using OJS.Services.Administration.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+using OJS.Services.Administration.Business.Checkers;
+using OJS.Services.Administration.Business.Checkers.Validators;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Checkers;
 
-public class CheckersController : BaseAutoCrudAdminController<Checker>
+public class CheckersController : BaseAdminApiController<Checker, int, CheckerInListModel, CheckerAdministrationModel>
 {
-    public CheckersController(IOptions<ApplicationConfig> appConfigOptions)
-        : base(appConfigOptions)
-    {
-    }
+    private readonly ICheckersDataService checkersDataService;
 
-    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
-        Checker entity,
-        EntityAction action,
-        IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
-        Type? autocompleteType)
-    {
-        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
-            .ToList();
+    public CheckersController(
+        ICheckersDataService checkersDataService,
+        IGridDataService<Checker> checkerGridDataService,
+        ICheckersBusinessService checkersBusinessService,
+        CheckerAdministrationModelValidator validator)
+    : base(
+        checkerGridDataService,
+        checkersBusinessService,
+        validator)
+        => this.checkersDataService = checkersDataService;
 
-        var parameterFormControl = formControls.First(x => x.Name == nameof(entity.Parameter));
-
-        parameterFormControl.FormControlType = FormControlType.TextArea;
-
-        return formControls;
-    }
+    [HttpGet]
+    public IActionResult GetForProblems()
+        => this.Ok(this.checkersDataService.GetQuery());
 }
