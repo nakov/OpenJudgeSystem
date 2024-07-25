@@ -12,4 +12,7 @@
   <ItemGroup>
     <Folder Include="wwwroot" />
   </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
 </Project>
