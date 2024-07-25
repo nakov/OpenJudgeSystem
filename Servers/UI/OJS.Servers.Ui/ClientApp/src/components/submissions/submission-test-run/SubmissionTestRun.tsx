@@ -80,14 +80,14 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
             <div className={styles.testRunTitleWrapper}>
                 <div className={styles.testNameButtonWrapper}>
                     <div style={{ color: getTestResultColorId(resultType) }}>
-                        { isTrialTest && 'Zero '}
+                        {isTrialTest && 'Zero '}
                         Test #
-                        { idx }
-                        { !isCorrectAnswer && ` (${getResultTypeText(resultType)})` }
+                        {idx}
+                        {!isCorrectAnswer && ` (${getResultTypeText(resultType)})`}
                     </div>
                 </div>
                 <div className={styles.testDetailsAndMemoryWrapper}>
-                    { showInput && (
+                    {showInput && (
                         <Button
                           onClick={() => onShowHideInputButtonClick()}
                           text={testShowInput
@@ -99,7 +99,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                           size={ButtonSize.small}
                         />
                     )}
-                    { shouldRenderAdminData && (
+                    {shouldRenderAdminData && (
                         <AdministrationLink
                           text={`Test #${testId}`}
                           to={`/tests/${testId}`}
@@ -174,7 +174,16 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                         </span>
                     </div>
                 </div>
+
             </div>
+            { isTrialTest && (
+                <div
+                  style={{ color: themeColors.baseColor100 }}
+                  className={styles.zeroTestsInfoMessage}
+                >
+                    The zero tests are not included in the final result
+                </div>
+            )}
             {testShowInput && (
                 <>
                     <div>Test input:</div>
@@ -188,7 +197,11 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
             )}
             {
                 testRun.resultType.toLowerCase() === TestRunResultType.RunTimeError.toLowerCase() && testRun.executionComment && (
-                    <MultiLineTextDisplay text={testRun.executionComment} maxVisibleLines={5} className={styles.runtimeExecutionComment} />
+                    <MultiLineTextDisplay
+                      text={testRun.executionComment}
+                      maxVisibleLines={5}
+                      className={styles.runtimeExecutionComment}
+                    />
                 )
             }
         </div>

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { createUrlFriendlyString } from '../../../common/contest-helpers';
 import { IProblemResourceType } from '../../../common/types';
 import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
 import { getAllContestsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
@@ -99,7 +98,7 @@ const ContestDetailsPage = () => {
               type={ButtonType.secondary}
               size={ButtonSize.small}
               onClick={() => navigate(getContestsResultsPageUrl({
-                  slug: createUrlFriendlyString(name),
+                  contestName: name,
                   contestId: id!,
                   participationType: ContestParticipationType.Compete,
                   isSimple: true,
@@ -123,7 +122,7 @@ const ContestDetailsPage = () => {
                       ? styles.greenColor
                       : styles.blueColor}`}
                   to={getContestsResultsPageUrl({
-                      slug: createUrlFriendlyString(name),
+                      contestName: name,
                       contestId: id!,
                       participationType: isCompete
                           ? ContestParticipationType.Compete

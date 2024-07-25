@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { useEffect } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
 import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
@@ -27,8 +27,7 @@ interface IContestBreadcrumbsProps {
 
 const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     const dispatch = useAppDispatch();
-    const { pathname } = useLocation();
-    const [ searchParams ] = useSearchParams();
+    const { categoryId } = useParams();
     const { themeColors, getColorClassName } = useTheme();
     const { breadcrumbItems, contestCategories, contestDetails } = useAppSelector((state) => state.contests);
     const { data, isLoading, refetch } = useGetContestCategoriesQuery();
@@ -52,9 +51,7 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     useEffect(() => {
         // contests page have directly category id in the url
         // if we make request for it, we go into recursion
-        const selectedCategoryId = pathname.split('/').filter((el) => el).length === 2
-            ? searchParams.get('category')
-            : contestDetails?.categoryId;
+        const selectedCategoryId = categoryId || contestDetails?.categoryId;
 
         if (!selectedCategoryId) {
             dispatch(clearContestCategoryBreadcrumbItems());
@@ -67,7 +64,7 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
 
             dispatch(updateContestCategoryBreadcrumbItem({ elements: selectedCategoryBreadcrumbItems }));
         }
-    }, [ contestCategories, breadcrumbItems.length, contestDetails, pathname, searchParams, dispatch ]);
+    }, [ contestCategories, contestDetails, categoryId, dispatch ]);
 
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean) => (
         <Link

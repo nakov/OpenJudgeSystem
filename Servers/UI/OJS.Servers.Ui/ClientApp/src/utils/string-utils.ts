@@ -11,12 +11,6 @@ const getEnumMemberName = <T extends object>(enumObj: T, enumMember: T[keyof T] 
 
 const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-export default {
-    splitByCapitalLetter,
-    toLowerCase,
-    capitalizeFirstLetter,
-};
-
 export {
     splitByCapitalLetter,
     toLowerCase,

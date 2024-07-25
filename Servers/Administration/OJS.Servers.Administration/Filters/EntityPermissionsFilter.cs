@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using OJS.Common.Extensions;
 using OJS.Servers.Administration.Attributes;
-using OJS.Servers.Administration.Controllers.Api;
+using OJS.Servers.Administration.Controllers;
 using OJS.Services.Administration.Business;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;

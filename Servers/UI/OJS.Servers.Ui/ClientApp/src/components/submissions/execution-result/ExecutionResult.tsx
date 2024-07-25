@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 
+import { sortTestRunsByTrialTest } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
@@ -29,7 +30,10 @@ const ExecutionResult = ({
     const { getColorClassName, themeColors } = useTheme();
 
     const renderTestRunIcons = useCallback(
-        (runs: ITestRunType[]) => runs.map((testRun) => <TestRunIcon key={`t-r-i-${testRun.id}`} testRun={testRun} />),
+        (runs: ITestRunType[]) => runs
+            .slice()
+            .sort(sortTestRunsByTrialTest)
+            .map((testRun) => <TestRunIcon key={`t-r-i-${testRun.id}`} testRun={testRun} />),
         [],
     );
 
@@ -62,6 +66,7 @@ const ExecutionResult = ({
                     {points}
                     {' '}
                     /
+                    {' '}
                     {maxPoints}
                 </span>
             </div>

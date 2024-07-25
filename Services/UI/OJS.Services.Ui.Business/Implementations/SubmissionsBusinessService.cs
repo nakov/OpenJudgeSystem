@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
+using static OJS.Services.Common.PaginationConstants.Submissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -615,6 +615,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             }
 
             var submissions = await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, 1);
+
             return new PagedResult<TServiceModel>
             {
                 Items = submissions.Items,
@@ -652,6 +653,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     ExecutionComment = testResult.ExecutionComment,
                     ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
                     UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    IsTrialTest = testResult.IsTrialTest,
                     TimeUsed = testResult.TimeUsed,
                     MemoryUsed = testResult.MemoryUsed,
                     SubmissionId = submission.Id,

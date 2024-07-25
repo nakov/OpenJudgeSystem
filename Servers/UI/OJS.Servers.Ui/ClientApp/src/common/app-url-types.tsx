@@ -15,7 +15,7 @@ interface IProblemSubmissionDetailsUrlParams {
 }
 
 interface IContestsResultsPageUrlParams {
-    slug?: string;
+    contestName?: string;
     contestId?: number;
     participationType: ContestParticipationType;
     isSimple: boolean;

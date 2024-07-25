@@ -27,6 +27,9 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .MapCollection<TServiceModel>()
             .FirstOrDefault();
 
+    // TODO: Revise usage of these two methods
+    // GetLatestSubmissions<TServiceModel>(int submissionsPerPage)
+    // GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber)
     public async Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage)
         => await this.GetQuery(
                 orderBy: s => s.Id,
