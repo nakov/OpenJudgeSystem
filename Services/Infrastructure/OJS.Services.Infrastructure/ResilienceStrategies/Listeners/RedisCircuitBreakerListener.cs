@@ -64,7 +64,7 @@ public class RedisCircuitBreakerListener : TelemetryListener
         => args.Context.Properties.GetValue(new ResiliencePropertyKey<string>(OperationKey), "This value should not be null. Use an appropriate operation key!");
 
     private void LogCircuitStateChange<TResult, TArgs>(string state, string outcomeResult, ref int count, in TelemetryEventArguments<TResult, TArgs> args)
-        => this.logger.LogWarning(
+        => this.logger.LogError(
             "Circuit breaker {CircuitBreakerState}. Total number of times {CircuitBreakerState}: {TimesChanged}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.",
             state,
             state,
