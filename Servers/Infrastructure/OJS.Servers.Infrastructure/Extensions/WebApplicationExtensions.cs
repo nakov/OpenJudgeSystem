@@ -3,16 +3,22 @@ namespace OJS.Servers.Infrastructure.Extensions
     using AutoMapper;
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Options;
     using OJS.Common;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Infrastructure;
-    using OJS.Services.Infrastructure.Configurations;
+    using System.IO;
+    using System.Text;
+    using System.Text.Json;
+    using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants.Urls;
+    using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
     public static class WebApplicationExtensions
     {
@@ -26,6 +32,9 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapHealthMonitoring();
+            app.MapControllers();
 
             return app;
         }
@@ -73,16 +82,13 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
-        public static void UseHealthMonitoring(this WebApplication app)
-        {
-            var healthCheckConfig = app.Services.GetRequiredService<IOptions<HealthCheckConfig>>().Value;
-
-            app.MapWhen(
-                httpContext =>
-                    httpContext.Request.Query.TryGetValue(healthCheckConfig.Key, out var healthPassword)
-                    && healthPassword == healthCheckConfig.Password,
-                appBuilder => appBuilder.UseHealthChecks("/health"));
-        }
+        public static void MapHealthMonitoring(this WebApplication app)
+            => app
+                .MapHealthChecks("/api/health", new HealthCheckOptions
+                {
+                    ResponseWriter = WriteHealthResponse,
+                })
+                .RequireAuthorization(ApiKeyPolicyName);
 
         public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app)
             where TDbContext : DbContext
@@ -104,6 +110,45 @@ namespace OJS.Servers.Infrastructure.Extensions
             AutoMapperSingleton.Init(mapper);
 
             return app;
+        }
+
+        private static Task WriteHealthResponse(HttpContext context, HealthReport healthReport)
+        {
+            context.Response.ContentType = "application/json; charset=utf-8";
+
+            var options = new JsonWriterOptions { Indented = true };
+
+            using var memoryStream = new MemoryStream();
+            using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+            {
+                jsonWriter.WriteStartObject();
+                jsonWriter.WriteString("status", healthReport.Status.ToString());
+                jsonWriter.WriteStartObject("results");
+
+                foreach (var healthReportEntry in healthReport.Entries)
+                {
+                    jsonWriter.WriteStartObject(healthReportEntry.Key);
+                    jsonWriter.WriteString("status", healthReportEntry.Value.Status.ToString());
+                    jsonWriter.WriteString("description", healthReportEntry.Value.Description);
+                    jsonWriter.WriteStartObject("data");
+
+                    foreach (var item in healthReportEntry.Value.Data)
+                    {
+                        jsonWriter.WritePropertyName(item.Key);
+
+                        JsonSerializer.Serialize(jsonWriter, item.Value, item.Value.GetType());
+                    }
+
+                    jsonWriter.WriteEndObject();
+                    jsonWriter.WriteEndObject();
+                }
+
+                jsonWriter.WriteEndObject();
+                jsonWriter.WriteEndObject();
+            }
+
+            return context.Response.WriteAsync(
+                Encoding.UTF8.GetString(memoryStream.ToArray()));
         }
     }
 }

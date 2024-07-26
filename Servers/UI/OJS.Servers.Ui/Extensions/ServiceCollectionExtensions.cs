@@ -31,7 +31,6 @@ namespace OJS.Servers.Ui.Extensions
 
             services
                 .AddWebServer<Program>(configuration)
-                .AddHttpContextServices()
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(configuration, AppName, new[] { UiQueueName })
                 .ConfigureCorsPolicy(configuration)
@@ -39,7 +38,6 @@ namespace OJS.Servers.Ui.Extensions
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
                 .AddMemoryCache()
                 .AddDistributedCaching(configuration)
-                .AddLogging()
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<ApplicationUrlsConfig>()
                 .AddOptionsWithValidation<EmailServiceConfig>()

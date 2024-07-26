@@ -34,7 +34,6 @@ internal static class ServiceCollectionExtensions
             .AddWebServer<Program>(configuration)
             .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
             .AddTransient<AdministrationExceptionMiddleware>()
-            .AddHttpContextServices()
             .AddHangfireServer(configuration, AppName, new[] { AdministrationQueueName })
             .AddMessageQueue<Program>(configuration)
             .ConfigureGlobalDateFormat()

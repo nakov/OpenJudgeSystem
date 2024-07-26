@@ -3,13 +3,12 @@ namespace OJS.Servers.Infrastructure.Extensions;
 using Elastic.Ingest.Elasticsearch;
 using Elastic.Ingest.Elasticsearch.DataStreams;
 using Elastic.Serilog.Sinks;
+using Elastic.Transport;
 using Microsoft.Extensions.Hosting;
 using OJS.Services.Infrastructure.Configurations;
 using Serilog;
 using Serilog.Events;
-using System;
 using System.IO;
-using System.Linq;
 
 public static class HostBuilderExtensions
 {
@@ -24,12 +23,8 @@ public static class HostBuilderExtensions
             var projectLogsDirectoryPath = Path.Combine(loggerFilePath, applicationName);
             var errorLogFilePath = Path.Combine(projectLogsDirectoryPath, "error.log");
 
-            var elasticSearchNodes =
-                hostingContext.Configuration
-                    .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.ElasticsearchEndpoints))
-                    .Split(',')
-                    .Select(x => new Uri(x))
-                    .ToArray();
+            var elasticsearchSettings = hostingContext.Configuration
+                .GetSectionWithValidation<ElasticsearchConfig>();
 
             configuration
                 .ReadFrom.Configuration(hostingContext.Configuration)
@@ -40,14 +35,24 @@ public static class HostBuilderExtensions
                     rollingInterval: RollingInterval.Day,
                     rollOnFileSizeLimit: true,
                     restrictedToMinimumLevel: LogEventLevel.Error)
-                .WriteTo.Elasticsearch(elasticSearchNodes, opts =>
-                {
-                    opts.DataStream = new DataStreamName(
-                        type: "logs",
-                        dataSet: environment.EnvironmentName.ToLower(),
-                        @namespace: applicationName.ToLower());
-                    // Silent mode is used to avoid exceptions when the elasticsearch is not available.
-                    opts.BootstrapMethod = BootstrapMethod.Silent;
-                });
+                .WriteTo.Elasticsearch(
+                    elasticsearchSettings.GetEndpoints(),
+                    opts =>
+                    {
+                        opts.DataStream = new DataStreamName(
+                            type: "logs",
+                            dataSet: environment.EnvironmentName.ToLower(),
+                            @namespace: applicationName.ToLower());
+                        // Silent mode is used to avoid exceptions when the elasticsearch is not available.
+                        opts.BootstrapMethod = BootstrapMethod.Silent;
+                    },
+                    transport =>
+                    {
+                        transport
+                            .CertificateFingerprint(elasticsearchSettings.CertificateFingerprint)
+                            .Authentication(new BasicAuthentication(
+                                elasticsearchSettings.Username,
+                                elasticsearchSettings.Password));
+                    });
         });
 }

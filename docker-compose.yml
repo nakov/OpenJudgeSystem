@@ -17,11 +17,9 @@ services:
     extra_hosts:
       - "db:host-gateway"
     links:
-      - elasticsearch
       - mq
       - redis
     depends_on:
-      - elasticsearch
       - mq
       - redis
   fe:
@@ -59,11 +57,9 @@ services:
     extra_hosts:
       - "db:host-gateway"
     links:
-      - elasticsearch
       - mq
       - redis
     depends_on:
-      - elasticsearch
       - mq
       - redis
   worker:
@@ -82,13 +78,11 @@ services:
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
       - /var/run/docker.sock:/var/run/docker.sock
     links:
-      - elasticsearch
       - mq
       - sql_server
       - mysql
       - postgres
     depends_on:
-      - elasticsearch
       - mq
       - sql_server
       - mysql
@@ -134,33 +128,6 @@ services:
       environment:
         POSTGRES_PASSWORD: 1123QwER
         POSTGRES_USER: postgres
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
-    container_name: elasticsearch_instance
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.14.3
-    container_name: kibana_instance
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - elasticsearch.ssl.verificationMode=none
-    volumes:
-        - kibana_data:/usr/share/kibana/data
-    links:
-      - elasticsearch
-    depends_on:
-      - elasticsearch
 
 volumes:
   rabbitmq_data:
-  elasticsearch_data:
-  kibana_data:

@@ -10,15 +10,10 @@ internal static class WebApplicationExtensions
     public static WebApplication ConfigureWebApplication(this WebApplication app)
     {
         app.UseCorsPolicy();
-        app
-            .UseDefaults()
-            .UseStaticFiles();
+        app.UseDefaults();
 
         app.UseMiddleware<AdministrationExceptionMiddleware>();
         app.MigrateDatabase<OjsDbContext>();
-
-        app.UseHealthMonitoring();
-        app.MapControllers();
 
         return app
             .UseAndMapHangfireDashboard();

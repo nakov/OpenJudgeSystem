@@ -1,10 +1,13 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using Elastic.Clients.Elasticsearch;
+    using Elastic.Transport;
     using Hangfire;
     using Hangfire.SqlServer;
     using MassTransit;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.AspNetCore.Http;
@@ -21,7 +24,9 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Common;
     using OJS.Data;
     using OJS.Data.Implementations;
-    using OJS.Servers.Infrastructure.Filters;
+    using OJS.Servers.Infrastructure.Handlers;
+    using OJS.Servers.Infrastructure.Health;
+    using OJS.Servers.Infrastructure.Policy;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
@@ -43,6 +48,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
+    using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
     public static class ServiceCollectionExtensions
     {
@@ -55,6 +61,9 @@ namespace OJS.Servers.Infrastructure.Extensions
             services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
+                .AddHttpContextServices()
+                .AddLogging()
+                .AddElasticsearchClient(configuration)
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<HealthCheckConfig>();
 
@@ -69,9 +78,9 @@ namespace OJS.Servers.Infrastructure.Extensions
                 x.ValueLengthLimit = maxRequestLimit;
             });
 
-            services.AddSingleton<ValidateApiKeyAttribute>();
-
-            return services;
+            return services
+                .AddAuthorizationPolicies()
+                .AddHealthMonitoring();
         }
 
         /// <summary>
@@ -309,6 +318,54 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             return Task.CompletedTask;
+        }
+
+        private static IServiceCollection AddElasticsearchClient(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var config = configuration.GetSectionWithValidation<ElasticsearchConfig>();
+            var endpoints = config.GetEndpoints();
+
+            ElasticsearchClientSettings elasticsearchClientSettings;
+
+            if (endpoints.Count == 1)
+            {
+                elasticsearchClientSettings = new ElasticsearchClientSettings(endpoints.First());
+            }
+            else
+            {
+                var pool = new StaticNodePool(endpoints);
+                elasticsearchClientSettings = new ElasticsearchClientSettings(pool);
+            }
+
+            var settings = elasticsearchClientSettings
+                .CertificateFingerprint(config.CertificateFingerprint)
+                .Authentication(new BasicAuthentication(config.Username, config.Password));
+
+            var client = new ElasticsearchClient(settings);
+
+            return services
+                .AddSingleton<IElasticsearchHttpClient>(_ => new ElasticsearchHttpClient(client));
+        }
+
+        private static IServiceCollection AddHealthMonitoring(this IServiceCollection services)
+        {
+            services.AddHealthChecks()
+                .AddCheck<ElasticsearchHealthCheck>(nameof(ElasticsearchHealthCheck));
+
+            return services;
+        }
+
+        private static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+        {
+            services
+                .AddAuthorizationBuilder()
+                .AddPolicy(ApiKeyPolicyName, policy => policy.AddRequirements(new ApiKeyRequirement(HeaderKeys.ApiKey)));
+
+            services.AddSingleton<IAuthorizationHandler, ApiKeyHandler>();
+
+            return services;
         }
     }
 }
