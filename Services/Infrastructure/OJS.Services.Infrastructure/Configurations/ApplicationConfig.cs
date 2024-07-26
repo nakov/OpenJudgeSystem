@@ -14,7 +14,4 @@ public class ApplicationConfig : BaseConfig
 
     [Required]
     public string ApiKey { get; set; } = string.Empty;
-
-    [Required]
-    public ElasticsearchConfig Elasticsearch { get; set; } = new();
 }
