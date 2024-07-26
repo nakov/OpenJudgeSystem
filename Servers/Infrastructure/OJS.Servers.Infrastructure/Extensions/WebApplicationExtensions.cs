@@ -95,6 +95,14 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
+        public static WebApplication AddRoles(this WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            scope.ServiceProvider.CreateOrUpdateRoles().GetAwaiter().GetResult();
+
+            return app;
+        }
+
         public static IApplicationBuilder UseAutoMapper(this IApplicationBuilder app)
         {
             var services = app.ApplicationServices;

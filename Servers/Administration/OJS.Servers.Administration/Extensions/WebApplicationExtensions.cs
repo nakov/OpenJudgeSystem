@@ -16,6 +16,7 @@ internal static class WebApplicationExtensions
 
         app.UseMiddleware<AdministrationExceptionMiddleware>();
         app.MigrateDatabase<OjsDbContext>();
+        app.AddRoles();
 
         app.UseHealthMonitoring();
         app.MapControllers();
