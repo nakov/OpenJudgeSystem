@@ -19,7 +19,7 @@ public class ElasticsearchHealthCheck : IHealthCheck
         var healthResult = await this.elasticsearchHttpClient.IsHealthy(cancellationToken);
 
         return healthResult.isHealthy
-            ? HealthCheckResult.Healthy("Elasticsearch is healthy.")
+            ? HealthCheckResult.Healthy("Elasticsearch is up and running.")
             : HealthCheckResult.Unhealthy(healthResult.error);
     }
 }
