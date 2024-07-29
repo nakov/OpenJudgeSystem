@@ -340,8 +340,8 @@ namespace OJS.Servers.Infrastructure.Extensions
             }
 
             var settings = elasticsearchClientSettings
-                .CertificateFingerprint(config.CertificateFingerprint)
-                .Authentication(new BasicAuthentication(config.Username, config.Password));
+                .ServerCertificateValidationCallback(ElasticsearchHelper.GetServerCertificateValidationCallback())
+                .Authentication(ElasticsearchHelper.GetElasticsearchAuthentication(config));
 
             var client = new ElasticsearchClient(settings);
 

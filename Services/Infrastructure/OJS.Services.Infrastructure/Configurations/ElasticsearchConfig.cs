@@ -21,9 +21,6 @@ public class ElasticsearchConfig : BaseConfig
     [Required]
     public string Password { get; set; } = string.Empty;
 
-    [Required]
-    public string CertificateFingerprint { get; set; } = string.Empty;
-
     public ICollection<Uri> GetEndpoints()
     {
         var endpoints = this.Endpoints.Split(',', StringSplitOptions.RemoveEmptyEntries);

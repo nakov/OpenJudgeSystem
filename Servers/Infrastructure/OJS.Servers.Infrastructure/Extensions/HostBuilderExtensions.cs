@@ -3,7 +3,6 @@ namespace OJS.Servers.Infrastructure.Extensions;
 using Elastic.Ingest.Elasticsearch;
 using Elastic.Ingest.Elasticsearch.DataStreams;
 using Elastic.Serilog.Sinks;
-using Elastic.Transport;
 using Microsoft.Extensions.Hosting;
 using OJS.Services.Infrastructure.Configurations;
 using Serilog;
@@ -49,10 +48,8 @@ public static class HostBuilderExtensions
                     transport =>
                     {
                         transport
-                            .CertificateFingerprint(elasticsearchSettings.CertificateFingerprint)
-                            .Authentication(new BasicAuthentication(
-                                elasticsearchSettings.Username,
-                                elasticsearchSettings.Password));
+                            .ServerCertificateValidationCallback(ElasticsearchHelper.GetServerCertificateValidationCallback())
+                            .Authentication(ElasticsearchHelper.GetElasticsearchAuthentication(elasticsearchSettings));
                     });
         });
 }
