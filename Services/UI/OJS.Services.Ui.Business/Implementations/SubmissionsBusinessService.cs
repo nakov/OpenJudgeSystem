@@ -30,6 +30,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using static OJS.Services.Common.PaginationConstants.Submissions;
+using static OJS.Services.Ui.Business.Constants.Comments;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -557,7 +558,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 var errorMessage = exception?.Message
                     ?? "Invalid execution result received. Please contact an administrator.";
                 submission.ProcessingComment = errorMessage;
-                submission.CompilerComment = errorMessage;
+                submission.CompilerComment = ProcessingException;
             }
 
             this.submissionsForProcessingData.MarkProcessed(
@@ -662,6 +663,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
+    private static void HandleProcessingException(Submission submission, Exception ex, string methodName)
+    {
+        submission.ProcessingComment = string.Format(ProcessingException, methodName, ex.Message);
+        submission.IsCompiledSuccessfully = false;
+        submission.CompilerComment = ProcessingExceptionCompilerComment;
+        submission.TestRuns = new List<TestRun>();
+    }
+
     private static void CacheTestRuns(Submission submission)
     {
         try
@@ -670,7 +679,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
         catch (Exception ex)
         {
-            submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
+            HandleProcessingException(submission, ex, nameof(CacheTestRuns));
         }
     }
 
@@ -694,7 +703,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
         catch (Exception ex)
         {
-            submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
+            HandleProcessingException(submission, ex, nameof(this.SaveParticipantScore));
         }
     }
 
