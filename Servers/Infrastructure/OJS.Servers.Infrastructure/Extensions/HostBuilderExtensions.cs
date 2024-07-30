@@ -1,12 +1,12 @@
 namespace OJS.Servers.Infrastructure.Extensions;
 
-using Elastic.Ingest.Elasticsearch;
-using Elastic.Ingest.Elasticsearch.DataStreams;
-using Elastic.Serilog.Sinks;
 using Microsoft.Extensions.Hosting;
 using OJS.Services.Infrastructure.Configurations;
+using OJS.Workers.Common.Extensions;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.OpenTelemetry;
+using System.Collections.Generic;
 using System.IO;
 
 public static class HostBuilderExtensions
@@ -17,13 +17,9 @@ public static class HostBuilderExtensions
         => builder.UseSerilog((hostingContext, configuration) =>
         {
             var applicationName = environment.GetShortApplicationName();
-            var loggerFilePath = hostingContext.Configuration
-                .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.LoggerFilesFolderPath));
-            var projectLogsDirectoryPath = Path.Combine(loggerFilePath, applicationName);
+            var appSettings = hostingContext.Configuration.GetSectionWithValidation<ApplicationConfig>();
+            var projectLogsDirectoryPath = Path.Combine(appSettings.LoggerFilesFolderPath, applicationName);
             var errorLogFilePath = Path.Combine(projectLogsDirectoryPath, "error.log");
-
-            var elasticsearchSettings = hostingContext.Configuration
-                .GetSectionWithValidation<ElasticsearchConfig>();
 
             configuration
                 .ReadFrom.Configuration(hostingContext.Configuration)
@@ -34,22 +30,15 @@ public static class HostBuilderExtensions
                     rollingInterval: RollingInterval.Day,
                     rollOnFileSizeLimit: true,
                     restrictedToMinimumLevel: LogEventLevel.Error)
-                .WriteTo.Elasticsearch(
-                    elasticsearchSettings.GetEndpoints(),
-                    opts =>
+                .WriteTo.OpenTelemetry(options =>
+                {
+                    options.Endpoint = $"{appSettings.LokiBaseUrl.TrimFromEnd("/")}/otlp";
+                    options.Protocol = OtlpProtocol.HttpProtobuf;
+                    options.ResourceAttributes = new Dictionary<string, object>
                     {
-                        opts.DataStream = new DataStreamName(
-                            type: "logs",
-                            dataSet: environment.EnvironmentName.ToLower(),
-                            @namespace: applicationName.ToLower());
-                        // Silent mode is used to avoid exceptions when the elasticsearch is not available.
-                        opts.BootstrapMethod = BootstrapMethod.Silent;
-                    },
-                    transport =>
-                    {
-                        transport
-                            .ServerCertificateValidationCallback(ElasticsearchHelper.GetServerCertificateValidationCallback())
-                            .Authentication(ElasticsearchHelper.GetElasticsearchAuthentication(elasticsearchSettings));
-                    });
+                        ["service.name"] = applicationName.ToLower(),
+                        ["service.namespace"] = environment.EnvironmentName.ToLower(),
+                    };
+                });
         });
 }

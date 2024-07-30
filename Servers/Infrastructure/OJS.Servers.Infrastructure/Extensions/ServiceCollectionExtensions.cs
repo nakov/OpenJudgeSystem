@@ -1,7 +1,5 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using Elastic.Clients.Elasticsearch;
-    using Elastic.Transport;
     using Hangfire;
     using Hangfire.SqlServer;
     using MassTransit;
@@ -60,10 +58,10 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices<TStartup>()
+                .AddConventionServices<TStartup>()
+                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
                 .AddHttpContextServices()
-                .AddLogging()
-                .AddElasticsearchClient(configuration)
+                .AddHttpClients(configuration)
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<HealthCheckConfig>();
 
@@ -283,14 +281,16 @@ namespace OJS.Servers.Infrastructure.Extensions
                         .AllowCredentials());
         });
 
-        private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
+        private static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
         {
-            services
-                .AddConventionServices<TStartUp>()
-                .AddTransient(typeof(IDataService<>), typeof(DataService<>));
+            var settings = configuration.GetSectionWithValidation<ApplicationConfig>();
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
+            services.AddHttpClient(ServerConstants.LokiHttpClientName, client =>
+            {
+                client.BaseAddress = new Uri(settings.LokiBaseUrl);
+            });
 
             return services;
         }
@@ -320,39 +320,10 @@ namespace OJS.Servers.Infrastructure.Extensions
             return Task.CompletedTask;
         }
 
-        private static IServiceCollection AddElasticsearchClient(
-            this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            var config = configuration.GetSectionWithValidation<ElasticsearchConfig>();
-            var endpoints = config.GetEndpoints();
-
-            ElasticsearchClientSettings elasticsearchClientSettings;
-
-            if (endpoints.Count == 1)
-            {
-                elasticsearchClientSettings = new ElasticsearchClientSettings(endpoints.First());
-            }
-            else
-            {
-                var pool = new StaticNodePool(endpoints);
-                elasticsearchClientSettings = new ElasticsearchClientSettings(pool);
-            }
-
-            var settings = elasticsearchClientSettings
-                .ServerCertificateValidationCallback(ElasticsearchHelper.GetServerCertificateValidationCallback())
-                .Authentication(ElasticsearchHelper.GetElasticsearchAuthentication(config));
-
-            var client = new ElasticsearchClient(settings);
-
-            return services
-                .AddSingleton<IElasticsearchHttpClient>(_ => new ElasticsearchHttpClient(client));
-        }
-
         private static IServiceCollection AddHealthMonitoring(this IServiceCollection services)
         {
             services.AddHealthChecks()
-                .AddCheck<ElasticsearchHealthCheck>(nameof(ElasticsearchHealthCheck));
+                .AddCheck<LokiHealthCheck>(ServerConstants.LokiHealthCheckName);
 
             return services;
         }

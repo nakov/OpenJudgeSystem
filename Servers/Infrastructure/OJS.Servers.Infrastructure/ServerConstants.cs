@@ -2,6 +2,9 @@ namespace OJS.Servers.Infrastructure
 {
     public static class ServerConstants
     {
+        public const string LokiHttpClientName = "Loki";
+        public const string LokiHealthCheckName = "Loki Health Check";
+
         public static class Authentication
         {
             public const string CanAccessAdministrationCookieName = "can_access_administration";
