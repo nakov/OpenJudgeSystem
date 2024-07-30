@@ -182,7 +182,6 @@ const ContestSolutionSubmitPage = () => {
                 };
 
                 if (JSON.stringify(newUpdatedProblems) !== JSON.stringify(problems)) {
-                    console.log('REFETCHING');
                     refetch();
                 }
                 setUpdatedProblems(newUpdatedProblems);
