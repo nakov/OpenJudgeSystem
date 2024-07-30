@@ -82,6 +82,7 @@
     
     .processingErrorWrapper {
       margin-bottom: 1rem;
+      
       @include errorWrapperStyles;
     }
 
