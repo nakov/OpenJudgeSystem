@@ -289,7 +289,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
             services.AddHttpClient(ServerConstants.LokiHttpClientName, client =>
             {
-                client.BaseAddress = new Uri(settings.LokiBaseUrl);
+                client.BaseAddress = new Uri(new Uri(settings.OtlpCollectorEndpoint).GetLeftPart(UriPartial.Authority));
             });
 
             return services;

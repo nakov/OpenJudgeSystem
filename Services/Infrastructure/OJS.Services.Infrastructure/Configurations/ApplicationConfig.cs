@@ -15,6 +15,9 @@ public class ApplicationConfig : BaseConfig
     [Required]
     public string ApiKey { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the OpenTelemetry protocol collector endpoint.
+    /// </summary>
     [Required]
-    public string LokiBaseUrl { get; set; } = string.Empty;
+    public string OtlpCollectorEndpoint { get; set; } = string.Empty;
 }

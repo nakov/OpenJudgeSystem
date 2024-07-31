@@ -2,7 +2,6 @@ namespace OJS.Servers.Infrastructure.Extensions;
 
 using Microsoft.Extensions.Hosting;
 using OJS.Services.Infrastructure.Configurations;
-using OJS.Workers.Common.Extensions;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.OpenTelemetry;
@@ -32,12 +31,12 @@ public static class HostBuilderExtensions
                     restrictedToMinimumLevel: LogEventLevel.Error)
                 .WriteTo.OpenTelemetry(options =>
                 {
-                    options.Endpoint = $"{appSettings.LokiBaseUrl.TrimFromEnd("/")}/otlp";
+                    options.Endpoint = appSettings.OtlpCollectorEndpoint;
                     options.Protocol = OtlpProtocol.HttpProtobuf;
                     options.ResourceAttributes = new Dictionary<string, object>
                     {
                         ["service.name"] = applicationName.ToLower(),
-                        ["service.namespace"] = environment.EnvironmentName.ToLower(),
+                        ["deployment.environment"] = environment.EnvironmentName.ToLower(),
                     };
                 });
         });
