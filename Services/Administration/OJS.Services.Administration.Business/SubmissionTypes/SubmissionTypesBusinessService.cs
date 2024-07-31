@@ -1,6 +1,9 @@
 ﻿namespace OJS.Services.Administration.Business.SubmissionTypes;
 
+using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using OJS.Data.Models;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
@@ -8,15 +11,35 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, int, SubmissionTypeAdministrationModel>, ISubmissionTypesBusinessService
 {
     private readonly ISubmissionTypesDataService submissionTypesDataService;
+    private readonly IContestsDataService contestsDataService;
+    private readonly ISubmissionsDataService submissionsDataService;
+    private readonly IParticipantScoresDataService participantScoresData;
+    private readonly ITestRunsDataService testRunsData;
+    private readonly ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService;
 
-    public SubmissionTypesBusinessService(ISubmissionTypesDataService submissionTypesDataService)
-        => this.submissionTypesDataService = submissionTypesDataService;
+    public SubmissionTypesBusinessService(
+        ISubmissionTypesDataService submissionTypesDataService,
+        IContestsDataService contestsDataService,
+        ISubmissionsDataService submissionsDataService,
+        IParticipantScoresDataService participantScoresData,
+        ITestRunsDataService testRunsData,
+        ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService)
+    {
+        this.submissionTypesDataService = submissionTypesDataService;
+        this.contestsDataService = contestsDataService;
+        this.submissionsDataService = submissionsDataService;
+        this.participantScoresData = participantScoresData;
+        this.testRunsData = testRunsData;
+        this.submissionTypesInProblemsDataService = submissionTypesInProblemsDataService;
+    }
 
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
         await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypesInProblemView>().ToListAsync();
@@ -37,23 +60,114 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
 
         SubmissionType? submissionTypeToReplaceWith = null;
 
-        if (model.SubmissionTypeToReplaceWith.HasValue)
+        bool shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
+
+        if (!shouldDoSubmissionsDeletion)
         {
             submissionTypeToReplaceWith = await this.submissionTypesDataService
-                .GetByIdQuery(model.SubmissionTypeToReplaceWith)
+                .GetByIdQuery(model.SubmissionTypeToReplaceWith!.Value)
                 .FirstOrDefaultAsync();
         }
 
-        if (submissionTypeToReplaceWith != null)
+        if (!shouldDoSubmissionsDeletion && submissionTypeToReplaceWith == null)
+        {
+            throw new BusinessServiceException("Submission type to replace with not found");
+        }
+
+        var contests = await this.contestsDataService
+            .GetAllVisible()
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.SubmissionTypesInProblems)
+            .Where(c => c.ProblemGroups
+                .Any(pg => pg.Problems
+                    .Any(p => p.SubmissionTypesInProblems.Any(st => st.SubmissionTypeId == model.SubmissionTypeToReplace))))
+            .ToListAsync();
+
+        if (shouldDoSubmissionsDeletion)
         {
             stringBuilder.Append(
-                $"Submission type {submissionType.Name} will be replaced with {submissionTypeToReplaceWith.Name}");
+                $"Submission type {submissionType.Name} will be deleted and all submissions associated with it");
+            AppendProblemsLeftWithNoSubmissionTypeText(stringBuilder, contests);
         }
         else
         {
             stringBuilder.Append(
-                $"Submission type {submissionType.Name} will be deleted");
+                $"Submission type {submissionType.Name} will be deleted and replaced with {submissionTypeToReplaceWith!.Name}");
         }
+
+        var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+        var problemIds = new List<int>();
+        foreach (var contest in contests)
+        {
+            var problemsInContestContainingSubmissionTypeToReplace = contest.ProblemGroups
+                .Where(pg => pg.Problems
+                    .Any(p => p.SubmissionTypesInProblems
+                        .Any(st => st.SubmissionTypeId == model.SubmissionTypeToReplace)))
+                .SelectMany(pg => pg.Problems)
+                .ToList();
+
+            foreach (var problem in problemsInContestContainingSubmissionTypeToReplace)
+            {
+                problemIds.Add(problem.Id);
+                var submissions = this.submissionsDataService
+                    .GetAllByProblem(problem.Id)
+                    .Where(s => s.SubmissionTypeId == submissionType.Id);
+
+                if (!shouldDoSubmissionsDeletion)
+                {
+                    submissions.ForEach(s =>
+                    {
+                        s.SubmissionTypeId = submissionTypeToReplaceWith!.Id;
+                        s.ProcessingComment = s.ProcessingComment += $"{Environment.NewLine}The submission type of this submission was updated from {submissionType.Name} to {submissionTypeToReplaceWith.Name} and changes to the problem or submission might be needed for correct execution.";
+
+                        this.submissionsDataService.Update(s);
+                    });
+
+                    var alreadyContainsSubmissionTypeToReplace = problem
+                        .SubmissionTypesInProblems
+                        .Any(s => s.SubmissionTypeId == model.SubmissionTypeToReplaceWith!.Value);
+
+                    if (!alreadyContainsSubmissionTypeToReplace)
+                    {
+                        await this.submissionTypesInProblemsDataService.Add(new SubmissionTypeInProblem
+                        {
+                            Problem = problem,
+                            SubmissionType = submissionTypeToReplaceWith!,
+                        });
+                    }
+                }
+                else
+                {
+                    var submissionIds = submissions.Select(s => s.Id);
+
+                    var participantScores = this.participantScoresData
+                        .GetAllByProblem(problem.Id)
+                        .Where(ps => submissionIds.Contains(ps.SubmissionId!.Value))
+                        .ToList();
+
+                    await this.participantScoresData.Delete(participantScores);
+                    await this.testRunsData.DeleteBySubmissions(submissionIds);
+
+                    this.submissionsDataService.DeleteMany(submissions);
+                }
+            }
+        }
+
+
+        await this.submissionTypesInProblemsDataService
+            .GetByProblemIds(problemIds)
+            .Where(st => st.SubmissionTypeId == model.SubmissionTypeToReplace)
+            .DeleteFromQueryAsync();
+        this.submissionTypesDataService.Delete(submissionType);
+
+        await this.submissionTypesDataService.SaveChanges();
+
+        scope.Complete();
+        scope.Dispose();
+
+        stringBuilder.AppendLine();
 
         return stringBuilder.ToString();
     }
@@ -97,5 +211,40 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     {
         await this.submissionTypesDataService.DeleteById(id);
         await this.submissionTypesDataService.SaveChanges();
+    }
+
+    private static void AppendProblemsLeftWithNoSubmissionTypeText(StringBuilder stringBuilder, List<Contest> contests)
+    {
+        var problemsWithOneSubmissionType = contests
+            .SelectMany(c => c.ProblemGroups
+                .SelectMany(pg => pg.Problems
+                    .Where(p => p.SubmissionTypesInProblems.Count == 1)
+                    .Select(p => new
+                    {
+                        ContestId = c.Id,
+                        ContestName = c.Name,
+                        ProblemName = p.Name,
+                    })))
+            .ToList();
+
+        if (contests.Count >= 1)
+        {
+            stringBuilder.Append("The following Contests are left with Problems without a submission type:");
+            stringBuilder.AppendLine();
+        }
+
+        foreach (var group in problemsWithOneSubmissionType.GroupBy(x => x.ContestName))
+        {
+            stringBuilder.Append($"Contest #{group.First().ContestId}: {group.Key}");
+            stringBuilder.AppendLine();
+
+            foreach (var problem in group)
+            {
+                stringBuilder.Append($"- Problem: {problem.ProblemName}");
+                stringBuilder.AppendLine();
+            }
+
+            stringBuilder.AppendLine();
+        }
     }
 }

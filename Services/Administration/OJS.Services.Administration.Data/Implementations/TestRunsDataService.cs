@@ -36,6 +36,11 @@ public class TestRunsDataService : AdministrationDataService<TestRun>, ITestRuns
         await this.SaveChanges();
     }
 
+    public Task DeleteBySubmissions(IEnumerable<int> submissionIds)
+        => this.GetQuery()
+            .Where(tr => submissionIds.Contains(tr.SubmissionId))
+            .DeleteFromQueryAsync();
+
     public async Task DeleteInBatchesBySubmissionIds(IEnumerable<int> submissionIds)
         => await submissionIds
             .Chunk(GlobalConstants.BatchOperationsChunkSize)

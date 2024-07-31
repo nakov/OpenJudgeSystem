@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import React, { useCallback, useState } from 'react';
+import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import isNil from 'lodash/isNil';
 
 import { IReplaceSubmissionTypeModel } from '../../../common/types';
+import AdministrationModal
+    from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
+import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     useGetForProblemQuery, useReplaceSubmissionTypeMutation,
 } from '../../../redux/services/admin/submissionTypesAdminService';
 import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
+import { getErrorMessage } from '../../../utils/http-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../../components/administration/common/styles/FormStyles.module.scss';
@@ -17,15 +21,16 @@ import styles from './AdministrationReplaceDeleteSubmissionTypesPage.module.scss
 const AdministrationReplaceDeleteSubmissionTypesPage = () => {
     const [ validations, setValidations ] = useState({
         isSubmissionTypeToReplaceTouched: false,
-        isSubmissionTypeToReplaceValid: true,
+        isSubmissionTypeToReplaceValid: false,
         isReplaceWithTouched: false,
-        isReplaceWithValid: true,
+        isReplaceWithValid: false,
     });
 
     const [ submissionTypeToReplace, setSubmissionTypeToReplace ] = useState<string | null>();
     const [ replaceWith, setReplaceWith ] = useState<string | null>();
     const [ submissionTypeIdToReplace, setSubmissionTypeIdToReplace ] = useState<number | null>();
     const [ replaceWithId, setReplaceWithId ] = useState<number | null>();
+    const [ openConfirmModal, setOpenConfirmModal ] = useState<boolean>(false);
 
     const SUBMISSION_TYPE_TO_REPLACE_FIELD_NAME = 'submission-type-to-replace';
     const REPLACE_WITH_FIELD_NAME = 'replace-with';
@@ -49,7 +54,7 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
         .find((st) => st.name === nameValue)!.id;
 
     const onChange = (e: any) => {
-        const { name, value, checked } = e.target;
+        const { name, value } = e.target;
         const currentValidations = validations;
         // eslint-disable-next-line default-case
         switch (name) {
@@ -73,12 +78,83 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
         setValidations(currentValidations);
     };
 
+    const clearReplaceWith = useCallback(() => {
+        setReplaceWith(null);
+        setReplaceWithId(null);
+    }, []);
+
+    const renderReplaceSubmissionTypeText = useCallback(
+        () => (
+            <Typography>
+                <p>
+                    {'You are about to replace submission type '}
+                    <span className={styles.blueText}>{submissionTypeToReplace}</span>
+                    {' with '}
+                    <span className={styles.blueText}>{replaceWith}</span>
+                    . This action will
+                    <span className={styles.redText}> delete</span>
+                    {' the '}
+                    <span className={styles.blueText}>
+                        {submissionTypeToReplace}
+                        {' '}
+                    </span>
+                    submission type.
+                </p>
+                <p>
+                    Problems using only this submission type will remain with
+                    <span className={styles.redText}> 0</span>
+                    {' '}
+                    submission types attached.
+                    All submissions associated will be updated with the new one (
+                    <span className={styles.blueText}>{replaceWith}</span>
+                    ) but they will
+                    {' '}
+                    <span className={styles.redText}> not be retested</span>
+                    .
+                </p>
+                <p>Changes might need to be made to the problems, tests or submissions in order to execute correctly.</p>
+            </Typography>
+        ),
+        [ replaceWith, submissionTypeToReplace ],
+    );
+
+    const renderReplaceSubmissionTypeWithDeletionText = useCallback(() => (
+        <Typography>
+            <p>
+                {'You are about to delete the '}
+                <span className={styles.blueText}>{submissionTypeToReplace}</span>
+                {' submission type. '}
+                Problems using only this submission type will remain with
+                <span className={styles.redText}> 0</span>
+                {' '}
+                submission types attached.
+            </p>
+            <p>
+                All submissions associated will be
+                <span className={styles.redText}> deleted</span>
+                .
+            </p>
+        </Typography>
+    ), [ submissionTypeToReplace ]);
+
     const submit = () => {
         replaceSubmissionType({
             submissionTypeToReplace: submissionTypeIdToReplace,
             submissionTypeToReplaceWith: replaceWithId,
         } as IReplaceSubmissionTypeModel);
     };
+
+    const renderSubmissionTypesMenuItems = useCallback(
+        () => !isNil(submissionTypesData) && submissionTypesData.map((st) => (
+            <MenuItem key={st.id} value={st.name}>
+                {st.id}
+                :
+                {' '}
+                {st.name}
+            </MenuItem>
+        )),
+        [ submissionTypesData ],
+    );
 
     return (
         <>
@@ -107,13 +183,7 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
                                   : 'primary'}
                               error={(validations.isSubmissionTypeToReplaceTouched && !validations.isSubmissionTypeToReplaceValid)}
                             >
-                                {!isNil(submissionTypesData) && submissionTypesData.map((st) => (
-                                    <MenuItem key={st.id} value={st.name}>
-                                        {st.id}
-                                        :
-                                        {st.name}
-                                    </MenuItem>
-                                ))}
+                                {renderSubmissionTypesMenuItems()}
                                 helperText=
                                 {(validations.isSubmissionTypeToReplaceTouched &&
                                         !validations.isSubmissionTypeToReplaceValid) &&
@@ -124,6 +194,9 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
                           className={formStyles.inputRow}
                         >
                             <InputLabel id={REPLACE_WITH_FIELD_NAME}>Replace with</InputLabel>
+                            <Button onClick={clearReplaceWith} className={styles.clearBtn}>
+                                Clear
+                            </Button>
                             <Select
                               sx={{ width: '100%' }}
                               variant="standard"
@@ -140,22 +213,35 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
                                   : 'primary'}
                               error={(validations.isReplaceWithTouched && !validations.isReplaceWithValid)}
                             >
-                                {!isNil(submissionTypesData) && submissionTypesData.map((st) => (
-                                    <MenuItem key={st.id} value={st.name}>
-                                        {st.id}
-                                        :
-                                        {st.name}
-                                    </MenuItem>
-                                ))}
+                                {renderSubmissionTypesMenuItems()}
                                 helperText=
                                 {(validations.isSubmissionTypeToReplaceTouched &&
                                         !validations.isSubmissionTypeToReplaceValid) &&
                                     'Invalid submission type to replace'}
                             </Select>
                         </FormControl>
+                        <AdministrationModal
+                          className={styles.confirmModal}
+                          key={5}
+                          index={1}
+                          open={openConfirmModal}
+                          onClose={() => setOpenConfirmModal(false)}
+                        >
+                            {isNilOrEmpty(replaceWith)
+                                ? renderReplaceSubmissionTypeWithDeletionText()
+                                : renderReplaceSubmissionTypeText()}
+                            <FormActionButton
+                              name="Confirm"
+                              onClick={() => {
+                                  submit();
+                                  setOpenConfirmModal(false);
+                              }}
+                              className={styles.confirmModalBtn}
+                            />
+                        </AdministrationModal>
                         <FormActionButton
                           name="Find And Replace All"
-                          onClick={() => submit()}
+                          onClick={() => setOpenConfirmModal(true)}
                           disabled={!validations.isSubmissionTypeToReplaceValid}
                         />
                     </form>
@@ -163,7 +249,9 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
 }
                 <div className={styles.resultContainer}>
                     <h2>Result</h2>
-                    {!isReplaceLoading && isSuccessfullyReplaced && (<p>{replaceResult}</p>)}
+                    { isReplaceLoading && <SpinningLoader />}
+                    { !isReplaceLoading && isSuccessfullyReplaced && (<p>{replaceResult}</p>) }
+                    { !isReplaceLoading && !isNilOrEmpty(error) && (<p className={styles.redText}>{getErrorMessage(error)}</p>)}
                 </div>
             </div>
         </>

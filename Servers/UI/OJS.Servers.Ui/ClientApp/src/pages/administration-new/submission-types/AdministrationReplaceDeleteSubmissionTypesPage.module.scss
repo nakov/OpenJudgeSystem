@@ -1,3 +1,6 @@
+@use 'src/styles/fonts';
+@use 'src/styles/colors';
+
 .pageContentContainer {
   display: flex;
   flex-direction: column;
@@ -13,5 +16,34 @@
 .resultContainer {
   border: 1px solid rgba(81, 81, 81, 1);
   border-radius: 10px;
+  white-space: pre;
+  padding: 20px;
+}
+
+.clearBtn {
+  width: 50px;
+  align-self: end;
+}
+
+.confirmModal {
+  @extend %font-family-normal;
+  
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  .confirmModalBtn {
+    margin-top: 20px;
+  }
+}
+
+.blueText {
+  color: colors.$primary-blue;
+}
+
+.redText {
+  color: colors.$primary-red;
 }
 
