@@ -43,7 +43,7 @@ import {
 } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
 import ExternalLink from '../../../guidelines/buttons/ExternalLink';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -61,18 +61,26 @@ interface IContestEditProps {
     isEditMode?: boolean;
     currentContest?: IContestAdministration;
     onSuccess?: Function;
+    setSuccessMessage: Function;
     onDeleteSuccess? : Function;
     skipGettingContest?: boolean;
 }
 
 const NAME_PROP = 'name';
 const ContestEdit = (props:IContestEditProps) => {
-    const { contestId, isEditMode = true, currentContest, onSuccess, onDeleteSuccess, skipGettingContest = false } = props;
+    const {
+        contestId,
+        isEditMode = true,
+        currentContest,
+        onSuccess,
+        setSuccessMessage,
+        onDeleteSuccess,
+        skipGettingContest = false,
+    } = props;
 
     const navigate = useNavigate();
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
 
     useDisableMouseWheelOnNumberInputs();
@@ -164,12 +172,12 @@ const ContestEdit = (props:IContestEditProps) => {
             { message: updateData, shouldGet: isSuccessfullyUpdating },
             { message: createData, shouldGet: isSuccessfullyCreating } ]);
         setSuccessMessage(message);
-    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating ]);
+    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating, setSuccessMessage ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
         setSuccessMessage(null);
-    }, [ updateError, createError ]);
+    }, [ updateError, createError, setSuccessMessage ]);
 
     useEffect(() => {
         if (isSuccessfullyUpdating && onSuccess) {
@@ -422,7 +430,6 @@ const ContestEdit = (props:IContestEditProps) => {
     return (
         <Box className={`${styles.flex}`}>
             {renderErrorMessagesAlert(errorMessages)}
-            {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
                 {(contest.name && (
                 <ExternalLink
