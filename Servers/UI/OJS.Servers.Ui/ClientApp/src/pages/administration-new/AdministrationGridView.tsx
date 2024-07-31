@@ -37,7 +37,7 @@ interface IAdministrationGridViewProps<T> {
 }
 
 const defaultFilterToAdd = 'isdeleted~equals~false';
-const defaultSorterToAdd = 'id=DESC';
+const defaultSorterToAdd = 'id=ASC';
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
     const {
         filterableGridColumnDef,
