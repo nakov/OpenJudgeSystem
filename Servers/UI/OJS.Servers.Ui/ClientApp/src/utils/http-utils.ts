@@ -27,17 +27,15 @@ const getErrorMessage = (
 
     // we should unify the return object from BE on error
     // in order to implement better logic in this function
-    {
-        if ('data' in err) {
-            if ((err.data as any).detail) {
-                return (err.data as any).detail as string;
-            }
-            if (err.data) {
-                return err.data as string;
-            }
-
-            return defaultErrorMessage;
+    if ('data' in err) {
+        if ((err.data as any).detail) {
+            return (err.data as any).detail as string;
         }
+        if (err.data) {
+            return err.data as string;
+        }
+
+        return defaultErrorMessage;
     }
 
     if ('status' in err) {

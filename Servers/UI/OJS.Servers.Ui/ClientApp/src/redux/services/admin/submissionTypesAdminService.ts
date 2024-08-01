@@ -7,7 +7,7 @@ import {
     IReplaceSubmissionTypeModel,
     ISubmissionTypeAdministrationModel,
     ISubmissionTypeInProblem,
-    ISubmissionTypesInListModel
+    ISubmissionTypesInListModel,
 } from '../../../common/types';
 import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -38,7 +38,7 @@ export const submissionTypesAdminService = createApi({
         }),
         replaceSubmissionType: builder.mutation<string, IReplaceSubmissionTypeModel>({
             query: (replaceData) => ({
-                url: `/ReplaceSubmissionTypes`,
+                url: '/ReplaceSubmissionTypes',
                 method: 'POST',
                 body: replaceData,
             }),
