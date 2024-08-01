@@ -21,18 +21,25 @@ const getErrorMessage = (
         return defaultErrorMessage;
     }
 
+    if (Array.isArray(err) && err.length === 1) {
+        return getErrorMessage(err[0]);
+    }
+
     // we should unify the return object from BE on error
     // in order to implement better logic in this function
-    if ('data' in err) {
-        if ((err.data as any).detail) {
-            return (err.data as any).detail as string;
-        }
-        if (err.data) {
-            return err.data as string;
-        }
+    {
+        if ('data' in err) {
+            if ((err.data as any).detail) {
+                return (err.data as any).detail as string;
+            }
+            if (err.data) {
+                return err.data as string;
+            }
 
-        return defaultErrorMessage;
+            return defaultErrorMessage;
+        }
     }
+
     if ('status' in err) {
         return 'error' in err
             ? err.error.replace(/"/g, '')
@@ -42,6 +49,7 @@ const getErrorMessage = (
     if (err.message) {
         return err.message.replace(/"/g, '');
     }
+
     if ((err as any).detail) {
         return (err as any).detail.replace(/"/g, '');
     }

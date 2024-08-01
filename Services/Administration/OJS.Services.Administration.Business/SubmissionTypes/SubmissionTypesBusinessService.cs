@@ -7,6 +7,7 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static OJS.Common.GlobalConstants.Roles;
 
 public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, int, SubmissionTypeAdministrationModel>, ISubmissionTypesBusinessService
 {
@@ -24,6 +26,7 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     private readonly IParticipantScoresDataService participantScoresData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService;
+    private readonly IDatesService datesService;
 
     public SubmissionTypesBusinessService(
         ISubmissionTypesDataService submissionTypesDataService,
@@ -31,7 +34,8 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         ISubmissionsDataService submissionsDataService,
         IParticipantScoresDataService participantScoresData,
         ITestRunsDataService testRunsData,
-        ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService)
+        ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService,
+        IDatesService datesService)
     {
         this.submissionTypesDataService = submissionTypesDataService;
         this.contestsDataService = contestsDataService;
@@ -39,6 +43,7 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         this.participantScoresData = participantScoresData;
         this.testRunsData = testRunsData;
         this.submissionTypesInProblemsDataService = submissionTypesInProblemsDataService;
+        this.datesService = datesService;
     }
 
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
@@ -60,6 +65,24 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         if (submissionType == null)
         {
             throw new BusinessServiceException($"Submission type {model.SubmissionTypeToReplace} does not exist");
+        }
+
+        var administratorRoles = new string[] { Administrator, Lecturer, Developer };
+
+        var submissionsByRegularUsersInTheLastMonth = await this.submissionsDataService
+            .GetQuery()
+            .Include(s => s.Participant)
+            .ThenInclude(p => p.User)
+            .ThenInclude(u => u.UsersInRoles)
+            .Where(s => s.SubmissionTypeId == submissionType.Id &&
+                        s.CreatedOn > this.datesService.GetUtcNow().AddMonths(-1) &&
+                        !s.Participant.User.UsersInRoles.Any(ur => administratorRoles.Contains(ur.Role.Name)))
+            .ToListAsync();
+
+        if (submissionsByRegularUsersInTheLastMonth.Count > 0)
+        {
+            throw new BusinessServiceException(
+                "This submission type has been used in the last month and cannot be considered as deprecated. Try again later.");
         }
 
         SubmissionType? submissionTypeToReplaceWith = null;

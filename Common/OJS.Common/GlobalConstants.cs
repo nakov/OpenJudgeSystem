@@ -56,7 +56,6 @@ namespace OJS.Common
             public const string Developer = "Developer";
 
             public const string AdministratorOrLecturer = Administrator + ", " + Lecturer;
-            public const string AdministratorOrDeveloper = Administrator + ", " + Developer;
         }
 
         public static class Urls
