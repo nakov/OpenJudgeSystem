@@ -45,6 +45,7 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
         {
             data: replaceResult,
             error,
+            isUninitialized,
             isSuccess: isSuccessfullyReplaced,
             isLoading: isReplaceLoading,
         },
@@ -247,12 +248,17 @@ const AdministrationReplaceDeleteSubmissionTypesPage = () => {
                     </form>
                     )
 }
-                <div className={styles.resultContainer}>
-                    <h2>Result</h2>
-                    { isReplaceLoading && <SpinningLoader />}
-                    { !isReplaceLoading && isSuccessfullyReplaced && (<p>{replaceResult}</p>) }
-                    { !isReplaceLoading && !isNilOrEmpty(error) && (<p className={styles.redText}>{getErrorMessage(error)}</p>)}
-                </div>
+                {
+                    !isUninitialized && (
+                        <div className={styles.resultContainer}>
+                            <h2>Result</h2>
+                            {isReplaceLoading && <SpinningLoader />}
+                            {!isReplaceLoading && isSuccessfullyReplaced && (<p>{replaceResult}</p>)}
+                            {!isReplaceLoading && !isNilOrEmpty(error) && (
+                            <p className={styles.redText}>{getErrorMessage(error)}</p>)}
+                        </div>
+                    )
+                }
             </div>
         </>
     );

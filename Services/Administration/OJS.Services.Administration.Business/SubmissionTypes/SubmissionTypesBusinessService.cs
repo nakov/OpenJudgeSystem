@@ -47,7 +47,11 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     public async Task<string> ReplaceSubmissionType(ReplaceSubmissionTypeServiceModel model)
     {
         var stringBuilder = new StringBuilder();
-        Console.WriteLine();
+
+        if (model.SubmissionTypeToReplaceWith.HasValue && model.SubmissionTypeToReplace == model.SubmissionTypeToReplaceWith.Value)
+        {
+            throw new BusinessServiceException("Cannot replace submission type with identical submission type");
+        }
 
         var submissionType = await this.submissionTypesDataService
             .GetByIdQuery(model.SubmissionTypeToReplace)
@@ -64,14 +68,15 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
 
         if (!shouldDoSubmissionsDeletion)
         {
+            // We delete submissions only when SubmissionTypeToReplaceWith is not provided
             submissionTypeToReplaceWith = await this.submissionTypesDataService
                 .GetByIdQuery(model.SubmissionTypeToReplaceWith!.Value)
                 .FirstOrDefaultAsync();
-        }
 
-        if (!shouldDoSubmissionsDeletion && submissionTypeToReplaceWith == null)
-        {
-            throw new BusinessServiceException("Submission type to replace with not found");
+            if (submissionTypeToReplaceWith == null)
+            {
+                throw new BusinessServiceException("Submission type to replace with not found");
+            }
         }
 
         var contests = await this.contestsDataService
@@ -87,30 +92,29 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         if (shouldDoSubmissionsDeletion)
         {
             stringBuilder.Append(
-                $"Submission type {submissionType.Name} will be deleted and all submissions associated with it");
-            AppendProblemsLeftWithNoSubmissionTypeText(stringBuilder, contests);
+                $"Submission type \"{submissionType.Name}\" will be deleted and all submissions associated with it");
+            stringBuilder.AppendLine();
+
+            AppendProblemsLeftWithNoSubmissionTypeText(stringBuilder, contests, submissionType);
         }
         else
         {
             stringBuilder.Append(
-                $"Submission type {submissionType.Name} will be deleted and replaced with {submissionTypeToReplaceWith!.Name}");
+                $"Submission type \"{submissionType.Name}\" will be deleted and replaced with \"{submissionTypeToReplaceWith!.Name}\"");
         }
 
         var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var problemIds = new List<int>();
         foreach (var contest in contests)
         {
             var problemsInContestContainingSubmissionTypeToReplace = contest.ProblemGroups
                 .Where(pg => pg.Problems
                     .Any(p => p.SubmissionTypesInProblems
                         .Any(st => st.SubmissionTypeId == model.SubmissionTypeToReplace)))
-                .SelectMany(pg => pg.Problems)
-                .ToList();
+                .SelectMany(pg => pg.Problems);
 
             foreach (var problem in problemsInContestContainingSubmissionTypeToReplace)
             {
-                problemIds.Add(problem.Id);
                 var submissions = this.submissionsDataService
                     .GetAllByProblem(problem.Id)
                     .Where(s => s.SubmissionTypeId == submissionType.Id);
@@ -120,7 +124,7 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
                     submissions.ForEach(s =>
                     {
                         s.SubmissionTypeId = submissionTypeToReplaceWith!.Id;
-                        s.ProcessingComment = s.ProcessingComment += $"{Environment.NewLine}The submission type of this submission was updated from {submissionType.Name} to {submissionTypeToReplaceWith.Name} and changes to the problem or submission might be needed for correct execution.";
+                        s.ProcessingComment = $"{s.ProcessingComment}{Environment.NewLine}The submission type of this submission was updated from {submissionType.Name} to {submissionTypeToReplaceWith.Name} and changes to the problem or submission might be needed for correct execution.";
 
                         this.submissionsDataService.Update(s);
                     });
@@ -155,19 +159,12 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
             }
         }
 
-
-        await this.submissionTypesInProblemsDataService
-            .GetByProblemIds(problemIds)
-            .Where(st => st.SubmissionTypeId == model.SubmissionTypeToReplace)
-            .DeleteFromQueryAsync();
         this.submissionTypesDataService.Delete(submissionType);
 
         await this.submissionTypesDataService.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
-
-        stringBuilder.AppendLine();
 
         return stringBuilder.ToString();
     }
@@ -213,19 +210,18 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         await this.submissionTypesDataService.SaveChanges();
     }
 
-    private static void AppendProblemsLeftWithNoSubmissionTypeText(StringBuilder stringBuilder, List<Contest> contests)
+    private static void AppendProblemsLeftWithNoSubmissionTypeText(
+        StringBuilder stringBuilder,
+        List<Contest> contests,
+        SubmissionType submissionTypeToReplace)
     {
         var problemsWithOneSubmissionType = contests
             .SelectMany(c => c.ProblemGroups
                 .SelectMany(pg => pg.Problems
-                    .Where(p => p.SubmissionTypesInProblems.Count == 1)
-                    .Select(p => new
-                    {
-                        ContestId = c.Id,
-                        ContestName = c.Name,
-                        ProblemName = p.Name,
-                    })))
-            .ToList();
+                    .Where(p => p.SubmissionTypesInProblems
+                        .Select(stp => stp.SubmissionTypeId)
+                        .Contains(submissionTypeToReplace.Id) && p.SubmissionTypesInProblems.Count == 1))
+                .Select(p => new { ContestId = c.Id, ContestName = c.Name, ProblemName = p.Name, }));
 
         if (contests.Count >= 1)
         {
