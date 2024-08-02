@@ -448,6 +448,7 @@ interface IProblemAdministration {
     checkerId: string;
     problemGroupType: string;
     contestId: number;
+    contestName: string;
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;

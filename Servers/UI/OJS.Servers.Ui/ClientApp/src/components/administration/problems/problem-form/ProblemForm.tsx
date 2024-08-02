@@ -50,6 +50,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
         checkerId: '2',
         contestId: contestId ?? -1,
+        contestName: '',
         id: 0,
         maximumPoints: defaultMaxPoints,
         memoryLimit: defaultMemoryLimit,
