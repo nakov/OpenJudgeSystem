@@ -3,10 +3,8 @@ namespace OJS.Servers.Infrastructure.Extensions;
 using Microsoft.Extensions.Hosting;
 using OJS.Services.Infrastructure.Configurations;
 using Serilog;
-using Serilog.Events;
 using Serilog.Sinks.OpenTelemetry;
 using System.Collections.Generic;
-using System.IO;
 
 public static class HostBuilderExtensions
 {
@@ -17,18 +15,13 @@ public static class HostBuilderExtensions
         {
             var applicationName = environment.GetShortApplicationName();
             var appSettings = hostingContext.Configuration.GetSectionWithValidation<ApplicationConfig>();
-            var projectLogsDirectoryPath = Path.Combine(appSettings.LoggerFilesFolderPath, applicationName);
-            var errorLogFilePath = Path.Combine(projectLogsDirectoryPath, "error.log");
 
             configuration
                 .ReadFrom.Configuration(hostingContext.Configuration)
                 .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.File(
-                    errorLogFilePath,
-                    rollingInterval: RollingInterval.Day,
-                    rollOnFileSizeLimit: true,
-                    restrictedToMinimumLevel: LogEventLevel.Error)
+                .Enrich.WithProperty("ApplicationName", applicationName)
+                .Enrich.WithProperty("EnvironmentName", environment.EnvironmentName)
+                .WriteTo.Async(wt => wt.Console())
                 .WriteTo.OpenTelemetry(options =>
                 {
                     options.Endpoint = appSettings.OtlpCollectorEndpoint;
