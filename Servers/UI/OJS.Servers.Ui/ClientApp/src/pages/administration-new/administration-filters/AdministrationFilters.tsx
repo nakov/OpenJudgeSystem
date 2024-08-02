@@ -734,11 +734,13 @@ const mapUrlToSorters = (
     const urlParams = sorterParams.split(sorterSeparator).filter((param) => param);
 
     if (defaultSorter) {
-        const sorterProperty = defaultSorter.split('=')[0];
-        const indexOfSorter = columns.findIndex((x) => x.toLowerCase() === sorterProperty.toLowerCase());
-        if ((!sorterParams || !urlParams.find((x) => x.includes(sorterProperty))) && indexOfSorter >= 0) {
-            urlParams.push(defaultSorter);
-        }
+        defaultSorter.split('&').forEach((sorter) => {
+            const sorterProperty = sorter.split('=')[0];
+            const indexOfSorter = columns.findIndex((x) => x.toLowerCase() === sorterProperty.toLowerCase());
+            if ((!sorterParams || !urlParams.find((x) => x.includes(sorterProperty))) && indexOfSorter >= 0) {
+                urlParams.push(sorter);
+            }
+        });
     }
 
     urlParams.forEach((param: string) => {
