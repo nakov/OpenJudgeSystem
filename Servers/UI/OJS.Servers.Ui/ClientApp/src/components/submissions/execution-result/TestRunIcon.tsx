@@ -37,7 +37,6 @@ const TestRunIcon = ({ testRun }: ITestRunIconProps) => {
 
     const renderTestRunIcon = useCallback(
         () => {
-            console.log(iconClassName);
             switch (toLowerCase(testRun.resultType)) {
             // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1287
             case TestRunResultType.CorrectAnswer.toLowerCase(): return <TickIcon className={iconClassName} key={testRun.id} />;
