@@ -153,9 +153,11 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         return this.Ok("Successfully copied problem");
     }
 
-    [HttpGet("{id:int}")]
-    [ProtectedEntityAction("id", typeof(ProblemIdPermissionsService))]
-    public async Task<IActionResult> GetResources(int id)
-        => this.Ok(await this.problemResourceGridDataService
-            .GetAll<ProblemResourceInListModel>(new PaginationRequestModel(), x => x.ProblemId == id));
+    [HttpGet("{problemId:int}")]
+    [ProtectedEntityAction("problemId", typeof(ProblemIdPermissionsService))]
+    public async Task<IActionResult> GetResources([FromQuery] PaginationRequestModel model, [FromRoute] int problemId)
+        => this.Ok(
+            await this.problemResourceGridDataService.GetAll<ProblemResourceInListModel>(
+                model,
+                pr => pr.ProblemId == problemId));
 }
