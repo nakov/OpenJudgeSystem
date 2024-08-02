@@ -230,7 +230,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         contest.IpsInContests.Clear();
         await this.AddIpsToContest(contest, model.AllowedIps);
 
-        this.contestsCacheService.ClearContestsCacheByContestId(contest.Id);
+        await this.contestsCacheService.ClearContestsCacheByContestId(contest.Id);
 
         this.contestsData.Update(contest);
         await this.contestsData.SaveChanges();
@@ -252,7 +252,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             throw new BusinessServiceException("Cannot delete active contest.");
         }
 
-        this.contestsCacheService.ClearContestsCacheByContestId(contest.Id);
+        await this.contestsCacheService.ClearContestsCacheByContestId(contest.Id);
 
         this.contestsData.Delete(contest);
         await this.contestsData.SaveChanges();

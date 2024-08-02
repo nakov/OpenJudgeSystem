@@ -4,8 +4,13 @@ namespace OJS.Services.Infrastructure.Implementations
 
     public class DatesService : IDatesService
     {
-        public DateTime GetUtcNow() => DateTime.UtcNow;
+        public DateTime GetUtcNow()
+            => DateTime.UtcNow;
 
-        public DateTime GetMaxValue() => DateTime.MaxValue;
+        public DateTime GetMaxValue()
+            => DateTime.MaxValue;
+
+        public DateTime GetAbsoluteExpirationBySeconds(int seconds)
+            => this.GetUtcNow().AddSeconds(seconds);
     }
 }
