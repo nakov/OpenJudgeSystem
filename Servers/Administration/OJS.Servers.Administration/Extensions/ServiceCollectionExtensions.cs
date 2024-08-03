@@ -39,6 +39,7 @@ internal static class ServiceCollectionExtensions
             .ConfigureGlobalDateFormat()
             .ConfigureCorsPolicy(configuration)
             .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
+            .AddResiliencePipelines()
             .AddMemoryCache()
             .AddDistributedCaching(configuration)
             .AddOptionsWithValidation<ApplicationConfig>()

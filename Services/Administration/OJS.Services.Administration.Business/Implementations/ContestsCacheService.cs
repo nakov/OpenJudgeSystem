@@ -2,6 +2,7 @@
 
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
+using System.Threading.Tasks;
 
 public class ContestsCacheService : IContestsCacheService
 {
@@ -11,9 +12,9 @@ public class ContestsCacheService : IContestsCacheService
         ICacheService cache)
         => this.cache = cache;
 
-    public void ClearContestsCacheByContestId(int contestId)
+    public async Task ClearContestsCacheByContestId(int contestId)
     {
-        this.cache.Remove(string.Format(CacheConstants.ContestDetails, contestId));
-        this.cache.Remove(string.Format(CacheConstants.ContestDetailsForSubmit, contestId));
+        await this.cache.Remove(string.Format(CacheConstants.ContestDetails, contestId));
+        await this.cache.Remove(string.Format(CacheConstants.ContestDetailsForSubmit, contestId));
     }
 }

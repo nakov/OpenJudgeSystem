@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { ContestVariation } from '../../../common/contest-types';
 import { useGetContestActivityQuery, useGetContestByIdQuery } from '../../../redux/services/admin/contestsAdminService';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
-import { renderErrorMessagesAlert } from '../../../utils/render-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import TabsInView from '../common/tabs/TabsInView';
 
@@ -23,6 +23,7 @@ const AdministrationContestPage = () => {
     const [ tabName, setTabName ] = useState(CONTEST_LISTED_DATA.PROBLEMS);
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
     const onTabChange = (event: React.SyntheticEvent, newValue: CONTEST_LISTED_DATA) => {
         setTabName(newValue);
@@ -58,7 +59,13 @@ const AdministrationContestPage = () => {
     }, [ tabName ]);
 
     const renderContestEdit = () => (
-        <ContestEdit contestId={Number(contestId)} currentContest={data} onSuccess={retake} skipGettingContest />
+        <ContestEdit
+          contestId={Number(contestId)}
+          currentContest={data}
+          onSuccess={retake}
+          setSuccessMessage={setSuccessMessage}
+          skipGettingContest
+        />
     );
 
     const renderProblemsInContestView = (key:string) => (
@@ -80,13 +87,14 @@ const AdministrationContestPage = () => {
         </span>
     );
 
-    if (isFetching || isLoading || isLoadingActivity || isFetchingActivity) {
+    if (!successMessage && (isFetching || isLoading || isLoadingActivity || isFetchingActivity)) {
         return (<SpinningLoader />);
     }
 
     return (
         <>
             {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessage, 7000)}
             <TabsInView
               form={renderContestEdit}
               onTabChange={onTabChange}
