@@ -381,11 +381,17 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.AddSingleton<IConnectionMultiplexer>(redisConnection);
             services.AddSingleton<ICacheService, CacheService>();
 
-            return services.AddStackExchangeRedisCache(options =>
+            services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = redisConfig.ConnectionString;
                 options.InstanceName = $"{redisConfig.InstanceName}:";
             });
+
+            services
+                .AddHealthChecks()
+                .AddRedis(redisConfig.ConnectionString, timeout: TimeSpan.FromSeconds(5));
+
+            return services;
         }
 
         private static void ConfigureHttpClient(HttpClient client)
