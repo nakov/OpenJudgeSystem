@@ -139,7 +139,7 @@ services:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
-      - loki-data:/loki
+      - loki_data:/loki
 
   grafana:
     image: grafana/grafana:latest

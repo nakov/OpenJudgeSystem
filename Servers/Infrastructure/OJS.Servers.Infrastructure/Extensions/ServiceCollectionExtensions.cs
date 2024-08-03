@@ -21,7 +21,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.Options;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
-    using OJS.Common;
     using OJS.Data;
     using OJS.Data.Implementations;
     using OJS.Servers.Infrastructure.Configurations;
@@ -105,10 +104,16 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityRole : IdentityRole
             where TIdentityUserRole : IdentityUserRole<string>, new()
         {
+            var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("DB connection string is missing.");
+            }
+
             services
                 .AddDbContext<TDbContext>(options =>
                 {
-                    var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
                     options.UseSqlServer(connectionString);
                 })
                 .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
@@ -149,6 +154,10 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddDataProtection()
                 .PersistKeysToDbContext<TDbContext>()
                 .SetApplicationName(ApplicationFullName);
+
+            services
+                .AddHealthChecks()
+                .AddSqlServer(connectionString, name: "SQL Server");
 
             return services;
         }
@@ -281,7 +290,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services.AddCors(options =>
             {
                 options.AddPolicy(
-                    GlobalConstants.CorsDefaultPolicyName,
+                    CorsDefaultPolicyName,
                     config =>
                         config.WithOrigins(
                                 configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
@@ -391,7 +400,7 @@ namespace OJS.Servers.Infrastructure.Extensions
         private static IServiceCollection AddHealthMonitoring(this IServiceCollection services)
         {
             services.AddHealthChecks()
-                .AddCheck<LokiHealthCheck>(ServerConstants.LokiHealthCheckName);
+                .AddCheck<LokiHealthCheck>("Loki");
 
             return services;
         }
