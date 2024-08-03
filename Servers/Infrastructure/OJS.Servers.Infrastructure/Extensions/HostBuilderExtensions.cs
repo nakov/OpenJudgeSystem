@@ -1,6 +1,7 @@
 namespace OJS.Servers.Infrastructure.Extensions;
 
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using OJS.Services.Infrastructure.Configurations;
 using Serilog;
 using Serilog.Sinks.OpenTelemetry;
@@ -19,13 +20,15 @@ public static class HostBuilderExtensions
             configuration
                 .ReadFrom.Configuration(hostingContext.Configuration)
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("ApplicationName", applicationName)
-                .Enrich.WithProperty("EnvironmentName", environment.EnvironmentName)
                 .WriteTo.Async(wt => wt.Console())
                 .WriteTo.OpenTelemetry(options =>
                 {
                     options.Endpoint = appSettings.OtlpCollectorEndpoint;
                     options.Protocol = OtlpProtocol.HttpProtobuf;
+                    options.Headers = new Dictionary<string, string>
+                    {
+                        [HeaderNames.Authorization] = appSettings.OtlpCollectorBasicAuthHeaderValue,
+                    };
                     options.ResourceAttributes = new Dictionary<string, object>
                     {
                         ["service.name"] = applicationName.ToLower(),

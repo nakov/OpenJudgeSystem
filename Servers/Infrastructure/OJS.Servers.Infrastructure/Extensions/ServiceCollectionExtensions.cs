@@ -290,6 +290,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.AddHttpClient(ServerConstants.LokiHttpClientName, client =>
             {
                 client.BaseAddress = new Uri(new Uri(settings.OtlpCollectorEndpoint).GetLeftPart(UriPartial.Authority));
+                client.DefaultRequestHeaders.Add(HeaderNames.Authorization, settings.OtlpCollectorBasicAuthHeaderValue);
             });
 
             return services;
