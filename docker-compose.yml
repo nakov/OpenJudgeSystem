@@ -17,6 +17,7 @@ services:
     extra_hosts:
       - "db:host-gateway"
     links:
+      - loki
       - mq
       - redis
     depends_on:
@@ -57,6 +58,7 @@ services:
     extra_hosts:
       - "db:host-gateway"
     links:
+      - loki
       - mq
       - redis
     depends_on:
@@ -100,7 +102,7 @@ services:
     environment:
       DEFAULT_USER_PASSWORD: myS3cretPass2
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq/mnesia
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
   redis:
     image: "redis:7"
@@ -140,6 +142,9 @@ services:
       - loki-data:/loki
 
   grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -163,10 +168,10 @@ services:
           editable: false
         EOF
         /run.sh
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
 
 volumes:
-  rabbitmq-data:
-  loki-data:
+  rabbitmq_data:
+  loki_data:
+  grafana_data:

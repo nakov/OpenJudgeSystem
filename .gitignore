@@ -190,4 +190,3 @@ typings/
 
 # dotenv environment variables file
 .env
-!/elasticsearch/.env
