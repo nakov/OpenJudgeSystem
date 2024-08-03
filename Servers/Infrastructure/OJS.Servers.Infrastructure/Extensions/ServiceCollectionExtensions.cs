@@ -157,7 +157,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services
                 .AddHealthChecks()
-                .AddSqlServer(connectionString, name: "SQL Server");
+                .AddSqlServer(connectionString);
 
             return services;
         }
@@ -400,7 +400,7 @@ namespace OJS.Servers.Infrastructure.Extensions
         private static IServiceCollection AddHealthMonitoring(this IServiceCollection services)
         {
             services.AddHealthChecks()
-                .AddCheck<LokiHealthCheck>("Loki");
+                .AddCheck<LokiHealthCheck>("loki");
 
             return services;
         }
