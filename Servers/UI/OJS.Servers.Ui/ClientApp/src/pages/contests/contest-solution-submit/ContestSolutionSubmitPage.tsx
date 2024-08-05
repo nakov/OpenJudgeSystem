@@ -75,7 +75,7 @@ const ContestSolutionSubmitPage = () => {
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
     // Get the participationType type from route params or path (if not in params)
-    const getParticipationType = () => {
+    const getParticipationType = useCallback(() => {
         if (participationType) {
             return participationType === ContestParticipationType.Compete
                 ? ContestParticipationType.Compete
@@ -85,7 +85,7 @@ const ContestSolutionSubmitPage = () => {
         return location.pathname.includes(`/${ContestParticipationType.Compete}`)
             ? ContestParticipationType.Compete
             : ContestParticipationType.Practice;
-    };
+    }, [ participationType, location.pathname ]);
 
     const [ submitSolution, {
         // isSuccess: submitSolutionSuccess,
@@ -111,7 +111,7 @@ const ContestSolutionSubmitPage = () => {
     ] = useLazyGetSubmissionResultsByProblemQuery();
 
     const isModalOpen = Boolean(anchorEl);
-    const isCompete = getParticipationType() === ContestParticipationType.Compete;
+    const isCompete = useMemo(() => getParticipationType() === ContestParticipationType.Compete, [ getParticipationType ]);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -168,25 +168,26 @@ const ContestSolutionSubmitPage = () => {
     useEffect(() => {
         if (submissionsData?.items && problems && submissionsData.items.length > 0) {
             // eslint-disable-next-line max-len
-            const latestSubmission = submissionsData.items.reduce((newest, current) => new Date(current.createdOn) > new Date(newest.createdOn)
+            const latestSubmission = submissionsData.items.reduce((latest, current) => new Date(current.createdOn) > new Date(latest.createdOn)
                 ? current
-                : newest, submissionsData.items[0]);
+                : latest);
 
-            if (latestSubmission?.problem) {
-                const problemIndex = problems.findIndex((p) => p.id === latestSubmission.problem.id);
-                if (problemIndex !== -1) {
-                    const updatedProblem = { ...problems[problemIndex] };
-                    updatedProblem.points = Math.max(latestSubmission.result.points, updatedProblem.points);
+            const updatedProblemIndex = problems.findIndex((problem) => problem.id === latestSubmission.problem.id);
 
-                    setUpdatedProblems([
-                        ...problems.slice(0, problemIndex),
-                        updatedProblem,
-                        ...problems.slice(problemIndex + 1),
-                    ]);
+            if (updatedProblemIndex !== -1) {
+                const newUpdatedProblems = [ ...problems ];
+                newUpdatedProblems[updatedProblemIndex] = {
+                    ...problems[updatedProblemIndex],
+                    points: Math.max(latestSubmission.result.points, problems[updatedProblemIndex].points),
+                };
+
+                if (JSON.stringify(newUpdatedProblems) !== JSON.stringify(problems)) {
+                    refetch();
                 }
+                setUpdatedProblems(newUpdatedProblems);
             }
         }
-    }, [ problems, submissionsData ]);
+    }, [ submissionsData, problems, refetch ]);
 
     useEffect(() => {
         if (!submissionsDataFetching) {

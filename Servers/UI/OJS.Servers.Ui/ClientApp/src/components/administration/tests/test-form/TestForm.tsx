@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
-import { HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, TYPE } from '../../../../common/labels';
+import {
+    HIDE_INPUT,
+    ID,
+    INPUT,
+    ORDER_BY_DECIMAL,
+    OUTPUT,
+    TYPE,
+} from '../../../../common/labels';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useCreateTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -138,7 +145,7 @@ const TestForm = (props: ITestFormProps) => {
                         <FormControl className={formStyles.spacing}>
                             <TextField
                               variant="standard"
-                              label={ORDER_BY}
+                              label={ORDER_BY_DECIMAL}
                               value={test?.orderBy}
                               InputLabelProps={{ shrink: true }}
                               type="number"

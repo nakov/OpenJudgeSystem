@@ -37,6 +37,7 @@ namespace OJS.Servers.Ui.Extensions
                 .ConfigureCorsPolicy(configuration)
                 .AddMessageQueue<Program>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
+                .AddResiliencePipelines()
                 .AddMemoryCache()
                 .AddDistributedCaching(configuration)
                 .AddLogging()
