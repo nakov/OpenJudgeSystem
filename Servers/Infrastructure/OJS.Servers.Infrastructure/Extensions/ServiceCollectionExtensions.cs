@@ -1,5 +1,6 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using OJS.Servers.Infrastructure.Configurations;
     using Hangfire;
     using Hangfire.SqlServer;
     using MassTransit;
@@ -16,6 +17,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common;
@@ -32,6 +35,12 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using OJS.Services.Infrastructure.ResilienceStrategies.Listeners;
+    using Polly;
+    using Polly.CircuitBreaker;
+    using Polly.Retry;
+    using Polly.Telemetry;
+    using Serilog.Extensions.Logging;
     using StackExchange.Redis;
     using System;
     using System.IO;
@@ -43,6 +52,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
+    using static OJS.Services.Infrastructure.Constants.ResilienceStrategyConstants.Common;
 
     public static class ServiceCollectionExtensions
     {
@@ -125,7 +135,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     opt.Events.OnRedirectToLogin = UnAuthorizedResponse;
                 });
 
-            // By default the data protection API that encrypts the authentication cookie generates a unique key for each application,
+            // By default, the data protection API that encrypts the authentication cookie generates a unique key for each application,
             // but in order to use/decrypt the same cookie across multiple servers, we need to use the same encryption key.
             // By setting custom data protection, we can use the same key in each server configured with the same application name.
             services
@@ -273,6 +283,63 @@ namespace OJS.Servers.Infrastructure.Extensions
                         .AllowAnyHeader()
                         .AllowCredentials());
         });
+
+        public static IServiceCollection AddResiliencePipelines(this IServiceCollection services)
+        {
+            services
+                .AddOptionsWithValidation<CircuitBreakerResilienceStrategyConfig>()
+                .AddOptionsWithValidation<RetryResilienceStrategyConfig>()
+                .AddResiliencePipeline("RedisCircuitBreaker", (builder, context) =>
+                {
+                    var circuitBreakerConfig = context.ServiceProvider.GetRequiredService<IOptions<CircuitBreakerResilienceStrategyConfig>>().Value;
+                    var retryConfig = context.ServiceProvider.GetRequiredService<IOptions<RetryResilienceStrategyConfig>>().Value;
+                    var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddProvider(new SerilogLoggerProvider()));
+                    var logger = loggerFactory.CreateLogger<ResiliencePipeline>();
+
+                    var handleRedisExceptions = new PredicateBuilder()
+                        .Handle<RedisConnectionException>()
+                        .Handle<RedisCommandException>();
+
+                    var handleAllExceptions = new PredicateBuilder()
+                        .Handle<Exception>();
+
+                    builder
+                        .AddCircuitBreaker(new CircuitBreakerStrategyOptions
+                        {
+                            FailureRatio = circuitBreakerConfig.FailureRatio,
+                            MinimumThroughput = circuitBreakerConfig.MinimumThroughput,
+                            SamplingDuration = circuitBreakerConfig.SamplingDuration,
+                            BreakDuration = circuitBreakerConfig.DurationOfBreak,
+                            ShouldHandle = handleRedisExceptions,
+                        })
+                        .AddRetry(new RetryStrategyOptions
+                        {
+                            MaxRetryAttempts = retryConfig.MaxRetryAttempts,
+                            Delay = retryConfig.Delay,
+                            BackoffType = retryConfig.BackoffType,
+                            UseJitter = retryConfig.UseJitter,
+                            ShouldHandle = handleAllExceptions,
+                            OnRetry = (args) =>
+                            {
+                              logger.LogWarning(
+                                  "Retry attempt #{RetryAttempt}. Operation: Retry_{OperationKey} Outcome: [{ResilienceOutcome}]. Duration: {RetryDuration}ms. Delay: {RetryDelay}ms.",
+                                  args.AttemptNumber + 1,
+                                  args.Context.Properties.GetValue(new ResiliencePropertyKey<string>(OperationKey), string.Empty),
+                                  args.Outcome.Exception?.Message ?? (args.Outcome.Result ?? "No result."),
+                                  args.Duration.Milliseconds,
+                                  args.RetryDelay.Milliseconds);
+                              return default;
+                            },
+                        })
+                        .ConfigureTelemetry(new TelemetryOptions
+                        {
+                            LoggerFactory = loggerFactory,
+                        })
+                        .TelemetryListener = new RedisCircuitBreakerListener(logger);
+                });
+
+            return services;
+        }
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {

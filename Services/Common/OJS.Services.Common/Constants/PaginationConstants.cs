@@ -1,4 +1,4 @@
-namespace OJS.Services.Common;
+namespace OJS.Services.Common.Constants;
 
 public static class PaginationConstants
 {

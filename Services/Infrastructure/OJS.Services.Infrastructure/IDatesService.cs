@@ -7,5 +7,7 @@ namespace OJS.Services.Infrastructure
         DateTime GetUtcNow();
 
         DateTime GetMaxValue();
+
+        DateTime GetAbsoluteExpirationBySeconds(int seconds);
     }
 }

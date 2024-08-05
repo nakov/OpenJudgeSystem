@@ -4,7 +4,7 @@ import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { ProblemGroupTypes } from '../../../../common/enums';
-import { CHECKER, CONTEST_ID, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../common/labels';
+import { CHECKER, CONTEST_ID, CONTEST_NAME, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../common/labels';
 import { IProblemAdministration, IProblemGroupDropdownModel } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
@@ -113,8 +113,6 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           onChange={(e) => onChange(e)}
                         />
                     </FormControl>
-                </FormGroup>
-                <FormGroup className={formStyles.inlineElement}>
                     <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
@@ -126,6 +124,8 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           onChange={(e) => onChange(e)}
                         />
                     </FormControl>
+                </FormGroup>
+                <FormGroup className={formStyles.inlineElement}>
                     <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
@@ -134,6 +134,18 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           InputLabelProps={{ shrink: true }}
                           type="number"
                           name="contestId"
+                          onChange={(e) => onChange(e)}
+                          disabled
+                        />
+                    </FormControl>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={CONTEST_NAME}
+                          value={currentProblem?.contestName}
+                          InputLabelProps={{ shrink: true }}
+                          type="text"
+                          name="contestName"
                           onChange={(e) => onChange(e)}
                           disabled
                         />
