@@ -144,7 +144,7 @@
         {
             var currentUser = this.userProvider.GetCurrentUser();
 
-            if (currentUser.IsNull() || string.IsNullOrEmpty(profileUsername))
+            if (currentUser == null || string.IsNullOrEmpty(profileUsername))
             {
                 return false;
             }
