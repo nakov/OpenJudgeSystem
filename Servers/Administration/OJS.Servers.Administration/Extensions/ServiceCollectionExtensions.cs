@@ -4,6 +4,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using OJS.Common;
 using OJS.Common.Exceptions;
 using OJS.Data;
 using OJS.Data.Models.Users;
@@ -45,6 +47,7 @@ internal static class ServiceCollectionExtensions
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()
+            .AddHealthChecksDashboard()
             .AddControllers()
             .ConfigureApiBehaviorOptions(options =>
             {
@@ -81,4 +84,22 @@ internal static class ServiceCollectionExtensions
     private static IServiceCollection AddGridServices(this IServiceCollection services)
         => services
             .AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>));
+
+    private static IServiceCollection AddHealthChecksDashboard(this IServiceCollection services)
+    {
+        services
+            .AddHealthChecksUI(settings =>
+            {
+                settings.SetNotifyUnHealthyOneTimeUntilChange(); // Notify once until status changes.
+                settings.MaximumHistoryEntriesPerEndpoint(100); // Keep only 100 entries in history.
+                settings.ConfigureApiEndpointHttpclient((sp, client) =>
+                {
+                    var apiKey = sp.GetRequiredService<IOptions<ApplicationConfig>>().Value.ApiKey;
+                    client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.ApiKey, apiKey);
+                });
+            })
+            .AddInMemoryStorage();
+
+        return services;
+    }
 }
