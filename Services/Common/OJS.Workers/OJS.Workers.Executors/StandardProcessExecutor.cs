@@ -160,7 +160,7 @@
             }
             catch (Exception ex)
             {
-                this.logger.LogWarning("Exception caught while reading the process error output: {StandardProcessExecutorException}", ex);
+                this.logger.LogWarning("Exception caught while reading the process error output: {@StandardProcessExecutorException}", ex);
                 return $"Error while reading the {outputName} of the underlying process: {ex.Message}";
             }
         }
