@@ -1,8 +1,9 @@
 ﻿namespace OJS.Services.Administration.Business;
 
 using OJS.Services.Infrastructure;
+using System.Threading.Tasks;
 
 public interface IContestsCacheService : IService
 {
-    void ClearContestsCacheByContestId(int contestId);
+    Task ClearContestsCacheByContestId(int contestId);
 }

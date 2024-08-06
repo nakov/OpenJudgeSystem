@@ -8,7 +8,7 @@
     using OJS.Services.Infrastructure.Models;
     using System.Linq;
     using System.Threading.Tasks;
-    using static OJS.Services.Common.PaginationConstants.Submissions;
+    using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 
     public interface ISubmissionsBusinessService : IService
     {

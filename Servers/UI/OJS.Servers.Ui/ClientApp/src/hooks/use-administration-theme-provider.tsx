@@ -18,7 +18,7 @@ const getColors = (mode: ThemeMode) => ({
                 : '#333333',
         },
         deleted: mode === ThemeMode.Light
-            ? '#FFA1A1'
+            ? '#FF7A7A'
             : '#e04545',
         visible: mode === ThemeMode.Light
             ? '#c0c0c0'
@@ -82,7 +82,14 @@ const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = (prop
                         color: 'inherit',
                         textDecoration: 'none',
                     },
-                    '.is-deleted-record': { backgroundColor: getColors(mode).palette.deleted },
+                    '.is-deleted-record': {
+                        backgroundColor: `${getColors(mode).palette.deleted} !important`,
+                        '&:hover': {
+                            backgroundColor: `${mode === ThemeMode.Light
+                                ? '#e04545'
+                                : '#FF7A7A'} !important`,
+                        },
+                    },
                     '.is-visible-record': { backgroundColor: getColors(mode).palette.visible },
                     '::-webkit-scrollbar': {
                         width: '10px',

@@ -45,7 +45,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         await this.categoriesDataService.SaveChanges();
 
         await this.OrderContestCategoriesByOrderBy(contestCategory);
-        this.contestCategoriesCache.ClearMainContestCategoriesCache();
+        await this.contestCategoriesCache.ClearMainContestCategoriesCache();
         return model;
     }
 
@@ -70,7 +70,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         await this.categoriesDataService.SaveChanges();
 
         await this.OrderContestCategoriesByOrderBy(contestCategory);
-        this.contestCategoriesCache.ClearMainContestCategoriesCache();
+        await this.contestCategoriesCache.ClearMainContestCategoriesCache();
         return model;
     }
 
@@ -90,7 +90,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
             this.CascadeDeleteCategories(contestCategory));
 
         this.categoriesDataService.Delete(contestCategory);
-        this.contestCategoriesCache.ClearMainContestCategoriesCache();
+        await this.contestCategoriesCache.ClearMainContestCategoriesCache();
         await this.categoriesDataService.SaveChanges();
     }
 
