@@ -97,7 +97,7 @@
             {
                 if (!(ex.InnerException is TaskCanceledException))
                 {
-                    this.logger.LogWarning($"AggregateException caught: {ex.InnerException}");
+                    this.logger.LogWarning("AggregateException caught: {@StandardProcessExecutorException}", ex);
                 }
             }
 
@@ -123,7 +123,7 @@
             }
             catch (Exception ex)
             {
-                this.logger.LogError($"Exception in writing to standard input with input data: {inputData}", ex);
+                this.logger.LogError(ex, "Exception in writing to standard input with input data: {StandardProcessExecutorInputData}", inputData);
             }
             finally
             {
@@ -138,7 +138,7 @@
                 }
                 catch (Exception ex)
                 {
-                    this.logger.LogWarning($"Exception caught while closing the standard input: {ex}");
+                    this.logger.LogWarning("Exception caught while closing the standard input: {@StandardProcessExecutorException}", ex);
                 }
             }
         }
@@ -160,7 +160,7 @@
             }
             catch (Exception ex)
             {
-                this.logger.LogWarning($"Exception caught while reading the process error output: {ex}");
+                this.logger.LogWarning("Exception caught while reading the process error output: {StandardProcessExecutorException}", ex);
                 return $"Error while reading the {outputName} of the underlying process: {ex.Message}";
             }
         }
