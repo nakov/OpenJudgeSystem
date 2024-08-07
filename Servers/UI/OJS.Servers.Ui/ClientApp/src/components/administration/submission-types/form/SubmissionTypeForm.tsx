@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import {
     Box,
@@ -40,9 +41,11 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface ISubmissionTypesFormProps {
     id: number | null;
     isEditMode: boolean;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
-    const { id, isEditMode } = props;
+    const { id, isEditMode, setParentSuccessMessage, onSuccess } = props;
     const [ compilersData, setCompilersData ] = useState<Array<string>>([]);
     const [ strategiesData, setStrategiesData ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
@@ -101,6 +104,14 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
     useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
         const message = getAndSetSuccesfullMessages([
             {
                 message: updateData,
@@ -112,10 +123,12 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
             },
         ]);
 
-        if (message) {
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
             setSuccessMessage(message);
         }
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
+    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData, setParentSuccessMessage ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([
