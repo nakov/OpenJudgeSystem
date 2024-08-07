@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material';
@@ -24,18 +25,19 @@ import { handleDateTimePickerChange } from '../../utils/mui-utils';
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface ISettingFormProps {
-isEditMode: boolean;
-id?: number;
-
+    isEditMode: boolean;
+    id?: number;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const SettingForm = (props: ISettingFormProps) => {
-    const { id = 0, isEditMode = true } = props;
+    const { id = 0, isEditMode = true, onSuccess, setParentSuccessMessage } = props;
 
     const navigate = useNavigate();
 
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
-    const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
     const [ setting, setSetting ] = useState<ISettingAdministrationModel>({
         id,
@@ -73,6 +75,14 @@ const SettingForm = (props: ISettingFormProps) => {
     useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
         if (settingData) {
             setSetting(settingData);
         }
@@ -88,8 +98,12 @@ const SettingForm = (props: ISettingFormProps) => {
             { message: updateData, shouldGet: isSuccessfullyUpdated },
         ]);
 
-        setSuccessfullMessage(message);
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessage(message);
+        }
+    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, setParentSuccessMessage, updateData ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -227,7 +241,7 @@ const SettingForm = (props: ISettingFormProps) => {
 
     return (
         <>
-            {renderSuccessfullAlert(successfullMessage)}
+            {renderSuccessfullAlert(successMessage)}
             {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Setting administration form</Typography>
             <form className={formStyles.form}>
