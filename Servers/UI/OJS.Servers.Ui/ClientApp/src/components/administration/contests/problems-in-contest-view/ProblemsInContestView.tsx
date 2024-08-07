@@ -117,6 +117,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                 ? (
                     <ProblemForm
                       contestId={Number(contestId)}
+                      contestName={contestName}
                       problemId={null}
                       isEditMode={false}
                       contestType={contestType!}

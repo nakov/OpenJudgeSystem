@@ -77,7 +77,12 @@ const AdministrationProblemsPage = () => {
           open={openEditProblemModal}
           onClose={() => onEditModalClose()}
         >
-            <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
+            <ProblemForm
+              problemId={Number(problemId)}
+              isEditMode
+              contestId={null}
+              contestName={null}
+            />
         </AdministrationModal>
     );
 
