@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { Autocomplete, Checkbox, debounce, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 
@@ -17,12 +18,14 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IParticipantFormProps {
     contestName?: string;
     contestId?: number;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const ParticipantForm = (props: IParticipantFormProps) => {
-    const { contestName = '', contestId = 0 } = props;
+    const { contestName = '', contestId = 0, onSuccess, setParentSuccessMessage } = props;
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessages, setSuccessMessages ] = useState<string>('');
+    const [ successMessages, setSuccessMessages ] = useState<string | null>(null);
     const [ participant, setParticipant ] = useState<IParticipantAdministrationModel>({
         contestId,
         id: 0,
@@ -67,17 +70,27 @@ const ParticipantForm = (props: IParticipantFormProps) => {
         } ] = useCreateParticipantMutation();
 
     useEffect(() => {
-        const successMessage = getAndSetSuccesfullMessages([
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
+        const message = getAndSetSuccesfullMessages([
             {
                 message: createData,
                 shouldGet: isSuccessfullyCreated,
             },
         ]);
 
-        if (successMessage) {
-            setSuccessMessages(successMessage);
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessages(message);
         }
-    }, [ createData, isSuccessfullyCreated ]);
+    }, [ createData, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     useEffect(() => {
         if (contestsAutocompleteData) {
