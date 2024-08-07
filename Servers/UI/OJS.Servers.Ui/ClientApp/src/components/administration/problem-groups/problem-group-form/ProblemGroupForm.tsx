@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
@@ -21,10 +22,12 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IProblemFormProps {
     id?:number;
     isEditMode?: boolean;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const ProblemGroupForm = (props: IProblemFormProps) => {
-    const { id = null, isEditMode = true } = props;
+    const { id = null, isEditMode = true, onSuccess, setParentSuccessMessage } = props;
     const [ currentProblemGroup, setCurrentProblemGroup ] = useState<IProblemGroupAdministrationModel>({
         id: 0,
         orderBy: 0,
@@ -37,7 +40,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
     const [ contestsData, setContestsData ] = useState <Array<IContestAutocomplete>>([]);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessages, setSuccessMessages ] = useState<string>('');
+    const [ successMessages, setSuccessMessages ] = useState<string | null>(null);
 
     const { data: contestsAutocompleteData, error: getContestDataError } = useGetContestAutocompleteQuery(contestSearchString);
     const {
@@ -64,6 +67,14 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
         } ] = useCreateProblemGroupMutation();
 
     useDisableMouseWheelOnNumberInputs();
+
+    useEffect(() => {
+        if ((isSuccessfullyUpdated || isSuccessfullyCreated) && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyUpdated, isSuccessfullyCreated, onSuccess ]);
 
     useEffect(() => {
         if (contestsAutocompleteData) {
@@ -93,10 +104,12 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
             },
         ]);
 
-        if (successMessage) {
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(successMessage);
+        } else {
             setSuccessMessages(successMessage);
         }
-    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated ]);
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, createError, updateError, getProblemGroupError ], setErrorMessages);
