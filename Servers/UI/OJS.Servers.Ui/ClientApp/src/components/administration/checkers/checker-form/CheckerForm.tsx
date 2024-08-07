@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { Box, FormControl, FormGroup, FormLabel, TextareaAutosize, TextField, Typography } from '@mui/material';
 
@@ -15,12 +16,14 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface ICheckerFormProps {
     isEditMode?: boolean;
     id?: number | null;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const CheckerForm = (props: ICheckerFormProps) => {
-    const { isEditMode = true, id = null } = props;
+    const { isEditMode = true, id = null, onSuccess, setParentSuccessMessage } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
-    const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ checker, setChecker ] = useState<ICheckerAdministrationModel>({
         id: 0,
         className: null,
@@ -57,6 +60,14 @@ const CheckerForm = (props: ICheckerFormProps) => {
     ] = useUpdateCheckerMutation();
 
     useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
         if (checkerData) {
             setChecker(checkerData);
         }
@@ -71,7 +82,12 @@ const CheckerForm = (props: ICheckerFormProps) => {
             { message: createData, shouldGet: isSuccessfullyCreated },
             { message: updateData, shouldGet: isSuccessfullyUpdated },
         ]);
-        setSuccessfullMessage(message);
+
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessage(message);
+        }
     }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
 
     const onChange = (e: any) => {
@@ -90,7 +106,7 @@ const CheckerForm = (props: ICheckerFormProps) => {
     }
     return (
         <>
-            {renderSuccessfullAlert(successfullMessage)}
+            {renderSuccessfullAlert(successMessage)}
             {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Checker administration form</Typography>
             <form className={formStyles.form}>
