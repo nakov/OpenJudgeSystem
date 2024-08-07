@@ -61,7 +61,7 @@ interface IContestEditProps {
     isEditMode?: boolean;
     currentContest?: IContestAdministration;
     onSuccess?: Function;
-    setSuccessMessage: Function;
+    setParentSuccessMessage: Function;
     onDeleteSuccess? : Function;
     skipGettingContest?: boolean;
 }
@@ -73,7 +73,7 @@ const ContestEdit = (props:IContestEditProps) => {
         isEditMode = true,
         currentContest,
         onSuccess,
-        setSuccessMessage,
+        setParentSuccessMessage,
         onDeleteSuccess,
         skipGettingContest = false,
     } = props;
@@ -140,13 +140,13 @@ const ContestEdit = (props:IContestEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             error: updateError,
-            isSuccess: isSuccessfullyUpdating,
+            isSuccess: isSuccessfullyUpdated,
         } ] = useUpdateContestMutation();
 
     const [
         createContest, {
             data: createData,
-            isSuccess: isSuccessfullyCreating,
+            isSuccess: isSuccessfullyCreated,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestMutation();
@@ -169,18 +169,18 @@ const ContestEdit = (props:IContestEditProps) => {
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
-            { message: updateData, shouldGet: isSuccessfullyUpdating },
-            { message: createData, shouldGet: isSuccessfullyCreating } ]);
-        setSuccessMessage(message);
-    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating, setSuccessMessage ]);
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+            { message: createData, shouldGet: isSuccessfullyCreated } ]);
+        setParentSuccessMessage(message);
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-        setSuccessMessage(null);
-    }, [ updateError, createError, setSuccessMessage ]);
+        setParentSuccessMessage(null);
+    }, [ updateError, createError, setParentSuccessMessage ]);
 
     useEffect(() => {
-        if (isSuccessfullyUpdating && onSuccess) {
+        if ((isSuccessfullyUpdated || isSuccessfullyCreated) && onSuccess) {
             /* The function is called in timeout,
             because we want to show success message before calling onSuccess,
             since it can cause re-rendering of the component and the message will not be visible
@@ -189,7 +189,7 @@ const ContestEdit = (props:IContestEditProps) => {
                 onSuccess();
             }, 500);
         }
-    }, [ isSuccessfullyUpdating, onSuccess ]);
+    }, [ isSuccessfullyUpdated, isSuccessfullyCreated, onSuccess ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&

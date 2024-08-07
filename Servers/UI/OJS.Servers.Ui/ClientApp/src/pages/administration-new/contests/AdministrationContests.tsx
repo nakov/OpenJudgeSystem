@@ -222,7 +222,7 @@ const AdministrationContestsPage = () => {
               isEditMode={isEditMode}
               skipGettingContest={!isEditMode}
               onSuccess={() => onClose(isEditMode)}
-              setSuccessMessage={setSuccessMessage}
+              setParentSuccessMessage={setSuccessMessage}
               onDeleteSuccess={() => onClose(isEditMode)}
             />
         </AdministrationModal>
