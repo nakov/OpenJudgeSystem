@@ -108,6 +108,11 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
             : setOpenEditModal(false);
 
+        const onProblemCreate = () => {
+            retakeData();
+            onClose();
+        };
+
         return (
             <AdministrationModal
               index={index}
@@ -124,7 +129,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                           problemId={null}
                           isEditMode={false}
                           contestType={contestType!}
-                          onSuccess={onClose}
+                          onSuccess={onProblemCreate}
                           setParentSuccessMessage={setSuccessMessage}
                         />
                     )

@@ -38,6 +38,12 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
         const onClose = () => isCreate
             ? setShowCreateModal(!showCreateModal)
             : setOpenEditModal(false);
+
+        const onProblemCreate = () => {
+            onClose();
+            retakeData();
+        };
+
         return (
             <AdministrationModal
               key={index}
@@ -51,7 +57,7 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
                   id={problemResourceId}
                   isEditMode={!isCreate}
                   problemId={problemId}
-                  onSuccess={onClose}
+                  onSuccess={onProblemCreate}
                   setParentSuccessMessage={setSuccessMessage}
                 />
             </AdministrationModal>
