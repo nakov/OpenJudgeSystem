@@ -95,7 +95,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
-        public static WebApplication AddRoles(this WebApplication app)
+        public static WebApplication SeedRoles(this WebApplication app)
         {
             using var scope = app.Services.CreateScope();
             scope.ServiceProvider.CreateOrUpdateRoles().GetAwaiter().GetResult();

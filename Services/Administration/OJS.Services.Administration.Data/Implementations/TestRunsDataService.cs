@@ -37,8 +37,7 @@ public class TestRunsDataService : AdministrationDataService<TestRun>, ITestRuns
     }
 
     public Task DeleteBySubmissions(IEnumerable<int> submissionIds)
-        => this.GetQuery()
-            .Where(tr => submissionIds.Contains(tr.SubmissionId))
+        => this.GetQuery(tr => submissionIds.Contains(tr.SubmissionId))
             .DeleteFromQueryAsync();
 
     public async Task DeleteInBatchesBySubmissionIds(IEnumerable<int> submissionIds)

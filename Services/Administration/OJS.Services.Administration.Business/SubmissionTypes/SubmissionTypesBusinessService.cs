@@ -1,22 +1,22 @@
 ﻿namespace OJS.Services.Administration.Business.SubmissionTypes;
 
-using FluentExtensions.Extensions;
-using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Submissions;
-using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.SubmissionTypes;
-using OJS.Services.Infrastructure;
-using OJS.Services.Infrastructure.Exceptions;
-using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
-using static OJS.Common.GlobalConstants.Roles;
+using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
+using OJS.Data;
+using OJS.Data.Models;
+using OJS.Data.Models.Contests;
+using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Business.SubmissionTypes.Validators;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.SubmissionTypes;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Extensions;
 
 public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, int, SubmissionTypeAdministrationModel>, ISubmissionTypesBusinessService
 {
@@ -26,7 +26,9 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     private readonly IParticipantScoresDataService participantScoresData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService;
+    private readonly IDeleteOrReplaceSubmissionTypeValidationService deleteOrReplaceSubmissionTypeValidationService;
     private readonly IDatesService datesService;
+    private readonly ITransactionsProvider transactionsProvider;
 
     public SubmissionTypesBusinessService(
         ISubmissionTypesDataService submissionTypesDataService,
@@ -35,7 +37,9 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         IParticipantScoresDataService participantScoresData,
         ITestRunsDataService testRunsData,
         ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService,
-        IDatesService datesService)
+        IDeleteOrReplaceSubmissionTypeValidationService deleteOrReplaceSubmissionTypeValidationService,
+        IDatesService datesService,
+        ITransactionsProvider transactionsProvider)
     {
         this.submissionTypesDataService = submissionTypesDataService;
         this.contestsDataService = contestsDataService;
@@ -43,7 +47,9 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         this.participantScoresData = participantScoresData;
         this.testRunsData = testRunsData;
         this.submissionTypesInProblemsDataService = submissionTypesInProblemsDataService;
+        this.deleteOrReplaceSubmissionTypeValidationService = deleteOrReplaceSubmissionTypeValidationService;
         this.datesService = datesService;
+        this.transactionsProvider = transactionsProvider;
     }
 
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
@@ -58,48 +64,27 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
             throw new BusinessServiceException("Cannot replace submission type with identical submission type");
         }
 
-        var submissionType = await this.submissionTypesDataService
+        var submissionTypeToReplaceOrDelete = await this.submissionTypesDataService
             .GetByIdQuery(model.SubmissionTypeToReplace)
             .FirstOrDefaultAsync();
 
-        if (submissionType == null)
-        {
-            throw new BusinessServiceException($"Submission type {model.SubmissionTypeToReplace} does not exist");
-        }
-
-        var administratorRoles = new string[] { Administrator, Lecturer, Developer };
-
-        var submissionsByRegularUsersInTheLastMonth = await this.submissionsDataService
-            .GetQuery()
-            .Include(s => s.Participant)
-            .ThenInclude(p => p.User)
-            .ThenInclude(u => u.UsersInRoles)
-            .Where(s => s.SubmissionTypeId == submissionType.Id &&
-                        s.CreatedOn > this.datesService.GetUtcNow().AddMonths(-1) &&
-                        !s.Participant.User.UsersInRoles.Any(ur => administratorRoles.Contains(ur.Role.Name)))
-            .ToListAsync();
-
-        if (submissionsByRegularUsersInTheLastMonth.Count > 0)
-        {
-            throw new BusinessServiceException(
-                "This submission type has been used in the last month and cannot be considered as deprecated. Try again later.");
-        }
-
         SubmissionType? submissionTypeToReplaceWith = null;
 
-        bool shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
-
-        if (!shouldDoSubmissionsDeletion)
+        if (model.SubmissionTypeToReplaceWith.HasValue)
         {
-            // We delete submissions only when SubmissionTypeToReplaceWith is not provided
             submissionTypeToReplaceWith = await this.submissionTypesDataService
                 .GetByIdQuery(model.SubmissionTypeToReplaceWith!.Value)
                 .FirstOrDefaultAsync();
+        }
 
-            if (submissionTypeToReplaceWith == null)
-            {
-                throw new BusinessServiceException("Submission type to replace with not found");
-            }
+        bool shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
+
+        var validationResult = this.deleteOrReplaceSubmissionTypeValidationService.GetValidationResult(
+            (submissionTypeToReplaceOrDelete, submissionTypeToReplaceWith, shouldDoSubmissionsDeletion));
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
         }
 
         var contests = await this.contestsDataService
@@ -115,79 +100,82 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         if (shouldDoSubmissionsDeletion)
         {
             stringBuilder.Append(
-                $"Submission type \"{submissionType.Name}\" will be deleted and all submissions associated with it");
+                $"Submission type \"{submissionTypeToReplaceOrDelete!.Name}\" will be deleted and all submissions associated with it");
             stringBuilder.AppendLine();
 
-            AppendProblemsLeftWithNoSubmissionTypeText(stringBuilder, contests, submissionType);
+            AppendProblemsLeftWithNoSubmissionTypeText(stringBuilder, contests, submissionTypeToReplaceOrDelete);
         }
         else
         {
             stringBuilder.Append(
-                $"Submission type \"{submissionType.Name}\" will be deleted and replaced with \"{submissionTypeToReplaceWith!.Name}\"");
+                $"Submission type \"{submissionTypeToReplaceOrDelete!.Name}\" will be deleted and replaced with \"{submissionTypeToReplaceWith!.Name}\"");
         }
 
-        var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-        foreach (var contest in contests)
+        await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
-            var problemsInContestContainingSubmissionTypeToReplace = contest.ProblemGroups
-                .Where(pg => pg.Problems
-                    .Any(p => p.SubmissionTypesInProblems
-                        .Any(st => st.SubmissionTypeId == model.SubmissionTypeToReplace)))
-                .SelectMany(pg => pg.Problems);
-
-            foreach (var problem in problemsInContestContainingSubmissionTypeToReplace)
+            foreach (var contest in contests)
             {
-                var submissions = this.submissionsDataService
-                    .GetAllByProblem(problem.Id)
-                    .Where(s => s.SubmissionTypeId == submissionType.Id);
+                var problemsInContestContainingSubmissionTypeToReplace = contest.ProblemGroups
+                    .Where(pg => pg.Problems
+                        .Any(p => p.SubmissionTypesInProblems
+                            .Any(st => st.SubmissionTypeId == model.SubmissionTypeToReplace)))
+                    .SelectMany(pg => pg.Problems);
 
-                if (!shouldDoSubmissionsDeletion)
+                foreach (var problem in problemsInContestContainingSubmissionTypeToReplace)
                 {
-                    submissions.ForEach(s =>
+                    var submissions = this.submissionsDataService
+                        .GetAllByProblem(problem.Id)
+                        .Where(s => s.SubmissionTypeId == submissionTypeToReplaceOrDelete.Id);
+
+                    if (!shouldDoSubmissionsDeletion)
                     {
-                        s.SubmissionTypeId = submissionTypeToReplaceWith!.Id;
-                        s.ProcessingComment = $"{s.ProcessingComment}{Environment.NewLine}The submission type of this submission was updated from {submissionType.Name} to {submissionTypeToReplaceWith.Name} and changes to the problem or submission might be needed for correct execution.";
-
-                        this.submissionsDataService.Update(s);
-                    });
-
-                    var alreadyContainsSubmissionTypeToReplace = problem
-                        .SubmissionTypesInProblems
-                        .Any(s => s.SubmissionTypeId == model.SubmissionTypeToReplaceWith!.Value);
-
-                    if (!alreadyContainsSubmissionTypeToReplace)
-                    {
-                        await this.submissionTypesInProblemsDataService.Add(new SubmissionTypeInProblem
+                        submissions.ForEach(s =>
                         {
-                            Problem = problem,
-                            SubmissionType = submissionTypeToReplaceWith!,
+                            s.SubmissionTypeId = submissionTypeToReplaceWith!.Id;
+                            s.ProcessingComment = $"{s.ProcessingComment}{Environment.NewLine}The submission type of this submission was updated from {submissionTypeToReplaceOrDelete.Name} to {submissionTypeToReplaceWith.Name} and changes to the problem or submission might be needed for correct execution.";
+
+                            this.submissionsDataService.Update(s);
                         });
+
+                        var alreadyContainsSubmissionTypeToReplace = problem
+                            .SubmissionTypesInProblems
+                            .Any(s => s.SubmissionTypeId == model.SubmissionTypeToReplaceWith!.Value);
+
+                        if (!alreadyContainsSubmissionTypeToReplace)
+                        {
+                            await this.submissionTypesInProblemsDataService.Add(new SubmissionTypeInProblem
+                            {
+                                Problem = problem,
+                                SubmissionType = submissionTypeToReplaceWith!,
+                            });
+                        }
+                    }
+                    else
+                    {
+                        var submissionIds = submissions.Select(s => s.Id);
+
+                        var participantScores = this.participantScoresData
+                            .GetAllByProblem(problem.Id)
+                            .Where(ps => submissionIds.Contains(ps.SubmissionId!.Value))
+                            .ToList();
+
+                        await this.participantScoresData.Delete(participantScores);
+                        await this.testRunsData.DeleteBySubmissions(submissionIds);
+
+                        this.submissionsDataService.DeleteMany(submissions);
                     }
                 }
-                else
-                {
-                    var submissionIds = submissions.Select(s => s.Id);
-
-                    var participantScores = this.participantScoresData
-                        .GetAllByProblem(problem.Id)
-                        .Where(ps => submissionIds.Contains(ps.SubmissionId!.Value))
-                        .ToList();
-
-                    await this.participantScoresData.Delete(participantScores);
-                    await this.testRunsData.DeleteBySubmissions(submissionIds);
-
-                    this.submissionsDataService.DeleteMany(submissions);
-                }
             }
-        }
 
-        this.submissionTypesDataService.Delete(submissionType);
+            this.submissionTypesDataService.Delete(submissionTypeToReplaceOrDelete);
 
-        await this.submissionTypesDataService.SaveChanges();
+            await this.submissionTypesDataService.SaveChanges();
+        });
 
-        scope.Complete();
-        scope.Dispose();
+        // var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        //
+        // scope.Complete();
+        // scope.Dispose();
 
         return stringBuilder.ToString();
     }
