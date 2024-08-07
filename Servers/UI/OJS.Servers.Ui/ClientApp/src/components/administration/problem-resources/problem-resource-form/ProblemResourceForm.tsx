@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
@@ -23,11 +24,12 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IProblemResourceFormProps {
     id: number;
     isEditMode?: boolean;
-
     problemId? : number;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 const ProblemResourceForm = (props :IProblemResourceFormProps) => {
-    const { id, isEditMode = true, problemId = 0 } = props;
+    const { id, isEditMode = true, problemId = 0, onSuccess, setParentSuccessMessage } = props;
 
     const [ currentResource, setCurrentResource ] = useState<IProblemResourceAdministrationModel>({
         id: 0,
@@ -70,6 +72,14 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
     } = useDownloadResourceQuery(Number(id), { skip: skipDownload });
 
     useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
         if (resourceData) {
             setCurrentResource(resourceData);
         }
@@ -85,8 +95,12 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
             { message: updateData, shouldGet: isSuccessfullyUpdated },
         ]);
 
-        setSuccessMessages(message);
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessages(message);
+        }
+    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData, setParentSuccessMessage ]);
 
     useEffect(() => {
         if (downloadData?.blob) {

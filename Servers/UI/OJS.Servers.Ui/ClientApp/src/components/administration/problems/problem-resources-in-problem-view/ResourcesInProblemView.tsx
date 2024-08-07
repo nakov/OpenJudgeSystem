@@ -5,17 +5,19 @@ import AdministrationGridView from '../../../../pages/administration-new/Adminis
 import problemResourceFilterableColumns, { returnProblemResourceNonFilterableColumns } from '../../../../pages/administration-new/problem-resources/problemResourcesGridColumns';
 import { useGetResourcesQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
+import { renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import ProblemResourceForm from '../../problem-resources/problem-resource-form/ProblemResourceForm';
 
 interface IResourceInproblemViewProps {
-problemId: number;
+    problemId: number;
 }
 
 const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
     const { problemId } = props;
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
     const themeMode = useAppSelector((x) => x.theme.administrationMode);
@@ -32,24 +34,29 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
         setProblemResourceId(id);
     };
 
-    const renderProblemResourceModal = (index: number, isCreate: boolean) => (
-        <AdministrationModal
-          key={index}
-          index={index}
-          open={isCreate
-              ? showCreateModal
-              : openEditModal}
-          onClose={() => isCreate
-              ? setShowCreateModal(!showCreateModal)
-              : setOpenEditModal(false)}
-        >
-            <ProblemResourceForm
-              id={problemResourceId}
-              isEditMode={!isCreate}
-              problemId={problemId}
-            />
-        </AdministrationModal>
-    );
+    const renderProblemResourceModal = (index: number, isCreate: boolean) => {
+        const onClose = () => isCreate
+            ? setShowCreateModal(!showCreateModal)
+            : setOpenEditModal(false);
+        return (
+            <AdministrationModal
+              key={index}
+              index={index}
+              open={isCreate
+                  ? showCreateModal
+                  : openEditModal}
+              onClose={onClose}
+            >
+                <ProblemResourceForm
+                  id={problemResourceId}
+                  isEditMode={!isCreate}
+                  problemId={problemId}
+                  onSuccess={onClose}
+                  setParentSuccessMessage={setSuccessMessage}
+                />
+            </AdministrationModal>
+        );
+    };
 
     const renderGridSettings = () => (
         <CreateButton
@@ -64,19 +71,22 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
         return <SpinningLoader />;
     }
     return (
-        <AdministrationGridView
-          filterableGridColumnDef={problemResourceFilterableColumns}
-          notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
-          data={resourcesData}
-          error={resourcesError}
-          showFiltersAndSorters={false}
-          renderActionButtons={renderGridSettings}
-          legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'Problem Resource is deleted.' } ]}
-          modals={[
-              { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i, false) },
-              { showModal: showCreateModal, modal: (i) => renderProblemResourceModal(i, true) },
-          ]}
-        />
+        <>
+            {renderSuccessfullAlert(successMessage)}
+            <AdministrationGridView
+              filterableGridColumnDef={problemResourceFilterableColumns}
+              notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
+              data={resourcesData}
+              error={resourcesError}
+              showFiltersAndSorters={false}
+              renderActionButtons={renderGridSettings}
+              legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'Problem Resource is deleted.' } ]}
+              modals={[
+                  { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i, false) },
+                  { showModal: showCreateModal, modal: (i) => renderProblemResourceModal(i, true) },
+              ]}
+            />
+        </>
     );
 };
 
