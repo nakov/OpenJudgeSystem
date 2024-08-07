@@ -88,7 +88,7 @@ const CheckerForm = (props: ICheckerFormProps) => {
         } else {
             setSuccessMessage(message);
         }
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
+    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;

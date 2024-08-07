@@ -12,7 +12,7 @@ import { useGetAllAdminProblemGroupsQuery, useLazyExportProblemGroupsToExcelQuer
 import { useAppSelector } from '../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import {renderErrorMessagesAlert, renderSuccessfullAlert} from '../../../utils/render-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
 

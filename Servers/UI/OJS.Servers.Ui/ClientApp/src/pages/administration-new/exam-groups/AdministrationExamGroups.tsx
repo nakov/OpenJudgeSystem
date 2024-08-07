@@ -12,6 +12,7 @@ import {
     useLazyExportExamGroupsToExcelQuery,
 } from '../../../redux/services/admin/examGroupsAdminService';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
@@ -79,20 +80,23 @@ const AdministrationExamGroupsPage = () => {
     }
 
     return (
-        <AdministrationGridView
-          data={data}
-          error={error}
-          filterableGridColumnDef={examGroupsFilterableColumns}
-          notFilterableGridColumnDef={returnExamGroupsNonFilterableColumns(onEditClick)}
-          renderActionButtons={renderGridActions}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-          modals={[
-              { showModal: openShowCreateExamGroupModal, modal: (i) => renderExamGroupModal(i, false, null) },
-              { showModal: openEditExamGroupModal, modal: (i) => renderExamGroupModal(i, true, Number(examGroupId)) },
-          ]}
-          excelMutation={useLazyExportExamGroupsToExcelQuery}
-        />
+        <>
+            {renderSuccessfullAlert(successMessage)}
+            <AdministrationGridView
+              data={data}
+              error={error}
+              filterableGridColumnDef={examGroupsFilterableColumns}
+              notFilterableGridColumnDef={returnExamGroupsNonFilterableColumns(onEditClick)}
+              renderActionButtons={renderGridActions}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
+              modals={[
+                  { showModal: openShowCreateExamGroupModal, modal: (i) => renderExamGroupModal(i, false, null) },
+                  { showModal: openEditExamGroupModal, modal: (i) => renderExamGroupModal(i, true, Number(examGroupId)) },
+              ]}
+              excelMutation={useLazyExportExamGroupsToExcelQuery}
+            />
+        </>
     );
 };
 
