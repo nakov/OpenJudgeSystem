@@ -26,10 +26,12 @@ interface IExamGroupEditProps {
     examGroupId: number | null;
     isEditMode?: boolean;
     getContestId?: Function;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const ExamGroupEdit = (props:IExamGroupEditProps) => {
-    const { examGroupId, isEditMode = true, getContestId } = props;
+    const { examGroupId, isEditMode = true, getContestId, onSuccess, setParentSuccessMessage } = props;
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
@@ -60,17 +62,25 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             isSuccess:
-                isSuccesfullyUpdated,
+                isSuccessfullyUpdated,
             error: updateError,
         } ] = useUpdateExamGroupMutation();
 
     const [
         createExamGroup, {
             data: createData,
-            isSuccess: isSuccesfullyCreated,
+            isSuccess: isSuccessfullyCreated,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateExamGroupMutation();
+
+    useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
 
     useEffect(
         () => {
@@ -99,14 +109,14 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
 
     useEffect(() => {
         setErrorMessages([]);
-        if (isSuccesfullyUpdated) {
+        if (isSuccessfullyUpdated) {
             setSuccessMessage(updateData as string);
             setErrorMessages([]);
-        } if (isSuccesfullyCreated) {
+        } if (isSuccessfullyCreated) {
             setSuccessMessage(createData as string);
             setErrorMessages([]);
         }
-    }, [ isSuccesfullyUpdated, updateData, createData, isSuccesfullyCreated ]);
+    }, [ isSuccessfullyUpdated, updateData, createData, isSuccessfullyCreated ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ updateError, createError ], setErrorMessages);
@@ -114,10 +124,15 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
-            { message: updateData, shouldGet: isSuccesfullyUpdated },
-            { message: createData, shouldGet: isSuccesfullyCreated } ]);
-        setSuccessMessage(message);
-    }, [ updateData, createData, isSuccesfullyUpdated, isSuccesfullyCreated ]);
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+            { message: createData, shouldGet: isSuccessfullyCreated } ]);
+
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessage(message);
+        }
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     const validateForm = () => {
         const isValid = examGroupValidations.isNameValid;
