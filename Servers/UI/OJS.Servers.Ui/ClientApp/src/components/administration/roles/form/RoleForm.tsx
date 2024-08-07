@@ -17,12 +17,14 @@ interface IRoleFormProps {
     id?: string | null;
     isEditMode?: boolean;
     getRoleName?: Function;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const RoleForm = (props: IRoleFormProps) => {
-    const { id, isEditMode = true, getRoleName } = props;
+    const { id, isEditMode = true, getRoleName, onSuccess, setParentSuccessMessage } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
-    const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
     const [ role, setRole ] = useState<IRoleAdministrationModel>({
         id: null,
@@ -56,6 +58,14 @@ const RoleForm = (props: IRoleFormProps) => {
     ] = useUpdateRoleMutation();
 
     useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
         if (roleData) {
             setRole(roleData);
             if (getRoleName) {
@@ -74,8 +84,12 @@ const RoleForm = (props: IRoleFormProps) => {
             { message: updateData, shouldGet: isSuccessfullyUpdated },
         ]);
 
-        setSuccessfullMessage(message);
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessage(message);
+        }
+    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -92,7 +106,7 @@ const RoleForm = (props: IRoleFormProps) => {
 
     return (
         <>
-            {renderSuccessfullAlert(successfullMessage)}
+            {renderSuccessfullAlert(successMessage)}
             {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Role administration form</Typography>
             <form className={formStyles.form}>
