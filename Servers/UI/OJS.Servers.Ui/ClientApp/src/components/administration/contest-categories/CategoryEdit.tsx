@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 
@@ -12,7 +13,7 @@ import {
     useGetContestCategoryByIdQuery, useUpdateContestCategoryByIdMutation,
 } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
+import { renderErrorMessagesAlert } from '../../../utils/render-utils';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -21,6 +22,8 @@ import styles from './CategoryEdit.module.scss';
 interface IContestCategoryEditProps {
     contestCategoryId: number | null;
     isEditMode?: boolean;
+    setSuccessMessage: Function;
+    onSuccess: Function;
 }
 
 const initialState : IContestCategoryAdministration = {
@@ -36,10 +39,9 @@ const initialState : IContestCategoryAdministration = {
 };
 
 const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
-    const { contestCategoryId, isEditMode = true } = props;
+    const { contestCategoryId, isEditMode = true, onSuccess, setSuccessMessage } = props;
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
 
     const [ contestCategory, setContestCategory ] = useState<IContestCategoryAdministration>(initialState);
@@ -58,20 +60,27 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         updateContestCategory, {
             data: updateData,
             isLoading: isUpdating,
-            isSuccess:
-                isSuccesfullyUpdated,
+            isSuccess: isSuccessfullyUpdated,
             error: updateError,
         } ] = useUpdateContestCategoryByIdMutation();
 
     const [
         createContestCategory, {
             data: createData,
-            isSuccess: isSuccesfullyCreated,
+            isSuccess: isSuccessfullyCreated,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestCategoryMutation();
 
     useDisableMouseWheelOnNumberInputs();
+
+    useEffect(() => {
+        if ((isSuccessfullyUpdated || isSuccessfullyCreated) && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, isSuccessfullyUpdated, onSuccess ]);
 
     useEffect(
         () => {
@@ -83,19 +92,20 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     );
 
     useEffect(() => {
-        if (isSuccesfullyUpdated) {
+        if (isSuccessfullyUpdated) {
             setSuccessMessage(updateData as string);
             setErrorMessages([]);
         }
-        if (isSuccesfullyCreated) {
+
+        if (isSuccessfullyCreated) {
             setSuccessMessage(createData as string);
             setErrorMessages([]);
         }
-    }, [ createData, isSuccesfullyCreated, isSuccesfullyUpdated, updateData ]);
+    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, setSuccessMessage, updateData ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-    }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
+    }, [ createError, isSuccessfullyCreated, isSuccessfullyUpdated, updateError ]);
 
     useEffect(() => () => {
         setContestCategory(initialState);
@@ -191,7 +201,6 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             : (
                 <div className={`${styles.flex}`}>
                     {renderErrorMessagesAlert(errorMessages)}
-                    {renderSuccessfullAlert(successMessage)}
                     <Typography className={styles.centralize} variant="h4">
                         {isEditMode
                             ? contestCategory.name
