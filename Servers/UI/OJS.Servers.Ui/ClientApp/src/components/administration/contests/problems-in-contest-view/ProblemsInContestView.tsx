@@ -103,34 +103,40 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         setProblemToRetestId(id);
     };
 
-    const renderProblemModal = (index: number, isCreate: boolean) => (
-        <AdministrationModal
-          index={index}
-          open={isCreate
-              ? openShowCreateProblemModal
-              : openEditModal}
-          onClose={() => isCreate
-              ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
-              : setOpenEditModal(false)}
-        >
-            {isCreate
-                ? (
-                    <ProblemForm
-                      contestId={Number(contestId)}
-                      contestName={contestName}
-                      problemId={null}
-                      isEditMode={false}
-                      contestType={contestType!}
-                    />
-                )
-                : (
-                    <ProblemForm
-                      problemId={problemId}
-                      contestType={null}
-                    />
-                )}
-        </AdministrationModal>
-    );
+    const renderProblemModal = (index: number, isCreate: boolean) => {
+        const onClose = () => isCreate
+            ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
+            : setOpenEditModal(false);
+
+        return (
+            <AdministrationModal
+              index={index}
+              open={isCreate
+                  ? openShowCreateProblemModal
+                  : openEditModal}
+              onClose={onClose}
+            >
+                {isCreate
+                    ? (
+                        <ProblemForm
+                          contestId={Number(contestId)}
+                          contestName={contestName}
+                          problemId={null}
+                          isEditMode={false}
+                          contestType={contestType!}
+                          onSuccess={onClose}
+                          setParentSuccessMessage={setSuccessMessage}
+                        />
+                    )
+                    : (
+                        <ProblemForm
+                          problemId={problemId}
+                          contestType={null}
+                        />
+                    )}
+            </AdministrationModal>
+        );
+    };
 
     const renderDeleteAllModal = (index: number) => (
         <ConfirmDialog

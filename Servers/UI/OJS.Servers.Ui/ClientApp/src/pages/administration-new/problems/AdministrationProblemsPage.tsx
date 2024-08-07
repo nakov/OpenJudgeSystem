@@ -82,6 +82,8 @@ const AdministrationProblemsPage = () => {
               isEditMode
               contestId={null}
               contestName={null}
+              onSuccess={() => onEditModalClose()}
+              setParentSuccessMessage={setSuccessMessage}
             />
         </AdministrationModal>
     );

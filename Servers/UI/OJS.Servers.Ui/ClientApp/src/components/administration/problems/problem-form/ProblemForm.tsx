@@ -30,6 +30,8 @@ interface IProblemFormCreateProps extends IProblemFormProps{
     contestName: string | undefined;
     contestType: ContestVariation;
     problemId: null;
+    onSuccess: Function;
+    setParentSuccessMessage: Function;
 }
 
 interface IProblemFormEditProps extends IProblemFormProps{
@@ -37,6 +39,8 @@ interface IProblemFormEditProps extends IProblemFormProps{
     contestName?: null;
     contestType?: null;
     problemId: number;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const defaultMaxPoints = 100;
@@ -45,7 +49,17 @@ const defaultTimeLimit = 100;
 const defaultSourceCodeSizeLimit = 16384;
 
 const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => {
-    const { problemId, isEditMode = true, contestId, contestName, contestType, getName, getContestId } = props;
+    const {
+        problemId,
+        isEditMode = true,
+        contestId,
+        contestName,
+        contestType,
+        getName,
+        getContestId,
+        onSuccess,
+        setParentSuccessMessage,
+    } = props;
 
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ problemGroupIds, setProblemGroupsIds ] = useState<Array<IProblemGroupDropdownModel>>([]);
@@ -87,6 +101,14 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
 
     useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
         if (problemGroupData) {
             setProblemGroupsIds(problemGroupData);
         }
@@ -116,8 +138,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     }, [ updateError, createError, gettingDataError ]);
 
     useEffect(() => {
-        let successMessage: string | null = '';
-        successMessage = getAndSetSuccesfullMessages([
+        const message = getAndSetSuccesfullMessages([
             {
                 message: updateData,
                 shouldGet: isSuccessfullyUpdated,
@@ -127,8 +148,13 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                 shouldGet: isSuccessfullyCreated,
             },
         ]);
-        setSuccessMessages(successMessage);
-    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated ]);
+
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessages(message);
+        }
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;
