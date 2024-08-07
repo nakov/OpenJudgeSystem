@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
@@ -25,14 +26,15 @@ interface ITestFormProps {
     id?:number;
     problemName?: string;
     isEditMode?: boolean;
-
     problemId?: number;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 const TestForm = (props: ITestFormProps) => {
-    const { id = 0, isEditMode = true, problemName = '', problemId = 0 } = props;
+    const { id = 0, isEditMode = true, problemName = '', problemId = 0, onSuccess, setParentSuccessMessage } = props;
 
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
-    const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ test, setTest ] = useState<ITestAdministration>({
         id,
         input: '',
@@ -58,6 +60,14 @@ const TestForm = (props: ITestFormProps) => {
     useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
+        if (isSuccessfullyCreated && onSuccess) {
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
+        }
+    }, [ isSuccessfullyCreated, onSuccess ]);
+
+    useEffect(() => {
         if (testData) {
             setTest(testData);
         }
@@ -72,8 +82,13 @@ const TestForm = (props: ITestFormProps) => {
             { message: editData, shouldGet: isSuccessfullyEdited },
             { message: createData, shouldGet: isSuccessfullyCreated },
         ]);
-        setSuccessfullMessage(message);
-    }, [ editData, createData, isSuccessfullyEdited, isSuccessfullyCreated ]);
+
+        if (setParentSuccessMessage) {
+            setParentSuccessMessage(message);
+        } else {
+            setSuccessMessage(message);
+        }
+    }, [ editData, createData, isSuccessfullyEdited, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -96,7 +111,7 @@ const TestForm = (props: ITestFormProps) => {
 
     return (
         <>
-            {renderSuccessfullAlert(successfullMessage)}
+            {renderSuccessfullAlert(successMessage)}
             {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Test administration form</Typography>
             <form className={formStyles.form}>

@@ -208,6 +208,8 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
               isEditMode={isEditMode}
               problemName={problemName}
               problemId={problemId}
+              onSuccess={() => onClose(isEditMode)}
+              setParentSuccessMessage={setSuccessMessage}
             />
         </AdministrationModal>
     );
