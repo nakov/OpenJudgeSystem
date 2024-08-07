@@ -90,6 +90,7 @@ const SubmissionDetailsPage = () => {
         userIsInRoleForContest,
         isOfficial,
         maxPoints,
+        processingComment,
     } = data || {};
 
     const handleRetestSubmission = useCallback(() => {
@@ -395,6 +396,19 @@ const SubmissionDetailsPage = () => {
                             </div>
                         </div>
                         {renderAdminButtons()}
+                        {processingComment && user.isAdmin && (
+                        <div className={concatClassNames(
+                            styles.processingErrorWrapper,
+                            textColorClassName,
+                            isDarkMode
+                                ? styles.darkTheme
+                                : '',
+                        )}
+                        >
+                            <div>A processing error occurred:</div>
+                            <MultiLineTextDisplay text={processingComment} maxVisibleLines={50} />
+                        </div>
+                        )}
                         {renderSubmissionExecutionDetails()}
                         {content && (
                             <div className={styles.codeContentWrapper} id="code-content-wrapper">
