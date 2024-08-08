@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { EDIT } from '../../../common/labels';
+import { EDIT, TEST } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
@@ -98,7 +98,7 @@ export const returnTestsNonFilterableColumns = (
                 <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton
                   id={Number(params.row.id)}
-                  name={params.row.name}
+                  name={`${TEST}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={useDeleteTestMutation}
                   onSuccess={onSuccessFullDelete}
