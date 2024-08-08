@@ -14,6 +14,7 @@ COPY PubSub ./PubSub
 COPY Data ./Data
 COPY Services/Common ./Services/Common
 COPY Services/Infrastructure ./Services/Infrastructure
+COPY SignalR ./SignalR
 
 FROM build AS publish
 RUN dotnet publish Servers/Administration/OJS.Servers.Administration/OJS.Servers.Administration.csproj -c Release -o /app/publish

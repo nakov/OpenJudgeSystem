@@ -2,6 +2,7 @@ namespace OJS.Servers.Worker.Extensions;
 
 using Microsoft.AspNetCore.Builder;
 using OJS.Servers.Infrastructure.Extensions;
+using OJS.SignalR.Extensions;
 
 internal static class WebApplicationExtensions
 {
@@ -9,6 +10,7 @@ internal static class WebApplicationExtensions
     {
         app.UseCustomExceptionHandling();
         app.UseAutoMapper();
+        app.RegisterSignalRHubs();
         app.MapControllers();
 
         app.UseHealthMonitoring();

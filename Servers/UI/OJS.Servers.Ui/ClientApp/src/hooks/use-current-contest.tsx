@@ -335,14 +335,14 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             } as IContestType);
 
             const { participantId: registerParticipantId } = registerForContestData;
-            if (!isNil(registerParticipantId) || user.isAdmin) {
+            if (!isNil(registerParticipantId) || user?.isAdmin) {
                 setUserHasConfirmedModal(true);
             }
 
             setRequirePassword(responseRequirePassword);
             setContestError(null);
         },
-        [ registerForContestData, registerContestError, user.isAdmin ],
+        [ registerForContestData, registerContestError, user?.isAdmin ],
     );
 
     useEffect(() => {

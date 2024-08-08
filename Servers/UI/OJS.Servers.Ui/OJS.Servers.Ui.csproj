@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Business\OJS.Services.Ui.Business.csproj" />
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
+    <ProjectReference Include="..\..\..\SignalR\OJS.SignalR\OJS.SignalR.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
     <ProjectReference Include="..\OJS.Servers.Ui.Models\OJS.Servers.Ui.Models.csproj" />
   </ItemGroup>

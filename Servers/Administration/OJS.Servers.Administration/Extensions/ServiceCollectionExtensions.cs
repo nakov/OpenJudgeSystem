@@ -15,6 +15,7 @@ using OJS.Services.Administration.Data.Implementations;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Configurations;
+using OJS.SignalR.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -42,6 +43,7 @@ internal static class ServiceCollectionExtensions
             .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
             .AddMemoryCache()
             .AddDistributedCaching(configuration)
+            .RegisterSignalR()
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()

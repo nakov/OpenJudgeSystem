@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using OJS.Data;
 using OJS.Servers.Administration.Middleware;
 using OJS.Servers.Infrastructure.Extensions;
+using OJS.SignalR.Extensions;
 
 internal static class WebApplicationExtensions
 {
@@ -16,6 +17,8 @@ internal static class WebApplicationExtensions
 
         app.UseMiddleware<AdministrationExceptionMiddleware>();
         app.MigrateDatabase<OjsDbContext>();
+
+        app.RegisterSignalRHubs();
 
         app.UseHealthMonitoring();
         app.MapControllers();

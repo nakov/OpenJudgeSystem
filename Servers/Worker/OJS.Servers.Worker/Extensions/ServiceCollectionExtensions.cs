@@ -7,6 +7,7 @@ using OJS.Services.Worker.Business.Implementations;
 using OJS.Services.Worker.Models.Configuration;
 using OJS.Workers.Compilers;
 using OJS.Workers.ExecutionStrategies;
+using OJS.SignalR.Extensions;
 using ApplicationConfig = OJS.Services.Worker.Models.Configuration.ApplicationConfig;
 
 internal static class ServiceCollectionExtensions
@@ -20,7 +21,8 @@ internal static class ServiceCollectionExtensions
             .AddHttpContextServices()
             .AddSingleton<ICompilerFactory, CompilerFactory>()
             .AddSingleton<IExecutionStrategySettingsProvider, ExecutionStrategySettingsProvider>()
-            .AddMemoryCache();
+            .AddMemoryCache()
+            .RegisterSignalR();
 
         if (configuration.GetSectionValueWithValidation<ApplicationConfig, bool>(nameof(ApplicationConfig.UseMessageQueue)))
         {

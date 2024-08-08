@@ -5,6 +5,7 @@ namespace OJS.Servers.Ui.Extensions
     using OJS.Common;
     using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.SignalR.Extensions;
 
     internal static class WebApplicationExtensions
     {
@@ -16,6 +17,8 @@ namespace OJS.Servers.Ui.Extensions
             app.UseDefaults();
 
             app.MigrateDatabase<OjsDbContext>();
+
+            app.RegisterSignalRHubs();
 
             if (app.Environment.IsDevelopment())
             {

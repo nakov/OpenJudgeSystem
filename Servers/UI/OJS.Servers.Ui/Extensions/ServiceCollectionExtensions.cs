@@ -8,6 +8,7 @@ namespace OJS.Servers.Ui.Extensions
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.Configurations;
+    using OJS.SignalR.Extensions;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.BackgroundJobs;
     using ApplicationConfig = OJS.Services.Ui.Models.ApplicationConfig;
@@ -39,6 +40,7 @@ namespace OJS.Servers.Ui.Extensions
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
                 .AddMemoryCache()
                 .AddDistributedCaching(configuration)
+                .RegisterSignalR()
                 .AddLogging()
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<ApplicationUrlsConfig>()

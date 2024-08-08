@@ -104,7 +104,7 @@ const PageHeader = () => {
                 >
                     <Link to={getAllContestsPageUrl({})} className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Contests</Link>
                     <Link to="/submissions" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Submissions</Link>
-                    {user.canAccessAdministration && (
+                    {user?.canAccessAdministration && (
                         <Link
                           to={`/${NEW_ADMINISTRATION_PATH}`}
                           target="_blank"
@@ -130,7 +130,7 @@ const PageHeader = () => {
                 </div>
             );
         },
-        [ areBurgerItemsOpened, isLoggedIn, user.canAccessAdministration ],
+        [ areBurgerItemsOpened, isLoggedIn, user?.canAccessAdministration ],
     );
 
     const onBurgerClick = (e: any) => {
@@ -151,7 +151,7 @@ const PageHeader = () => {
                 <div className={styles.navButtons}>
                     <Link to={getAllContestsPageUrl({})} className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                    {user.canAccessAdministration &&
+                    {user?.canAccessAdministration &&
                         <Link to={`/${NEW_ADMINISTRATION_PATH}`} target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
                 </div>
             </div>

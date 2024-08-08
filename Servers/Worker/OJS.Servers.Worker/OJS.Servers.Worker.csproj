@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj" />
     <ProjectReference Include="..\..\..\Services\Worker\OJS.Services.Worker.Business\OJS.Services.Worker.Business.csproj" />
+    <ProjectReference Include="..\..\..\SignalR\OJS.SignalR\OJS.SignalR.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
     <ProjectReference Include="..\OJS.Servers.Worker.Models\OJS.Servers.Worker.Models.csproj" />
   </ItemGroup>

@@ -12,6 +12,7 @@ COPY Data/ ./Data/
 COPY Servers/Infrastructure ./Servers/Infrastructure
 COPY Services/Common ./Services/Common
 COPY Services/Infrastructure ./Services/Infrastructure
+COPY SignalR ./SignalR
 
 WORKDIR Servers/Worker/OJS.Servers.Worker
 RUN dotnet publish OJS.Servers.Worker.csproj -c Release --verbosity q -o /app
