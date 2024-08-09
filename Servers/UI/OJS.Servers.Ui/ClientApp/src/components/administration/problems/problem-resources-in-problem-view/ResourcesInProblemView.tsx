@@ -87,22 +87,22 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
 
     return (
         <>
-          {renderSuccessfullAlert(successMessage)}
-          <AdministrationGridView
-            filterableGridColumnDef={problemResourceFilterableColumns}
-            notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
-            data={resourcesData}
-            error={resourcesError}
-            queryParams={queryParams}
-            setQueryParams={setQueryParams}
-            withSearchParams={false}
-            renderActionButtons={renderGridSettings}
-            legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'Problem Resource is deleted.' } ]}
-            modals={[
-                { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i, false) },
-                { showModal: showCreateModal, modal: (i) => renderProblemResourceModal(i, true) },
-            ]}
-          />
+            {renderSuccessfullAlert(successMessage)}
+            <AdministrationGridView
+              filterableGridColumnDef={problemResourceFilterableColumns}
+              notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
+              data={resourcesData}
+              error={resourcesError}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
+              withSearchParams={false}
+              renderActionButtons={renderGridSettings}
+              legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'Problem Resource is deleted.' } ]}
+              modals={[
+                  { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i, false) },
+                  { showModal: showCreateModal, modal: (i) => renderProblemResourceModal(i, true) },
+              ]}
+            />
         </>
     );
 };
