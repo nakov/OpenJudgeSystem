@@ -16,7 +16,7 @@ public class LokiHealthCheck : IHealthCheck
         HealthCheckContext context,
         CancellationToken cancellationToken = new())
     {
-        var response = await this.client.GetAsync("/ready", cancellationToken);
+        var response = await this.client.GetAsync("ready", cancellationToken);
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         return response.IsSuccessStatusCode
