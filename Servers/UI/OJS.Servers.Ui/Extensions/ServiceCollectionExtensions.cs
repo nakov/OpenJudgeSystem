@@ -1,9 +1,7 @@
 namespace OJS.Servers.Ui.Extensions
 {
-    using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
@@ -20,16 +18,8 @@ namespace OJS.Servers.Ui.Extensions
         public static void ConfigureServices(
             this IServiceCollection services,
             IConfiguration configuration,
-            IWebHostEnvironment environment,
             string apiVersion)
-        {
-            if (environment.IsDevelopment())
-            {
-                services
-                    .AddSpaStaticFiles(cnfg => { cnfg.RootPath = "ClientApp/dist"; });
-            }
-
-            services
+            => services
                 .AddWebServer<Program>(configuration)
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(configuration, AppName, new[] { UiQueueName })
@@ -42,7 +32,6 @@ namespace OJS.Servers.Ui.Extensions
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<ApplicationUrlsConfig>()
                 .AddOptionsWithValidation<EmailServiceConfig>()
-                .AddControllersWithViews();
-        }
+                .AddControllers();
     }
 }

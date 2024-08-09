@@ -10,7 +10,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.ConfigureServices(builder.Configuration);
+        builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
         builder.Host.UseLogger(builder.Environment);
 
         var app = builder.Build();

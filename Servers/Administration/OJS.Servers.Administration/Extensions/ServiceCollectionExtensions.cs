@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using OJS.Common;
 using OJS.Common.Exceptions;
@@ -29,7 +30,8 @@ internal static class ServiceCollectionExtensions
 
     public static void ConfigureServices(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostEnvironment environment)
         => services
             .AddGridServices()
             .AddValidators()
@@ -47,7 +49,7 @@ internal static class ServiceCollectionExtensions
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()
-            .AddHealthChecksDashboard()
+            .AddHealthChecksDashboard(environment, configuration)
             .AddControllers()
             .ConfigureApiBehaviorOptions(options =>
             {
@@ -85,21 +87,91 @@ internal static class ServiceCollectionExtensions
         => services
             .AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>));
 
-    private static IServiceCollection AddHealthChecksDashboard(this IServiceCollection services)
+    private static IServiceCollection AddHealthChecksDashboard(
+        this IServiceCollection services,
+        IHostEnvironment environment,
+        IConfiguration configuration)
     {
+        var microsoftTeamsWebhookUri = configuration
+            .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.MicrosoftTeamsWebhookUri));
+        var payload = GetHealthCheckPayload(environment, configuration);
+        var restorePayload = GetRestorePayload(environment);
+
         services
-            .AddHealthChecksUI(settings =>
-            {
-                settings.SetNotifyUnHealthyOneTimeUntilChange(); // Notify once until status changes.
-                settings.MaximumHistoryEntriesPerEndpoint(100); // Keep only 100 entries in history.
-                settings.ConfigureApiEndpointHttpclient((sp, client) =>
+            .AddHealthChecksUI(settings => settings
+                .AddWebhookNotification("Microsoft Teams", microsoftTeamsWebhookUri, payload, restorePayload)
+                .SetNotifyUnHealthyOneTimeUntilChange() // Notify once until status changes.
+                .MaximumHistoryEntriesPerEndpoint(100) // Keep only 100 entries in history.
+                .ConfigureApiEndpointHttpclient((sp, client) =>
                 {
                     var apiKey = sp.GetRequiredService<IOptions<ApplicationConfig>>().Value.ApiKey;
                     client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.ApiKey, apiKey);
-                });
-            })
+                }))
             .AddInMemoryStorage();
 
         return services;
+    }
+
+    private static string GetRestorePayload(IHostEnvironment environment)
+        => $$"""
+        {
+            "attachments": [
+                 {
+                   "contentType": "application/vnd.microsoft.card.adaptive",
+                   "content": {
+                     "type": "AdaptiveCard",
+                     "body": [
+                       {
+                         "type": "TextBlock",
+                         "text": "[[LIVENESS]] has been restored on {{environment.EnvironmentName}}!"
+                       }
+                     ],
+                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                         "version": "1.0"
+                       }
+                }
+            ]
+        }
+        """;
+
+    private static string GetHealthCheckPayload(IHostEnvironment environment, IConfiguration configuration)
+    {
+        var administrationUrl = configuration.GetSectionValueWithValidation<ApplicationUrlsConfig, string>(nameof(ApplicationUrlsConfig.AdministrationUrl));
+
+        return $$"""
+                 {
+                   "attachments": [
+                     {
+                       "contentType": "application/vnd.microsoft.card.adaptive",
+                       "content": {
+                         "type": "AdaptiveCard",
+                         "body": [
+                           {
+                             "type": "TextBlock",
+                             "text": "[[LIVENESS]] has failed on {{environment.EnvironmentName}}!"
+                           },
+                           {
+                             "type": "TextBlock",
+                             "text": "[[FAILURE]]"
+                           },
+                           {
+                             "type": "TextBlock",
+                             "text": "[[DESCRIPTIONS]]"
+                           }
+                         ],
+                         "actions": [
+                           {
+                             "type": "Action.OpenUrl",
+                             "title": "Check health status",
+                             "url": "{{administrationUrl}}/healthchecks-ui"
+                           }
+                         ],
+                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                         "version": "1.0"
+                       }
+                     }
+                   ]
+                 }
+                 """;
     }
 }

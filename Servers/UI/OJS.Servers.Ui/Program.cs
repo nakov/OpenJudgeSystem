@@ -12,7 +12,7 @@ namespace OJS.Servers.Ui
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.ConfigureServices(builder.Configuration, builder.Environment, ApiVersion);
+            builder.Services.ConfigureServices(builder.Configuration, ApiVersion);
             builder.Host.UseLogger(builder.Environment);
 
             var app = builder.Build();
