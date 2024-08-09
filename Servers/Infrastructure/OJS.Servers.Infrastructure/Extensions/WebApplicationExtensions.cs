@@ -23,8 +23,6 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             app.UseAutoMapper();
 
-            // app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
