@@ -171,7 +171,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
           text={`Are you sure you want to delete all tests for ${testsData?.items
               ? testsData?.items[0].problemName
               : ''}`}
-          title="Delete All Problems"
+          title="Delete All Tests"
           declineButtonText="Close"
           confirmButtonText="Delete"
           declineFunction={() => setShowDeleteAllConfirm(!showDeleteAllConfirm)}

@@ -134,12 +134,12 @@ namespace OJS.Data.Models.Submissions
                 var trialTests = 0;
 
                 var orderedTestRuns = this.TestRuns
-                    .OrderByDescending(tr => tr.Test.IsTrialTest)
+                    .OrderByDescending(tr => tr.IsTrialTest)
                     .ThenBy(tr => tr.Id);
 
                 foreach (var testRun in orderedTestRuns)
                 {
-                    if (testRun.Test.IsTrialTest)
+                    if (testRun.IsTrialTest)
                     {
                         trialTests++;
                     }

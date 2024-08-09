@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 
+import { IGetAllAdminParams } from '../../../../common/types';
 import { getColors } from '../../../../hooks/use-administration-theme-provider';
-import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
-import problemResourceFilterableColumns, { returnProblemResourceNonFilterableColumns } from '../../../../pages/administration-new/problem-resources/problemResourcesGridColumns';
+import {
+    applyDefaultFilterToQueryString,
+} from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
+import problemResourceFilterableColumns, {
+    returnProblemResourceNonFilterableColumns,
+} from '../../../../pages/administration-new/problem-resources/problemResourcesGridColumns';
 import { useGetResourcesQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
 import { renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -22,12 +28,14 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
     const themeMode = useAppSelector((x) => x.theme.administrationMode);
     const [ problemResourceId, setProblemResourceId ] = useState<number>(0);
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd));
+
     const {
         refetch: retakeData,
         data: resourcesData,
         isLoading: isGettingResources,
         error: resourcesError,
-    } = useGetResourcesQuery(Number(problemId));
+    } = useGetResourcesQuery({ problemId: Number(problemId), ...queryParams });
 
     const onEditClick = (id: number) => {
         setOpenEditModal(true);
@@ -78,20 +86,22 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
     }
     return (
         <>
-            {renderSuccessfullAlert(successMessage)}
-            <AdministrationGridView
-              filterableGridColumnDef={problemResourceFilterableColumns}
-              notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
-              data={resourcesData}
-              error={resourcesError}
-              showFiltersAndSorters={false}
-              renderActionButtons={renderGridSettings}
-              legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'Problem Resource is deleted.' } ]}
-              modals={[
-                  { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i, false) },
-                  { showModal: showCreateModal, modal: (i) => renderProblemResourceModal(i, true) },
-              ]}
-            />
+          {renderSuccessfullAlert(successMessage)}
+          <AdministrationGridView
+            filterableGridColumnDef={problemResourceFilterableColumns}
+            notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
+            data={resourcesData}
+            error={resourcesError}
+            queryParams={queryParams}
+            setQueryParams={setQueryParams}
+            withSearchParams={false}
+            renderActionButtons={renderGridSettings}
+            legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'Problem Resource is deleted.' } ]}
+            modals={[
+                { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i, false) },
+                { showModal: showCreateModal, modal: (i) => renderProblemResourceModal(i, true) },
+            ]}
+          />
         </>
     );
 };

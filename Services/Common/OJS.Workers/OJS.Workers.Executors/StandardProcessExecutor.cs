@@ -123,7 +123,7 @@
             }
             catch (Exception ex)
             {
-                this.logger.LogError($"Exception in writing to standard input with input data: {inputData}", ex);
+                this.logger.LogError(ex, "Exception in writing to standard input with input data: {StandardProcessExecutorInputData}", inputData);
             }
             finally
             {

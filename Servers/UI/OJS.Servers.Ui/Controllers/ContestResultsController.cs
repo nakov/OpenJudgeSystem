@@ -1,14 +1,15 @@
 namespace OJS.Servers.Ui.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
-using OJS.Servers.Infrastructure.Filters;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Ui.Business;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
 public class ContestResultsController : BaseApiController
 {
@@ -40,7 +41,7 @@ public class ContestResultsController : BaseApiController
     /// <returns>Results in json format.</returns>
     [HttpGet("/api/Results/GetAllUserResultsPercentageByForContest")]
     [ProducesResponseType(typeof(IEnumerable<UserPercentageResultsServiceModel>), Status200OK)]
-    [ServiceFilter(typeof(ValidateApiKeyAttribute))]
+    [Authorize(ApiKeyPolicyName)]
     public async Task<IActionResult> GetAllUserResultsPercentageByForContest(string apiKey, int? contestId)
         => await this.contestResultsBusiness
             .GetAllUserResultsPercentageByForContest(contestId)

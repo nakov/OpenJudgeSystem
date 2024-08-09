@@ -89,6 +89,7 @@ export const MAX_ALLOWED_MEMORY_LIMIT = 'Max allowed memory limit in bytes';
 
 // Tests
 export const TESTS = 'Tests';
+export const TEST = 'Test';
 export const HIDE_INPUT = 'Hide Input';
 
 // Problem Resources
