@@ -113,8 +113,6 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
                 $"Submission type \"{submissionTypeToReplaceOrDelete!.Name}\" is deleted and replaced with \"{submissionTypeToReplaceWith!.Name}\"");
         }
 
-        var elapsed = stopWatch.ElapsedMilliseconds;
-
         await problems.Chunk(100).ForEachSequential(async problemChunk =>
         {
             var problemIdsInChunk = problemChunk.Select(p => p.Id).ToList();
@@ -140,12 +138,6 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
             Console.WriteLine(stopWatch.ElapsedMilliseconds);
             stopWatch.Restart();
 
-            // await this.submissionTypesInProblemsDataService
-            //     .GetQuery(stp =>
-            //         stp.SubmissionTypeId == submissionTypeToReplaceOrDelete.Id &&
-            //         problemIdsInChunk.Contains(stp.ProblemId))
-            //     .DeleteFromQueryAsync();
-
             this.submissionTypesInProblemsDataService
                 .Delete(stp =>
                     stp.SubmissionTypeId == submissionTypeToReplaceOrDelete!.Id &&
@@ -155,8 +147,6 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         this.submissionTypesDataService.Delete(submissionTypeToReplaceOrDelete!);
 
         await this.submissionTypesDataService.SaveChanges();
-
-        var elapsed2 = stopWatch.ElapsedMilliseconds;
 
         return stringBuilder.ToString();
     }
@@ -233,7 +223,6 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         await this.testRunsData.DeleteBySubmissions(submissions.Select(s => s.Id).ToList());
 
         this.submissionsDataService.DeleteMany(submissions);
-        // await submissionsQuery.DeleteFromQueryAsync();
     }
 
     private async Task AppendMessageForProblemsThatWillBeLeftWithNoSubmissionType(
