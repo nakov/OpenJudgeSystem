@@ -333,7 +333,7 @@ finally:
                 this.PreprocessTestInput(skeletonWithTests),
                 filePath);
 
-            var processExecutionResult = await this.Execute(executionContext, executor, mainCodeSavePath, skeletonWithTests);
+            var processExecutionResult = await this.Execute(executionContext, executor, mainCodeSavePath, string.Empty);
 
             var testResults = this.ExtractTestResultsFromReceivedOutput(
                 processExecutionResult.ReceivedOutput,
