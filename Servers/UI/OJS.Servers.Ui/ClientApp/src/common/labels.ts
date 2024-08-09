@@ -3,6 +3,7 @@
 export const ID = 'Id';
 export const NAME = 'Name';
 export const ORDER_BY = 'Order By';
+export const ORDER_BY_DECIMAL = 'Order By (whole or decimal number, e.g. 5 or 5.5)';
 export const TYPE = 'Type';
 export const DESCRIPTION = 'Description';
 export const CATEGORY = 'Category';
@@ -88,6 +89,7 @@ export const MAX_ALLOWED_MEMORY_LIMIT = 'Max allowed memory limit in bytes';
 
 // Tests
 export const TESTS = 'Tests';
+export const TEST = 'Test';
 export const HIDE_INPUT = 'Hide Input';
 
 // Problem Resources

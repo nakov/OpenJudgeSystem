@@ -6,7 +6,7 @@ import { ContestVariation } from '../../../../common/contest-types';
 import { IGetAllAdminParams } from '../../../../common/types';
 import { getColors } from '../../../../hooks/use-administration-theme-provider';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
+import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
@@ -28,13 +28,15 @@ interface IProblemsInContestViewProps {
     canContestBeCompeted: boolean;
 }
 
+const defaultProblemsSorterToAdd = 'problemgrouporderby=ASC';
+
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const { contestId, contestName, contestType, canContestBeCompeted } = props;
 
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemId, setProblemId ] = useState<number>(-1);
     // eslint-disable-next-line max-len
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultProblemsSorterToAdd));
     const themeMode = useAppSelector((x) => x.theme.administrationMode);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
@@ -115,6 +117,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                 ? (
                     <ProblemForm
                       contestId={Number(contestId)}
+                      contestName={contestName}
                       problemId={null}
                       isEditMode={false}
                       contestType={contestType!}
@@ -229,6 +232,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 }
                       queryParams={queryParams}
                       setQueryParams={setQueryParams}
+                      defaultSorter={defaultProblemsSorterToAdd}
                       modals={[
                           { showModal: openEditModal, modal: (i) => renderProblemModal(i, false) },
                           { showModal: openShowCreateProblemModal, modal: (i) => renderProblemModal(i, true) },
