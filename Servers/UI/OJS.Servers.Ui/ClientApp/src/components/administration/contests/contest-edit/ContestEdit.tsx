@@ -161,7 +161,7 @@ const ContestEdit = (props:IContestEditProps) => {
         setParentSuccessMessage,
     });
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyUpdated || isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyUpdated, onSuccess });
 
     useEffect(
         () => {

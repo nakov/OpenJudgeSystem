@@ -92,7 +92,7 @@ const ParticipantForm = (props: IParticipantFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, getContestDataError, getUsersDataError ], setErrorMessages);
-        setSuccessMessage('');
+        setSuccessMessage(null);
     }, [ createError, getContestDataError, getUsersDataError ]);
 
     const onInputChange = debounce((e: any) => {

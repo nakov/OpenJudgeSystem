@@ -52,7 +52,7 @@ const TestForm = (props: ITestFormProps) => {
     const { data: testData, error: getTestError, isLoading: isGettingData } = useGetTestByIdQuery(id, { skip: !isEditMode });
     const [
         updateTest,
-        { data: updateData, error: editError, isLoading: isEditing, isSuccess: isSuccessfullyUpdated },
+        { data: updateData, error: updateError, isLoading: isUpdating, isSuccess: isSuccessfullyUpdated },
     ] = useUpdateTestMutation();
     const [
         createTest,
@@ -79,8 +79,8 @@ const TestForm = (props: ITestFormProps) => {
     }, [ testData ]);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ getTestError, editError, createError ], setExceptionMessages);
-    }, [ getTestError, editError, createError ]);
+        getAndSetExceptionMessage([ getTestError, updateError, createError ], setExceptionMessages);
+    }, [ getTestError, updateError, createError ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -97,7 +97,7 @@ const TestForm = (props: ITestFormProps) => {
         }));
     };
 
-    if (isGettingData || isEditing || isCreating) {
+    if (isGettingData || isUpdating || isCreating) {
         return <SpinningLoader />;
     }
 

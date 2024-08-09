@@ -99,7 +99,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, createError, updateError, getProblemGroupError ], setErrorMessages);
-        setSuccessMessage('');
+        setSuccessMessage(null);
     }, [ updateError, createError, getContestDataError, getProblemGroupError ]);
 
     const onAutocompleteChange = debounce((e: any) => {

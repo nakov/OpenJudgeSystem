@@ -115,10 +115,9 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
     useEffect(() => {
         setErrorMessages([]);
         if (isSuccessfullyUpdated) {
-            setSuccessMessage(updateData as string);
             setErrorMessages([]);
-        } if (isSuccessfullyCreated) {
-            setSuccessMessage(createData as string);
+        }
+        if (isSuccessfullyCreated) {
             setErrorMessages([]);
         }
     }, [ isSuccessfullyUpdated, updateData, createData, isSuccessfullyCreated ]);

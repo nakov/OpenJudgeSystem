@@ -103,11 +103,11 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         if (isSuccessfullyCreated) {
             setErrorMessages([]);
         }
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, setParentSuccessMessage, updateData ]);
+    }, [ isSuccessfullyCreated, isSuccessfullyUpdated ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-    }, [ createError, isSuccessfullyCreated, isSuccessfullyUpdated, updateError ]);
+    }, [ createError, updateError ]);
 
     useEffect(() => () => {
         setContestCategory(initialState);

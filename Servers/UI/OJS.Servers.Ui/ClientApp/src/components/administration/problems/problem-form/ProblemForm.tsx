@@ -139,7 +139,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
 
     useEffect(() => {
         getAndSetExceptionMessage([ gettingDataError, createError, updateError ], setErrorMessages);
-        setSuccessMessage('');
+        setSuccessMessage(null);
     }, [ updateError, createError, gettingDataError ]);
 
     const onChange = (e: any) => {

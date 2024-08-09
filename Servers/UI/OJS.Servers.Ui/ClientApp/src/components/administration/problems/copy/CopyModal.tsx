@@ -53,7 +53,7 @@ const CopyModal = (props: ICopyModalProps) => {
     const [ copyAll,
         {
             data: copyAllData,
-            isSuccess: isSuccesfullyCoppiedAll,
+            isSuccess: isSuccessfullyCopiedAll,
             isLoading: isCopyingAll,
             error: copyAllError,
         } ] = useCopyAllMutation();
@@ -63,7 +63,7 @@ const CopyModal = (props: ICopyModalProps) => {
     useSuccessMessageEffect({
         data: [
             { message: copyData, shouldGet: isSuccesfullyCoppied },
-            { message: copyAllData, shouldGet: isSuccesfullyCoppiedAll },
+            { message: copyAllData, shouldGet: isSuccessfullyCopiedAll },
         ],
         setParentSuccessMessage,
     });
@@ -79,10 +79,10 @@ const CopyModal = (props: ICopyModalProps) => {
     }, [ copyError, copyAllError ]);
 
     useEffect(() => {
-        if (isSuccesfullyCoppied || isSuccesfullyCoppiedAll) {
+        if (isSuccesfullyCoppied || isSuccessfullyCopiedAll) {
             setShowModal(false);
         }
-    }, [ isSuccesfullyCoppied, isSuccesfullyCoppiedAll, setShowModal ]);
+    }, [ isSuccesfullyCoppied, isSuccessfullyCopiedAll, setShowModal ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ copyError ], setErrorMessages);
