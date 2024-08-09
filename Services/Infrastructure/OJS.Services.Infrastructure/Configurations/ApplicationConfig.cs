@@ -15,14 +15,21 @@ public class ApplicationConfig : BaseConfig
     public string ApiKey { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the OpenTelemetry protocol collector endpoint.
+    /// Gets or sets the OpenTelemetry protocol collector base URL.
     /// </summary>
     [Required]
-    public string OtlpCollectorEndpoint { get; set; } = string.Empty;
+    public string OtlpCollectorBaseUrl { get; set; } = string.Empty;
 
     public string OtlpCollectorUsername { get; set; } = string.Empty;
 
     public string OtlpCollectorPassword { get; set; } = string.Empty;
+
+    public string OtlpCollectorLogsPushPath { get; set; } = "/v1/logs";
+
+    public string OtlpCollectorLogsPushEndpoint
+        => this.OtlpCollectorBaseUrl.EndsWith('/')
+            ? $"{this.OtlpCollectorBaseUrl.TrimEnd('/')}{this.OtlpCollectorLogsPushPath}"
+            : $"{this.OtlpCollectorBaseUrl}{this.OtlpCollectorLogsPushPath}";
 
     public string OtlpCollectorBasicAuthHeaderValue
         => $"Basic {Convert.ToBase64String(

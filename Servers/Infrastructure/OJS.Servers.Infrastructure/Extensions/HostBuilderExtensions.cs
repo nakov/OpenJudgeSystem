@@ -23,7 +23,7 @@ public static class HostBuilderExtensions
                 .WriteTo.Async(wt => wt.Console())
                 .WriteTo.OpenTelemetry(options =>
                 {
-                    options.Endpoint = appSettings.OtlpCollectorEndpoint;
+                    options.Endpoint = appSettings.OtlpCollectorLogsPushEndpoint;
                     options.Protocol = OtlpProtocol.HttpProtobuf;
                     options.Headers = new Dictionary<string, string>
                     {
