@@ -1,11 +1,11 @@
-namespace OJS.Services.Ui.Business.Extensions;
+namespace OJS.Services.Common.Extensions;
 
 using FluentExtensions.Extensions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 
-public static class SubmissionSerializationExtensions
+public static class SubmissionServiceModelExtensions
 {
-    public static string ToSerializedDetails(this SubmissionServiceModel model)
+    public static SubmissionServiceModel TrimDetails(this SubmissionServiceModel model)
     {
         var modelCopy = model.DeepCopy();
 
@@ -25,6 +25,6 @@ public static class SubmissionSerializationExtensions
                 });
         }
 
-        return modelCopy.ToJson();
+        return modelCopy;
     }
 }

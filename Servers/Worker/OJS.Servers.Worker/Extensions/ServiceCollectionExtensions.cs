@@ -17,7 +17,6 @@ internal static class ServiceCollectionExtensions
     {
         services
             .AddWebServer<Program>(configuration)
-            .AddHttpContextServices()
             .AddSingleton<ICompilerFactory, CompilerFactory>()
             .AddSingleton<IExecutionStrategySettingsProvider, ExecutionStrategySettingsProvider>()
             .AddMemoryCache();
@@ -27,10 +26,7 @@ internal static class ServiceCollectionExtensions
             services.AddMessageQueue<Program>(configuration);
         }
 
-        services.AddHealthChecks();
-
         services
-            .AddLogging()
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<SubmissionExecutionConfig>()
             .AddOptionsWithValidation<OjsWorkersConfig>()
