@@ -76,6 +76,7 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
     if (isGettingResources) {
         return <SpinningLoader />;
     }
+
     return (
         <>
             {renderSuccessfullAlert(successMessage)}

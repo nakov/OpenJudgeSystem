@@ -181,7 +181,8 @@ const ContestEdit = (props:IContestEditProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-    }, [ updateError, createError ]);
+        setParentSuccessMessage(null);
+    }, [ updateError, createError, setParentSuccessMessage ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&
