@@ -32,7 +32,9 @@ import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, C
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { getContestsDetailsPageUrl } from '../../../../common/urls/compose-client-urls';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import {
     useCreateContestMutation,
@@ -42,7 +44,7 @@ import {
     useUpdateContestMutation,
 } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
 import ExternalLink from '../../../guidelines/buttons/ExternalLink';
@@ -82,8 +84,6 @@ const ContestEdit = (props:IContestEditProps) => {
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
-
-    useDisableMouseWheelOnNumberInputs();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -151,6 +151,18 @@ const ContestEdit = (props:IContestEditProps) => {
             isLoading: isCreating,
         } ] = useCreateContestMutation();
 
+    useDisableMouseWheelOnNumberInputs();
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+    });
+
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyUpdated || isSuccessfullyCreated, onSuccess });
+
     useEffect(
         () => {
             if (isEditMode && currentContest) {
@@ -168,28 +180,8 @@ const ContestEdit = (props:IContestEditProps) => {
     }, [ data ]);
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: updateData, shouldGet: isSuccessfullyUpdated },
-            { message: createData, shouldGet: isSuccessfullyCreated } ]);
-        setParentSuccessMessage(message);
-    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated, setParentSuccessMessage ]);
-
-    useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-        setParentSuccessMessage(null);
-    }, [ updateError, createError, setParentSuccessMessage ]);
-
-    useEffect(() => {
-        if ((isSuccessfullyUpdated || isSuccessfullyCreated) && onSuccess) {
-            /* The function is called in timeout,
-            because we want to show success message before calling onSuccess,
-            since it can cause re-rendering of the component and the message will not be visible
-            */
-            setTimeout(() => {
-                onSuccess();
-            }, 500);
-        }
-    }, [ isSuccessfullyUpdated, isSuccessfullyCreated, onSuccess ]);
+    }, [ updateError, createError ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&

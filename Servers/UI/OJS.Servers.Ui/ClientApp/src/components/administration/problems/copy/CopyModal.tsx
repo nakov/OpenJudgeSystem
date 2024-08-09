@@ -5,9 +5,10 @@ import { Autocomplete, Box, Button, debounce, MenuItem, Modal, TextField, Typogr
 
 import { IContestAutocomplete } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCopyAllMutation, useCopyMutation } from '../../../../redux/services/admin/problemsAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { modalStyles } from '../../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -19,17 +20,16 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 interface ICopyModalProps{
     index :number;
-    setShowModal: Function;
     operation: AllowedOperations;
     sourceId : number;
     sourceName: string;
     problemToCopy?: number | null;
-
-    onSuccess: Function;
+    setShowModal: Function;
+    setParentSuccessMessage: Function;
 }
 
 const CopyModal = (props: ICopyModalProps) => {
-    const { index, setShowModal, operation, sourceId, sourceName, problemToCopy = null, onSuccess } = props;
+    const { index, setShowModal, operation, sourceId, sourceName, problemToCopy = null, setParentSuccessMessage } = props;
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
     const [ problemGroupId, setNewProblemGroup ] = useState<number | undefined>(undefined);
@@ -60,6 +60,14 @@ const CopyModal = (props: ICopyModalProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
+    useSuccessMessageEffect({
+        data: [
+            { message: copyData, shouldGet: isSuccesfullyCoppied },
+            { message: copyAllData, shouldGet: isSuccesfullyCoppiedAll },
+        ],
+        setParentSuccessMessage,
+    });
+
     useEffect(() => {
         if (data) {
             setContestsAutocomplete(data);
@@ -71,18 +79,10 @@ const CopyModal = (props: ICopyModalProps) => {
     }, [ copyError, copyAllError ]);
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: copyData, shouldGet: isSuccesfullyCoppied },
-            { message: copyAllData, shouldGet: isSuccesfullyCoppiedAll } ]);
-
-        onSuccess(message);
-    }, [ copyAllData, copyData, isSuccesfullyCoppied, isSuccesfullyCoppiedAll, onSuccess ]);
-
-    useEffect(() => {
         if (isSuccesfullyCoppied || isSuccesfullyCoppiedAll) {
             setShowModal(false);
         }
-    }, [ isSuccesfullyCoppied, isSuccesfullyCoppiedAll, onSuccess, setShowModal ]);
+    }, [ isSuccesfullyCoppied, isSuccesfullyCoppiedAll, setShowModal ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ copyError ], setErrorMessages);

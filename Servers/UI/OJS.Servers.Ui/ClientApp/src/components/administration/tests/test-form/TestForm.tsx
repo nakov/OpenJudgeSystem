@@ -11,9 +11,11 @@ import {
     OUTPUT,
     TYPE,
 } from '../../../../common/labels';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useCreateTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
@@ -49,8 +51,8 @@ const TestForm = (props: ITestFormProps) => {
 
     const { data: testData, error: getTestError, isLoading: isGettingData } = useGetTestByIdQuery(id, { skip: !isEditMode });
     const [
-        editTest,
-        { data: editData, error: editError, isLoading: isEditing, isSuccess: isSuccessfullyEdited },
+        updateTest,
+        { data: updateData, error: editError, isLoading: isEditing, isSuccess: isSuccessfullyUpdated },
     ] = useUpdateTestMutation();
     const [
         createTest,
@@ -59,13 +61,16 @@ const TestForm = (props: ITestFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useEffect(() => {
-        if (isSuccessfullyCreated && onSuccess) {
-            setTimeout(() => {
-                onSuccess();
-            }, 500);
-        }
-    }, [ isSuccessfullyCreated, onSuccess ]);
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+        setSuccessMessage,
+    });
 
     useEffect(() => {
         if (testData) {
@@ -76,19 +81,6 @@ const TestForm = (props: ITestFormProps) => {
     useEffect(() => {
         getAndSetExceptionMessage([ getTestError, editError, createError ], setExceptionMessages);
     }, [ getTestError, editError, createError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: editData, shouldGet: isSuccessfullyEdited },
-            { message: createData, shouldGet: isSuccessfullyCreated },
-        ]);
-
-        if (setParentSuccessMessage) {
-            setParentSuccessMessage(message);
-        } else {
-            setSuccessMessage(message);
-        }
-    }, [ editData, createData, isSuccessfullyEdited, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -211,7 +203,7 @@ const TestForm = (props: ITestFormProps) => {
                 <AdministrationFormButtons
                   isEditMode={isEditMode}
                   onCreateClick={() => createTest(test)}
-                  onEditClick={() => editTest(test)}
+                  onEditClick={() => updateTest(test)}
                 />
             </form>
         </>

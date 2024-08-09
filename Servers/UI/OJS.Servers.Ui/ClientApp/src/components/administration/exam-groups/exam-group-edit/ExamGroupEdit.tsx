@@ -9,12 +9,14 @@ import {
     IContestCategories,
     IExamGroupAdministration,
 } from '../../../../common/types';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import {
     useCreateExamGroupMutation, useGetExamGroupByIdQuery,
     useUpdateExamGroupMutation,
 } from '../../../../redux/services/admin/examGroupsAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
@@ -74,13 +76,16 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
             isLoading: isCreating,
         } ] = useCreateExamGroupMutation();
 
-    useEffect(() => {
-        if (isSuccessfullyCreated && onSuccess) {
-            setTimeout(() => {
-                onSuccess();
-            }, 500);
-        }
-    }, [ isSuccessfullyCreated, onSuccess ]);
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+        setSuccessMessage,
+    });
 
     useEffect(
         () => {
@@ -121,18 +126,6 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
     useEffect(() => {
         getAndSetExceptionMessage([ updateError, createError ], setErrorMessages);
     }, [ createError, updateError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: updateData, shouldGet: isSuccessfullyUpdated },
-            { message: createData, shouldGet: isSuccessfullyCreated } ]);
-
-        if (setParentSuccessMessage) {
-            setParentSuccessMessage(message);
-        } else {
-            setSuccessMessage(message);
-        }
-    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated, setParentSuccessMessage ]);
 
     const validateForm = () => {
         const isValid = examGroupValidations.isNameValid;

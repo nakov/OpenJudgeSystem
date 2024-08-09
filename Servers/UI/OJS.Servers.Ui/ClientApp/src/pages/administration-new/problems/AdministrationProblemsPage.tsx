@@ -99,7 +99,7 @@ const AdministrationProblemsPage = () => {
               ? problemsData?.items[0].contest
               : ''}
           problemToCopy={problemId}
-          onSuccess={onSuccessOperation}
+          setParentSuccessMessage={setSuccessMessage}
         />
     );
 

@@ -62,7 +62,7 @@ const AdministrationContestCategoriesPage = () => {
                   : null}
               isEditMode={isEditMode}
               onSuccess={() => onCloseModal(isEditMode)}
-              setSuccessMessage={setSuccessMessage}
+              setParentSuccessMessage={setSuccessMessage}
             />
         </AdministrationModal>
     );

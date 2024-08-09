@@ -4,10 +4,12 @@ import { Autocomplete, Checkbox, debounce, FormControl, FormControlLabel, MenuIt
 
 import { IS_OFFICIAL } from '../../../../common/labels';
 import { IContestAutocomplete, IParticipantAdministrationModel, IUserAutocompleteData } from '../../../../common/types';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCreateParticipantMutation } from '../../../../redux/services/admin/participantsAdminService';
 import { useGetUsersAutocompleteQuery } from '../../../../redux/services/admin/usersAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
@@ -25,7 +27,7 @@ interface IParticipantFormProps {
 const ParticipantForm = (props: IParticipantFormProps) => {
     const { contestName = '', contestId = 0, onSuccess, setParentSuccessMessage } = props;
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessages, setSuccessMessages ] = useState<string | null>(null);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ participant, setParticipant ] = useState<IParticipantAdministrationModel>({
         contestId,
         id: 0,
@@ -69,28 +71,15 @@ const ParticipantForm = (props: IParticipantFormProps) => {
             isSuccess: isSuccessfullyCreated,
         } ] = useCreateParticipantMutation();
 
-    useEffect(() => {
-        if (isSuccessfullyCreated && onSuccess) {
-            setTimeout(() => {
-                onSuccess();
-            }, 500);
-        }
-    }, [ isSuccessfullyCreated, onSuccess ]);
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
 
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            {
-                message: createData,
-                shouldGet: isSuccessfullyCreated,
-            },
-        ]);
-
-        if (setParentSuccessMessage) {
-            setParentSuccessMessage(message);
-        } else {
-            setSuccessMessages(message);
-        }
-    }, [ createData, isSuccessfullyCreated, setParentSuccessMessage ]);
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+        ],
+        setParentSuccessMessage,
+        setSuccessMessage,
+    });
 
     useEffect(() => {
         if (contestsAutocompleteData) {
@@ -103,7 +92,7 @@ const ParticipantForm = (props: IParticipantFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, getContestDataError, getUsersDataError ], setErrorMessages);
-        setSuccessMessages('');
+        setSuccessMessage('');
     }, [ createError, getContestDataError, getUsersDataError ]);
 
     const onInputChange = debounce((e: any) => {
@@ -164,7 +153,7 @@ const ParticipantForm = (props: IParticipantFormProps) => {
     return (
         <>
             {renderErrorMessagesAlert(errorMessages)}
-            {renderSuccessfullAlert(successMessages)}
+            {renderSuccessfullAlert(successMessage)}
             <form className={formStyles.form}>
                 <Typography variant="h4" className="centralize">
                     Participant Administration Form

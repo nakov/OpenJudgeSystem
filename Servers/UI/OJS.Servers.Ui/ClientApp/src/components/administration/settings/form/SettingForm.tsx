@@ -10,10 +10,12 @@ import { CREATE, EDIT, ID, NAME, RECORD, TYPE, VALUE } from '../../../../common/
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { ISettingAdministrationModel } from '../../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SETTINGS_PATH } from '../../../../common/urls/administration-urls';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useCreateSettingMutation, useDeleteSettingMutation, useGetSettingByIdQuery, useUpdateSettingMutation } from '../../../../redux/services/admin/settingsAdminService';
 import { getDateAsLocal } from '../../../../utils/administration/administration-dates';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -74,13 +76,16 @@ const SettingForm = (props: ISettingFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useEffect(() => {
-        if (isSuccessfullyCreated && onSuccess) {
-            setTimeout(() => {
-                onSuccess();
-            }, 500);
-        }
-    }, [ isSuccessfullyCreated, onSuccess ]);
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+        setSuccessMessage,
+    });
 
     useEffect(() => {
         if (settingData) {
@@ -91,19 +96,6 @@ const SettingForm = (props: ISettingFormProps) => {
     useEffect(() => {
         getAndSetExceptionMessage([ getError, updateError, createError ], setExceptionMessages);
     }, [ getError, updateError, createError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: createData, shouldGet: isSuccessfullyCreated },
-            { message: updateData, shouldGet: isSuccessfullyUpdated },
-        ]);
-
-        if (setParentSuccessMessage) {
-            setParentSuccessMessage(message);
-        } else {
-            setSuccessMessage(message);
-        }
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, setParentSuccessMessage, updateData ]);
 
     const onChange = (e: any) => {
         const { target } = e;
