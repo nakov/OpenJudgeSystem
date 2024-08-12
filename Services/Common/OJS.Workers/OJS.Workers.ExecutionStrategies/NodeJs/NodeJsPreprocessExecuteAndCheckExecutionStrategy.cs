@@ -259,12 +259,12 @@ process.stdin.on('end', function() {
             IExecutionContext<TInput> executionContext,
             IExecutor executor,
             string codeSavePath,
-            string input)
+            string? inputData = null)
             => executor.Execute(
                 this.Settings.NodeJsExecutablePath,
-                input,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
+                inputData,
                 new[] { LatestEcmaScriptFeaturesEnabledFlag, codeSavePath });
     }
 

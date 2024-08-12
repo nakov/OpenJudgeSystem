@@ -108,13 +108,13 @@ namespace OJS.Workers.ExecutionStrategies.Python
             IExecutionContext<TInput> executionContext,
             IExecutor executor,
             string codeSavePath,
-            string input,
+            string inputData = null,
             string directory = null)
             => executor.Execute(
                 this.Settings.PythonExecutablePath,
-                input,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
+                inputData,
                 this.ExecutionArguments.Concat(new[] { codeSavePath }),
                 directory,
                 useProcessTime: false,

@@ -112,11 +112,10 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
             var packageExecutionResult = await mavenExecutor.Execute(
               this.Settings.MavenPath,
-              string.Empty,
               executionContext.TimeLimit,
               executionContext.MemoryLimit,
-              mavenArgs,
-              this.WorkingDirectory);
+              executionArguments: mavenArgs,
+              workingDirectory: this.WorkingDirectory);
 
             var mavenBuildFailureRegex = new Regex(MavenErrorFailurePattern);
 
@@ -140,11 +139,10 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
                 var processExecutionResult = await executor.Execute(
                 this.Settings.MavenPath,
-                string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
-                mavenArgs,
-                this.WorkingDirectory);
+                executionArguments: mavenArgs,
+                workingDirectory: this.WorkingDirectory);
 
                 ValidateJvmInitialization(processExecutionResult.ReceivedOutput);
 

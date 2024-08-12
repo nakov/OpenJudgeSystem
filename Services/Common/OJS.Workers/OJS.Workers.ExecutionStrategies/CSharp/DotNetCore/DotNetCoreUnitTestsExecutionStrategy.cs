@@ -118,11 +118,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
                 var processExecutionResult = await executor.Execute(
                     compilerPath,
-                    string.Empty,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
-                    arguments,
-                    workingDirectory: null,
+                    executionArguments: arguments,
                     useProcessTime: false,
                     useSystemEncoding: true);
 

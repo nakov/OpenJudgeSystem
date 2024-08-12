@@ -101,9 +101,9 @@
             {
                 var processExecutionResult = await executor.Execute(
                     this.Settings.NodeJsExecutablePath,
-                    test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
+                    test.Input,
                     arguments);
 
                 var mochaResult = JsonExecutionResult.Parse(processExecutionResult.ReceivedOutput);
