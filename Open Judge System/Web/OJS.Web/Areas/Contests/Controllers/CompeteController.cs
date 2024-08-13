@@ -457,17 +457,17 @@
 
             if (this.Data.Submissions.HasSubmissionTimeLimitPassedForParticipant(participant.Id, participant.Contest.LimitBetweenSubmissions))
             {
-                throw new HttpException((int)HttpStatusCode.ServiceUnavailable, Resource.ContestsGeneral.Submission_was_sent_too_soon);
+                return this.JsonError(Resource.ContestsGeneral.Submission_was_sent_too_soon);
             }
 
             if (problem.SourceCodeSizeLimit < participantSubmission.Content.Length)
             {
-                throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.Submission_too_long);
+                return this.JsonError(Resource.ContestsGeneral.Submission_too_long);
             }
 
             if (this.Data.Submissions.HasUserNotProcessedSubmissionForProblem(problem.Id, this.UserProfile.Id))
             {
-                throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.User_has_not_processed_submission_for_problem);
+                return this.JsonError(Resource.ContestsGeneral.User_has_not_processed_submission_for_problem);
             }
 
             if (participant.Contest.UsersCantSubmitConcurrently && this.Data.Submissions.UserHasUnprocessedSubmissionInContest(participant.ContestId, this.UserProfile.Id))
