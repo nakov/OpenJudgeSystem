@@ -71,6 +71,7 @@ services:
     image: judge_worker
     ports:
       - "8003:80"
+      - "9090:9090"
     container_name: worker_instance
     restart: on-failure
     env_file:
@@ -90,6 +91,8 @@ services:
       - sql_server
       - mysql
       - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 # External services
   mq:
