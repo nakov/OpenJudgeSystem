@@ -71,7 +71,6 @@ services:
     image: judge_worker
     ports:
       - "8003:80"
-      - "9090:9090"
     container_name: worker_instance
     restart: on-failure
     env_file:
