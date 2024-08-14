@@ -8,6 +8,7 @@ using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
 using OJS.PubSub.Worker.Models.Submissions;
+using OJS.Services.Common.Extensions;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 
@@ -32,23 +33,23 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
 
     public async Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
     {
-        var message = context.Message;
-        var result = new ProcessedSubmissionPubSubModel(message.Id)
+        this.logger.LogInformation("Received submission #{SubmissionId} for processing",  context.Message.Id);
+
+        var result = new ProcessedSubmissionPubSubModel(context.Message.Id)
         {
             WorkerName = this.hostInfoService.GetHostIp(),
         };
 
-        this.logger.LogInformation("Starting processing submission #{SubmissionId} on worker: {WorkerName}", message.Id, result.WorkerName);
-        var submission = message.Map<SubmissionServiceModel>();
+        this.logger.LogInformation("Starting processing submission #{SubmissionId} on worker {WorkerName}", context.Message.Id, result.WorkerName);
+        var submission = context.Message.Map<SubmissionServiceModel>();
         var startedExecutionOn = DateTime.UtcNow;
 
         try
         {
-            this.logger.LogInformation("Executing submission #{SubmissionId}", submission.Id);
+            this.logger.LogInformation("Executing submission #{SubmissionId}: {@Submission}", submission.Id, submission.TrimDetails());
             var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
-            this.logger.LogDebug("Execution result for submission #{SubmissionId}: {@ExecutionResult}", submission.Id, executionResult);
+            this.logger.LogInformation("Produced execution result for submission #{SubmissionId}: {@ExecutionResult}", submission.Id, executionResult);
 
-            this.logger.LogInformation("Mapping execution result for submission #{SubmissionId}", submission.Id);
             result.SetExecutionResult(executionResult.Map<ExecutionResultServiceModel>());
         }
         catch (Exception ex)

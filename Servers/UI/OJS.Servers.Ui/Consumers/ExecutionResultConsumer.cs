@@ -26,17 +26,18 @@ public class ExecutionResultConsumer : IConsumer<ProcessedSubmissionPubSubModel>
     {
         var workerName = context.Message.WorkerName + $" ({context.Host.MachineName})";
 
-        this.logger.LogInformation("Starting processing execution result for submission #{SubmissionId} from worker {WorkerName}", context.Message.Id, workerName);
-        this.logger.LogDebug("Received execution result for submission #{SubmissionId}: {@ExecutionResult}", context.Message.Id, context.Message.ExecutionResult);
-        this.logger.LogDebug("Exception for submission #{SubmissionId}: {@Exception}", context.Message.Id, context.Message.Exception);
+        this.logger.LogInformation("Received execution result for submission #{SubmissionId} from worker {WorkerName}", context.Message.Id, workerName);
+
+        if (context.Message.Exception != null)
+        {
+            this.logger.LogError("Exception returned for submission #{SubmissionId}: {@SubmissionException}", context.Message.Id, context.Message.Exception);
+        }
 
         try
         {
             var executionResult = context.Message.Map<SubmissionExecutionResult>();
-            this.logger.LogDebug("Mapped execution result for submission #{SubmissionId}: {@ExecutionResult}", executionResult.SubmissionId, executionResult);
-
+            this.logger.LogInformation("Starting processing execution result for submission #{SubmissionId}: {@ExecutionResult}", context.Message.Id, executionResult);
             executionResult.WorkerName = workerName;
-
             await this.submissionsBusinessService.ProcessExecutionResult(executionResult);
             this.logger.LogInformation("Processed execution result for submission #{SubmissionId} from worker {WorkerName}", executionResult.SubmissionId, executionResult.WorkerName);
         }

@@ -87,6 +87,7 @@ namespace OJS.Common
         {
             public const string ContentDisposition = "Content-Disposition";
             public const string Origin = "Origin";
+            public const string ApiKey = "X-Api-Key";
         }
 
         public static class HeaderValues

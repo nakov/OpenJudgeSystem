@@ -9,7 +9,4 @@
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
     <ProjectReference Include="..\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot" />
-  </ItemGroup>
 </Project>
