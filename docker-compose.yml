@@ -90,6 +90,8 @@ services:
       - sql_server
       - mysql
       - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 # External services
   mq:
