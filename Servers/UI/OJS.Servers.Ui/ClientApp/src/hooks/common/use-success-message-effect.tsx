@@ -1,7 +1,18 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect } from 'react';
 
-import { ISuccessMessageData, ISuccessMessageEffectParams } from '../../common/types';
 import { getAndSetSuccessfulMessages } from '../../utils/messages-utils';
+
+interface ISuccessMessageData {
+    message: string | undefined;
+    shouldGet: boolean;
+}
+
+interface ISuccessMessageEffectParams {
+    data: ISuccessMessageData[];
+    setParentSuccessMessage?: Function;
+    setSuccessMessage?: Function;
+}
 
 const useSuccessMessageEffect = ({
     data,

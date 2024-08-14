@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/submissions/types';
 import { IErrorDataType } from '../hooks/use-http';
 
@@ -764,22 +763,6 @@ interface IUSerSearchCardProps {
     name: string;
 }
 
-interface IDelayedSuccessEffectParams {
-    isSuccess: boolean;
-    onSuccess?: Function;
-}
-
-interface ISuccessMessageData {
-    message: string | undefined;
-    shouldGet: boolean;
-}
-
-interface ISuccessMessageEffectParams {
-    data: ISuccessMessageData[];
-    setParentSuccessMessage?: Function;
-    setSuccessMessage?: Function;
-}
-
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -858,7 +841,4 @@ export type {
     IUSerSearchCardProps,
     IProblemSearchType,
     IContestDetailsSliceType,
-    IDelayedSuccessEffectParams,
-    ISuccessMessageData,
-    ISuccessMessageEffectParams,
 };

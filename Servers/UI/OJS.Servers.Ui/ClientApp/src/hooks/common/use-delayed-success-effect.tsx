@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect } from 'react';
 
-import { IDelayedSuccessEffectParams } from '../../common/types';
+interface IDelayedSuccessEffectParams {
+    isSuccess: boolean;
+    onSuccess?: Function;
+}
 
 const useDelayedSuccessEffect = ({ isSuccess, onSuccess } : IDelayedSuccessEffectParams) => {
     /*
