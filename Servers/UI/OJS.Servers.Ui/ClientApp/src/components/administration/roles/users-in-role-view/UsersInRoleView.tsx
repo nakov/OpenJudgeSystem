@@ -21,6 +21,8 @@ import UserForm from '../../users/form/UserForm';
 import { onAutocompleteInputChange } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
+import styles from '../../../../pages/administration-new/AdministrationStyles.module.scss';
+// eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IUsersInRoleViewProps {
@@ -218,7 +220,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
         <>
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
-            <div style={{ marginTop: '2rem' }}>
+            <div className={styles.container}>
                 <AdministrationGridView
                   filterableGridColumnDef={usersFilterableColumns}
                   notFilterableGridColumnDef={returnUsersNonFilterableColumns(onEditClick, onRemoveFromRowClicked)}

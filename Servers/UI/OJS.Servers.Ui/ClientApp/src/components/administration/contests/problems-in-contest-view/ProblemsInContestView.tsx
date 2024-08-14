@@ -22,6 +22,9 @@ import CopyModal, { AllowedOperations } from '../../problems/copy/CopyModal';
 import ProblemForm from '../../problems/problem-form/ProblemForm';
 import ProblemRetest from '../../problems/retest/ProblemRetest';
 
+// eslint-disable-next-line css-modules/no-unused-class
+import styles from '../../../../pages/administration-new/AdministrationStyles.module.scss';
+
 interface IProblemsInContestViewProps {
     contestId: number;
     contestName?: string;
@@ -217,7 +220,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     );
 
     return (
-        <div style={{ marginTop: '2rem' }}>
+        <div className={styles.container}>
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
             { isDeletingAll

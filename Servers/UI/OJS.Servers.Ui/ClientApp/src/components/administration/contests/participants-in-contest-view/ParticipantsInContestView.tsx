@@ -12,7 +12,8 @@ import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import ParticipantForm from '../../participants/form/ParticipantForm';
 
-import styles from './ParticipantsInContestView.module.scss';
+// eslint-disable-next-line css-modules/no-unused-class
+import styles from '../../../../pages/administration-new/AdministrationStyles.module.scss';
 
 interface IParticipantsInContestView {
     contestId: number;
