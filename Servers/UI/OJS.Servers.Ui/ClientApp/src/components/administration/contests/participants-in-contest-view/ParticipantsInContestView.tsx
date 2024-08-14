@@ -12,6 +12,8 @@ import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import ParticipantForm from '../../participants/form/ParticipantForm';
 
+import styles from './ParticipantsInContestView.module.scss';
+
 interface IParticipantsInContestView {
     contestId: number;
     contestName: string;
@@ -59,7 +61,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
     return (
         <>
             {renderSuccessfullAlert(successMessage)}
-            <div style={{ marginTop: '2rem' }}>
+            <div className={styles.container}>
                 <AdministrationGridView
                   data={data}
                   error={error}
