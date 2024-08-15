@@ -9,17 +9,13 @@
 
     public interface IUsersBusinessService : IService
     {
-        public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username);
+        public Task<UserProfileServiceModel?> GetUserShortOrFullProfileByLoggedInUserIsAdminOrProfileOwner(string? username);
 
         public Task<string?> GetUserIdByUsername(string? username);
 
-        public Task<UserProfileServiceModel?> GetUserProfileById(string userId);
-
         Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model);
 
-        Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal);
-
-        bool IsUserAdminLecturerOrProfileOwner(string? profileUsername);
+        bool IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles);
 
         Task AddOrUpdateUser(UserProfile userEntity);
 

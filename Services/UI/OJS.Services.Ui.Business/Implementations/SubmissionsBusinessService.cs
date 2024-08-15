@@ -358,7 +358,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int page,
         int itemsInPage = DefaultSubmissionsPerPage)
     {
-        if (!this.usersBusiness.IsUserAdminLecturerOrProfileOwner(username))
+        if (!this.usersBusiness.IsUserInRolesOrProfileOwner(
+                username,
+                [GlobalConstants.Roles.Administrator, GlobalConstants.Roles.Lecturer]))
         {
             throw new UnauthorizedAccessException("You are not authorized for this action");
         }
@@ -379,7 +381,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId)
     {
-        var user = await this.usersBusiness.GetUserProfileByUsername(username);
+        var user = await this.usersBusiness.GetUserShortOrFullProfileByLoggedInUserIsAdminOrProfileOwner(username);
 
         return await this.submissionsData
             .GetAllForUserByContest(
