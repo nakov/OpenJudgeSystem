@@ -1,12 +1,10 @@
 namespace OJS.Services.Administration.Business.SubmissionTypes.Validators;
 
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
-using static OJS.Common.GlobalConstants.Roles;
 
 public class DeleteOrReplaceSubmissionTypeValidationService : IDeleteOrReplaceSubmissionTypeValidationService
 {
@@ -21,9 +19,19 @@ public class DeleteOrReplaceSubmissionTypeValidationService : IDeleteOrReplaceSu
         this.datesService = datesService;
     }
 
-    public ValidationResult GetValidationResult((SubmissionType?, SubmissionType?, bool) item)
+    public ValidationResult GetValidationResult((int, int?, SubmissionType?, SubmissionType?, bool) item)
     {
-        var (submissionTypeToReplaceOrDelete, submissionTypeToReplaceWith, shouldDoSubmissionsDeletion) = item;
+        var (
+            requestSubmissionTypeToReplaceValue,
+            requestSubmissionTypeToReplaceWithValue,
+            submissionTypeToReplaceOrDelete,
+            submissionTypeToReplaceWith,
+            shouldDoSubmissionsDeletion) = item;
+
+        if (requestSubmissionTypeToReplaceWithValue.HasValue && requestSubmissionTypeToReplaceValue == requestSubmissionTypeToReplaceWithValue)
+        {
+            return ValidationResult.Invalid("Cannot replace submission type with identical submission type");
+        }
 
         if (submissionTypeToReplaceOrDelete == null)
         {
@@ -35,16 +43,8 @@ public class DeleteOrReplaceSubmissionTypeValidationService : IDeleteOrReplaceSu
             return ValidationResult.Invalid("Submission type to replace with not found");
         }
 
-        var administratorRoles = new string[] { Administrator, Lecturer, Developer };
-
         var submissionsByRegularUsersInTheLastMonth = this.submissionsDataService
-            .GetQuery()
-            .Include(s => s.Participant)
-            .ThenInclude(p => p.User)
-            .ThenInclude(u => u.UsersInRoles)
-            .Where(s => s.SubmissionTypeId == submissionTypeToReplaceOrDelete.Id &&
-                        s.CreatedOn > this.datesService.GetUtcNow().AddMonths(-1) &&
-                        !s.Participant.User.UsersInRoles.Any(ur => administratorRoles.Contains(ur.Role.Name)))
+            .GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(submissionTypeToReplaceOrDelete.Id, 1)
             .ToList();
 
         if (submissionsByRegularUsersInTheLastMonth.Count > 0)

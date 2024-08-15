@@ -31,6 +31,8 @@
 
         IQueryable<Submission> GetAllHavingPointsExceedingLimit();
 
+        IQueryable<Submission> GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(int submissionTypeId, int monthsCount);
+
         IQueryable<int> GetIdsByProblem(int problemId);
 
         bool IsOfficialById(int id);

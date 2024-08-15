@@ -63,11 +63,6 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     {
         var stringBuilder = new StringBuilder();
 
-        if (model.SubmissionTypeToReplaceWith.HasValue && model.SubmissionTypeToReplace == model.SubmissionTypeToReplaceWith.Value)
-        {
-            throw new BusinessServiceException("Cannot replace submission type with identical submission type");
-        }
-
         var submissionTypeToReplaceOrDelete = await this.submissionTypesDataService
             .GetByIdQuery(model.SubmissionTypeToReplace)
             .FirstOrDefaultAsync();
@@ -84,14 +79,18 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         bool shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
 
         var validationResult = this.deleteOrReplaceSubmissionTypeValidationService.GetValidationResult(
-            (submissionTypeToReplaceOrDelete, submissionTypeToReplaceWith, shouldDoSubmissionsDeletion));
+            (
+                model.SubmissionTypeToReplace,
+                model.SubmissionTypeToReplaceWith,
+                submissionTypeToReplaceOrDelete,
+                submissionTypeToReplaceWith,
+                shouldDoSubmissionsDeletion));
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var stopWatch = Stopwatch.StartNew();
         var problems = await this.problemsDataService
             .GetQuery(p => p.SubmissionTypesInProblems
                 .Any(st => st.SubmissionTypeId == submissionTypeToReplaceOrDelete!.Id))
@@ -135,8 +134,6 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
             }
 
             await this.submissionTypesDataService.SaveChanges();
-            Console.WriteLine(stopWatch.ElapsedMilliseconds);
-            stopWatch.Restart();
 
             this.submissionTypesInProblemsDataService
                 .Delete(stp =>
