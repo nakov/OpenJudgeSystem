@@ -27,12 +27,14 @@ interface IProblemFormProps {
 
 interface IProblemFormCreateProps extends IProblemFormProps{
     contestId: number;
+    contestName: string | undefined;
     contestType: ContestVariation;
     problemId: null;
 }
 
 interface IProblemFormEditProps extends IProblemFormProps{
     contestId?: null;
+    contestName?: null;
     contestType?: null;
     problemId: number;
 }
@@ -43,14 +45,14 @@ const defaultTimeLimit = 100;
 const defaultSourceCodeSizeLimit = 16384;
 
 const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => {
-    const { problemId, isEditMode = true, contestId, contestType, getName, getContestId } = props;
+    const { problemId, isEditMode = true, contestId, contestName, contestType, getName, getContestId } = props;
 
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ problemGroupIds, setProblemGroupsIds ] = useState<Array<IProblemGroupDropdownModel>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
         checkerId: '2',
         contestId: contestId ?? -1,
-        contestName: '',
+        contestName: contestName ?? '',
         id: 0,
         maximumPoints: defaultMaxPoints,
         memoryLimit: defaultMemoryLimit,
@@ -149,6 +151,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         formData.append('id', currentProblem.id?.toString() ?? '');
         formData.append('orderBy', currentProblem.orderBy?.toString() || '');
         formData.append('contestId', currentProblem.contestId?.toString() || '');
+        formData.append('contestName', currentProblem.contestName?.toString() || '');
         formData.append('maximumPoints', currentProblem.maximumPoints?.toString() || '');
         formData.append('memoryLimit', currentProblem.memoryLimit?.toString() || '');
         formData.append('sourceCodeSizeLimit', currentProblem.sourceCodeSizeLimit?.toString() || '');

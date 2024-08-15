@@ -1,45 +1,39 @@
 namespace OJS.Servers.Infrastructure.Extensions;
 
 using Microsoft.Extensions.Hosting;
-using OJS.Common.Extensions;
+using Microsoft.Net.Http.Headers;
 using OJS.Services.Infrastructure.Configurations;
 using Serilog;
-using Serilog.Events;
-using System.IO;
+using Serilog.Sinks.OpenTelemetry;
+using System.Collections.Generic;
 
 public static class HostBuilderExtensions
 {
-    public static IHostBuilder UseFileLogger<TStartup>(this IHostBuilder builder)
+    public static IHostBuilder UseLogger(
+        this IHostBuilder builder,
+        IHostEnvironment environment)
         => builder.UseSerilog((hostingContext, configuration) =>
         {
-            var loggerFilePath = hostingContext.Configuration
-                .GetSectionValueWithValidation<ApplicationConfig, string>(
-                    nameof(ApplicationConfig.LoggerFilesFolderPath));
-
-            var projectLogsDirectoryPath = Path.Combine(loggerFilePath, typeof(TStartup).GetProjectName());
-            var filePath = Path.Combine(projectLogsDirectoryPath, "log.txt");
-            var errorFilePath = Path.Combine(projectLogsDirectoryPath, "error.txt");
+            var applicationName = environment.GetShortApplicationName();
+            var appSettings = hostingContext.Configuration.GetSectionWithValidation<ApplicationConfig>();
 
             configuration
-                .ReadFrom
-                .Configuration(hostingContext.Configuration)
-                .Enrich
-                .FromLogContext()
-                .WriteTo
-                .Console()
-                .WriteTo
-                .File(
-                    filePath,
-                    rollingInterval: RollingInterval.Day,
-                    rollOnFileSizeLimit: true,
-                    retainedFileCountLimit: null)
-                .WriteTo
-                .Logger(l => l.Filter.ByIncludingOnly(e => e.Level is LogEventLevel.Error or LogEventLevel.Fatal)
-                    .WriteTo
-                    .File(
-                        errorFilePath,
-                        rollingInterval: RollingInterval.Day,
-                        rollOnFileSizeLimit: true,
-                        retainedFileCountLimit: null));
+                .ReadFrom.Configuration(hostingContext.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Async(wt => wt.Console())
+                .WriteTo.OpenTelemetry(options =>
+                {
+                    options.Endpoint = appSettings.OtlpCollectorLogsPushEndpoint;
+                    options.Protocol = OtlpProtocol.HttpProtobuf;
+                    options.Headers = new Dictionary<string, string>
+                    {
+                        [HeaderNames.Authorization] = appSettings.OtlpCollectorBasicAuthHeaderValue,
+                    };
+                    options.ResourceAttributes = new Dictionary<string, object>
+                    {
+                        ["service.name"] = applicationName.ToLower(),
+                        ["deployment.environment"] = environment.EnvironmentName.ToLower(),
+                    };
+                });
         });
 }
