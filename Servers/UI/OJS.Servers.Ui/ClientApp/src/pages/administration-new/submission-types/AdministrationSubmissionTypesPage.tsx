@@ -30,6 +30,7 @@ const AdministrationSubmissionTypesPage = () => {
 
     const {
         refetch,
+        isFetching,
         data: submissionTypesData,
         isLoading: isGettingData,
         error,
@@ -42,7 +43,7 @@ const AdministrationSubmissionTypesPage = () => {
         setShowEditModal(true);
     };
 
-    if (isGettingData) {
+    if (isGettingData || isFetching) {
         return <SpinningLoader />;
     }
     const onModalClose = (isEditMode : boolean) => {
