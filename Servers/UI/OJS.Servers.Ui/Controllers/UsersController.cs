@@ -32,7 +32,7 @@ public class UsersController : BaseApiController
     [ProducesResponseType(typeof(UserProfileResponseModel), Status200OK)]
     public async Task<IActionResult> GetProfileInfo([FromQuery] string? username)
         => await this.usersBusiness
-            .GetUserProfileByUsername(username)
+            .GetUserShortOrFullProfileByLoggedInUserIsAdminOrProfileOwner(username)
             .Map<UserProfileResponseModel>()
             .ToOkResult();
 

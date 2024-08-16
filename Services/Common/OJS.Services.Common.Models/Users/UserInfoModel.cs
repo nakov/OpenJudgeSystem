@@ -3,6 +3,7 @@ namespace OJS.Services.Common.Models.Users;
 using AutoMapper;
 using OJS.Common.Extensions;
 using OJS.Services.Infrastructure.Models.Mapping;
+using System.Linq;
 using System.Security.Claims;
 
 public class UserInfoModel : IMapExplicitly
@@ -10,6 +11,8 @@ public class UserInfoModel : IMapExplicitly
     public string Id { get; set; } = null!;
 
     public string? Username { get; set; }
+
+    public string[] Roles { get; set; } = [];
 
     public bool IsAuthenticated => this.Id != null!;
 
@@ -33,5 +36,11 @@ public class UserInfoModel : IMapExplicitly
                 opt => opt.MapFrom(src => src.IsAdmin()))
             .ForMember(
                 m => m.IsLecturer,
-                opt => opt.MapFrom(src => src.IsLecturer()));
+                opt => opt.MapFrom(src => src.IsLecturer()))
+            .ForMember(
+                m => m.Roles,
+                opt => opt.MapFrom(src => ((ClaimsIdentity)src.Identity!)
+                    .Claims
+                    .Where(c => c.Type == ClaimTypes.Role)
+                    .Select(c => c.Value)));
 }
