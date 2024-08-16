@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -150,6 +150,19 @@ const ContestEdit = (props:IContestEditProps) => {
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestMutation();
+
+    const getDefaultContestCategory = useCallback(() => {
+        const defaultCategory = contestCategories![0];
+        const categoryName = defaultCategory.name;
+        const categoryId = defaultCategory.id;
+        setContest((prevState) => ({
+            ...prevState,
+            categoryId,
+            categoryName,
+        }));
+
+        return defaultCategory;
+    }, [ contestCategories ]);
 
     useEffect(
         () => {
@@ -631,7 +644,7 @@ const ContestEdit = (props:IContestEditProps) => {
                       sx={{ width: '100%' }}
                       className={formStyles.inputRow}
                       onChange={(event, newValue) => handleAutocompleteChange('category', newValue!, 'id', onChange)}
-                      value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
+                      value={contestCategories?.find((category) => category.id === contest.categoryId) ?? getDefaultContestCategory()}
                       options={contestCategories!}
                       renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} key={params.id} />}
                       getOptionLabel={(option) => option?.name}
