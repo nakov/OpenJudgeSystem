@@ -44,8 +44,8 @@ public class UserToRoleModelValidator : BaseValidator<UserToRoleModel>
             .WithMessage("User is already in the role.")
             .When(x => x.OperationType == CrudOperationType.Create)
             .MustAsync(async (model, _) => await this.BeInRole(model.UserId!, model.RoleId!))
-            .When(x => x.OperationType == CrudOperationType.Delete)
-            .WithMessage("User is not in this role.");
+            .WithMessage("User is not in this role.")
+            .When(x => x.OperationType == CrudOperationType.Delete);
     }
 
     private async Task<bool> HaveUserWithId(string userId)
