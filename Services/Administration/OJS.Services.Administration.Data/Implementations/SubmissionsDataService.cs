@@ -15,7 +15,7 @@
 
     public class SubmissionsDataService : AdministrationDataService<Submission>, ISubmissionsDataService
     {
-        private IDatesService datesService;
+        private readonly IDatesService datesService;
         public SubmissionsDataService(OjsDbContext submissions, IDatesService datesService)
             : base(submissions)
             => this.datesService = datesService;
