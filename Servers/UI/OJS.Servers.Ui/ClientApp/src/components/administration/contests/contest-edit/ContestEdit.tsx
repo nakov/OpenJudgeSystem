@@ -155,6 +155,13 @@ const ContestEdit = (props:IContestEditProps) => {
         const defaultCategory = contestCategories![0];
         const categoryName = defaultCategory.name;
         const categoryId = defaultCategory.id;
+        /*
+            Set the contest's 'categoryId' and 'categoryName' to the default contest category's
+            values, because otherwise they will remain 0 and an empty string ('') respectively.
+            If a user tries to create a new contest without selecting a category, an error
+            would occur since 0 and '' are not valid values for categoryId and categoryName.
+            This ensures a valid default category is always set when creating a new contest.
+        */
         setContest((prevState) => ({
             ...prevState,
             categoryId,
