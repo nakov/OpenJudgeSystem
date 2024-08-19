@@ -75,8 +75,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                     executionContext,
                     executor,
                     testPath,
-                    string.Empty,
-                    this.WorkingDirectory);
+                    directory: this.WorkingDirectory);
 
                 var testResult = this.GetTestResult(processExecutionResult, test, checker);
 

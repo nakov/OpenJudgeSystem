@@ -273,11 +273,10 @@ public class _$TestRunner {{
 
                 var preprocessExecutionResult = await preprocessExecutor.Execute(
                     this.Settings.JavaExecutablePath,
-                    string.Empty,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
-                    preprocessArguments,
-                    this.WorkingDirectory);
+                    executionArguments: preprocessArguments,
+                    workingDirectory: this.WorkingDirectory);
 
                 ValidateJvmInitialization(preprocessExecutionResult.ReceivedOutput);
 
@@ -321,11 +320,10 @@ public class _$TestRunner {{
 
             var processExecutionResult = await executor.Execute(
                 this.Settings.JavaExecutablePath,
-                string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
-                arguments,
-                this.WorkingDirectory,
+                executionArguments: arguments,
+                workingDirectory: this.WorkingDirectory,
                 useProcessTime: true);
 
             if (!string.IsNullOrWhiteSpace(processExecutionResult.ErrorOutput))

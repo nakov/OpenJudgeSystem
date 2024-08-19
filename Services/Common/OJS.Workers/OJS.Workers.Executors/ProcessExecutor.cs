@@ -38,9 +38,9 @@
 
         public async Task<ProcessExecutionResult> Execute(
             string fileName,
-            string inputData,
             int processTimeLimit,
             int processMemoryLimit,
+            string? inputData = null,
             IEnumerable<string>? executionArguments = null,
             string? workingDirectory = null,
             bool useProcessTime = false,
@@ -57,8 +57,8 @@
 
             var processExecutionResult = await this.InternalExecute(
                 fileName,
-                inputData,
                 this.timeLimit,
+                inputData,
                 executionArguments,
                 workingDirectory,
                 useSystemEncoding,
@@ -74,8 +74,8 @@
 
         protected abstract Task<ProcessExecutionResult> InternalExecute(
             string fileName,
-            string inputData,
             int timeLimit,
+            string? inputData,
             IEnumerable<string>? executionArguments,
             string? workingDirectory,
             bool useSystemEncoding,

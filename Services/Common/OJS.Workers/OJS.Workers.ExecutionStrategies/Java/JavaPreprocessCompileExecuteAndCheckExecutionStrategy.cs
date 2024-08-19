@@ -289,7 +289,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             IExecutor executor,
             IExecutionContext<TInput> executionContext,
             string filePath,
-            string input)
+            string? inputData = null)
         {
             var classToExecute = filePath
                 .Substring(
@@ -310,11 +310,10 @@ class _$SandboxSecurityManager extends SecurityManager {
 
             var processExecutionResult = await executor.Execute(
                     this.Settings.JavaExecutablePath,
-                    input,
                     executionContext.TimeLimit * 2, // Java virtual machine takes more time to start up
                     executionContext.MemoryLimit,
+                    inputData,
                     executionArguments,
-                    null,
                     useProcessTime: false,
                     useSystemEncoding: true);
 

@@ -90,8 +90,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 executionContext,
                 executor,
                 codeSavePath,
-                string.Empty,
-                this.WorkingDirectory)
+                directory: this.WorkingDirectory)
                 .GetAwaiter()
                 .GetResult();
 
