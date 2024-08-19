@@ -29,8 +29,8 @@ public class SettingAdministrationModelValidator : BaseAdministrationModelValida
         this.RuleFor(model => model)
             .NotEmpty()
             .Must(ValueMustMatchType)
-            .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update)
-            .WithMessage("The value does not match the setting type.");
+            .WithMessage("The value does not match the setting type.")
+            .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
     }
 
     private static bool ValueMustMatchType(SettingAdministrationModel setting)
