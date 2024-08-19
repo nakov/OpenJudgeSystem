@@ -12,6 +12,7 @@ import SubmissionTypesForm from '../../../components/administration/submission-t
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { useGetAllSubmissionTypesQuery, useLazyExportSubmissionTypesToExcelQuery } from '../../../redux/services/admin/submissionTypesAdminService';
+import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
@@ -21,6 +22,7 @@ const AdministrationSubmissionTypesPage = () => {
     const [ searchParams ] = useSearchParams();
     const navigate = useNavigate();
 
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
     const [ showEditModal, setShowEditModal ] = useState<boolean>(false);
     const [ submissionTypeId, setSubmissionTypeId ] = useState<number | null>(null);
@@ -67,7 +69,12 @@ const AdministrationSubmissionTypesPage = () => {
               : showCreateModal}
           onClose={() => onModalClose(isEditMode)}
         >
-            <SubmissionTypesForm id={submissionTypeId} isEditMode={isEditMode} />
+            <SubmissionTypesForm
+              id={submissionTypeId}
+              isEditMode={isEditMode}
+              onSuccess={() => onModalClose(isEditMode)}
+              setParentSuccessMessage={setSuccessMessage}
+            />
         </AdministrationModal>
     );
 
@@ -99,20 +106,23 @@ const AdministrationSubmissionTypesPage = () => {
     );
 
     return (
-        <AdministrationGridView
-          filterableGridColumnDef={submissionTypesFilterableColumns}
-          notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick, onSuccessFullDelete)}
-          data={submissionTypesData}
-          error={error}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-          modals={[
-              { showModal: showEditModal, modal: (i) => renderFormModal(i, true) },
-              { showModal: showCreateModal, modal: (i) => renderFormModal(i, false) },
-          ]}
-          renderActionButtons={renderGridSettings}
-          excelMutation={useLazyExportSubmissionTypesToExcelQuery}
-        />
+        <>
+            {renderSuccessfullAlert(successMessage)}
+            <AdministrationGridView
+              filterableGridColumnDef={submissionTypesFilterableColumns}
+              notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick, onSuccessFullDelete)}
+              data={submissionTypesData}
+              error={error}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
+              modals={[
+                  { showModal: showEditModal, modal: (i) => renderFormModal(i, true) },
+                  { showModal: showCreateModal, modal: (i) => renderFormModal(i, false) },
+              ]}
+              renderActionButtons={renderGridSettings}
+              excelMutation={useLazyExportSubmissionTypesToExcelQuery}
+            />
+        </>
     );
 };
 export default AdministrationSubmissionTypesPage;
