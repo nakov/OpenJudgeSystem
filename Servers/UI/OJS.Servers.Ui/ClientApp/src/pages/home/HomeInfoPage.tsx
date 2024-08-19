@@ -101,6 +101,10 @@ const HomePage = () => {
 
     return (
         <div className={styles.homePageContentWrapper}>
+            <meta
+              name="description"
+              content="SoftUni Judge Platform. A platform used by SoftUni students for testing and evaluating their programming skills."
+            />
             <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
             <LiteYouTubeEmbed
               id={YOUTUBE_VIDEO_ID}
