@@ -17,6 +17,8 @@
 
         IQueryable<Submission> GetAllByProblem(int problemId);
 
+        IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
+
         IQueryable<Submission> GetByIds(IEnumerable<int> ids);
 
         IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
@@ -28,6 +30,8 @@
             DateTime nonBestCreatedBeforeDate);
 
         IQueryable<Submission> GetAllHavingPointsExceedingLimit();
+
+        IQueryable<Submission> GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(int submissionTypeId, int monthsCount);
 
         IQueryable<int> GetIdsByProblem(int problemId);
 

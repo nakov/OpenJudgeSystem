@@ -1,11 +1,11 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using OJS.Servers.Infrastructure.Configurations;
     using Hangfire;
     using Hangfire.SqlServer;
     using MassTransit;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.AspNetCore.Http;
@@ -21,10 +21,12 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.Options;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
-    using OJS.Common;
     using OJS.Data;
     using OJS.Data.Implementations;
-    using OJS.Servers.Infrastructure.Filters;
+    using OJS.Servers.Infrastructure.Configurations;
+    using OJS.Servers.Infrastructure.Handlers;
+    using OJS.Servers.Infrastructure.Health;
+    using OJS.Servers.Infrastructure.Policy;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
@@ -52,6 +54,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
+    using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
     using static OJS.Services.Infrastructure.Constants.ResilienceStrategyConstants.Common;
 
     public static class ServiceCollectionExtensions
@@ -64,7 +67,10 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices<TStartup>()
+                .AddConventionServices<TStartup>()
+                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
+                .AddHttpContextServices()
+                .AddHttpClients(configuration)
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<HealthCheckConfig>();
 
@@ -79,9 +85,9 @@ namespace OJS.Servers.Infrastructure.Extensions
                 x.ValueLengthLimit = maxRequestLimit;
             });
 
-            services.AddSingleton<ValidateApiKeyAttribute>();
-
-            return services;
+            return services
+                .AddAuthorizationPolicies()
+                .AddHealthMonitoring();
         }
 
         /// <summary>
@@ -98,10 +104,16 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityRole : IdentityRole
             where TIdentityUserRole : IdentityUserRole<string>, new()
         {
+            var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("DB connection string is missing.");
+            }
+
             services
                 .AddDbContext<TDbContext>(options =>
                 {
-                    var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
                     options.UseSqlServer(connectionString);
                 })
                 .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
@@ -142,6 +154,10 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddDataProtection()
                 .PersistKeysToDbContext<TDbContext>()
                 .SetApplicationName(ApplicationFullName);
+
+            services
+                .AddHealthChecks()
+                .AddSqlServer(connectionString);
 
             return services;
         }
@@ -270,19 +286,19 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .ValidateOnStart()
                 .Services;
 
-        public static IServiceCollection ConfigureCorsPolicy(this IServiceCollection services, IConfiguration configuration) =>
-        services.AddCors(options =>
-        {
-            options.AddPolicy(
-                GlobalConstants.CorsDefaultPolicyName,
-                config =>
-                    config.WithOrigins(
-                            configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
-                        .WithExposedHeaders("Content-Disposition")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
-        });
+        public static IServiceCollection ConfigureCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+            => services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    CorsDefaultPolicyName,
+                    config =>
+                        config.WithOrigins(
+                                configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
+                            .WithExposedHeaders("Content-Disposition")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials());
+            });
 
         public static IServiceCollection AddResiliencePipelines(this IServiceCollection services)
         {
@@ -341,14 +357,17 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
+        private static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
         {
-            services
-                .AddConventionServices<TStartUp>()
-                .AddTransient(typeof(IDataService<>), typeof(DataService<>));
+            var settings = configuration.GetSectionWithValidation<ApplicationConfig>();
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
+            services.AddHttpClient(ServerConstants.LokiHttpClientName, client =>
+            {
+                client.BaseAddress = new Uri(settings.OtlpCollectorBaseUrl);
+                client.DefaultRequestHeaders.Add(HeaderNames.Authorization, settings.OtlpCollectorBasicAuthHeaderValue);
+            });
 
             return services;
         }
@@ -362,11 +381,17 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.AddSingleton<IConnectionMultiplexer>(redisConnection);
             services.AddSingleton<ICacheService, CacheService>();
 
-            return services.AddStackExchangeRedisCache(options =>
+            services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = redisConfig.ConnectionString;
                 options.InstanceName = $"{redisConfig.InstanceName}:";
             });
+
+            services
+                .AddHealthChecks()
+                .AddRedis(redisConfig.ConnectionString, timeout: TimeSpan.FromSeconds(5));
+
+            return services;
         }
 
         private static void ConfigureHttpClient(HttpClient client)
@@ -376,6 +401,25 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             return Task.CompletedTask;
+        }
+
+        private static IServiceCollection AddHealthMonitoring(this IServiceCollection services)
+        {
+            services.AddHealthChecks()
+                .AddCheck<LokiHealthCheck>("loki");
+
+            return services;
+        }
+
+        private static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+        {
+            services
+                .AddAuthorizationBuilder()
+                .AddPolicy(ApiKeyPolicyName, policy => policy.AddRequirements(new ApiKeyRequirement(HeaderKeys.ApiKey)));
+
+            services.AddSingleton<IAuthorizationHandler, ApiKeyHandler>();
+
+            return services;
         }
     }
 }

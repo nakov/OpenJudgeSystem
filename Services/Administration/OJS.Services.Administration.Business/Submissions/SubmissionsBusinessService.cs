@@ -182,11 +182,9 @@ namespace OJS.Services.Administration.Business.Submissions
                         submissionProblemId);
                 }
 
-                var serializedExecutionDetails = submissionServiceModel.ToJson();
-
                 await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
-                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id, serializedExecutionDetails);
+                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;

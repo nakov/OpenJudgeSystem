@@ -2,17 +2,18 @@ namespace OJS.Servers.Infrastructure.Extensions
 {
     using AutoMapper;
     using Hangfire;
+    using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Options;
     using OJS.Common;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Infrastructure;
-    using OJS.Services.Infrastructure.Configurations;
     using static OJS.Common.GlobalConstants.Urls;
+    using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
     public static class WebApplicationExtensions
     {
@@ -22,10 +23,11 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             app.UseAutoMapper();
 
-            app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapHealthMonitoring();
+            app.MapControllers();
 
             return app;
         }
@@ -73,16 +75,13 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
-        public static void UseHealthMonitoring(this WebApplication app)
-        {
-            var healthCheckConfig = app.Services.GetRequiredService<IOptions<HealthCheckConfig>>().Value;
-
-            app.MapWhen(
-                httpContext =>
-                    httpContext.Request.Query.TryGetValue(healthCheckConfig.Key, out var healthPassword)
-                    && healthPassword == healthCheckConfig.Password,
-                appBuilder => appBuilder.UseHealthChecks("/health"));
-        }
+        public static void MapHealthMonitoring(this WebApplication app)
+            => app
+                .MapHealthChecks("/api/health", new HealthCheckOptions
+                {
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+                })
+                .RequireAuthorization(ApiKeyPolicyName);
 
         public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app)
             where TDbContext : DbContext
@@ -91,6 +90,14 @@ namespace OJS.Servers.Infrastructure.Extensions
             var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
             dbContext.Database.Migrate();
+
+            return app;
+        }
+
+        public static WebApplication SeedRoles(this WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            scope.ServiceProvider.CreateOrUpdateRoles().GetAwaiter().GetResult();
 
             return app;
         }

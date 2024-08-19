@@ -15,7 +15,6 @@ using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
-using OJS.Services.Ui.Business.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using OJS.Services.Ui.Data;
@@ -359,17 +358,17 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int page,
         int itemsInPage = DefaultSubmissionsPerPage)
     {
-        var user = await this.usersBusiness.GetUserProfileByUsername(username);
-        var loggedInUser = this.userProviderService.GetCurrentUser();
-        var loggedInUserProfile = await this.usersBusiness.GetUserProfileById(loggedInUser.Id);
-
-        if (!loggedInUser.IsAdminOrLecturer && loggedInUserProfile!.UserName != username)
+        if (!this.usersBusiness.IsUserInRolesOrProfileOwner(
+                username,
+                [GlobalConstants.Roles.Administrator, GlobalConstants.Roles.Lecturer]))
         {
             throw new UnauthorizedAccessException("You are not authorized for this action");
         }
 
+        var userId = await this.usersBusiness.GetUserIdByUsername(username);
+
         var userParticipantsIds = await this.participantsDataService
-            .GetAllByUser(user!.Id)
+            .GetAllByUser(userId)
             .Select(p => p.Id)
                 .ToEnumerableAsync();
 
@@ -382,7 +381,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId)
     {
-        var user = await this.usersBusiness.GetUserProfileByUsername(username);
+        var user = await this.usersBusiness.GetUserShortOrFullProfileByLoggedInUserIsAdminOrProfileOwner(username);
 
         return await this.submissionsData
             .GetAllForUserByContest(
@@ -485,7 +484,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToSerializedDetails());
+        await this.submissionsForProcessingData.Add(newSubmission.Id);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
@@ -535,9 +534,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
 
-        var serializedExecutionResultServiceModel =
-            submissionExecutionResult.Map<SerializedSubmissionExecutionResultServiceModel>();
-
         await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
             submission.Processed = true;
@@ -561,9 +557,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submission.CompilerComment = ProcessingExceptionCompilerComment;
             }
 
-            this.submissionsForProcessingData.MarkProcessed(
-                submissionForProcessing,
-                serializedExecutionResultServiceModel);
+            this.submissionsForProcessingData.MarkProcessed(submissionForProcessing);
             await this.submissionsData.SaveChanges();
         });
     }
