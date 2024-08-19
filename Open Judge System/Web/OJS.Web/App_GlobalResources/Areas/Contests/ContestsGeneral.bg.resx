@@ -207,4 +207,7 @@
   <data name="Text_upload_not_allowed" xml:space="preserve">
     <value>Не е позволено качването на текст</value>
   </data>
+  <data name="User_has_not_processed_submission_for_contest" xml:space="preserve">
+    <value>Имате необработено решение за този изпит. Моля изчакайте решението да бъде обработено.</value>
+  </data>
 </root>
