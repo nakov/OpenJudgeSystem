@@ -73,7 +73,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         {
             WriteTestInCodeFile(test.Input, codeSavePath, executionContext.Code);
 
-            var processExecutionResult = this.Execute(executionContext, executor, codeSavePath, string.Empty)
+            var processExecutionResult = this.Execute(executionContext, executor, codeSavePath)
                 .GetAwaiter().GetResult();
 
             return this.GetUnitTestsResultFromExecutionResult(

@@ -13,7 +13,7 @@ public class ContestSimilarityModelValidator : BaseValidator<SimillarityCheckMod
             .Must(MustHaveIdsAndMustBeValidIds)
             .WithMessage("Must specify at least one valid contest id");
 
-    private static bool MustHaveIdsAndMustBeValidIds(IEnumerable<int>? contestIds)
+    private static bool MustHaveIdsAndMustBeValidIds(List<int>? contestIds)
     {
         if (contestIds == null || !contestIds.Any())
         {

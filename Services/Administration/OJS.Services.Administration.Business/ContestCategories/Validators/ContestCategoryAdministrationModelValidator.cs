@@ -31,7 +31,7 @@ public class ContestCategoryAdministrationModelValidator : BaseAdministrationMod
         this.RuleFor(model => model)
             .MustAsync(async (model, _)
                 => await this.ValidateParentCategoryIsValid(model))
-            .WithMessage($"Provided Parent category does not exist.")
+            .WithMessage("Provided Parent category does not exist.")
             .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
     }
 

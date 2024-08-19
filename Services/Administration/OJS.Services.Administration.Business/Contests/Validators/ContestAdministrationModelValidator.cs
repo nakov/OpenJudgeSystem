@@ -32,14 +32,14 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
 
         this.RuleFor(model => model.EndTime)
             .GreaterThan(model => model.StartTime)
-            .When(model => model.StartTime.HasValue)
             .WithMessage("End Time must be greater than Start Time")
+            .When(model => model.StartTime.HasValue)
             .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model.PracticeEndTime)
             .GreaterThan(model => model.PracticeStartTime)
-            .When(model => model.PracticeStartTime.HasValue)
             .WithMessage("Practice end time must be greater than Practice start time")
+            .When(model => model.PracticeStartTime.HasValue)
             .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model.Type)
@@ -52,24 +52,24 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
         this.RuleFor(model => model)
             .MustAsync(async (model, _)
                 => await this.ValidateActiveContestCannotEditDurationTypeOnEdit(model))
+            .WithMessage("Cannot change duration or type in an active contest.")
             .WithName("Duration")
             .NotNull()
-            .WithMessage("Cannot change duration or type in an active contest.")
             .When(model => model.OperationType is CrudOperationType.Update);
 
         this.RuleFor(model => model)
             .Must(ValidateOnlineContestProblemGroups)
+            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}")
             .WithName("Number of problem groups")
             .NotNull()
             .When(model => model.OperationType == CrudOperationType.Create &&
-                           model.Type == ContestType.OnlinePracticalExam.ToString())
-            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
+                           model.Type == ContestType.OnlinePracticalExam.ToString());
 
         this.RuleFor(model => model.Id)
             .MustAsync(async (x, _) => !await this.activityService.IsContestActive(x))
+            .WithMessage("Cannot delete active contest")
             .NotNull()
-            .When(model => model.OperationType is CrudOperationType.Delete)
-            .WithMessage($"Cannot delete active contest");
+            .When(model => model.OperationType is CrudOperationType.Delete);
     }
 
     private static bool BeAValidContestType(string? type)

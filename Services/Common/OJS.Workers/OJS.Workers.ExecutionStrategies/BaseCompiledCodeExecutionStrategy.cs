@@ -52,14 +52,12 @@
             {
                 var processExecutionResult = await executor.Execute(
                     outputFile,
-                    test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
-                    null,
-                    null,
+                    test.Input,
                     useProcessTime: false,
-                    useSystemEncoding,
-                    dependOnExitCodeForRunTimeError);
+                    useSystemEncoding: useSystemEncoding,
+                    dependOnExitCodeForRunTimeError: dependOnExitCodeForRunTimeError);
 
                 var testResult = CheckAndGetTestResult(
                     test,
