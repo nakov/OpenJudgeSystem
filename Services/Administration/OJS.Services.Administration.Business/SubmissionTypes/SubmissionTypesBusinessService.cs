@@ -24,35 +24,26 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     private readonly ISubmissionTypesDataService submissionTypesDataService;
     private readonly IContestsDataService contestsDataService;
     private readonly ISubmissionsDataService submissionsDataService;
-    private readonly IParticipantScoresDataService participantScoresData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IDeleteOrReplaceSubmissionTypeValidationService deleteOrReplaceSubmissionTypeValidationService;
-    private readonly IDatesService datesService;
-    private readonly ITransactionsProvider transactionsProvider;
 
     public SubmissionTypesBusinessService(
         ISubmissionTypesDataService submissionTypesDataService,
         IContestsDataService contestsDataService,
         ISubmissionsDataService submissionsDataService,
-        IParticipantScoresDataService participantScoresData,
         ITestRunsDataService testRunsData,
         ISubmissionTypesInProblemsDataService submissionTypesInProblemsDataService,
         IProblemsDataService problemsDataService,
-        IDeleteOrReplaceSubmissionTypeValidationService deleteOrReplaceSubmissionTypeValidationService,
-        IDatesService datesService,
-        ITransactionsProvider transactionsProvider)
+        IDeleteOrReplaceSubmissionTypeValidationService deleteOrReplaceSubmissionTypeValidationService)
     {
         this.submissionTypesDataService = submissionTypesDataService;
         this.contestsDataService = contestsDataService;
         this.submissionsDataService = submissionsDataService;
-        this.participantScoresData = participantScoresData;
         this.testRunsData = testRunsData;
         this.submissionTypesInProblemsDataService = submissionTypesInProblemsDataService;
         this.deleteOrReplaceSubmissionTypeValidationService = deleteOrReplaceSubmissionTypeValidationService;
-        this.datesService = datesService;
-        this.transactionsProvider = transactionsProvider;
         this.problemsDataService = problemsDataService;
     }
 
