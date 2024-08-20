@@ -9,6 +9,7 @@ import useSuccessMessageEffect from '../../../../hooks/common/use-success-messag
 import { useCreateRoleMutation, useGetRoleByIdQuery, useUpdateRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -68,6 +69,7 @@ const RoleForm = (props: IRoleFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {
@@ -81,7 +83,8 @@ const RoleForm = (props: IRoleFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getError, updateError, createError ], setExceptionMessages);
-    }, [ getError, updateError, createError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ getError, updateError, createError, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;

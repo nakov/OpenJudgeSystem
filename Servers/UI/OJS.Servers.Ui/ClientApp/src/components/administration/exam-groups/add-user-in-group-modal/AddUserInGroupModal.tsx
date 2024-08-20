@@ -69,6 +69,7 @@ const AddUserInGroupModal = (props:IAddUserInExamGroupProps) => {
             { message: createData, shouldGet: isSuccessfullyCreated },
         ],
         setSuccessMessage,
+        clearFlags: [ isCreating ],
     });
 
     useEffect(

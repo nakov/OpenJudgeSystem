@@ -18,6 +18,7 @@ import { getDateAsLocal } from '../../../../utils/administration/administration-
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -85,6 +86,7 @@ const SettingForm = (props: ISettingFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {
@@ -95,7 +97,8 @@ const SettingForm = (props: ISettingFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getError, updateError, createError ], setExceptionMessages);
-    }, [ getError, updateError, createError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ getError, updateError, createError, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;

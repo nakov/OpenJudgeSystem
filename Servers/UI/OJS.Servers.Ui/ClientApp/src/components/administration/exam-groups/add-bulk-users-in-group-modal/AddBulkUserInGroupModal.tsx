@@ -62,6 +62,7 @@ const AddBulkUsersInGroupModal = (props:IAddUsersInExamGroupProps) => {
             { message: addingData, shouldGet: isSuccessfullyAdded },
         ],
         setSuccessMessage,
+        clearFlags: [ isAdding ],
     });
 
     useEffect(

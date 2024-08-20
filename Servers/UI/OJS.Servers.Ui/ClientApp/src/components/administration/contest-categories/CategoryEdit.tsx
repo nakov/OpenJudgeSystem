@@ -15,7 +15,8 @@ import {
     useGetContestCategoryByIdQuery, useUpdateContestCategoryByIdMutation,
 } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
-import { renderErrorMessagesAlert } from '../../../utils/render-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
+import clearSuccessMessages from '../../../utils/success-messages-utils';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -24,8 +25,8 @@ import styles from './CategoryEdit.module.scss';
 interface IContestCategoryEditProps {
     contestCategoryId: number | null;
     isEditMode?: boolean;
-    setParentSuccessMessage: Function;
-    onSuccess: Function;
+    setParentSuccessMessage?: Function;
+    onSuccess?: Function;
 }
 
 const initialState : IContestCategoryAdministration = {
@@ -43,6 +44,7 @@ const initialState : IContestCategoryAdministration = {
 const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     const { contestCategoryId, isEditMode = true, onSuccess, setParentSuccessMessage } = props;
 
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
 
@@ -56,6 +58,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     });
 
     const { data, isFetching, isLoading } = useGetContestCategoryByIdQuery({ id: Number(contestCategoryId) }, { skip: !isEditMode });
+
     const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
 
     const [
@@ -76,7 +79,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyUpdated || isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
@@ -84,6 +87,8 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             { message: updateData, shouldGet: isSuccessfullyUpdated },
         ],
         setParentSuccessMessage,
+        setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(
@@ -103,11 +108,12 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         if (isSuccessfullyCreated) {
             setErrorMessages([]);
         }
-    }, [ isSuccessfullyCreated, isSuccessfullyUpdated ]);
+    }, [ isSuccessfullyCreated, isSuccessfullyUpdated, setParentSuccessMessage ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-    }, [ createError, updateError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ createError, setParentSuccessMessage, updateError ]);
 
     useEffect(() => () => {
         setContestCategory(initialState);
@@ -202,6 +208,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
+                    {renderSuccessfullAlert(successMessage)}
                     {renderErrorMessagesAlert(errorMessages)}
                     <Typography className={styles.centralize} variant="h4">
                         {isEditMode

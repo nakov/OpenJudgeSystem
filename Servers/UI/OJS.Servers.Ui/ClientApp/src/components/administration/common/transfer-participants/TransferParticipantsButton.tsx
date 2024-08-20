@@ -37,6 +37,7 @@ const TransferParticipantsButton = (props: ITransferParticipantsButtonProps) => 
             { message: data as string, shouldGet: isSuccess },
         ],
         setSuccessMessage,
+        clearFlags: [ isLoading, isFetching ],
     });
 
     useEffect(() => {

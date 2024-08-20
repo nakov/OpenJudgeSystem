@@ -45,8 +45,8 @@ const CopyModal = (props: ICopyModalProps) => {
     const [ copy,
         {
             data: copyData,
-            isSuccess: isSuccesfullyCoppied,
-            isLoading: isCoppying,
+            isSuccess: isSuccessfullyCopied,
+            isLoading: isCopying,
             error: copyError,
         } ] = useCopyMutation();
 
@@ -62,10 +62,11 @@ const CopyModal = (props: ICopyModalProps) => {
 
     useSuccessMessageEffect({
         data: [
-            { message: copyData, shouldGet: isSuccesfullyCoppied },
+            { message: copyData, shouldGet: isSuccessfullyCopied },
             { message: copyAllData, shouldGet: isSuccessfullyCopiedAll },
         ],
         setParentSuccessMessage,
+        clearFlags: [ isCopying, isCopyingAll ],
     });
 
     useEffect(() => {
@@ -79,10 +80,10 @@ const CopyModal = (props: ICopyModalProps) => {
     }, [ copyError, copyAllError ]);
 
     useEffect(() => {
-        if (isSuccesfullyCoppied || isSuccessfullyCopiedAll) {
+        if (isSuccessfullyCopied || isSuccessfullyCopiedAll) {
             setShowModal(false);
         }
-    }, [ isSuccesfullyCoppied, isSuccessfullyCopiedAll, setShowModal ]);
+    }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ copyError ], setErrorMessages);
@@ -101,7 +102,7 @@ const CopyModal = (props: ICopyModalProps) => {
         setContestSearchString('');
     };
 
-    if (isCoppying || isCopyingAll) {
+    if (isCopying || isCopyingAll) {
         return <SpinningLoader />;
     }
 

@@ -36,6 +36,7 @@ const DeleteUserFromGroupButton = (props: IDeleteUserFromGroupButtonProps) => {
             { message: data, shouldGet: isSuccess },
         ],
         setSuccessMessage,
+        clearFlags: [ isLoading ],
     });
 
     useEffect(() => {

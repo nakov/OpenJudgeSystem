@@ -72,6 +72,7 @@ const UserForm = (props: IUserFormProps) => {
             { message: updateData, shouldGet: isSuccessfullyUpdated },
         ],
         setSuccessMessage,
+        clearFlags: [ isUpdating ],
     });
 
     useEffect(() => {

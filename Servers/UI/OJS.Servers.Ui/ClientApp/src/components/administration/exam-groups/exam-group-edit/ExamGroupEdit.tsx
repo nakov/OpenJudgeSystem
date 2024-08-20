@@ -18,6 +18,7 @@ import {
 } from '../../../../redux/services/admin/examGroupsAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -85,6 +86,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(
@@ -124,7 +126,8 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ updateError, createError ], setErrorMessages);
-    }, [ createError, updateError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ createError, setParentSuccessMessage, updateError ]);
 
     const validateForm = () => {
         const isValid = examGroupValidations.isNameValid;
