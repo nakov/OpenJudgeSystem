@@ -243,11 +243,10 @@ public class _$TestRunner {{
                 // Process the submission and check each test
                 var processExecutionResult = await executor.Execute(
                     this.Settings.JavaExecutablePath,
-                    string.Empty,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
-                    arguments,
-                    this.WorkingDirectory,
+                    executionArguments: arguments,
+                    workingDirectory: this.WorkingDirectory,
                     useProcessTime: true);
 
                 JavaStrategiesHelper.ValidateJvmInitialization(processExecutionResult.ReceivedOutput);

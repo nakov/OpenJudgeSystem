@@ -44,11 +44,10 @@
 
             var processExecutionResult = await executor.Execute(
                 compileResult.OutputFile,
-                executionContext.Input?.Input ?? string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
-                null,
-                this.WorkingDirectory);
+                executionContext.Input?.Input,
+                workingDirectory: this.WorkingDirectory);
 
             result.Results.Add(GetOutputResult(processExecutionResult));
 

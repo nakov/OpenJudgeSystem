@@ -26,8 +26,8 @@
 
         protected override async Task<ProcessExecutionResult> InternalExecute(
             string fileName,
-            string inputData,
             int timeLimit,
+            string? inputData,
             IEnumerable<string>? executionArguments,
             string? workingDirectory,
             bool useSystemEncoding,
@@ -69,7 +69,10 @@
             var processOutputTask = process.StandardOutput.ReadToEndAsync();
             var errorOutputTask = process.StandardError.ReadToEndAsync();
 
-            await this.WriteInputToProcess(process, inputData);
+            if (inputData is not null)
+            {
+                await this.WriteInputToProcess(process, inputData);
+            }
 
             // Wait the process to complete. Kill it after (timeLimit * 1.5) milliseconds if not completed.
             // We are waiting the process for more than defined time and after this we compare the process time with the real time limit.

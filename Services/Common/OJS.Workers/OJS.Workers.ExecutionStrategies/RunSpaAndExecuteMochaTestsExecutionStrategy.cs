@@ -262,7 +262,7 @@ finally:
             var preExecuteCodeSavePath = this.SavePythonCodeTemplateToTempFile(this.PythonPreExecuteCodeTemplate);
             var executor = this.CreateExecutor();
             var checker = executionContext.Input.GetChecker();
-            var preExecutionResult = await this.Execute(executionContext, executor, preExecuteCodeSavePath, string.Empty);
+            var preExecutionResult = await this.Execute(executionContext, executor, preExecuteCodeSavePath);
             var match = Regex.Match(preExecutionResult.ReceivedOutput, @"Container port: (\d+);Container name: ([a-zA-Z-_]+);");
             if (match.Success)
             {
