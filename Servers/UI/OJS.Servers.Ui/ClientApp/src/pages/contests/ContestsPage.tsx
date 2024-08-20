@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { SortType } from '../../common/contest-types';
 import { IContestsSortAndFilterOptions, IIndexContestsType } from '../../common/types';
+import MetaTags from '../../components/common/MetaTags';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -131,9 +132,9 @@ const ContestsPage = () => {
 
     return (
         <div className={styles.contestsContainer}>
-            <meta
-              name="description"
-              content="List of contests available on the Judge platform. Filter by category and execution strategy."
+            <MetaTags
+              title="SoftUni Judge Contests"
+              description="List of contests available on the Judge platform. Filter by category and execution strategy."
             />
             <div style={{ width: '100%' }}>
                 <div className={`${styles.headingWrapper} ${textColorClassName}`}>

@@ -3,6 +3,7 @@ import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 
+import MetaTags from '../../components/common/MetaTags';
 import IconSize from '../../components/guidelines/icons/common/icon-sizes';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -101,9 +102,9 @@ const HomePage = () => {
 
     return (
         <div className={styles.homePageContentWrapper}>
-            <meta
-              name="description"
-              content="SoftUni Judge Platform. A platform used by SoftUni students for testing and evaluating their programming skills."
+            <MetaTags
+              title="SoftUni Judge Platform"
+              description="The platform is used for testing and evaluating programming skills by solving problems and submitting solutions."
             />
             <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
             <LiteYouTubeEmbed
