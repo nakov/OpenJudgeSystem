@@ -92,21 +92,29 @@ internal static class ServiceCollectionExtensions
         IHostEnvironment environment,
         IConfiguration configuration)
     {
-        var microsoftTeamsWebhookUri = configuration
-            .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.MicrosoftTeamsWebhookUri));
-        var payload = GetHealthCheckPayload(environment, configuration);
-        var restorePayload = GetRestorePayload(environment);
-
         services
-            .AddHealthChecksUI(settings => settings
-                .AddWebhookNotification("Microsoft Teams", microsoftTeamsWebhookUri, payload, restorePayload)
-                .SetNotifyUnHealthyOneTimeUntilChange() // Notify once until status changes.
-                .MaximumHistoryEntriesPerEndpoint(100) // Keep only 100 entries in history.
-                .ConfigureApiEndpointHttpclient((sp, client) =>
+            .AddHealthChecksUI(settings =>
+            {
+                if (!environment.IsDevelopment())
                 {
-                    var apiKey = sp.GetRequiredService<IOptions<ApplicationConfig>>().Value.ApiKey;
-                    client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.ApiKey, apiKey);
-                }))
+                    var microsoftTeamsWebhookUri = configuration
+                        .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.MicrosoftTeamsWebhookUri));
+                    var payload = GetHealthCheckPayload(environment, configuration);
+                    var restorePayload = GetRestorePayload(environment);
+
+                    settings
+                        .AddWebhookNotification("Microsoft Teams", microsoftTeamsWebhookUri, payload, restorePayload)
+                        .SetNotifyUnHealthyOneTimeUntilChange(); // Notify once until status changes.
+                }
+
+                settings
+                    .MaximumHistoryEntriesPerEndpoint(100) // Keep only 100 entries in history.
+                    .ConfigureApiEndpointHttpclient((sp, client) =>
+                    {
+                        var apiKey = sp.GetRequiredService<IOptions<ApplicationConfig>>().Value.ApiKey;
+                        client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.ApiKey, apiKey);
+                    });
+            })
             .AddInMemoryStorage();
 
         return services;
