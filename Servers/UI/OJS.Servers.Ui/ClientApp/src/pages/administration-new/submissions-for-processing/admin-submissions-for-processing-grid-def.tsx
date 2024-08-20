@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { VIEW } from '../../../common/labels';
+import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
@@ -76,5 +79,7 @@ const dataColumns: GridColDef[] = [
         valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
+
+export const returnSubmissionsForProcessingNonFilterableColumns = () => [] as GridColDef[];
 
 export default dataColumns;
