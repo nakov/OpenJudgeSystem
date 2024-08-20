@@ -171,19 +171,15 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         validateForm();
     };
 
-    const handleAutocompleteChange = (name: string, newValue:IContestCategories) => {
+    const handleAutocompleteChange = (name: string, newValue: IContestCategories | null) => {
         setExamGroup((prevState) => ({
             ...prevState,
-            contestId: newValue.id ?? null,
-            contestName: newValue.name ?? null,
+            contestId: newValue?.id ?? null,
+            contestName: newValue?.name ?? '',
         }));
     };
 
     const onInputChange = (event: any, newInputValue: string) => {
-        if (!newInputValue) {
-            return;
-        }
-
         setContestSearchString(newInputValue);
     };
 
@@ -238,15 +234,17 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
                 <FormControl className={formStyles.inputRow} sx={{ margin: '20px 0' }}>
                     <Autocomplete
                       className={formStyles.inputRow}
-                      onChange={(event, newValue) => handleAutocompleteChange('contest', newValue!)}
+                      onChange={(event, newValue) => handleAutocompleteChange('contest', newValue)}
                       onInputChange={onInputChange}
                       options={contestsData}
                       inputValue={contestSearchString}
+                      value={examGroup.contestId
+                          ? contestsData.find((c) => c.id === examGroup.contestId) || null
+                          : null}
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       isOptionEqualToValue={(option, value) => option.id === value.id && option.name === value.name}
-                      getOptionLabel={(option) => option?.name}
+                      getOptionLabel={(option) => option?.name ?? ''}
                       disableCloseOnSelect
-                      disableClearable
                       renderOption={(properties, option) => (
                           <MenuItem {...properties} key={option.id} value={option.id}>
                               {option.name}
