@@ -195,12 +195,13 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         SubmissionType submissionTypeToReplaceOrDelete,
         SubmissionType submissionTypeToReplaceWith)
     {
-        await submissionsQuery.UpdateFromQueryAsync(s =>
-            new Submission
-            {
-                SubmissionTypeId = submissionTypeToReplaceWith!.Id,
-                ProcessingComment = $"{s.ProcessingComment}{Environment.NewLine}The submission type of this submission was updated from {submissionTypeToReplaceOrDelete.Name} to {submissionTypeToReplaceWith.Name} and changes to the problem or submission might be needed for correct execution.",
-            });
+        var commentUpdate = $"{Environment.NewLine}The submission type of this submission was updated from {submissionTypeToReplaceOrDelete.Name} to {submissionTypeToReplaceWith.Name} and changes to the problem or submission might be needed for correct execution.";
+
+        await submissionsQuery.UpdateFromQueryAsync(s => new Submission
+        {
+            SubmissionTypeId = submissionTypeToReplaceWith!.Id,
+            ProcessingComment = s.ProcessingComment + commentUpdate,
+        });
 
         var problemsWithoutSubmissionType = problems
             .Where(p => p.SubmissionTypesInProblems.All(s => s.SubmissionTypeId != submissionTypeToReplaceWith.Id));
