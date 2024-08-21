@@ -3,6 +3,7 @@ import { IoMdTrash } from 'react-icons/io';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { DELETE } from '../../../../common/labels';
+import { IMappingEntityId } from '../../../../common/types';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
@@ -10,7 +11,7 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 interface IDeleteButtonProps {
     onSuccess?: () => void;
-    id: number | string;
+    id: number | string | IMappingEntityId;
     name: string;
     style?: object;
     text: string;

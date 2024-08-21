@@ -4,7 +4,7 @@ import { IContestActivity, IContestAdministration, IContestAutocomplete, IFileMo
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
-import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, GET_ALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import { SimillarityType } from '../../../pages/administration-new/submissions-simillarity/SubmissionsSimillarity';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
@@ -14,7 +14,7 @@ export const contestService = createApi({
     endpoints: (builder) => ({
         getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
-                url: `/${GETALL_ENDPOINT}`,
+                url: `/${GET_ALL_ENDPOINT}`,
                 params: {
                     filter,
                     page,

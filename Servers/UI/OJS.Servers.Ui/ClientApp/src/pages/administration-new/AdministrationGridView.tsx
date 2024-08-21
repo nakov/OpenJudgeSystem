@@ -30,7 +30,7 @@ interface IAdministrationGridViewProps<T> {
     setQueryParams?: Dispatch<SetStateAction<IGetAllAdminParams>>;
     withSearchParams?: boolean;
     legendProps?: Array<{color: string; message:string}>;
-    specificRowIdName?: string | null;
+    specificRowIdName?: string[] | null;
     excelMutation?: any;
     defaultFilter?: string;
     defaultSorter?: string;
@@ -144,8 +144,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           onPaginationModelChange={handlePaginationModelChange}
                           pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                           disableRowSelectionOnClick
-                          getRowId={(row) => specifyColumnIdName
-                              ? row[specifyColumnIdName]
+                          getRowId={(row) => specifyColumnIdName && specifyColumnIdName.length > 0
+                              ? specifyColumnIdName.map((colName) => row[colName]).join('')
                               : row.id}
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{

@@ -58,7 +58,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ deleteByContest,
         {
             data: deleteAllData,
-            isSuccess: isSuccesfullyDeletedAll,
+            isSuccess: isSuccessfullyDeletedAll,
             isLoading: isDeletingAll,
             error: deleteAllError,
         } ] = useDeleteByContestMutation();
@@ -72,11 +72,11 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         const message = getAndSetSuccesfullMessages([
             {
                 message: deleteAllData,
-                shouldGet: isSuccesfullyDeletedAll,
+                shouldGet: isSuccessfullyDeletedAll,
             } ]);
 
         setSuccessMessage(message);
-    }, [ deleteAllData, isSuccesfullyDeletedAll ]);
+    }, [ deleteAllData, isSuccessfullyDeletedAll ]);
 
     const onEditClick = (id: number) => {
         setOpenEditModal(true);
@@ -84,10 +84,10 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     };
 
     useEffect(() => {
-        if (isSuccesfullyDeletedAll) {
+        if (isSuccessfullyDeletedAll) {
             retakeData();
         }
-    }, [ isSuccesfullyDeletedAll, retakeData ]);
+    }, [ isSuccessfullyDeletedAll, retakeData ]);
 
     const onCopySuccess = (message: string | null) => {
         setSuccessMessage(message);
