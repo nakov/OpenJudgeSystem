@@ -1,0 +1,145 @@
+﻿.container {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.submissionTypeList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.submissionTypeItem {
+  font-size: 1em;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  border: none;
+}
+
+.submissionTypeItem:hover {
+  background-color: #0066cc;
+  color: #ffffff;
+}
+
+.entityContainer {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 22px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.content {
+  font-size: 16px;
+  line-height: 1.5;
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  ul,
+  ol {
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.divider {
+  border: none;
+  height: 1px;
+  margin: 30px 0;
+  width: 100%;
+}
+
+.light {
+  color: #333;
+
+  .submissionTypeItem {
+    color: #4a4a4a;
+    background-color: #f0f0f0;
+  }
+
+  .submissionTypeItem:hover {
+    background-color: #d9d9d9;
+    color: #4a4a4a;
+  }
+
+  .entityContainer {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .title {
+    color: #333333;
+  }
+
+  .content {
+    color: #4a4a4a;
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    a:hover {
+      color: #004999;
+    }
+  }
+
+  .divider {
+    background-color: #e0e0e0;
+  }
+}
+
+.dark {
+  color: #e0e0e0;
+
+  .submissionTypeItem {
+    color: #e6f2ff;
+    background-color: #1a4a7a;
+  }
+
+  .submissionTypeItem:hover {
+    background-color: #0d3b5e;
+    color: #ffffff;
+  }
+
+  .entityContainer {
+    background-color: #2c2c2c;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
+
+  .title {
+    color: #bdc3c7;
+  }
+
+  .content {
+    color: #cccccc;
+
+    a {
+      color: #3498db;
+    }
+
+    a:hover {
+      color: #2980b9;
+    }
+  }
+
+  .divider {
+    background-color: #444444;
+  }
+}
