@@ -481,6 +481,7 @@ const AdministrationPortal = () => {
             Element: AdministrationSubmissionTypeDocumentViewPage,
             visibleOnlyForAdmin: false,
         },
+        {
             path: `${SUBMISSION_TYPES_PATH}/deleteReplaceSubmissionTypes`,
             Element: AdministrationReplaceDeleteSubmissionTypesPage,
             visibleOnlyForAdmin: true,

@@ -38,4 +38,4 @@ export const {
     setSelectedTerms,
 } = searchSlice.actions;
 
-export default searchSlice.reducer;
+export default searchSlice;

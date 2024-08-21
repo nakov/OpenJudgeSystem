@@ -22,4 +22,4 @@ export {
     setProfile,
 };
 
-export default usersSlice.reducer;
+export default usersSlice;

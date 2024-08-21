@@ -7,10 +7,10 @@ import storage from 'redux-persist/lib/storage';
 // features
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
-import { submissionsSlice } from './features/submissionsSlice';
-import { searchSlice } from './features/searchSlice';
+import submissionsSlice from './features/submissionsSlice';
+import searchSlice from './features/searchSlice';
 import { themeSlice } from './features/themeSlice';
-import { usersSlice } from './features/usersSlice';
+import usersSlice from './features/usersSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // admin services

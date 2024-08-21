@@ -45,4 +45,4 @@ export {
     setCurrentPage,
 };
 
-export default submissionsSlice.reducer;
+export default submissionsSlice;

@@ -1,5 +1,6 @@
-/* eslint-disable import/no-extraneous-dependencies,css-modules/no-unused-class */
+/* eslint-disable import/no-extraneous-dependencies,css-modules/no-unused-class,@typescript-eslint/ban-types,max-len */
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Autocomplete, FormControl, FormGroup, IconButton, TextField, Tooltip, Typography } from '@mui/material';
@@ -14,14 +15,22 @@ import {
     ISubmissionTypeInSubmissionDocumentAdministrationModel,
 } from '../../../../common/types';
 import {
+    NEW_ADMINISTRATION_PATH,
+    SUBMISSION_TYPE_DOCUMENTS_PATH,
+    SUBMISSIONS_FOR_PROCESSING_PATH
+} from '../../../../common/urls/administration-urls';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
+import {
     useCreateSubmissionTypeDocumentMutation,
     useGetSubmissionTypeDocumentByIdQuery,
     useUpdateSubmissionTypeDocumentMutation,
 } from '../../../../redux/services/admin/submissionTypeDocumentsAdminService';
 import { useGetForDocumentQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { useAppSelector } from '../../../../redux/store';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -34,8 +43,8 @@ interface ISubmissionTypeDocumentFormProps {
     isEditMode: boolean;
     id: number | null;
 }
-
 const SubmissionTypeDocumentForm = (props: ISubmissionTypeDocumentFormProps) => {
+    const navigate = useNavigate();
     const { isEditMode, id } = props;
     const theme = useAppSelector((x) => x.theme.administrationMode) === ThemeMode.Dark
         ? 'quill-dark-theme'
@@ -61,6 +70,7 @@ const SubmissionTypeDocumentForm = (props: ISubmissionTypeDocumentFormProps) => 
             data: createData,
             error: createError,
             isSuccess: isSuccessfullyCreated,
+            isLoading: isCreating,
         },
     ] = useCreateSubmissionTypeDocumentMutation();
 
@@ -70,6 +80,7 @@ const SubmissionTypeDocumentForm = (props: ISubmissionTypeDocumentFormProps) => 
             data: updateData,
             error: updateError,
             isSuccess: isSuccessfullyUpdated,
+            isLoading: isUpdating,
         },
     ] = useUpdateSubmissionTypeDocumentMutation();
 
@@ -81,6 +92,21 @@ const SubmissionTypeDocumentForm = (props: ISubmissionTypeDocumentFormProps) => 
     } = useGetSubmissionTypeDocumentByIdQuery({ id: Number(id) }, { skip: !id || id === 0 });
 
     const { data: allSubmissionTypes } = useGetForDocumentQuery(null);
+
+    useDelayedSuccessEffect({
+        isSuccess: isSuccessfullyCreated,
+        onSuccess: () => navigate(`/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPE_DOCUMENTS_PATH}`),
+        timeoutDuration: 2000,
+    });
+
+    useSuccessMessageEffect({
+        data: [
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+            { message: createData, shouldGet: isSuccessfullyCreated },
+        ],
+        setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
+    });
 
     const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, type, value } = e.target;
@@ -188,30 +214,13 @@ const SubmissionTypeDocumentForm = (props: ISubmissionTypeDocumentFormProps) => 
     }, [ allSubmissionTypes, submissionTypeDocument, quill ]);
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            {
-                message: updateData,
-                shouldGet: isSuccessfullyUpdated,
-            },
-            {
-                message: createData,
-                shouldGet: isSuccessfullyCreated,
-            },
-        ]);
-
-        if (message) {
-            setSuccessMessage(message);
-        }
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
-
-    useEffect(() => {
         getAndSetExceptionMessage([
             createError,
             updateError,
             submissionTypeDocumentError,
         ], setErrorMessages);
 
-        setSuccessMessage(null);
+        clearSuccessMessages({ setSuccessMessage });
     }, [ updateError, createError, submissionTypeDocumentError ]);
 
     useEffect(() => {

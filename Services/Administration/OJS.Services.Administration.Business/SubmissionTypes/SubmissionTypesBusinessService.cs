@@ -51,7 +51,6 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
         await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypesInProblemView>().ToListAsync();
 
-
     public async Task<List<SubmissionTypeInDocument>> GetForDocument()
         => await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypeInDocument>().ToListAsync();
 
