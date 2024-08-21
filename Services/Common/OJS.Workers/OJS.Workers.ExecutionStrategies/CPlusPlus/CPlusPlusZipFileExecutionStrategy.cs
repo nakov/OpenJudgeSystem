@@ -68,10 +68,9 @@
             {
                 var processExecutionResult = await executor.Execute(
                     compilationResult.OutputFile,
-                    test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
-                    executionArguments: null,
+                    test.Input,
                     useProcessTime: false,
                     useSystemEncoding: false,
                     dependOnExitCodeForRunTimeError: true);

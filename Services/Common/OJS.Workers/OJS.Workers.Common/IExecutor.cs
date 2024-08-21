@@ -9,9 +9,9 @@
         /// redirected input and output streams in order to pass and read information from it.
         /// </summary>
         /// <param name="fileName">The path to the executable.</param>
-        /// <param name="inputData">Information that should be written on the Standard Input of the process.</param>
         /// <param name="timeLimit">Time limit of the process in miliseconds.</param>
         /// <param name="memoryLimit">Memory limit of the process in bytes.</param>
+        /// <param name="inputData">Information that should be written on the Standard Input of the process.</param>
         /// <param name="executionArguments">Additional command line arguments that should be passed to the executable.</param>
         /// <param name="workingDirectory">The working directory of the process.</param>
         /// <param name="useProcessTime">A boolean value indicating whether the Process's time or the Total Processor time
@@ -24,9 +24,9 @@
         /// to the <param name="timeLimit">timeLimit</param> * .<param name="timeoutMultiplier">timeoutMultiplier</param></param>
         Task<ProcessExecutionResult> Execute(
             string fileName,
-            string inputData,
             int timeLimit,
             int memoryLimit,
+            string? inputData = null,
             IEnumerable<string>? executionArguments = null,
             string? workingDirectory = null,
             bool useProcessTime = false,

@@ -16,6 +16,7 @@ import { flexCenterObjectStyles } from '../../utils/object-utils';
 
 import AdministrationFilters, { addDefaultFilter, IAdministrationFilter, IAdministrationSorter, mapGridColumnsToAdministrationFilterProps, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from './administration-filters/AdministrationFilters';
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from './AdministrationStyles.module.scss';
 
 interface IAdministrationGridViewProps<T> {

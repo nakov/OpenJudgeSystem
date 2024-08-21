@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -32,7 +32,9 @@ import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, C
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { getContestsDetailsPageUrl } from '../../../../common/urls/compose-client-urls';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import {
     useCreateContestMutation,
@@ -42,9 +44,10 @@ import {
     useUpdateContestMutation,
 } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ExternalLink from '../../../guidelines/buttons/ExternalLink';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
@@ -61,7 +64,7 @@ interface IContestEditProps {
     isEditMode?: boolean;
     currentContest?: IContestAdministration;
     onSuccess?: Function;
-    setSuccessMessage: Function;
+    setParentSuccessMessage: Function;
     onDeleteSuccess? : Function;
     skipGettingContest?: boolean;
 }
@@ -73,7 +76,7 @@ const ContestEdit = (props:IContestEditProps) => {
         isEditMode = true,
         currentContest,
         onSuccess,
-        setSuccessMessage,
+        setParentSuccessMessage,
         onDeleteSuccess,
         skipGettingContest = false,
     } = props;
@@ -82,8 +85,6 @@ const ContestEdit = (props:IContestEditProps) => {
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
-
-    useDisableMouseWheelOnNumberInputs();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -140,16 +141,49 @@ const ContestEdit = (props:IContestEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             error: updateError,
-            isSuccess: isSuccessfullyUpdating,
+            isSuccess: isSuccessfullyUpdated,
         } ] = useUpdateContestMutation();
 
     const [
         createContest, {
             data: createData,
-            isSuccess: isSuccessfullyCreating,
+            isSuccess: isSuccessfullyCreated,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestMutation();
+
+    const getDefaultContestCategory = useCallback(() => {
+        const defaultCategory = contestCategories![0];
+        const categoryName = defaultCategory.name;
+        const categoryId = defaultCategory.id;
+        /*
+            Set the contest's 'categoryId' and 'categoryName' to the default contest category's
+            values, because otherwise they will remain 0 and an empty string ('') respectively.
+            If a user tries to create a new contest without selecting a category, an error
+            would occur since 0 and '' are not valid values for categoryId and categoryName.
+            This ensures a valid default category is always set when creating a new contest.
+        */
+        setContest((prevState) => ({
+            ...prevState,
+            categoryId,
+            categoryName,
+        }));
+
+        return defaultCategory;
+    }, [ contestCategories ]);
+
+    useDisableMouseWheelOnNumberInputs();
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
+    });
+
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
 
     useEffect(
         () => {
@@ -168,28 +202,9 @@ const ContestEdit = (props:IContestEditProps) => {
     }, [ data ]);
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: updateData, shouldGet: isSuccessfullyUpdating },
-            { message: createData, shouldGet: isSuccessfullyCreating } ]);
-        setSuccessMessage(message);
-    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating, setSuccessMessage ]);
-
-    useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-        setSuccessMessage(null);
-    }, [ updateError, createError, setSuccessMessage ]);
-
-    useEffect(() => {
-        if (isSuccessfullyUpdating && onSuccess) {
-            /* The function is called in timeout,
-            because we want to show success message before calling onSuccess,
-            since it can cause re-rendering of the component and the message will not be visible
-            */
-            setTimeout(() => {
-                onSuccess();
-            }, 500);
-        }
-    }, [ isSuccessfullyUpdating, onSuccess ]);
+        clearSuccessMessages({ setParentSuccessMessage });
+    }, [ updateError, createError, setParentSuccessMessage ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&
@@ -631,7 +646,7 @@ const ContestEdit = (props:IContestEditProps) => {
                       sx={{ width: '100%' }}
                       className={formStyles.inputRow}
                       onChange={(event, newValue) => handleAutocompleteChange('category', newValue!, 'id', onChange)}
-                      value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
+                      value={contestCategories?.find((category) => category.id === contest.categoryId) ?? getDefaultContestCategory()}
                       options={contestCategories!}
                       renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} key={params.id} />}
                       getOptionLabel={(option) => option?.name}

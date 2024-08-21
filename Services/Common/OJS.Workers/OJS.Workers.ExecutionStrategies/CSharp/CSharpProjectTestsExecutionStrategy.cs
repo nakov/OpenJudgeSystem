@@ -193,11 +193,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
 
             var processExecutionResult = await executor.Execute(
                 consoleRunnerPath,
-                string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
-                arguments,
-                null,
+                executionArguments: arguments,
                 useProcessTime: false,
                 useSystemEncoding: true);
 

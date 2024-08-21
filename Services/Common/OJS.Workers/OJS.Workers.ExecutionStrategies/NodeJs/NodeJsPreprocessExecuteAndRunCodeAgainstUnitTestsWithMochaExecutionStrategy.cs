@@ -122,10 +122,9 @@ describe('Test {i} ', function(){{
             var testCount = 0;
             var processExecutionResult = await executor.Execute(
                 this.Settings.NodeJsExecutablePath,
-                string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
-                arguments);
+                executionArguments: arguments);
 
             var mochaResult = JsonExecutionResult.Parse(processExecutionResult.ReceivedOutput);
             var numberOfUserTests = mochaResult.UsersTestCount;

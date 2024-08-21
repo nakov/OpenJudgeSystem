@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 
 import { SELECT_CATEGORY } from '../../../../common/labels';
 import { IContestCategories, IGetAllAdminParams } from '../../../../common/types';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import lecturerInCategoriesFilterableColumns, { returnLecturerInCategoriesNonFilterableColumns } from '../../../../pages/administration-new/lecturers-in-categories/lecturersInCategoriesGridColumns';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useAddLecturerToCategoryMutation, useGetLecturerCategoriesQuery, useRemoveLecturerFromCategoryMutation } from '../../../../redux/services/admin/usersAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -63,6 +65,15 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
 
     const { data: contestCategories } = useGetCategoriesQuery(null);
 
+    useSuccessMessageEffect({
+        data: [
+            { message: addData, shouldGet: isSuccessfullyAdded },
+            { message: removeData, shouldGet: isSuccessfullyRemoved },
+        ],
+        setSuccessMessage,
+        clearFlags: [ isAdding, isRemoving ],
+    });
+
     useEffect(() => {
         if (isSuccessfullyRemoved || isSuccessfullyAdded) {
             refetch();
@@ -71,22 +82,8 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ addError, removeError ], setErrorMessages);
-        setSuccessMessage(null);
+        clearSuccessMessages({ setSuccessMessage });
     }, [ addError, removeError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            {
-                message: addData,
-                shouldGet: isSuccessfullyAdded,
-            },
-            {
-                message: removeData,
-                shouldGet: isSuccessfullyRemoved,
-            } ]);
-
-        setSuccessMessage(message);
-    }, [ addData, isSuccessfullyAdded, isSuccessfullyRemoved, removeData ]);
 
     const onRemoveFromRowClicked = (uId: number) => {
         setCategoryId(uId);

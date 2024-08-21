@@ -15,4 +15,6 @@ public interface ISubmissionTypesBusinessService : IAdministrationOperationServi
     Task<bool> AllExist(IEnumerable<SubmissionTypeInSubmissionDocumentAdministrationModel> submissionTypes);
 
     Task<bool> ExistsById(int submissionTypeId);
+
+    Task<string> ReplaceSubmissionType(ReplaceSubmissionTypeServiceModel model);
 }

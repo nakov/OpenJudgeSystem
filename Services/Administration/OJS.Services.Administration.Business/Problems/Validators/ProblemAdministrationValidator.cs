@@ -43,8 +43,8 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
 
             this.RuleFor(model => model.MaximumPoints)
                 .GreaterThanOrEqualTo((short)0)
-                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update)
-                .WithMessage("Maximum points cannot be zero or less.");
+                .WithMessage("Maximum points cannot be zero or less.")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
             this.RuleFor(model => model.SubmissionTypes.Count)
                 .GreaterThanOrEqualTo(1)

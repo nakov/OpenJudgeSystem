@@ -5,12 +5,13 @@ import { RiFolderZipFill } from 'react-icons/ri';
 import { Checkbox, FormControl, FormControlLabel, IconButton, Tooltip, Typography } from '@mui/material';
 
 import { IGetAllAdminParams, ITestsUploadModel } from '../../../../common/types';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import testsFilterableColums, { returnTestsNonFilterableColumns } from '../../../../pages/administration-new/tests/testsGridColumns';
 import { useDeleteByProblemMutation, useExportZipQuery, useGetTestsByProblemIdQuery, useImportTestsMutation } from '../../../../redux/services/admin/testsAdminService';
 import downloadFile from '../../../../utils/file-download-utils';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -64,7 +65,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const [ deleteByProblem,
         {
             data: deleteAllData,
-            isSuccess: isSuccesfullyDeletedAll,
+            isSuccess: isSuccessfullyDeletedAll,
             isLoading: isDeletingAll,
             error: deleteAllError,
         } ] = useDeleteByProblemMutation();
@@ -79,17 +80,20 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
 
     const { refetch: reExportZip, data: zipData, isError: exportZipError } = useExportZipQuery(problemId, { skip: shouldSkip });
 
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: deleteAllData, shouldGet: isSuccesfullyDeletedAll },
+    useSuccessMessageEffect({
+        data: [
+            { message: deleteAllData, shouldGet: isSuccessfullyDeletedAll },
             { message: importTestsData, shouldGet: isSuccessfullyImported },
-        ]);
-        setSuccessMessage(message);
+        ],
+        setSuccessMessage,
+        clearFlags: [ isDeletingAll, isImporting ],
+    });
 
-        if (isSuccesfullyDeletedAll) {
+    useEffect(() => {
+        if (isSuccessfullyDeletedAll) {
             retakeTests();
         }
-    }, [ deleteAllData, isSuccesfullyDeletedAll, importTestsData, isSuccessfullyImported, retakeTests ]);
+    }, [ deleteAllData, isSuccessfullyDeletedAll, importTestsData, isSuccessfullyImported, retakeTests ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ deleteAllError, importTestsError, exportZipError ], setErrorMessages);
@@ -208,6 +212,8 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
               isEditMode={isEditMode}
               problemName={problemName}
               problemId={problemId}
+              onSuccess={() => onClose(isEditMode)}
+              setParentSuccessMessage={setSuccessMessage}
             />
         </AdministrationModal>
     );

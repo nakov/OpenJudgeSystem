@@ -31,22 +31,21 @@ public class ProblemGroupAdministrationModelValidator : BaseAdministrationModelV
         this.RuleFor(model => model.OrderBy)
             .NotNull()
             .GreaterThanOrEqualTo(0)
-            .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update)
-            .WithMessage("Order by must be greater or equal to 0");
+            .WithMessage("Order by must be greater or equal to 0")
+            .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _) => await this.NotBeActiveOrOnlineContest(model))
-            .When(x => x.OperationType is CrudOperationType.Update or CrudOperationType.Delete)
-            .WithMessage(
-                $"{string.Format(Resources.ProblemGroupsControllers.CanEditOrderbyOnlyInOnlineContest, ContestType.OnlinePracticalExam.ToString())}");
+            .WithMessage($"{string.Format(Resources.ProblemGroupsControllers.CanEditOrderbyOnlyInOnlineContest, ContestType.OnlinePracticalExam.ToString())}")
+            .When(x => x.OperationType is CrudOperationType.Update or CrudOperationType.Delete);
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _) => await this.IsOnline(model.Contest.Id) && !await this.contestsActivityService.IsContestActive(model.Contest.Id))
-            .When(x => x.OperationType == CrudOperationType.Create)
             .WithMessage($"" +
                          $"{string.Format(Resources.ProblemGroupsControllers.CanCreateOnlyInOnlineContest, ContestType.OnlinePracticalExam.ToString())}" +
                          $" or " +
-                         $"{Resources.ProblemGroupsControllers.ActiveContestCannotAddProblemGroup}");
+                         $"{Resources.ProblemGroupsControllers.ActiveContestCannotAddProblemGroup}")
+            .When(x => x.OperationType == CrudOperationType.Create);
 
         this.RuleFor(x => x.Contest.Id)
             .MustAsync(async (id, _) => !await this.contestsActivityService.IsContestActive(id))

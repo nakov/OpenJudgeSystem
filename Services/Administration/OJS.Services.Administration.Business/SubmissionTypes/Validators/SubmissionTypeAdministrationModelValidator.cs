@@ -17,8 +17,8 @@ public class SubmissionTypeAdministrationModelValidator : BaseAdministrationMode
         this.RuleFor(model => model.Name)
             .NotNull()
             .NotEmpty()
-            .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update)
-            .WithMessage("Name field is required");
+            .WithMessage("Name field is required")
+            .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model.CompilerType)
             .MustBeValidEnum<SubmissionTypeAdministrationModel, CompilerType>()

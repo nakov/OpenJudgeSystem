@@ -439,6 +439,7 @@ interface IUserType {
     isInRole: boolean;
     isAdmin: boolean;
     isLecturer: boolean;
+    isDeveloper: boolean;
     canAccessAdministration: boolean;
 }
 
@@ -651,6 +652,11 @@ interface IUserAutocomplete {
     userName: string;
 }
 
+interface IReplaceSubmissionTypeModel {
+    submissionTypeToReplace: number;
+    submissionTypeToReplaceWith?: number | null;
+}
+
 interface ISubmissionTypeAdministrationModel {
     id: number;
     name: string;
@@ -859,6 +865,7 @@ export type {
     ISubmissionTypesInListModel,
     ISubmissionTypeInSubmissionDocumentInListModel,
     ISubmissionTypeInSubmissionDocumentInViewModel,
+    IReplaceSubmissionTypeModel,
     ISubmissionTypeAdministrationModel,
     ISubmissionTypeInSubmissionDocumentAdministrationModel,
     ISubmissionTypeDocumentAdministrationModel,

@@ -84,6 +84,8 @@ import AdministrationSubmissionTypeDocumentsPage
     from '../../../pages/administration-new/submission-type-documents/AdministrationSubmissionTypeDocumentsPage';
 import AdministrationSubmissionTypeDocumentViewPage
     from '../../../pages/administration-new/submission-type-documents-view/AdministrationSubmissionTypeDocumentViewPage';
+import AdministrationReplaceDeleteSubmissionTypesPage
+    from '../../../pages/administration-new/submission-types/AdministrationReplaceDeleteSubmissionTypesPage';
 import AdministrationSubmissionTypesPage
     from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
@@ -478,6 +480,10 @@ const AdministrationPortal = () => {
             path: `${SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH}`,
             Element: AdministrationSubmissionTypeDocumentViewPage,
             visibleOnlyForAdmin: false,
+        },
+            path: `${SUBMISSION_TYPES_PATH}/deleteReplaceSubmissionTypes`,
+            Element: AdministrationReplaceDeleteSubmissionTypesPage,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${CHECKERS_PATH}`,

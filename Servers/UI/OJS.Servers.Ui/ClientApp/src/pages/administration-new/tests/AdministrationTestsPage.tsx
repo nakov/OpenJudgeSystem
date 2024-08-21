@@ -21,6 +21,11 @@ const AdministrationTestsPage = () => {
 
     const { refetch: retakeTests, data: testsData, isLoading: isLoadingTests, error } = useGetAllAdminTestsQuery(queryParams);
 
+    const onClose = () => {
+        retakeTests();
+        setOpenEditTestModal(false);
+    };
+
     const onEditClick = (id: number) => {
         setTestId(id);
         setOpenEditTestModal(true);
@@ -35,9 +40,12 @@ const AdministrationTestsPage = () => {
           key={index}
           index={index}
           open={openEditTestModal}
-          onClose={() => setOpenEditTestModal(false)}
+          onClose={onClose}
         >
-            <TestForm id={testId!} />
+            <TestForm
+              id={testId!}
+              onSuccess={onClose}
+            />
         </AdministrationModal>
     );
 
@@ -53,7 +61,7 @@ const AdministrationTestsPage = () => {
                     onEditClick,
                     onSuccessDelete,
                 )
-}
+            }
           data={testsData}
           error={error}
           queryParams={queryParams}

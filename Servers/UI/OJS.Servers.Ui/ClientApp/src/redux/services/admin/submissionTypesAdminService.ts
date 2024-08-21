@@ -4,8 +4,9 @@ import {
     IFileModel,
     IGetAllAdminParams,
     IPagedResultType,
-    ISubmissionTypeAdministrationModel,
     ISubmissionTypeInDocument,
+    IReplaceSubmissionTypeModel,
+    ISubmissionTypeAdministrationModel,
     ISubmissionTypeInProblem,
     ISubmissionTypesInListModel,
 } from '../../../common/types';
@@ -36,6 +37,13 @@ const submissionTypesAdminService = createApi({
         getById: builder.query<ISubmissionTypeAdministrationModel, number>({
             query: (id) => ({ url: `/Get/${id}` }),
             keepUnusedDataFor: 0,
+        }),
+        replaceSubmissionType: builder.mutation<string, IReplaceSubmissionTypeModel>({
+            query: (replaceData) => ({
+                url: '/ReplaceSubmissionTypes',
+                method: 'POST',
+                body: replaceData,
+            }),
         }),
         updateSubmissionType: builder.mutation<string, ISubmissionTypeAdministrationModel >({
             query: (submissionType) => ({
@@ -74,6 +82,7 @@ export const {
     useGetCompilersQuery,
     useGetExecutionStrategiesQuery,
     useGetByIdQuery,
+    useReplaceSubmissionTypeMutation,
     useUpdateSubmissionTypeMutation,
     useCreateSubmissionTypeMutation,
     useLazyExportSubmissionTypesToExcelQuery,

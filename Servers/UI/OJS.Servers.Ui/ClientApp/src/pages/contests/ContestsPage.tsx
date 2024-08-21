@@ -131,6 +131,10 @@ const ContestsPage = () => {
 
     return (
         <div className={styles.contestsContainer}>
+            <meta
+              name="description"
+              content="List of contests available on the Judge platform. Filter by category and execution strategy."
+            />
             <div style={{ width: '100%' }}>
                 <div className={`${styles.headingWrapper} ${textColorClassName}`}>
                     <div>

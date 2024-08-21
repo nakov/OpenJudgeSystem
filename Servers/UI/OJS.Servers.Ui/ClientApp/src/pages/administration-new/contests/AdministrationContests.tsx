@@ -13,6 +13,7 @@ import ContestDownloadSubmissions from '../../../components/administration/conte
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
+import useSuccessMessageEffect from '../../../hooks/common/use-success-message-effect';
 import { getColors } from '../../../hooks/use-administration-theme-provider';
 import {
     useDownloadResultsMutation,
@@ -22,7 +23,7 @@ import {
 } from '../../../redux/services/admin/contestsAdminService';
 import { useAppSelector } from '../../../redux/store';
 import downloadFile from '../../../utils/file-download-utils';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
@@ -61,7 +62,7 @@ const AdministrationContestsPage = () => {
     } = useGetAllAdminContestsQuery(queryParams);
 
     const [
-        exportResutls,
+        exportResults,
         {
             data: file,
             isSuccess: isSuccessfullyDownloaded,
@@ -75,7 +76,7 @@ const AdministrationContestsPage = () => {
         {
             data: transferParticipantsData,
             isSuccess: isTransferParticipantsSuccess,
-            isLoading: isTransferParticipantsLoading,
+            isLoading: isTransferring,
             error: transferParticipantsError,
         },
     ] = useTransferParticipantsMutation();
@@ -84,6 +85,14 @@ const AdministrationContestsPage = () => {
         setOpenEditContestModal(true);
         setContestId(id);
     };
+
+    useSuccessMessageEffect({
+        data: [
+            { message: transferParticipantsData as string, shouldGet: isTransferParticipantsSuccess },
+        ],
+        setSuccessMessage,
+        clearFlags: [ isTransferring ],
+    });
 
     useEffect(() => {
         if (isSuccessfullyDownloaded) {
@@ -99,15 +108,6 @@ const AdministrationContestsPage = () => {
     useEffect(() => {
         getAndSetExceptionMessage([ downloadError ], setErrorMessages);
     }, [ downloadError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ {
-            message: transferParticipantsData as string,
-            shouldGet: isTransferParticipantsSuccess,
-        },
-        ]);
-        setSuccessMessage(message);
-    }, [ transferParticipantsData, isTransferParticipantsSuccess ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ transferParticipantsError ], setErrorMessages);
@@ -170,7 +170,7 @@ const AdministrationContestsPage = () => {
                     <FormActionButton
                       className={formStyles.buttonsWrapper}
                       buttonClassName={formStyles.button}
-                      onClick={() => exportResutls({ id: contestId!, type: excelExportType })}
+                      onClick={() => exportResults({ id: contestId!, type: excelExportType })}
                       name={DOWNLOAD}
                     />
                 </form>
@@ -199,7 +199,7 @@ const AdministrationContestsPage = () => {
                       buttonClassName={formStyles.button}
                       onClick={() => transfer(contestId!)}
                       name={TRANSFER}
-                      disabled={isTransferParticipantsLoading}
+                      disabled={isTransferring}
                     />
                 </form>
             </>
@@ -222,7 +222,7 @@ const AdministrationContestsPage = () => {
               isEditMode={isEditMode}
               skipGettingContest={!isEditMode}
               onSuccess={() => onClose(isEditMode)}
-              setSuccessMessage={setSuccessMessage}
+              setParentSuccessMessage={setSuccessMessage}
               onDeleteSuccess={() => onClose(isEditMode)}
             />
         </AdministrationModal>
