@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
+using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, int, SubmissionTypeAdministrationModel>, ISubmissionTypesBusinessService
@@ -18,6 +20,26 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
 
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
         await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypesInProblemView>().ToListAsync();
+
+    public async Task<List<SubmissionTypeInDocument>> GetForDocument()
+        => await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypeInDocument>().ToListAsync();
+
+    public async Task<bool> AllExist(IEnumerable<SubmissionTypeInSubmissionDocumentAdministrationModel> submissionTypes)
+    {
+        foreach (var submissionType in submissionTypes)
+        {
+            if (!await this.submissionTypesDataService.ExistsById(submissionType.SubmissionTypeId))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public async Task<bool> ExistsById(int submissionTypeId)
+        => await this.submissionTypesDataService
+            .ExistsById(submissionTypeId);
 
     public override async Task<SubmissionTypeAdministrationModel> Get(int id) =>
          await this.submissionTypesDataService

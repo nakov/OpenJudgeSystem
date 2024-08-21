@@ -30,6 +30,10 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
         => this.Ok(await this.submissionTypesBusinessService.GetForProblem());
 
     [HttpGet]
+    public async Task<IActionResult> GetForDocument()
+        => this.Ok(await this.submissionTypesBusinessService.GetForDocument());
+
+    [HttpGet]
     public IActionResult GetCompilers()
         => this.Ok(Enum.GetNames(typeof(CompilerType)).ToList());
 
