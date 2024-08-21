@@ -77,4 +77,6 @@ const dataColumns: GridColDef[] = [
     },
 ];
 
+export const returnSubmissionsForProcessingNonFilterableColumns = () => [] as GridColDef[];
+
 export default dataColumns;

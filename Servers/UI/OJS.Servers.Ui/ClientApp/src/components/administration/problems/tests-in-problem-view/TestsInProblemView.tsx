@@ -65,7 +65,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const [ deleteByProblem,
         {
             data: deleteAllData,
-            isSuccess: isSuccesfullyDeletedAll,
+            isSuccess: isSuccessfullyDeletedAll,
             isLoading: isDeletingAll,
             error: deleteAllError,
         } ] = useDeleteByProblemMutation();
@@ -82,17 +82,18 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
 
     useSuccessMessageEffect({
         data: [
-            { message: deleteAllData, shouldGet: isSuccesfullyDeletedAll },
+            { message: deleteAllData, shouldGet: isSuccessfullyDeletedAll },
             { message: importTestsData, shouldGet: isSuccessfullyImported },
         ],
         setSuccessMessage,
+        clearFlags: [ isDeletingAll, isImporting ],
     });
 
     useEffect(() => {
-        if (isSuccesfullyDeletedAll) {
+        if (isSuccessfullyDeletedAll) {
             retakeTests();
         }
-    }, [ deleteAllData, isSuccesfullyDeletedAll, importTestsData, isSuccessfullyImported, retakeTests ]);
+    }, [ deleteAllData, isSuccessfullyDeletedAll, importTestsData, isSuccessfullyImported, retakeTests ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ deleteAllError, importTestsError, exportZipError ], setErrorMessages);

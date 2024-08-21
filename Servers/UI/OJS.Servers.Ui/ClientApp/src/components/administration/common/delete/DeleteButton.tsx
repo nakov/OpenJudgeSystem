@@ -40,6 +40,7 @@ const DeleteButton = (props: IDeleteButtonProps) => {
             { message: data as string, shouldGet: isSuccess },
         ],
         setSuccessMessage,
+        clearFlags: [ isLoading ],
     });
 
     useEffect(() => {

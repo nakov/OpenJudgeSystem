@@ -10,6 +10,7 @@ import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin
 import { useAddLecturerToContestMutation, useGetLecturerContestsQuery, useRemoveLecturerFromContestMutation } from '../../../../redux/services/admin/usersAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -82,6 +83,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
             { message: removeData, shouldGet: isSuccessfullyRemoved },
         ],
         setSuccessMessage,
+        clearFlags: [ isAdding, isRemoving ],
     });
 
     useEffect(() => {
@@ -98,7 +100,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, addError, removeError ], setErrorMessages);
-        setSuccessMessage(null);
+        clearSuccessMessages({ setSuccessMessage });
     }, [ addError, getContestDataError, removeError ]);
 
     const onSelect = (contest: IContestAutocomplete) => {

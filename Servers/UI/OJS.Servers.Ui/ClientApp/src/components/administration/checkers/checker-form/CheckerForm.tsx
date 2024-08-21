@@ -9,6 +9,7 @@ import useSuccessMessageEffect from '../../../../hooks/common/use-success-messag
 import { useCreateCheckerMutation, useGetCheckerByIdQuery, useUpdateCheckerMutation } from '../../../../redux/services/admin/checkersAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -70,6 +71,7 @@ const CheckerForm = (props: ICheckerFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {
@@ -80,7 +82,8 @@ const CheckerForm = (props: ICheckerFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ checkerError, createError, updateError ], setExceptionMessages);
-    }, [ checkerError, createError, updateError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ checkerError, createError, setParentSuccessMessage, updateError ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -96,6 +99,7 @@ const CheckerForm = (props: ICheckerFormProps) => {
     if (isGettingChecker || isCreating || isUpdating) {
         <SpinningLoader />;
     }
+
     return (
         <>
             {renderSuccessfullAlert(successMessage)}

@@ -13,6 +13,7 @@ import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin
 import { useCreateProblemGroupMutation, useGetProblemGroupByIdQuery, useUpdateProblemGroupMutation } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import { IProblemGroupAdministrationModel } from '../types';
@@ -45,11 +46,13 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
     const { data: contestsAutocompleteData, error: getContestDataError } = useGetContestAutocompleteQuery(contestSearchString);
+
     const {
         data: problemGroupData,
         error: getProblemGroupError,
         isLoading: isGettingProblemGroupData,
     } = useGetProblemGroupByIdQuery(id!, { skip: !isEditMode || !id });
+
     const [
         updateProblemGroup,
         {
@@ -70,7 +73,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyUpdated || isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
@@ -79,6 +82,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {
@@ -99,8 +103,8 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, createError, updateError, getProblemGroupError ], setErrorMessages);
-        setSuccessMessage(null);
-    }, [ updateError, createError, getContestDataError, getProblemGroupError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ updateError, createError, getContestDataError, getProblemGroupError, setParentSuccessMessage ]);
 
     const onAutocompleteChange = debounce((e: any) => {
         if (!e) {
@@ -186,7 +190,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       onChange={(event, newValue) => onSelect(newValue!)}
                       onInputChange={(event) => onAutocompleteChange(event)}
-                      value={currentProblemGroup.contest.id
+                      value={currentProblemGroup?.contest
                           ? currentProblemGroup.contest
                           : null}
                       isOptionEqualToValue={(option, value) => option.id === value.id && option.name === value.name}

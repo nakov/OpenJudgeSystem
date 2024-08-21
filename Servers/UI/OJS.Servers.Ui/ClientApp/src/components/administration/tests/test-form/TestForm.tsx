@@ -50,10 +50,12 @@ const TestForm = (props: ITestFormProps) => {
     });
 
     const { data: testData, error: getTestError, isLoading: isGettingData } = useGetTestByIdQuery(id, { skip: !isEditMode });
+
     const [
         updateTest,
         { data: updateData, error: updateError, isLoading: isUpdating, isSuccess: isSuccessfullyUpdated },
     ] = useUpdateTestMutation();
+
     const [
         createTest,
         { data: createData, error: createError, isLoading: isCreating, isSuccess: isSuccessfullyCreated },
@@ -70,6 +72,7 @@ const TestForm = (props: ITestFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {

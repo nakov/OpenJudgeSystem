@@ -82,6 +82,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {

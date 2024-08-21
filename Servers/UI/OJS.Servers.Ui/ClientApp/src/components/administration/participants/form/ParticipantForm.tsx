@@ -11,6 +11,7 @@ import { useCreateParticipantMutation } from '../../../../redux/services/admin/p
 import { useGetUsersAutocompleteQuery } from '../../../../redux/services/admin/usersAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -79,6 +80,7 @@ const ParticipantForm = (props: IParticipantFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating ],
     });
 
     useEffect(() => {
@@ -92,8 +94,8 @@ const ParticipantForm = (props: IParticipantFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, getContestDataError, getUsersDataError ], setErrorMessages);
-        setSuccessMessage(null);
-    }, [ createError, getContestDataError, getUsersDataError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ createError, getContestDataError, getUsersDataError, setParentSuccessMessage ]);
 
     const onInputChange = debounce((e: any) => {
         setContestSearchString(e.target.value);

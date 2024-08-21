@@ -62,7 +62,7 @@ const AdministrationContestsPage = () => {
     } = useGetAllAdminContestsQuery(queryParams);
 
     const [
-        exportResutls,
+        exportResults,
         {
             data: file,
             isSuccess: isSuccessfullyDownloaded,
@@ -76,7 +76,7 @@ const AdministrationContestsPage = () => {
         {
             data: transferParticipantsData,
             isSuccess: isTransferParticipantsSuccess,
-            isLoading: isTransferParticipantsLoading,
+            isLoading: isTransferring,
             error: transferParticipantsError,
         },
     ] = useTransferParticipantsMutation();
@@ -91,6 +91,7 @@ const AdministrationContestsPage = () => {
             { message: transferParticipantsData as string, shouldGet: isTransferParticipantsSuccess },
         ],
         setSuccessMessage,
+        clearFlags: [ isTransferring ],
     });
 
     useEffect(() => {
@@ -169,7 +170,7 @@ const AdministrationContestsPage = () => {
                     <FormActionButton
                       className={formStyles.buttonsWrapper}
                       buttonClassName={formStyles.button}
-                      onClick={() => exportResutls({ id: contestId!, type: excelExportType })}
+                      onClick={() => exportResults({ id: contestId!, type: excelExportType })}
                       name={DOWNLOAD}
                     />
                 </form>
@@ -198,7 +199,7 @@ const AdministrationContestsPage = () => {
                       buttonClassName={formStyles.button}
                       onClick={() => transfer(contestId!)}
                       name={TRANSFER}
-                      disabled={isTransferParticipantsLoading}
+                      disabled={isTransferring}
                     />
                 </form>
             </>
