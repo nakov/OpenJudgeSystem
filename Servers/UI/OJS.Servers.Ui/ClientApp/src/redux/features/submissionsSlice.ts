@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
 import { submissionsSliceName } from '../../common/reduxNames';
@@ -21,7 +22,7 @@ const initialState: IRecentSubmissionsReduxState = {
     currentPage: 1,
 };
 
-export const submissionsSlice = createSlice({
+const submissionsSlice = createSlice({
     name: submissionsSliceName,
     initialState,
     reducers: {

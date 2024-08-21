@@ -5,11 +5,12 @@ import { IUserProfileType, IUsersState } from '../../common/types';
 
 const initialState: IUsersState = { profile: null };
 
-export const usersSlice = createSlice({
+const usersSlice = createSlice({
     name: usersSliceName,
     initialState,
     reducers: {
         setProfile: (state: IUsersState, action: PayloadAction<IUserProfileType | null>) => {
+            // eslint-disable-next-line no-param-reassign
             state.profile = action.payload;
         },
     },

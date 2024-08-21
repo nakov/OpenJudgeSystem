@@ -1,4 +1,4 @@
-﻿import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ThemeMode } from '../../../common/enums';
 import { ISubmissionTypeInSubmissionDocumentInViewModel } from '../../../common/types';

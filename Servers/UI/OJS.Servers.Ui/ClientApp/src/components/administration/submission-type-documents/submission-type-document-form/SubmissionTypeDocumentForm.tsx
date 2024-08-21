@@ -1,4 +1,4 @@
-﻿/* eslint-disable import/no-extraneous-dependencies,css-modules/no-unused-class */
+/* eslint-disable import/no-extraneous-dependencies,css-modules/no-unused-class */
 import React, { useCallback, useEffect, useState } from 'react';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';

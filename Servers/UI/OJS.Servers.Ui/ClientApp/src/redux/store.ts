@@ -31,7 +31,7 @@ import usersAdminService from './services/admin/usersAdminService';
 // features
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
-import { searchService } from './services/searchService';
+import searchService from './services/searchService';
 import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionsService from './services/submissionsService';
 import usersService from './services/usersService';

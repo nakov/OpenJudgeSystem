@@ -5,7 +5,7 @@ import { IGetByContestId, IGetByProblemId, IProblemUrlById } from '../../../comm
 import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const problemsAdminService = createApi({
+const problemsAdminService = createApi({
     reducerPath: 'problems',
     baseQuery: getCustomBaseQuery('problems'),
     endpoints: (builder) => ({

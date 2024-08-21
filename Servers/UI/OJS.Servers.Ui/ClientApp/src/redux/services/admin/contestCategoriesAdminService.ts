@@ -12,7 +12,7 @@ import { IContestCategoriesUrlParams } from '../../../common/url-types';
 import { EXCEL_RESULTS_ENDPOINT, GET_ALL_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const contestCategoriesAdminService = createApi({
+const contestCategoriesAdminService = createApi({
     reducerPath: 'contestCategories',
     baseQuery: getCustomBaseQuery('contestCategories'),
     endpoints: (builder) => ({
