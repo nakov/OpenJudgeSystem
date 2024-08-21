@@ -32,7 +32,6 @@ const AdministrationSubmissionTypesPage = () => {
 
     const {
         refetch,
-        isFetching,
         data: submissionTypesData,
         isLoading: isGettingData,
         error,
@@ -45,7 +44,7 @@ const AdministrationSubmissionTypesPage = () => {
         setShowEditModal(true);
     };
 
-    if (isGettingData || isFetching) {
+    if (isGettingData) {
         return <SpinningLoader />;
     }
     const onModalClose = (isEditMode : boolean) => {
@@ -56,7 +55,7 @@ const AdministrationSubmissionTypesPage = () => {
         }
         refetch();
     };
-    const onSuccessFullDelete = () => {
+    const onSuccessfullDelete = () => {
         refetch();
     };
 
@@ -110,7 +109,7 @@ const AdministrationSubmissionTypesPage = () => {
             {renderSuccessfullAlert(successMessage)}
             <AdministrationGridView
               filterableGridColumnDef={submissionTypesFilterableColumns}
-              notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick, onSuccessFullDelete)}
+              notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick, onSuccessfullDelete)}
               data={submissionTypesData}
               error={error}
               queryParams={queryParams}
