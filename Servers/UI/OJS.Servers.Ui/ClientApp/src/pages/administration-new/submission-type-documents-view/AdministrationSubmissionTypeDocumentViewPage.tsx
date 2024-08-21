@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ThemeMode } from '../../../common/enums';
@@ -51,7 +52,9 @@ const AdministrationSubmissionTypeDocumentViewPage = () => {
                     <div className={styles.entityContainer}>
                         <h2 className={styles.title}>{submissionType.submissionTypeDocumentTitle}</h2>
                         <div
-                          className={styles.content}
+                          className={`ql-editor ${currentThemeMode === ThemeMode.Dark
+                              ? 'quill-dark-theme'
+                              : 'quill-light-theme'} ${styles.content}`}
                           dangerouslySetInnerHTML={{ __html: submissionType.submissionTypeDocumentContent }}
                         />
                     </div>

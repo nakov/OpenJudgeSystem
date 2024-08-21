@@ -17,7 +17,6 @@ import {
 import {
     NEW_ADMINISTRATION_PATH,
     SUBMISSION_TYPE_DOCUMENTS_PATH,
-    SUBMISSIONS_FOR_PROCESSING_PATH
 } from '../../../../common/urls/administration-urls';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
