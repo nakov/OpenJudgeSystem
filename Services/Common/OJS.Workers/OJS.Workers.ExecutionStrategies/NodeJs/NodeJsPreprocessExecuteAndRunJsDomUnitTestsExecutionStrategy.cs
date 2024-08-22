@@ -98,10 +98,9 @@ it('Test{testsCount++}', function(done) {{
 
             var processExecutionResult = await executor.Execute(
                 this.Settings.NodeJsExecutablePath,
-                string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
-                arguments);
+                executionArguments: arguments);
 
             var mochaResult = JsonExecutionResult.Parse(processExecutionResult.ReceivedOutput);
             var currentTest = 0;

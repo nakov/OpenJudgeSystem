@@ -1,72 +1,72 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servers", "Servers", "{DA2DA5BA-A8A5-4A27-8DF5-D7A9EF08B40E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{6B680E41-21CE-4A3E-8774-B5B03CA511EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Ui", "Servers\UI\OJS.Servers.Ui\OJS.Servers.Ui.csproj", "{CDBD0A16-E35C-43F7-A20E-A3878F26384E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Ui", "Servers\UI\OJS.Servers.Ui\OJS.Servers.Ui.csproj", "{CDBD0A16-E35C-43F7-A20E-A3878F26384E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{DFBB5F84-EC8E-4E14-9467-C255071E821F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common", "Services\Common\OJS.Services.Common\OJS.Services.Common.csproj", "{80E97386-4389-4508-9569-975230730A73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Common", "Services\Common\OJS.Services.Common\OJS.Services.Common.csproj", "{80E97386-4389-4508-9569-975230730A73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common.Data", "Services\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj", "{51410337-F0D0-4DBE-89DF-1512396AD5F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Common.Data", "Services\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj", "{51410337-F0D0-4DBE-89DF-1512396AD5F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common.Models", "Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj", "{B5FA20F1-2AD5-4482-88D6-DCC0BE4D8EAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Common.Models", "Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj", "{B5FA20F1-2AD5-4482-88D6-DCC0BE4D8EAF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{EE89E503-154F-42F5-9B43-8DB820D2338B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Data.Models", "Data\OJS.Data.Models\OJS.Data.Models.csproj", "{4EBF2278-C4B5-4066-A16E-4555930DF6A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Data.Models", "Data\OJS.Data.Models\OJS.Data.Models.csproj", "{4EBF2278-C4B5-4066-A16E-4555930DF6A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Data", "Data\OJS.Data\OJS.Data.csproj", "{B779028A-0B99-4F53-9096-1218FF0CA173}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Data", "Data\OJS.Data\OJS.Data.csproj", "{B779028A-0B99-4F53-9096-1218FF0CA173}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Common", "Common\OJS.Common\OJS.Common.csproj", "{7F4451AF-8633-4122-8371-1809D7325306}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Common", "Common\OJS.Common\OJS.Common.csproj", "{7F4451AF-8633-4122-8371-1809D7325306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Infrastructure", "Servers\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj", "{AB446939-4C53-4E2E-AA41-7ACDC2568769}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Infrastructure", "Servers\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj", "{AB446939-4C53-4E2E-AA41-7ACDC2568769}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Ui.Models", "Servers\UI\OJS.Servers.Ui.Models\OJS.Servers.Ui.Models.csproj", "{4882EE14-CA16-49E7-AFC0-BA3895DB78CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Ui.Models", "Servers\UI\OJS.Servers.Ui.Models\OJS.Servers.Ui.Models.csproj", "{4882EE14-CA16-49E7-AFC0-BA3895DB78CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Data.Validation", "Data\OJS.Data.Validation\OJS.Data.Validation.csproj", "{06BAC325-9F71-4756-A29F-39C557062124}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Data.Validation", "Data\OJS.Data.Validation\OJS.Data.Validation.csproj", "{06BAC325-9F71-4756-A29F-39C557062124}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{49E796BB-BF99-4A1B-8FDE-AE2BAF87B028}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{998FEA04-6712-4645-B103-72E75B7110BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common.Business.Tests", "Tests\Services\Common\OJS.Services.Common.Business.Tests\OJS.Services.Common.Business.Tests.csproj", "{5EC14F1C-4A21-4F62-8C8B-BF3A969AF5C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Common.Business.Tests", "Tests\Services\Common\OJS.Services.Common.Business.Tests\OJS.Services.Common.Business.Tests.csproj", "{5EC14F1C-4A21-4F62-8C8B-BF3A969AF5C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Infrastructure", "Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj", "{62DCFD87-8C48-45CC-B14E-66C936178819}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Infrastructure", "Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj", "{62DCFD87-8C48-45CC-B14E-66C936178819}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A663FE9F-A608-4518-B863-ADA8D71FF498}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Common.Tests", "Tests\Common\OJS.Common.Tests\OJS.Common.Tests.csproj", "{0B23701D-B869-4BFB-B704-34F4354723BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Common.Tests", "Tests\Common\OJS.Common.Tests\OJS.Common.Tests.csproj", "{0B23701D-B869-4BFB-B704-34F4354723BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common.Data.Tests", "Tests\Services\Common\OJS.Services.Common.Data.Tests\OJS.Services.Common.Data.Tests.csproj", "{58538E0A-CA03-40A2-A942-3F65EF9EF9FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Common.Data.Tests", "Tests\Services\Common\OJS.Services.Common.Data.Tests\OJS.Services.Common.Data.Tests.csproj", "{58538E0A-CA03-40A2-A942-3F65EF9EF9FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Tests.Infrastructure", "Tests\Infrastructure\OJS.Tests.Infrastructure\OJS.Tests.Infrastructure.csproj", "{FF2B04A7-2E76-4CAA-870A-B41CDA5EF542}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Tests.Infrastructure", "Tests\Infrastructure\OJS.Tests.Infrastructure\OJS.Tests.Infrastructure.csproj", "{FF2B04A7-2E76-4CAA-870A-B41CDA5EF542}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Administration", "Administration", "{0E797985-3CB4-427C-98A5-48EF2C5C8403}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Administration.Models", "Servers\Administration\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj", "{F004C00D-974B-42AD-BEA8-D99AF1619694}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Administration.Models", "Servers\Administration\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj", "{F004C00D-974B-42AD-BEA8-D99AF1619694}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Administration", "Servers\Administration\OJS.Servers.Administration\OJS.Servers.Administration.csproj", "{855E160C-C596-4D9C-920A-EB83627A59AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Administration", "Servers\Administration\OJS.Servers.Administration\OJS.Servers.Administration.csproj", "{855E160C-C596-4D9C-920A-EB83627A59AB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Administration", "Administration", "{B073636C-5ABC-4BCD-B16A-855479B448CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Administration.Business", "Services\Administration\OJS.Services.Administration.Business\OJS.Services.Administration.Business.csproj", "{5333A2CE-6A0C-4956-99C2-632618CDAED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Administration.Business", "Services\Administration\OJS.Services.Administration.Business\OJS.Services.Administration.Business.csproj", "{5333A2CE-6A0C-4956-99C2-632618CDAED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Administration.Data", "Services\Administration\OJS.Services.Administration.Data\OJS.Services.Administration.Data.csproj", "{AADF5162-9EF8-48D3-BE55-3B9185510ACF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Administration.Data", "Services\Administration\OJS.Services.Administration.Data\OJS.Services.Administration.Data.csproj", "{AADF5162-9EF8-48D3-BE55-3B9185510ACF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Administration.Models", "Services\Administration\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj", "{6E03EFDF-FAD2-4E70-9F3C-3E67421A86E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Administration.Models", "Services\Administration\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj", "{6E03EFDF-FAD2-4E70-9F3C-3E67421A86E3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{D55F30EC-F2A0-4C6A-BCBC-9F4F0380614E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{9B36AD37-52BA-49A1-A0ED-77A3FE8C940A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Ui.Data", "Services\UI\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj", "{BA2D61A4-0C26-436F-A7E0-48EA10A1233B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Ui.Data", "Services\UI\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj", "{BA2D61A4-0C26-436F-A7E0-48EA10A1233B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Ui.Models", "Services\UI\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj", "{4558E2B1-9E72-429A-BFDC-A9033638D703}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Ui.Models", "Services\UI\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj", "{4558E2B1-9E72-429A-BFDC-A9033638D703}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Ui.Business", "Services\UI\OJS.Services.Ui.Business\OJS.Services.Ui.Business.csproj", "{68C6A8DD-1BF1-47CC-9875-CE44FE33C22E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Ui.Business", "Services\UI\OJS.Services.Ui.Business\OJS.Services.Ui.Business.csproj", "{68C6A8DD-1BF1-47CC-9875-CE44FE33C22E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{C0BBA7AB-3119-43F4-81A7-F6FDA8D888E6}"
 EndProject
@@ -78,9 +78,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{DDF8B4CB-3916-4657-8E40-688A5D7E46F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Worker", "Servers\Worker\OJS.Servers.Worker\OJS.Servers.Worker.csproj", "{4DDA1854-E593-458E-A4FF-F318DA739D7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Worker", "Servers\Worker\OJS.Servers.Worker\OJS.Servers.Worker.csproj", "{4DDA1854-E593-458E-A4FF-F318DA739D7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Worker.Models", "Servers\Worker\OJS.Servers.Worker.Models\OJS.Servers.Worker.Models.csproj", "{F387A599-4DF8-4443-B017-F044CF54E94D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Worker.Models", "Servers\Worker\OJS.Servers.Worker.Models\OJS.Servers.Worker.Models.csproj", "{F387A599-4DF8-4443-B017-F044CF54E94D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{AAE8857F-14F9-4894-99CC-1335AA7EC400}"
 EndProject
@@ -88,21 +88,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OJS.Workers", "OJS.Workers"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PubSub", "PubSub", "{CCACAFEF-FB33-4272-B398-DF3C3FB1A106}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.PubSub.Worker.Models", "PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj", "{0B863CB4-E9DB-4972-8354-643481C472F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.PubSub.Worker.Models", "PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj", "{0B863CB4-E9DB-4972-8354-643481C472F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Workers.Checkers", "Services\Common\OJS.Workers\OJS.Workers.Checkers\OJS.Workers.Checkers.csproj", "{0D0DD04E-9DF2-4211-BDF3-7DB6E3A14794}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Workers.Checkers", "Services\Common\OJS.Workers\OJS.Workers.Checkers\OJS.Workers.Checkers.csproj", "{0D0DD04E-9DF2-4211-BDF3-7DB6E3A14794}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Workers.Common", "Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj", "{423322B5-35BF-44DF-ADE8-B882598CA533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Workers.Common", "Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj", "{423322B5-35BF-44DF-ADE8-B882598CA533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Workers.Compilers", "Services\Common\OJS.Workers\OJS.Workers.Compilers\OJS.Workers.Compilers.csproj", "{D23AA156-7C94-4684-8CC8-8A272C5F92F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Workers.Compilers", "Services\Common\OJS.Workers\OJS.Workers.Compilers\OJS.Workers.Compilers.csproj", "{D23AA156-7C94-4684-8CC8-8A272C5F92F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Workers.ExecutionStrategies", "Services\Common\OJS.Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj", "{F6278B6A-E899-40DF-8137-77F2B75D3DF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Workers.ExecutionStrategies", "Services\Common\OJS.Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj", "{F6278B6A-E899-40DF-8137-77F2B75D3DF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Workers.Executors", "Services\Common\OJS.Workers\OJS.Workers.Executors\OJS.Workers.Executors.csproj", "{E8A95A48-3BAE-4ADA-9643-E783BB1F9FE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Workers.Executors", "Services\Common\OJS.Workers\OJS.Workers.Executors\OJS.Workers.Executors.csproj", "{E8A95A48-3BAE-4ADA-9643-E783BB1F9FE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Worker.Models", "Services\Worker\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj", "{4B984DF2-036A-432A-ACA5-1A403FC8824C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Worker.Models", "Services\Worker\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj", "{4B984DF2-036A-432A-ACA5-1A403FC8824C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Worker.Business", "Services\Worker\OJS.Services.Worker.Business\OJS.Services.Worker.Business.csproj", "{369BD97D-9875-4461-AA84-F9CA0224D528}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Worker.Business", "Services\Worker\OJS.Services.Worker.Business\OJS.Services.Worker.Business.csproj", "{369BD97D-9875-4461-AA84-F9CA0224D528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

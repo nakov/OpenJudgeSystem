@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\..\PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj" />
     <ProjectReference Include="..\..\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
     <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
   </ItemGroup>
-
 </Project>

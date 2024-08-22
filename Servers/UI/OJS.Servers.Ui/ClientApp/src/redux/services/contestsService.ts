@@ -67,7 +67,6 @@ export const contestsService = createApi({
                     strategy,
                 },
             }),
-            keepUnusedDataFor: 60,
         }),
         getContestById: builder.query<IContestDetailsResponseType, IContestDetailsUrlParams>({
             query: ({ id }) => ({ url: `/Contests/Details/${id}` }),

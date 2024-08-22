@@ -3,15 +3,12 @@ namespace OJS.Services.Common.Data.Implementations;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common;
-using OJS.Common.Helpers;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models.Submissions;
-using OJS.Services.Infrastructure.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 
 public class SubmissionsForProcessingCommonDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingCommonDataService
 {
@@ -34,14 +31,13 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
         => this.GetQuery(sfp => !sfp.Processed && sfp.Processing);
 
-    public async Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails)
+    public async Task<SubmissionForProcessing> Add(int submissionId)
     {
         var submissionForProcessing = new SubmissionForProcessing
         {
             SubmissionId = submissionId,
             Processed = false,
             Processing = false,
-            SerializedExecutionDetails = serializedExecutionDetails,
         };
 
         await this.Add(submissionForProcessing);
@@ -49,14 +45,34 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         return submissionForProcessing;
     }
 
-    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails)
+    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
     {
-        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId, serializedExecutionDetails);
+        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId);
 
         entity.Processing = false;
         entity.Processed = false;
 
         return entity;
+    }
+
+    public async Task AddOrUpdateMany(ICollection<int> submissionIds)
+    {
+        var newSubmissionsForProcessing = submissionIds
+            .Select(sId => new SubmissionForProcessing
+            {
+                SubmissionId = sId,
+            });
+
+        await submissionIds
+            .Chunk(GlobalConstants.BatchOperationsChunkSize)
+            .ForEachSequential(async chunk =>
+            {
+                this.Delete(sfp => chunk.Contains(sfp.SubmissionId));
+                await this.SaveChanges();
+            });
+
+        await this.AddMany(newSubmissionsForProcessing);
+        await this.SaveChanges();
     }
 
     public async Task RemoveBySubmission(int submissionId)
@@ -70,73 +86,28 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         }
     }
 
-    public new async Task Update(SubmissionForProcessing submissionForProcessing)
+    public void MarkProcessing(SubmissionForProcessing submissionForProcessing)
     {
-        base.Update(submissionForProcessing);
-        await this.SaveChanges();
-    }
-
-    public async Task MarkProcessing(int submissionId)
-    {
-        var submissionForProcessing = await this
-            .GetBySubmission(submissionId);
-
-        if (submissionForProcessing == null)
-        {
-            throw new BusinessServiceException(
-                $"Submission for processing for Submission with ID {submissionId} not found in the database.");
-        }
-
         submissionForProcessing.Processing = true;
         submissionForProcessing.Processed = false;
 
-        await this.Update(submissionForProcessing);
+        this.Update(submissionForProcessing);
     }
 
-    public async Task MarkMultipleForProcessing(ICollection<int> submissionsIds)
-    {
-        var newSubmissionsForProcessing = submissionsIds
-            .Select(sId => new SubmissionForProcessing
+    public Task MarkMultipleForProcessing(ICollection<int> submissionIds)
+     => this.GetQuery(sfp => submissionIds.Contains(sfp.SubmissionId))
+            .IgnoreQueryFilters()
+            .UpdateFromQueryAsync(sfp => new SubmissionForProcessing
             {
-                SubmissionId = sId,
-                Processed = false,
                 Processing = true,
+                Processed = false,
             });
 
-        using var scope = TransactionsHelper.CreateTransactionScope(
-            isolationLevel: IsolationLevel.RepeatableRead,
-            asyncFlowOption: TransactionScopeAsyncFlowOption.Enabled);
-
-        await submissionsIds
-            .Chunk(GlobalConstants.BatchOperationsChunkSize)
-            .ForEachSequential(async chunk =>
-            {
-                this.Delete(sfp => chunk.Contains(sfp.SubmissionId));
-                await this.SaveChanges();
-            });
-
-        await this.AddMany(newSubmissionsForProcessing);
-
-        await this.SaveChanges();
-
-        scope.Complete();
-    }
-
-    public async Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult)
+    public void MarkProcessed(SubmissionForProcessing submissionForProcessing)
     {
-        var submissionForProcessing = await this.GetBySubmission(submissionExecutionResult.SubmissionId);
-
-        if (submissionForProcessing == null)
-        {
-            throw new BusinessServiceException(
-                $"Submission for processing for Submission with ID {submissionExecutionResult.SubmissionId} not found in the database.");
-        }
-
         submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;
-        submissionForProcessing.SerializedException = submissionExecutionResult.SerializedException;
-        submissionForProcessing.SerializedExecutionResult = submissionExecutionResult.SerializedExecutionResult;
 
-        await this.Update(submissionForProcessing);
+        this.Update(submissionForProcessing);
     }
 }

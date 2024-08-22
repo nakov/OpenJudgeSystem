@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
-      <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
-      <ProjectReference Include="..\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
-      <ProjectReference Include="..\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+    <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+    <ProjectReference Include="..\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
+    <ProjectReference Include="..\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
+  </ItemGroup>
 </Project>

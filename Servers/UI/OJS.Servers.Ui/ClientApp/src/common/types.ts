@@ -434,6 +434,7 @@ interface IUserType {
     isInRole: boolean;
     isAdmin: boolean;
     isLecturer: boolean;
+    isDeveloper: boolean;
     canAccessAdministration: boolean;
 }
 
@@ -448,6 +449,7 @@ interface IProblemAdministration {
     checkerId: string;
     problemGroupType: string;
     contestId: number;
+    contestName: string;
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;
@@ -629,6 +631,11 @@ interface IUserInExamGroupModel {
 interface IUserAutocomplete {
     id: string;
     userName: string;
+}
+
+interface IReplaceSubmissionTypeModel {
+    submissionTypeToReplace: number;
+    submissionTypeToReplaceWith?: number | null;
 }
 
 interface ISubmissionTypeAdministrationModel {
@@ -818,6 +825,7 @@ export type {
     IUserInExamGroupModel,
     IUserAutocomplete,
     ISubmissionTypesInListModel,
+    IReplaceSubmissionTypeModel,
     ISubmissionTypeAdministrationModel,
     ITestRunInListModel,
     IProblemGroupDropdownModel,

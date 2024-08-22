@@ -29,6 +29,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public int ContestId { get; set; }
 
+    public string ContestName { get; set; } = null!;
+
     public ContestType ContestType { get; set; }
 
     public double ProblemGroupOrderBy { get; set; }
@@ -47,6 +49,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
          configuration.CreateMap<Problem, ProblemAdministrationModel>()
              .ForMember(pam => pam.ContestId, opt
                 => opt.MapFrom(p => p.ProblemGroup.ContestId))
+             .ForMember(pam => pam.ContestName, opt
+                => opt.MapFrom(p => p.ProblemGroup.Contest.Name))
             .ForMember(pam => pam.SubmissionTypes, opt
                 => opt.MapFrom(p => p.SubmissionTypesInProblems))
              .ForMember(p => p.OperationType, opt

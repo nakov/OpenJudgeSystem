@@ -65,7 +65,7 @@
                 .ForMember(
                     m => m.CheckerTypeName,
                     opt => opt.MapFrom<CheckerTypeNameValueResolver>())
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(m => m.CheckerAssemblyName, opt => opt.Ignore());
         }
     }
 }

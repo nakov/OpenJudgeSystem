@@ -22,7 +22,7 @@ public class RoleAdministrationModelValidator : BaseAdministrationModelValidator
         this.RuleFor(x => x.Id)
             .NotEmpty()
             .MustAsync(async (roleId, _) => !await this.userInRoleService.Exists(x => x.RoleId == roleId))
-            .When(x => x.OperationType is CrudOperationType.Delete)
-            .WithMessage("Cannot delete role which has users.");
+            .WithMessage("Cannot delete role which has users.")
+            .When(x => x.OperationType is CrudOperationType.Delete);
     }
 }

@@ -1,17 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
-      <ProjectReference Include="..\OJS.Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="10.1.1" />
-      <PackageReference Include="X.PagedList" Version="8.1.0" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
+    <ProjectReference Include="..\OJS.Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="X.PagedList" Version="8.1.0" />
+  </ItemGroup>
 </Project>

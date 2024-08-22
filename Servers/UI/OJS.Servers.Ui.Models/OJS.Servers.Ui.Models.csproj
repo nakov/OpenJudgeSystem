@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
-      <ProjectReference Include="..\..\..\Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+    <ProjectReference Include="..\..\..\Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
 </Project>

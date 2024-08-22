@@ -17,29 +17,31 @@ namespace OJS.Services.Common.Data.Implementations
         where TEntity : class, IEntity
     {
         private readonly OjsDbContext db;
+        private readonly DbSet<TEntity> dbSet;
 
         public DataService(OjsDbContext db)
         {
             this.db = db;
+            this.dbSet = db.Set<TEntity>();
             this.IgnoreQueryFilters = false;
         }
 
         protected bool IgnoreQueryFilters { get; init; }
 
         public virtual async Task Add(TEntity entity)
-            => await this.db.AddAsync(entity);
+            => await this.dbSet.AddAsync(entity);
 
         public virtual async Task AddMany(IEnumerable<TEntity> entities)
-            => await this.db.AddRangeAsync(entities);
+            => await this.dbSet.AddRangeAsync(entities);
 
         public virtual void Update(TEntity entity)
-            => this.db.Update(entity);
+            => this.dbSet.Update(entity);
 
         public virtual void Delete(TEntity entity)
-            => this.db.Remove(entity);
+            => this.dbSet.Remove(entity);
 
         public void Delete(Expression<Func<TEntity, bool>>? filter = null)
-            => this.db.RemoveRange(this.GetQuery(filter));
+            => this.dbSet.RemoveRange(this.GetQuery(filter));
 
         public virtual async Task DeleteById(object id)
         {
@@ -48,10 +50,10 @@ namespace OJS.Services.Common.Data.Implementations
         }
 
         public void Detach(TEntity entity)
-            => this.db.Entry(entity).State = EntityState.Detached;
+            => this.dbSet.Entry(entity).State = EntityState.Detached;
 
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
-            => this.db.RemoveRange(entities);
+            => this.dbSet.RemoveRange(entities);
 
         public virtual async Task<IEnumerable<TEntity>> All(
             Expression<Func<TEntity, bool>>? filter = null,
@@ -126,7 +128,7 @@ namespace OJS.Services.Common.Data.Implementations
             int? skip = null,
             int? take = null)
         {
-            var query = this.db.Set<TEntity>().AsQueryable();
+            var query = this.dbSet.AsQueryable();
 
             if (this.IgnoreQueryFilters)
             {

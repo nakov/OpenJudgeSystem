@@ -5,6 +5,7 @@ using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -57,11 +58,21 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
     public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission)
     {
+        var submissionForProcessing = await this.submissionForProcessingData
+            .GetBySubmission(submission.Id);
+
+        if (submissionForProcessing == null)
+        {
+            throw new BusinessServiceException(
+                $"Submission for processing for Submission with ID {submission.Id} not found in the database.");
+        }
+
         try
         {
             await this.submissionPublisherService.Publish(submission);
 
-            await this.submissionForProcessingData.MarkProcessing(submission.Id);
+            this.submissionForProcessingData.MarkProcessing(submissionForProcessing);
+            await this.submissionForProcessingData.SaveChanges();
         }
         catch (Exception ex)
         {

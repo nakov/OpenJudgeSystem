@@ -4,19 +4,21 @@
     using OJS.Data;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Users;
+    using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.Extensions;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using static OJS.Common.GlobalConstants.Roles;
 
     public class SubmissionsDataService : AdministrationDataService<Submission>, ISubmissionsDataService
     {
-        public SubmissionsDataService(OjsDbContext submissions)
+        private readonly IDatesService datesService;
+        public SubmissionsDataService(OjsDbContext submissions, IDatesService datesService)
             : base(submissions)
-        {
-        }
+            => this.datesService = datesService;
 
         public Submission? GetBestForParticipantByProblem(int participantId, int problemId)
             => this.GetAllByProblemAndParticipant(problemId, participantId)
@@ -37,6 +39,9 @@
 
         public IQueryable<Submission> GetAllByProblem(int problemId)
             => this.GetQuery(s => s.ProblemId == problemId);
+
+        public IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds)
+            => this.GetQuery(s => problemIds.Contains(s.ProblemId));
 
         public IQueryable<Submission> GetByIds(IEnumerable<int> ids)
             => this.GetQuery(s => ids.Contains(s.Id));
@@ -62,6 +67,18 @@
 
         public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
             => this.GetQuery(s => s.Points > s.Problem.MaximumPoints);
+
+        public IQueryable<Submission> GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(int submissionTypeId, int monthsCount)
+            => this.GetQuery()
+                .Include(s => s.Participant)
+                .ThenInclude(p => p.User)
+                .ThenInclude(u => u.UsersInRoles)
+                .Where(s => s.SubmissionTypeId == submissionTypeId &&
+                            s.CreatedOn > this.datesService.GetUtcNow().AddMonths(-monthsCount) &&
+                            !s.Participant.User.UsersInRoles.Any(ur => new List<string>
+                            {
+                                Administrator, Lecturer, Developer,
+                            }.Contains(ur.Role.Name!)));
 
         public IQueryable<int> GetIdsByProblem(int problemId)
             => this.GetAllByProblem(problemId)

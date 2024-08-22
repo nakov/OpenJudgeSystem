@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IFileModel, IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel, ITestsDropdownData } from '../../../common/types';
-import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
+import { IGetByContestId, IGetByProblemId, IProblemUrlById } from '../../../common/url-types';
 import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
@@ -88,8 +88,16 @@ export const problemsAdminService = createApi({
             }),
         }),
 
-        getResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, number>({
-            query: (problemId) => ({ url: `GetResources/${problemId}` }),
+        getResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, IGetByProblemId>({
+            query: ({ problemId, filter, page, itemsPerPage, sorting }) => ({
+                url: `GetResources/${problemId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
             keepUnusedDataFor: 5,
         }),
 

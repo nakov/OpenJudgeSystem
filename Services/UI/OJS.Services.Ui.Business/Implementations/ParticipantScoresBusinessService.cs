@@ -7,6 +7,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
+    using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common;
     using OJS.Services.Infrastructure.Exceptions;
@@ -61,18 +62,8 @@ namespace OJS.Services.Ui.Business.Implementations
             scope.Complete();
         }
 
-        public async Task SaveForSubmission(Submission submission)
+        public async Task SaveForSubmission(Participant participant, Submission submission)
         {
-            var participant = this.participantsData
-                .GetByIdQuery(submission.ParticipantId)
-                .Select(p => new { p.IsOfficial, p.User.UserName, Participant = p })
-                .FirstOrDefault();
-
-            if (participant == null)
-            {
-                return;
-            }
-
             var existingScore = await this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
                 submission.ParticipantId,
                 submission.ProblemId,
@@ -82,9 +73,9 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 await this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                     submission,
-                    participant.UserName,
+                    participant.User.UserName!,
                     participant.IsOfficial,
-                    participant.Participant);
+                    participant);
 
                 return;
             }
@@ -96,7 +87,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     existingScore,
                     submission.Id,
                     submission.Points,
-                    participant.Participant);
+                    participant);
             }
         }
 

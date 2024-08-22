@@ -9,13 +9,16 @@ import {
     IContestCategories,
     IExamGroupAdministration,
 } from '../../../../common/types';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import {
     useCreateExamGroupMutation, useGetExamGroupByIdQuery,
     useUpdateExamGroupMutation,
 } from '../../../../redux/services/admin/examGroupsAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -26,10 +29,12 @@ interface IExamGroupEditProps {
     examGroupId: number | null;
     isEditMode?: boolean;
     getContestId?: Function;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const ExamGroupEdit = (props:IExamGroupEditProps) => {
-    const { examGroupId, isEditMode = true, getContestId } = props;
+    const { examGroupId, isEditMode = true, getContestId, onSuccess, setParentSuccessMessage } = props;
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
@@ -60,17 +65,29 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             isSuccess:
-                isSuccesfullyUpdated,
+                isSuccessfullyUpdated,
             error: updateError,
         } ] = useUpdateExamGroupMutation();
 
     const [
         createExamGroup, {
             data: createData,
-            isSuccess: isSuccesfullyCreated,
+            isSuccess: isSuccessfullyCreated,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateExamGroupMutation();
+
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+        setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
+    });
 
     useEffect(
         () => {
@@ -99,25 +116,18 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
 
     useEffect(() => {
         setErrorMessages([]);
-        if (isSuccesfullyUpdated) {
-            setSuccessMessage(updateData as string);
-            setErrorMessages([]);
-        } if (isSuccesfullyCreated) {
-            setSuccessMessage(createData as string);
+        if (isSuccessfullyUpdated) {
             setErrorMessages([]);
         }
-    }, [ isSuccesfullyUpdated, updateData, createData, isSuccesfullyCreated ]);
+        if (isSuccessfullyCreated) {
+            setErrorMessages([]);
+        }
+    }, [ isSuccessfullyUpdated, updateData, createData, isSuccessfullyCreated ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ updateError, createError ], setErrorMessages);
-    }, [ createError, updateError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: updateData, shouldGet: isSuccesfullyUpdated },
-            { message: createData, shouldGet: isSuccesfullyCreated } ]);
-        setSuccessMessage(message);
-    }, [ updateData, createData, isSuccesfullyUpdated, isSuccesfullyCreated ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ createError, setParentSuccessMessage, updateError ]);
 
     const validateForm = () => {
         const isValid = examGroupValidations.isNameValid;
@@ -161,19 +171,15 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         validateForm();
     };
 
-    const handleAutocompleteChange = (name: string, newValue:IContestCategories) => {
+    const handleAutocompleteChange = (name: string, newValue: IContestCategories | null) => {
         setExamGroup((prevState) => ({
             ...prevState,
-            contestId: newValue.id ?? null,
-            contestName: newValue.name ?? null,
+            contestId: newValue?.id ?? null,
+            contestName: newValue?.name ?? '',
         }));
     };
 
     const onInputChange = (event: any, newInputValue: string) => {
-        if (!newInputValue) {
-            return;
-        }
-
         setContestSearchString(newInputValue);
     };
 
@@ -228,15 +234,17 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
                 <FormControl className={formStyles.inputRow} sx={{ margin: '20px 0' }}>
                     <Autocomplete
                       className={formStyles.inputRow}
-                      onChange={(event, newValue) => handleAutocompleteChange('contest', newValue!)}
+                      onChange={(event, newValue) => handleAutocompleteChange('contest', newValue)}
                       onInputChange={onInputChange}
                       options={contestsData}
                       inputValue={contestSearchString}
+                      value={examGroup.contestId
+                          ? contestsData.find((c) => c.id === examGroup.contestId) || null
+                          : null}
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       isOptionEqualToValue={(option, value) => option.id === value.id && option.name === value.name}
-                      getOptionLabel={(option) => option?.name}
+                      getOptionLabel={(option) => option?.name ?? ''}
                       disableCloseOnSelect
-                      disableClearable
                       renderOption={(properties, option) => (
                           <MenuItem {...properties} key={option.id} value={option.id}>
                               {option.name}

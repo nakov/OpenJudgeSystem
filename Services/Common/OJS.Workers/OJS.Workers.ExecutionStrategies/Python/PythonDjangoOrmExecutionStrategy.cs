@@ -222,12 +222,12 @@ namespace OJS.Workers.ExecutionStrategies.Python
             IExecutor executor,
             IExecutionContext<TestsInputModel> executionContext,
             int timeLimit = 0,
-            string inputData = "")
+            string inputData = null)
             => executor.Execute(
                 fileName,
-                inputData,
                 timeLimit == 0 ? executionContext.TimeLimit : timeLimit,
                 executionContext.MemoryLimit,
+                inputData,
                 arguments,
                 this.WorkingDirectory,
                 useProcessTime: false,

@@ -54,7 +54,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         {
             WriteTestInCodeFile(executionContext.Code, codeSavePath, test.Input);
 
-            var processExecutionResult = await this.Execute(executionContext, executor, codeSavePath, string.Empty);
+            var processExecutionResult = await this.Execute(executionContext, executor, codeSavePath);
 
             var testResult = this.GetTestResult(processExecutionResult, test, checker);
 
@@ -65,7 +65,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             IExecutionContext<TInput> executionContext,
             IExecutor executor,
             string codeSavePath,
-            string input,
+            string input = null,
             string directory = null)
         {
             var processExecutionResult = await base.Execute(executionContext, executor, codeSavePath, input, directory);

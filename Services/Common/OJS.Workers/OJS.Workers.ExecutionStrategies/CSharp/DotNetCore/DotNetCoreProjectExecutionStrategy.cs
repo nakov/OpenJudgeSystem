@@ -62,9 +62,9 @@
             {
                 var processExecutionResult = await executor.Execute(
                     compilerPath,
-                    test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
+                    test.Input,
                     arguments,
                     this.WorkingDirectory);
 

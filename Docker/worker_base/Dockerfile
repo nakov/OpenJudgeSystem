@@ -32,6 +32,7 @@ RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | ba
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
+      dotnet-sdk-8.0 \
       dotnet-sdk-6.0 \
       openjdk-11-jdk \
       openjdk-21-jdk \

@@ -12,6 +12,5 @@ public class SubmissionsHelper : ISubmissionsHelper
     public bool IsEligibleForRetest(SubmissionDetailsServiceModel detailsModel)
         => (detailsModel.Tests.Any() && !detailsModel.TestRuns.Any()) &&
            detailsModel.IsProcessed && detailsModel.IsCompiledSuccessfully &&
-           (detailsModel.ProcessingComment == null) &&
            !this.submissionsForProcessingBusinessService.IsSubmissionProcessing(detailsModel.Id);
 }

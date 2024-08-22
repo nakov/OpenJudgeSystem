@@ -4,8 +4,12 @@ using AutoMapper;
 using OJS.Data.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 
-public class ExamGroupDeleteValidationServiceModel : IMapFrom<ExamGroup>
+public class ExamGroupDeleteValidationServiceModel : IMapExplicitly
 {
-    [IgnoreMap]
     public bool ContestIsActive { get; set; }
+
+    public void RegisterMappings(IProfileExpression configuration)
+        => configuration
+            .CreateMap<ExamGroup, ExamGroupDeleteValidationServiceModel>()
+            .ForMember(d => d.ContestIsActive, opt => opt.Ignore());
 }

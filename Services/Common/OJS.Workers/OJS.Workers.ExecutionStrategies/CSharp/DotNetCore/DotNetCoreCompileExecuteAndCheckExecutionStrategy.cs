@@ -73,9 +73,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             {
                 var processExecutionResult = await executor.Execute(
                     this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
-                    test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
+                    test.Input,
                     arguments,
                     this.WorkingDirectory);
 
@@ -110,9 +110,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
             var processExecutionResult = await executor.Execute(
                 this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
-                executionContext.Input?.Input ?? string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
+                executionContext.Input?.Input,
                 arguments,
                 this.WorkingDirectory);
 

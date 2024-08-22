@@ -76,7 +76,12 @@
                 .ForMember(
                     nameof(OjsSubmission<object>.ExecutionStrategyBaseTimeLimit),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionStrategyBaseTimeLimit)))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(nameof(OjsSubmission<object>.AdditionalCompilerArguments), opt => opt.Ignore())
+                .ForMember(nameof(OjsSubmission<object>.ProcessingComment), opt => opt.Ignore())
+                .ForMember(nameof(OjsSubmission<object>.AllowedFileExtensions), opt => opt.Ignore())
+                .ForMember(nameof(OjsSubmission<object>.MaxPoints), opt => opt.Ignore())
+                .ForMember(nameof(OjsSubmission<object>.ExceptionType), opt => opt.Ignore())
+                .ForMember(nameof(OjsSubmission<object>.CompletedExecutionOn), opt => opt.Ignore());
 
             configuration.CreateMap<Submission, SubmissionServiceModel>()
                 .ForMember(

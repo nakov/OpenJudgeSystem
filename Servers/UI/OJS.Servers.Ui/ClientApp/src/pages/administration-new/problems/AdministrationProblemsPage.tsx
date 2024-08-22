@@ -77,7 +77,14 @@ const AdministrationProblemsPage = () => {
           open={openEditProblemModal}
           onClose={() => onEditModalClose()}
         >
-            <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
+            <ProblemForm
+              problemId={Number(problemId)}
+              isEditMode
+              contestId={null}
+              contestName={null}
+              onSuccess={() => onEditModalClose()}
+              setParentSuccessMessage={setSuccessMessage}
+            />
         </AdministrationModal>
     );
 
@@ -92,7 +99,7 @@ const AdministrationProblemsPage = () => {
               ? problemsData?.items[0].contest
               : ''}
           problemToCopy={problemId}
-          onSuccess={onSuccessOperation}
+          setParentSuccessMessage={setSuccessMessage}
         />
     );
 

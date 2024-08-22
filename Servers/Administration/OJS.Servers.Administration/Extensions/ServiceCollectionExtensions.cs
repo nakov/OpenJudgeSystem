@@ -4,6 +4,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using OJS.Common;
 using OJS.Common.Exceptions;
 using OJS.Data;
 using OJS.Data.Models.Users;
@@ -27,24 +30,26 @@ internal static class ServiceCollectionExtensions
 
     public static void ConfigureServices(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostEnvironment environment)
         => services
             .AddGridServices()
             .AddValidators()
             .AddWebServer<Program>(configuration)
             .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
             .AddTransient<AdministrationExceptionMiddleware>()
-            .AddHttpContextServices()
             .AddHangfireServer(configuration, AppName, new[] { AdministrationQueueName })
             .AddMessageQueue<Program>(configuration)
             .ConfigureGlobalDateFormat()
             .ConfigureCorsPolicy(configuration)
             .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
+            .AddResiliencePipelines()
             .AddMemoryCache()
             .AddDistributedCaching(configuration)
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()
+            .AddHealthChecksDashboard(environment, configuration)
             .AddControllers()
             .ConfigureApiBehaviorOptions(options =>
             {
@@ -81,4 +86,100 @@ internal static class ServiceCollectionExtensions
     private static IServiceCollection AddGridServices(this IServiceCollection services)
         => services
             .AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>));
+
+    private static IServiceCollection AddHealthChecksDashboard(
+        this IServiceCollection services,
+        IHostEnvironment environment,
+        IConfiguration configuration)
+    {
+        services
+            .AddHealthChecksUI(settings =>
+            {
+                if (!environment.IsDevelopment())
+                {
+                    var microsoftTeamsWebhookUri = configuration
+                        .GetSectionValueWithValidation<ApplicationConfig, string>(nameof(ApplicationConfig.MicrosoftTeamsWebhookUri));
+                    var payload = GetHealthCheckPayload(environment, configuration);
+                    var restorePayload = GetRestorePayload(environment);
+
+                    settings
+                        .AddWebhookNotification("Microsoft Teams", microsoftTeamsWebhookUri, payload, restorePayload)
+                        .SetNotifyUnHealthyOneTimeUntilChange(); // Notify once until status changes.
+                }
+
+                settings
+                    .MaximumHistoryEntriesPerEndpoint(100) // Keep only 100 entries in history.
+                    .ConfigureApiEndpointHttpclient((sp, client) =>
+                    {
+                        var apiKey = sp.GetRequiredService<IOptions<ApplicationConfig>>().Value.ApiKey;
+                        client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.ApiKey, apiKey);
+                    });
+            })
+            .AddInMemoryStorage();
+
+        return services;
+    }
+
+    private static string GetRestorePayload(IHostEnvironment environment)
+        => $$"""
+        {
+            "attachments": [
+                 {
+                   "contentType": "application/vnd.microsoft.card.adaptive",
+                   "content": {
+                     "type": "AdaptiveCard",
+                     "body": [
+                       {
+                         "type": "TextBlock",
+                         "text": "[[LIVENESS]] has been restored on {{environment.EnvironmentName}}!"
+                       }
+                     ],
+                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                         "version": "1.0"
+                       }
+                }
+            ]
+        }
+        """;
+
+    private static string GetHealthCheckPayload(IHostEnvironment environment, IConfiguration configuration)
+    {
+        var administrationUrl = configuration.GetSectionValueWithValidation<ApplicationUrlsConfig, string>(nameof(ApplicationUrlsConfig.AdministrationUrl));
+
+        return $$"""
+                 {
+                   "attachments": [
+                     {
+                       "contentType": "application/vnd.microsoft.card.adaptive",
+                       "content": {
+                         "type": "AdaptiveCard",
+                         "body": [
+                           {
+                             "type": "TextBlock",
+                             "text": "[[LIVENESS]] has failed on {{environment.EnvironmentName}}!"
+                           },
+                           {
+                             "type": "TextBlock",
+                             "text": "[[FAILURE]]"
+                           },
+                           {
+                             "type": "TextBlock",
+                             "text": "[[DESCRIPTIONS]]"
+                           }
+                         ],
+                         "actions": [
+                           {
+                             "type": "Action.OpenUrl",
+                             "title": "Check health status",
+                             "url": "{{administrationUrl}}/healthchecks-ui"
+                           }
+                         ],
+                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                         "version": "1.0"
+                       }
+                     }
+                   ]
+                 }
+                 """;
+    }
 }

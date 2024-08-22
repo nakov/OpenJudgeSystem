@@ -4,14 +4,16 @@ import { IconButton, Tooltip } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { IGetAllAdminParams } from '../../../../common/types';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { getColors } from '../../../../hooks/use-administration-theme-provider';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
+import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -21,6 +23,9 @@ import CopyModal, { AllowedOperations } from '../../problems/copy/CopyModal';
 import ProblemForm from '../../problems/problem-form/ProblemForm';
 import ProblemRetest from '../../problems/retest/ProblemRetest';
 
+// eslint-disable-next-line css-modules/no-unused-class
+import styles from '../../../../pages/administration-new/AdministrationStyles.module.scss';
+
 interface IProblemsInContestViewProps {
     contestId: number;
     contestName?: string;
@@ -28,13 +33,15 @@ interface IProblemsInContestViewProps {
     canContestBeCompeted: boolean;
 }
 
+const defaultProblemsSorterToAdd = 'problemgrouporderby=ASC';
+
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const { contestId, contestName, contestType, canContestBeCompeted } = props;
 
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemId, setProblemId ] = useState<number>(-1);
     // eslint-disable-next-line max-len
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultProblemsSorterToAdd));
     const themeMode = useAppSelector((x) => x.theme.administrationMode);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
@@ -56,25 +63,23 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ deleteByContest,
         {
             data: deleteAllData,
-            isSuccess: isSuccesfullyDeletedAll,
+            isSuccess: isSuccessfullyDeletedAll,
             isLoading: isDeletingAll,
             error: deleteAllError,
         } ] = useDeleteByContestMutation();
 
+    useSuccessMessageEffect({
+        data: [
+            { message: deleteAllData, shouldGet: isSuccessfullyDeletedAll },
+        ],
+        setSuccessMessage,
+        clearFlags: [ isDeletingAll ],
+    });
+
     useEffect(() => {
         getAndSetExceptionMessage([ deleteAllError, getContestError ], setErrorMessages);
-        setSuccessMessage(null);
+        clearSuccessMessages({ setSuccessMessage });
     }, [ deleteAllError, getContestError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            {
-                message: deleteAllData,
-                shouldGet: isSuccesfullyDeletedAll,
-            } ]);
-
-        setSuccessMessage(message);
-    }, [ deleteAllData, isSuccesfullyDeletedAll ]);
 
     const onEditClick = (id: number) => {
         setOpenEditModal(true);
@@ -82,14 +87,10 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     };
 
     useEffect(() => {
-        if (isSuccesfullyDeletedAll) {
+        if (isSuccessfullyDeletedAll) {
             retakeData();
         }
-    }, [ isSuccesfullyDeletedAll, retakeData ]);
-
-    const onCopySuccess = (message: string | null) => {
-        setSuccessMessage(message);
-    };
+    }, [ isSuccessfullyDeletedAll, retakeData ]);
 
     const openCopyModal = (id: number) => {
         setShowCopyModal(true);
@@ -101,33 +102,45 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         setProblemToRetestId(id);
     };
 
-    const renderProblemModal = (index: number, isCreate: boolean) => (
-        <AdministrationModal
-          index={index}
-          open={isCreate
-              ? openShowCreateProblemModal
-              : openEditModal}
-          onClose={() => isCreate
-              ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
-              : setOpenEditModal(false)}
-        >
-            {isCreate
-                ? (
-                    <ProblemForm
-                      contestId={Number(contestId)}
-                      problemId={null}
-                      isEditMode={false}
-                      contestType={contestType!}
-                    />
-                )
-                : (
-                    <ProblemForm
-                      problemId={problemId}
-                      contestType={null}
-                    />
-                )}
-        </AdministrationModal>
-    );
+    const renderProblemModal = (index: number, isCreate: boolean) => {
+        const onClose = () => isCreate
+            ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
+            : setOpenEditModal(false);
+
+        const onProblemCreate = () => {
+            retakeData();
+            onClose();
+        };
+
+        return (
+            <AdministrationModal
+              index={index}
+              open={isCreate
+                  ? openShowCreateProblemModal
+                  : openEditModal}
+              onClose={onClose}
+            >
+                {isCreate
+                    ? (
+                        <ProblemForm
+                          contestId={Number(contestId)}
+                          contestName={contestName}
+                          problemId={null}
+                          isEditMode={false}
+                          contestType={contestType!}
+                          onSuccess={onProblemCreate}
+                          setParentSuccessMessage={setSuccessMessage}
+                        />
+                    )
+                    : (
+                        <ProblemForm
+                          problemId={problemId}
+                          contestType={null}
+                        />
+                    )}
+            </AdministrationModal>
+        );
+    };
 
     const renderDeleteAllModal = (index: number) => (
         <ConfirmDialog
@@ -146,7 +159,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         />
     );
 
-    const onSuccesfullRetest = (message: string) => {
+    const onSuccessfulRetest = (message: string) => {
         setSuccessMessage(message);
         setShowRetestModal(false);
     };
@@ -162,7 +175,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               ? problemsData?.items.find((x) => x.id === problemToRetestId)?.name
               : 'problem'}
           problemToRetest={problemToRetestId}
-          onSuccess={onSuccesfullRetest}
+          onSuccess={onSuccessfulRetest}
         />
     );
 
@@ -204,12 +217,12 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               ? problemsData?.items[0].contest
               : ''}
           problemToCopy={problemToCopy}
-          onSuccess={onCopySuccess}
+          setParentSuccessMessage={setSuccessMessage}
         />
     );
 
     return (
-        <div style={{ marginTop: '2rem' }}>
+        <div className={styles.container}>
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
             { isDeletingAll
@@ -229,6 +242,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 }
                       queryParams={queryParams}
                       setQueryParams={setQueryParams}
+                      defaultSorter={defaultProblemsSorterToAdd}
                       modals={[
                           { showModal: openEditModal, modal: (i) => renderProblemModal(i, false) },
                           { showModal: openShowCreateProblemModal, modal: (i) => renderProblemModal(i, true) },

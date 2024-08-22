@@ -2,13 +2,15 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../../common/messages';
 import { IContestAutocomplete, IGetAllAdminParams } from '../../../../common/types';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import lecturerInContestFilterableColumns, { returnLecturerInContestNonFilterableColumns } from '../../../../pages/administration-new/lecturers-in-contests/lecturersInContestsGridColumns';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useAddLecturerToContestMutation, useGetLecturerContestsQuery, useRemoveLecturerFromContestMutation } from '../../../../redux/services/admin/usersAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -75,6 +77,15 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
         },
     ] = useRemoveLecturerFromContestMutation();
 
+    useSuccessMessageEffect({
+        data: [
+            { message: addData, shouldGet: isSuccessfullyAdded },
+            { message: removeData, shouldGet: isSuccessfullyRemoved },
+        ],
+        setSuccessMessage,
+        clearFlags: [ isAdding, isRemoving ],
+    });
+
     useEffect(() => {
         if (isSuccessfullyRemoved || isSuccessfullyAdded) {
             refetch();
@@ -89,22 +100,8 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, addError, removeError ], setErrorMessages);
-        setSuccessMessage(null);
+        clearSuccessMessages({ setSuccessMessage });
     }, [ addError, getContestDataError, removeError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            {
-                message: addData,
-                shouldGet: isSuccessfullyAdded,
-            },
-            {
-                message: removeData,
-                shouldGet: isSuccessfullyRemoved,
-            } ]);
-
-        setSuccessMessage(message);
-    }, [ addData, isSuccessfullyAdded, isSuccessfullyRemoved, removeData ]);
 
     const onSelect = (contest: IContestAutocomplete) => {
         let currContestId = 0;

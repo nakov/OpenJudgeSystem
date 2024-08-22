@@ -45,6 +45,7 @@ const AdministrationProblem = () => {
           problemId={Number(problemId)}
           isEditMode
           contestId={null}
+          contestName={null}
           getName={(name: string) => setProblemName(name)}
           getContestId={(id: number) => {
               setContestId(id);

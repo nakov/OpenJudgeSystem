@@ -17,10 +17,10 @@ namespace OJS.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.25")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
                 {
@@ -28,7 +28,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FriendlyName")
                         .HasColumnType("nvarchar(max)");
@@ -47,7 +47,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -72,7 +72,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -138,7 +138,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -178,7 +178,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
@@ -220,7 +220,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("AllowParallelSubmissionsInTasks")
                         .ValueGeneratedOnAdd()
@@ -310,7 +310,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -351,7 +351,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("ContestId")
                         .HasColumnType("int");
@@ -380,7 +380,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -423,7 +423,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -513,7 +513,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ContestId")
                         .HasColumnType("int");
@@ -561,7 +561,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsOfficial")
                         .HasColumnType("bit");
@@ -614,7 +614,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<byte[]>("AdditionalFiles")
                         .HasColumnType("varbinary(max)");
@@ -681,7 +681,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ContestId")
                         .HasColumnType("int");
@@ -717,7 +717,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -768,7 +768,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -786,13 +786,37 @@ namespace OJS.Data.Migrations
                     b.ToTable("Settings");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
+                {
+                    b.Property<int>("SubmissionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProblemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MemoryLimit")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("SolutionSkeleton")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("TimeLimit")
+                        .HasColumnType("int");
+
+                    b.HasKey("SubmissionTypeId", "ProblemId");
+
+                    b.HasIndex("ProblemId");
+
+                    b.ToTable("SubmissionTypeProblems");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Submissions.Submission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CompilerComment")
                         .HasColumnType("nvarchar(max)");
@@ -815,7 +839,7 @@ namespace OJS.Data.Migrations
 
                     b.Property<string>("IpAddress")
                         .HasMaxLength(45)
-                        .HasColumnType("varchar(45)");
+                        .HasColumnType("varchar");
 
                     b.Property<bool>("IsCompiledSuccessfully")
                         .HasColumnType("bit");
@@ -877,7 +901,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -890,15 +914,6 @@ namespace OJS.Data.Migrations
 
                     b.Property<bool>("Processing")
                         .HasColumnType("bit");
-
-                    b.Property<string>("SerializedException")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerializedExecutionDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerializedExecutionResult")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");
@@ -917,7 +932,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AdditionalCompilerArguments")
                         .HasColumnType("nvarchar(max)");
@@ -962,37 +977,13 @@ namespace OJS.Data.Migrations
                     b.ToTable("SubmissionTypes");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
-                {
-                    b.Property<int>("SubmissionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProblemId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MemoryLimit")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("SolutionSkeleton")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int?>("TimeLimit")
-                        .HasColumnType("int");
-
-                    b.HasKey("SubmissionTypeId", "ProblemId");
-
-                    b.HasIndex("ProblemId");
-
-                    b.ToTable("SubmissionTypeProblems");
-                });
-
             modelBuilder.Entity("OJS.Data.Models.Tests.Test", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("HideInput")
                         .HasColumnType("bit");
@@ -1030,7 +1021,7 @@ namespace OJS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CheckerComment")
                         .HasColumnType("nvarchar(max)");
@@ -1040,6 +1031,9 @@ namespace OJS.Data.Migrations
 
                     b.Property<string>("ExpectedOutputFragment")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsTrialTest")
+                        .HasColumnType("bit");
 
                     b.Property<long>("MemoryUsed")
                         .HasColumnType("bigint");
@@ -1449,6 +1443,25 @@ namespace OJS.Data.Migrations
                     b.Navigation("Problem");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
+                        .WithMany("SubmissionTypesInProblems")
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
+                        .WithMany("SubmissionTypesInProblems")
+                        .HasForeignKey("SubmissionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Problem");
+
+                    b.Navigation("SubmissionType");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Submissions.Submission", b =>
                 {
                     b.HasOne("OJS.Data.Models.Participants.Participant", "Participant")
@@ -1468,25 +1481,6 @@ namespace OJS.Data.Migrations
                         .HasForeignKey("SubmissionTypeId");
 
                     b.Navigation("Participant");
-
-                    b.Navigation("Problem");
-
-                    b.Navigation("SubmissionType");
-                });
-
-            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
-                {
-                    b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
-                        .WithMany("SubmissionTypesInProblems")
-                        .HasForeignKey("ProblemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
-                        .WithMany("SubmissionTypesInProblems")
-                        .HasForeignKey("SubmissionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Problem");
 

@@ -9,11 +9,5 @@ namespace OJS.Data.Models.Submissions
         public bool Processing { get; set; }
 
         public bool Processed { get; set; }
-
-        public string? SerializedExecutionDetails { get; set; }
-
-        public string? SerializedExecutionResult { get; set; }
-
-        public string? SerializedException { get; set; }
     }
 }

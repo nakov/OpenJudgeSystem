@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
+import { sortTestRunsByTrialTest } from '../../../common/submissions-utils';
 import { getContestsDetailsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import MultiLineTextDisplay from '../../../components/common/MultiLineTextDisplay';
@@ -89,6 +90,7 @@ const SubmissionDetailsPage = () => {
         userIsInRoleForContest,
         isOfficial,
         maxPoints,
+        processingComment,
     } = data || {};
 
     const handleRetestSubmission = useCallback(() => {
@@ -127,6 +129,135 @@ const SubmissionDetailsPage = () => {
             </Link>
         </div>
     ), [ solutionId, contestUser?.userName, contestName, contestId, isOfficial, problem?.id, problem?.name ]);
+
+    const renderAdminButtons = useCallback(() => {
+        const onViewCodeClick = () => {
+            const scrollToElement =
+                document.querySelector('#code-content-wrapper') ||
+                document.querySelector('#download-submission');
+
+            if (!scrollToElement) { return; }
+
+            const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
+        };
+
+        return (
+            <div className={styles.adminButtonsWrapper}>
+                <Button text="View Code" type={ButtonType.secondary} size={ButtonSize.small} onClick={onViewCodeClick} />
+                { userIsInRoleForContest && (
+                    <>
+                        <AdministrationLink
+                          text="Open In Administration"
+                          to={`/submissions?filter=id~equals~${solutionId}`}
+                        />
+                        <AdministrationLink
+                          text="Tests"
+                          to={`/tests?filter=problemid~equals~${problem!.id}`}
+                        />
+                        <Button
+                          text="Retest"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                          onClick={() => handleRetestSubmission()}
+                        />
+                    </>
+                )}
+            </div>
+        );
+    }, [ handleRetestSubmission, problem, solutionId, userIsInRoleForContest ]);
+
+    const renderSubmissionExecutionDetails = useCallback(() => {
+        const isSubmissionBeingProcessed =
+            // The submission has not yet been processed
+            !isProcessed ||
+            // The retesting of the submission has been started
+            isRetestingStarted ||
+            // If the test runs' length is 0 and the code is compiled successfully, and the
+            // submission is not eligible for retesting, then we are still processing the submission
+            ((testRuns && testRuns.length === 0) && isCompiledSuccessfully && !isEligibleForRetest);
+        if (isSubmissionBeingProcessed) {
+            return (
+                <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
+                    The submission is in queue and will be processed shortly. Please wait.
+                </div>
+            );
+        }
+
+        const compileTimeErrorClasses = concatClassNames(
+            styles.compileTimeErrorWrapper,
+            textColorClassName,
+            isDarkMode
+                ? styles.darkTheme
+                : '',
+        );
+
+        if (!isCompiledSuccessfully) {
+            return (
+                <div className={compileTimeErrorClasses}>
+                    <div>A compile time error occurred:</div>
+                    <MultiLineTextDisplay text={compilerComment} maxVisibleLines={50} />
+                </div>
+            );
+        }
+
+        if (isEligibleForRetest) {
+            return (
+                <div className={`${styles.retestWrapper} ${textColorClassName}`}>
+                    <div>
+                        The input / output data changed. Your (
+                        {points}
+                        {' '}
+                        /
+                        {' '}
+                        {maxPoints}
+                        ) submission is now outdated. Click &quot;Retest&quot; to resubmit
+                        your solution for re-evaluation against the new test cases. Your score may change.
+                    </div>
+                    <Button text="RETEST" onClick={() => handleRetestSubmission()} />
+                </div>
+            );
+        }
+
+        const renderTestRun = (testRun: ITestRunType, idx: number) => (
+            <SubmissionTestRun
+              key={`t-r-${testRun.testId}`}
+              testRun={testRun}
+              idx={idx}
+              shouldRenderAdminData={userIsInRoleForContest}
+            />
+        );
+
+        const sortedTestRuns = [ ...testRuns || [] ]?.sort(sortTestRunsByTrialTest);
+
+        const firstCompeteTestIndex = sortedTestRuns.findIndex((tr) => !tr.isTrialTest);
+
+        const renderTrialTestRuns = () => sortedTestRuns?.slice(0, firstCompeteTestIndex)
+            .map((testRun: ITestRunType, idx: number) => renderTestRun(testRun, idx + 1));
+
+        const renderCompeteTestRuns = () => sortedTestRuns?.slice(firstCompeteTestIndex, sortedTestRuns?.length)
+            .map((testRun: ITestRunType, idx: number) => renderTestRun(testRun, idx + 1));
+
+        return (
+            <>
+                {renderTrialTestRuns()}
+                {renderCompeteTestRuns()}
+            </>
+        );
+    }, [
+        isProcessed,
+        isRetestingStarted,
+        testRuns,
+        isCompiledSuccessfully,
+        isEligibleForRetest,
+        textColorClassName,
+        isDarkMode,
+        compilerComment,
+        points,
+        maxPoints,
+        handleRetestSubmission,
+        userIsInRoleForContest,
+    ]);
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
@@ -206,130 +337,6 @@ const SubmissionDetailsPage = () => {
         workerName,
     ]);
 
-    const renderSolutionTestDetails = useCallback(() => {
-        const isSubmissionBeingProcessed =
-            // The submission has not yet been processed
-            !isProcessed ||
-            // The retesting of the submission has been started
-            isRetestingStarted ||
-            // If the test runs' length is 0 and the code is compiled successfully, and the
-            // submission is not eligible for retesting, then we are still processing the submission
-            ((testRuns && testRuns.length === 0) && isCompiledSuccessfully && !isEligibleForRetest);
-        if (isSubmissionBeingProcessed) {
-            return (
-                <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
-                    The submission is in queue and will be processed shortly. Please wait.
-                </div>
-            );
-        }
-
-        const compileTimeErrorClasses = concatClassNames(
-            styles.compileTimeErrorWrapper,
-            textColorClassName,
-            isDarkMode
-                ? styles.darkTheme
-                : '',
-        );
-
-        if (!isCompiledSuccessfully) {
-            return (
-                <div className={compileTimeErrorClasses}>
-                    <div>A compile time error occurred:</div>
-                    <MultiLineTextDisplay text={compilerComment} maxVisibleLines={50} />
-                </div>
-            );
-        }
-
-        if (isEligibleForRetest) {
-            return (
-                <div className={`${styles.retestWrapper} ${textColorClassName}`}>
-                    <div>
-                        The input / output data changed. Your (
-                        {points}
-                        {' '}
-                        /
-                        {' '}
-                        {maxPoints}
-                        ) submission is now outdated. Click &quot;Retest&quot; to resubmit
-                        your solution for re-evaluation against the new test cases. Your score may change.
-                    </div>
-                    <Button text="RETEST" onClick={() => handleRetestSubmission()} />
-                </div>
-            );
-        }
-
-        const sortByTrialTest = (a: ITestRunType, b: ITestRunType) => {
-            if (a.isTrialTest && !b.isTrialTest) {
-                return -1;
-            }
-            if (!a.isTrialTest && b.isTrialTest) {
-                return 1;
-            }
-            return 0;
-        };
-
-        const sortedTestRuns = [ ...testRuns || [] ]?.sort(sortByTrialTest);
-
-        return sortedTestRuns.map((testRun: ITestRunType, idx: number) => (
-            <SubmissionTestRun
-              key={`t-r-${testRun.testId}`}
-              testRun={testRun}
-              idx={idx + 1}
-              shouldRenderAdminData={userIsInRoleForContest}
-            />
-        ));
-    }, [
-        isCompiledSuccessfully,
-        isEligibleForRetest,
-        points,
-        testRuns,
-        compilerComment,
-        isProcessed,
-        textColorClassName,
-        userIsInRoleForContest,
-        handleRetestSubmission,
-        isRetestingStarted,
-        maxPoints,
-        isDarkMode,
-    ]);
-
-    const renderAdminButtons = useCallback(() => {
-        const onViewCodeClick = () => {
-            const scrollToElement =
-                document.querySelector('#code-content-wrapper') ||
-                document.querySelector('#download-submission');
-
-            if (!scrollToElement) { return; }
-
-            const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
-            window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
-        };
-
-        return (
-            <div className={styles.adminButtonsWrapper}>
-                <Button text="View Code" type={ButtonType.secondary} size={ButtonSize.small} onClick={onViewCodeClick} />
-                { userIsInRoleForContest && (
-                    <>
-                        <AdministrationLink
-                          text="Open In Administration"
-                          to={`/submissions?filter=id~equals~${solutionId}`}
-                        />
-                        <AdministrationLink
-                          text="Tests"
-                          to={`/tests?filter=problemid~equals~${problem!.id}`}
-                        />
-                        <Button
-                          text="Retest"
-                          size={ButtonSize.small}
-                          type={ButtonType.secondary}
-                          onClick={() => handleRetestSubmission()}
-                        />
-                    </>
-                )}
-            </div>
-        );
-    }, [ handleRetestSubmission, problem, solutionId, userIsInRoleForContest ]);
-
     if (isLoading || retestIsLoading) {
         return (
             <div style={{ ...flexCenterObjectStyles }}>
@@ -382,9 +389,27 @@ const SubmissionDetailsPage = () => {
                             >
                                 {contestName}
                             </Link>
+                            <div className={styles.pointsResult}>
+                                {points}
+                                /
+                                {maxPoints}
+                            </div>
                         </div>
                         {renderAdminButtons()}
-                        {renderSolutionTestDetails()}
+                        {processingComment && user.isAdmin && (
+                        <div className={concatClassNames(
+                            styles.processingErrorWrapper,
+                            textColorClassName,
+                            isDarkMode
+                                ? styles.darkTheme
+                                : '',
+                        )}
+                        >
+                            <div>A processing error occurred:</div>
+                            <MultiLineTextDisplay text={processingComment} maxVisibleLines={50} />
+                        </div>
+                        )}
+                        {renderSubmissionExecutionDetails()}
                         {content && (
                             <div className={styles.codeContentWrapper} id="code-content-wrapper">
                                 <div>Source Code</div>

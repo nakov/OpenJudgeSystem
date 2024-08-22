@@ -5,12 +5,13 @@ import { RiFolderZipFill } from 'react-icons/ri';
 import { Checkbox, FormControl, FormControlLabel, IconButton, Tooltip, Typography } from '@mui/material';
 
 import { IGetAllAdminParams, ITestsUploadModel } from '../../../../common/types';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import AdministrationGridView, { defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
+import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import testsFilterableColums, { returnTestsNonFilterableColumns } from '../../../../pages/administration-new/tests/testsGridColumns';
 import { useDeleteByProblemMutation, useExportZipQuery, useGetTestsByProblemIdQuery, useImportTestsMutation } from '../../../../redux/services/admin/testsAdminService';
 import downloadFile from '../../../../utils/file-download-utils';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -31,6 +32,8 @@ interface ITestsInProblemsViewProps {
     canBeCompeted: boolean;
 }
 
+const defaultTestsSorterToAdd = 'istrialtest=DESC&orderby=ASC';
+
 const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const { problemId, problemName, canBeCompeted, contestId } = props;
     const defaultStateForUploadTests = {
@@ -50,7 +53,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const [ shouldSkip, setShouldSkip ] = useState<boolean>(true);
     const [ testsToUpload, setTestsToUpload ] = useState<ITestsUploadModel>({ ...defaultStateForUploadTests });
 
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd));
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultTestsSorterToAdd));
 
     const {
         refetch: retakeTests,
@@ -62,7 +65,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const [ deleteByProblem,
         {
             data: deleteAllData,
-            isSuccess: isSuccesfullyDeletedAll,
+            isSuccess: isSuccessfullyDeletedAll,
             isLoading: isDeletingAll,
             error: deleteAllError,
         } ] = useDeleteByProblemMutation();
@@ -77,17 +80,20 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
 
     const { refetch: reExportZip, data: zipData, isError: exportZipError } = useExportZipQuery(problemId, { skip: shouldSkip });
 
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: deleteAllData, shouldGet: isSuccesfullyDeletedAll },
+    useSuccessMessageEffect({
+        data: [
+            { message: deleteAllData, shouldGet: isSuccessfullyDeletedAll },
             { message: importTestsData, shouldGet: isSuccessfullyImported },
-        ]);
-        setSuccessMessage(message);
+        ],
+        setSuccessMessage,
+        clearFlags: [ isDeletingAll, isImporting ],
+    });
 
-        if (isSuccesfullyDeletedAll) {
+    useEffect(() => {
+        if (isSuccessfullyDeletedAll) {
             retakeTests();
         }
-    }, [ deleteAllData, isSuccesfullyDeletedAll, importTestsData, isSuccessfullyImported, retakeTests ]);
+    }, [ deleteAllData, isSuccessfullyDeletedAll, importTestsData, isSuccessfullyImported, retakeTests ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ deleteAllError, importTestsError, exportZipError ], setErrorMessages);
@@ -166,7 +172,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
           text={`Are you sure you want to delete all tests for ${testsData?.items
               ? testsData?.items[0].problemName
               : ''}`}
-          title="Delete All Problems"
+          title="Delete All Tests"
           declineButtonText="Close"
           confirmButtonText="Delete"
           declineFunction={() => setShowDeleteAllConfirm(!showDeleteAllConfirm)}
@@ -206,6 +212,8 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
               isEditMode={isEditMode}
               problemName={problemName}
               problemId={problemId}
+              onSuccess={() => onClose(isEditMode)}
+              setParentSuccessMessage={setSuccessMessage}
             />
         </AdministrationModal>
     );
@@ -291,6 +299,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
               queryParams={queryParams}
               setQueryParams={setQueryParams}
               withSearchParams={false}
+              defaultSorter={defaultTestsSorterToAdd}
               modals={[
                   { showModal: openCreateModal, modal: (i) => renderModal(i, false) },
                   { showModal: openEditTestModal, modal: (i) => renderModal(i, true) },

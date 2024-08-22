@@ -1,6 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Controllers;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Services.Ui.Business;
@@ -31,7 +32,7 @@ public class ProblemResourcesController : BaseApiController
     {
         var resource = await this.problemResourcesBusinessService.GetResource(id);
 
-        this.Response.Headers.Add(ContentDisposition, $"{ContentDispositionFileNameUtf8}{Uri.EscapeDataString(resource.Name)}.{resource.FileExtension}");
+        this.Response.Headers.Append(ContentDisposition, $"{ContentDispositionFileNameUtf8}{Uri.EscapeDataString(resource.Name)}.{resource.FileExtension}");
         return this.File(resource.File!, ApplicationOctetStream);
     }
 }

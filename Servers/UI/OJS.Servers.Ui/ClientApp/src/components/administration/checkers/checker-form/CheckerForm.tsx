@@ -1,11 +1,15 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { Box, FormControl, FormGroup, FormLabel, TextareaAutosize, TextField, Typography } from '@mui/material';
 
 import { CLASS_NAME, DESCRIPTION, DLL_FILE, ID, NAME, PARAMETER } from '../../../../common/labels';
 import { ICheckerAdministrationModel } from '../../../../common/types';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
+import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useCreateCheckerMutation, useGetCheckerByIdQuery, useUpdateCheckerMutation } from '../../../../redux/services/admin/checkersAdminService';
-import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -15,12 +19,14 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface ICheckerFormProps {
     isEditMode?: boolean;
     id?: number | null;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const CheckerForm = (props: ICheckerFormProps) => {
-    const { isEditMode = true, id = null } = props;
+    const { isEditMode = true, id = null, onSuccess, setParentSuccessMessage } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
-    const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ checker, setChecker ] = useState<ICheckerAdministrationModel>({
         id: 0,
         className: null,
@@ -56,6 +62,18 @@ const CheckerForm = (props: ICheckerFormProps) => {
         },
     ] = useUpdateCheckerMutation();
 
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+        setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
+    });
+
     useEffect(() => {
         if (checkerData) {
             setChecker(checkerData);
@@ -64,15 +82,8 @@ const CheckerForm = (props: ICheckerFormProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ checkerError, createError, updateError ], setExceptionMessages);
-    }, [ checkerError, createError, updateError ]);
-
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([
-            { message: createData, shouldGet: isSuccessfullyCreated },
-            { message: updateData, shouldGet: isSuccessfullyUpdated },
-        ]);
-        setSuccessfullMessage(message);
-    }, [ createData, isSuccessfullyCreated, isSuccessfullyUpdated, updateData ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ checkerError, createError, setParentSuccessMessage, updateError ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -88,9 +99,10 @@ const CheckerForm = (props: ICheckerFormProps) => {
     if (isGettingChecker || isCreating || isUpdating) {
         <SpinningLoader />;
     }
+
     return (
         <>
-            {renderSuccessfullAlert(successfullMessage)}
+            {renderSuccessfullAlert(successMessage)}
             {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Checker administration form</Typography>
             <form className={formStyles.form}>

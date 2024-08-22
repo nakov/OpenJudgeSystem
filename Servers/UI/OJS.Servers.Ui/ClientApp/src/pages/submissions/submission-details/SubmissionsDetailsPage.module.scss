@@ -44,6 +44,10 @@
         }
       }
 
+      .pointsResult {
+        margin-top: spacings.$sp-12;
+      }
+
       .adminButtonsWrapper {
         margin: spacings.$sp-24 0;
 
@@ -53,8 +57,8 @@
         }
       }
     }
-
-    .compileTimeErrorWrapper {
+    
+    @mixin errorWrapperStyles {
       background-color: colors.$light-base-color-200;
       border-radius: border-radiuses.$br-6;
       padding: spacings.$sp-24 spacings.$sp-32;
@@ -70,6 +74,16 @@
       div:nth-child(2) {
         margin-top: spacings.$sp-18;
       }
+    }
+
+    .compileTimeErrorWrapper {
+      @include errorWrapperStyles;
+    }
+    
+    .processingErrorWrapper {
+      margin-bottom: 1rem;
+      
+      @include errorWrapperStyles;
     }
 
     .retestWrapper {

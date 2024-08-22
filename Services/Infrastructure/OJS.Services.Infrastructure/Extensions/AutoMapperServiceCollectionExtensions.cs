@@ -55,7 +55,7 @@ public static class AutoMapperServiceCollectionExtensions
                 ExplicitMap = t
                     .GetInterfaces()
                     .Where(i => ExplicitMapType.IsAssignableFrom(i))
-                    .Select(i => (IMapExplicitly?)Activator.CreateInstance(t))
+                    .Select(_ => (IMapExplicitly?)Activator.CreateInstance(t))
                     .FirstOrDefault(),
             })
             .ToList()
@@ -63,14 +63,27 @@ public static class AutoMapperServiceCollectionExtensions
             {
                 t.AllMapFrom
                     .ToList()
-                    .ForEach(mapFrom => mapper.CreateMap(mapFrom, t.Type));
+                    .ForEach(mapFrom => CreateMap(mapper, mapFrom, t.Type));
 
                 t.AllMapTo
                     .ToList()
-                    .ForEach(mapTo => mapper.CreateMap(t.Type, mapTo));
+                    .ForEach(mapTo => CreateMap(mapper, t.Type, mapTo));
 
                 t.ExplicitMap?.RegisterMappings(mapper);
             });
+
+    private static void CreateMap(IMapperConfigurationExpression mapper, Type mapFrom, Type mapTo)
+    {
+        if (mapFrom.IsOpenGenericType() && mapTo.IsOpenGenericType())
+        {
+            // Handle generic type mappings.
+            // mapper.CreateMap(typeof(MapFrom<>), typeof(MapTo<>))
+            mapFrom = mapFrom.GetGenericTypeDefinition();
+            mapTo = mapTo.GetGenericTypeDefinition();
+        }
+
+        mapper.CreateMap(mapFrom, mapTo);
+    }
 
     private static IEnumerable<Type> GetMappingModels(Type source, Type mappingType)
         => source
