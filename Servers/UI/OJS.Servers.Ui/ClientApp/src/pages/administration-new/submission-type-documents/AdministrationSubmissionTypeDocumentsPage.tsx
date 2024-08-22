@@ -24,12 +24,11 @@ const AdministrationSubmissionTypeDocumentsPage = () => {
     const {
         refetch: refetchSubmissionTypesInSubmissionDocuments,
         data: submissionTypesInSubmissionDocumentsData,
-        isFetching: isDataFetching,
         isLoading: isDataLoading,
         error,
     } = useGetAllSubmissionTypesInSubmissionDocumentsQuery(queryParams);
 
-    if (isDataFetching || isDataLoading) {
+    if (isDataLoading) {
         return <SpinningLoader />;
     }
 
