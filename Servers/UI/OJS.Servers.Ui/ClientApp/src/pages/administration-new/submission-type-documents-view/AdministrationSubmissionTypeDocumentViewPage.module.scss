@@ -1,4 +1,4 @@
-﻿@import 'quill/dist/quill.snow.css';
+﻿@import url('quill/dist/quill.snow.css');
 
 .container {
   padding: 20px;
@@ -10,7 +10,7 @@
 .submissionTypeList {
   list-style-type: none;
   padding: 0;
-  margin: 0 0 20px 0;
+  margin: 0 0 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -28,8 +28,8 @@
 }
 
 .submissionTypeItem:hover {
-  background-color: #0066cc;
-  color: #ffffff;
+  background-color: #06c;
+  color: #fff;
 }
 
 .entityContainer {
@@ -88,14 +88,14 @@
   }
 
   .entityContainer {
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0 0 0 / 0.05);
   }
 
   .title {
     background-color: #f5f5f5;
-    color: #333333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0 0 0 / 0.1);
   }
 
   .title::after {
@@ -105,7 +105,7 @@
     top: 50%;
     height: 30px;
     width: 30px;
-    background-color: #0066cc;
+    background-color: #06c;
     transform: translateY(-50%) rotate(45deg);
     z-index: -1;
   }
@@ -114,7 +114,7 @@
     color: #4a4a4a;
 
     a {
-      color: #0066cc;
+      color: #06c;
       text-decoration: none;
       transition: color 0.3s;
     }
@@ -139,22 +139,22 @@
 
   .submissionTypeItem:hover {
     background-color: #0d3b5e;
-    color: #ffffff;
+    color: #fff;
   }
 
   .entityContainer {
     background-color: #2c2c2c;
-    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 4px rgba(255 255 255 / 0.1);
   }
 
   .title {
     background-color: #3a3a3a;
     color: #bdc3c7;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0 0 0 / 0.2);
   }
 
   .content {
-    color: #cccccc;
+    color: #ccc;
 
     a {
       color: #3498db;
@@ -166,6 +166,6 @@
   }
 
   .divider {
-    background-color: #444444;
+    background-color: #444;
   }
 }

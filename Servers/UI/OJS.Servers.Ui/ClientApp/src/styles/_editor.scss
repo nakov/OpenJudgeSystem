@@ -18,15 +18,15 @@
 
   .ql-toolbar.ql-snow {
     background-color: #2c2c2c;
-    border-color: #ffffff !important;
+    border-color: #fff !important;
 
     .ql-formats {
       button {
-        color: #ffffff;
+        color: #fff;
 
         svg {
           fill: none;
-          stroke: #ffffff;
+          stroke: #fff;
         }
 
         &:hover {
@@ -55,27 +55,27 @@
       }
 
       .ql-stroke {
-        stroke: #ffffff;
+        stroke: #fff;
       }
 
       .ql-fill {
-        fill: #ffffff;
+        fill: #fff;
       }
 
       .ql-picker {
-        color: #ffffff;
+        color: #fff;
 
         &-label {
-          color: #ffffff;
+          color: #fff;
 
           &::before {
-            color: #ffffff;
+            color: #fff;
           }
         }
 
         &-options {
           background-color: #2c2c2c;
-          color: #ffffff;
+          color: #fff;
         }
       }
     }
@@ -95,15 +95,15 @@
 
   .ql-snow {
     .ql-stroke {
-      stroke: #ffffff;
+      stroke: #fff;
     }
 
     .ql-fill, .ql-stroke.ql-fill {
-      fill: #ffffff;
+      fill: #fff;
     }
 
     .ql-picker {
-      color: #ffffff;
+      color: #fff;
 
       &.ql-expanded {
         .ql-picker-label {
@@ -120,7 +120,7 @@
   .ql-snow .ql-picker-label::before,
   .ql-snow .ql-color-picker .ql-picker-label svg,
   .ql-snow .ql-icon-picker .ql-picker-label svg {
-    border-top-color: #ffffff;
+    border-top-color: #fff;
   }
 
   .ql-snow .ql-color-picker .ql-picker-label.ql-active svg,
@@ -133,21 +133,21 @@
   }
 
   .ql-editor {
-    color: #ffffff;
+    color: #fff;
 
     p, h1, h2, h3, h4, h5, h6, ol, ul {
-      color: #ffffff;
+      color: #fff;
     }
 
     &.ql-blank::before {
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(255 255 255 / 0.6);
     }
   }
 
   .ql-tooltip {
     background-color: #2c2c2c;
-    color: #ffffff;
-    border-color: #ffffff;
+    color: #fff;
+    border-color: #fff;
   }
 
   .ql-editor pre.ql-syntax {
@@ -158,27 +158,27 @@
 
 .quill-light-theme {
   .quillEditor {
-    border: 1px solid #ffffff;
+    border: 1px solid #fff;
   }
 
   .ql-toolbar.ql-snow {
-    background-color: #ffffff;
+    background-color: #fff;
     border-color: #d1d1d1 !important;
 
     .ql-formats {
       button {
-        color: #333333;
+        color: #333;
 
         svg {
           fill: none;
-          stroke: #333333;
+          stroke: #333;
         }
 
         &:hover {
-          color: #666666;
+          color: #666;
 
           svg {
-            stroke: #666666;
+            stroke: #666;
           }
         }
 
@@ -200,27 +200,27 @@
       }
 
       .ql-stroke {
-        stroke: #333333;
+        stroke: #333;
       }
 
       .ql-fill {
-        fill: #333333;
+        fill: #333;
       }
 
       .ql-picker {
-        color: #333333;
+        color: #333;
 
         &-label {
-          color: #333333;
+          color: #333;
 
           &::before {
-            color: #333333;
+            color: #333;
           }
         }
 
         &-options {
-          background-color: #ffffff;
-          color: #333333;
+          background-color: #fff;
+          color: #333;
         }
       }
     }
@@ -240,15 +240,15 @@
 
   .ql-snow {
     .ql-stroke {
-      stroke: #333333;
+      stroke: #333;
     }
 
     .ql-fill, .ql-stroke.ql-fill {
-      fill: #333333;
+      fill: #333;
     }
 
     .ql-picker {
-      color: #333333;
+      color: #333;
 
       &.ql-expanded {
         .ql-picker-label {
@@ -265,7 +265,7 @@
   .ql-snow .ql-picker-label::before,
   .ql-snow .ql-color-picker .ql-picker-label svg,
   .ql-snow .ql-icon-picker .ql-picker-label svg {
-    border-top-color: #333333;
+    border-top-color: #333;
   }
 
   .ql-snow .ql-color-picker .ql-picker-label.ql-active svg,
@@ -274,29 +274,29 @@
   }
 
   .ql-container {
-    background-color: #ffffff;
+    background-color: #fff;
   }
 
   .ql-editor {
-    color: #000000;
+    color: #000;
 
     p, h1, h2, h3, h4, h5, h6, ol, ul {
-      color: #000000;
+      color: #000;
     }
 
     &.ql-blank::before {
-      color: rgba(0, 0, 0, 0.6);
+      color: rgba(0 0 0 / 0.6);
     }
   }
 
   .ql-tooltip {
-    background-color: #ffffff;
-    color: #333333;
+    background-color: #fff;
+    color: #333;
     border-color: #d1d1d1;
   }
 
   .ql-editor pre.ql-syntax {
     background-color: #f0f0f0;
-    color: #333333;
+    color: #333;
   }
 }

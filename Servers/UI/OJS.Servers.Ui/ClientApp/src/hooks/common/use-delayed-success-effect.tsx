@@ -29,7 +29,7 @@ const useDelayedSuccessEffect = ({ isSuccess, onSuccess, timeoutDuration } : IDe
                 clearTimeout(timeoutId);
             }
         };
-    }, [ isSuccess, onSuccess ]);
+    }, [ isSuccess, onSuccess, timeoutDuration ]);
 };
 
 export default useDelayedSuccessEffect;

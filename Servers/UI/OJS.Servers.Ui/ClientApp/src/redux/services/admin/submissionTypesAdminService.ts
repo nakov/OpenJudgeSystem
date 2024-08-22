@@ -4,13 +4,17 @@ import {
     IFileModel,
     IGetAllAdminParams,
     IPagedResultType,
-    ISubmissionTypeInDocument,
     IReplaceSubmissionTypeModel,
     ISubmissionTypeAdministrationModel,
+    ISubmissionTypeInDocument,
     ISubmissionTypeInProblem,
     ISubmissionTypesInListModel,
 } from '../../../common/types';
-import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import {
+    CREATE_ENDPOINT,
+    EXCEL_RESULTS_ENDPOINT,
+    UPDATE_ENDPOINT,
+} from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 const submissionTypesAdminService = createApi({
