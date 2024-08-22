@@ -5,11 +5,11 @@
 
     public class ExecutionOptionsRequestModel : IMapTo<ExecutionOptionsServiceModel>
     {
-        public bool KeepDetails { get; set; } = false;
+        public bool KeepDetails { get; set; }
 
-        public bool EscapeTests { get; set; } = true;
+        public bool EscapeTests { get; set; }
 
-        public bool EscapeLineEndings { get; set; } = false;
+        public bool EscapeLineEndings { get; set; }
 
         public bool KeepCheckerFragmentsForCorrectAnswers { get; set; } = true;
     }

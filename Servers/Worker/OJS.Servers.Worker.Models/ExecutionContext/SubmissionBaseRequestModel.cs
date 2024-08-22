@@ -65,9 +65,6 @@
                         (src.ExecutionDetails!.ToString() ?? string.Empty)
                         .FromJson<TestsExecutionDetailsRequestModel>()))
                 .ForMember(
-                    m => m.ExecutionOptions,
-                    opt => opt.Ignore())
-                .ForMember(
                     m => m.StartedExecutionOn,
                     opt => opt.Ignore());
 
