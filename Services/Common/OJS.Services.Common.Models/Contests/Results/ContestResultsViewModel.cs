@@ -31,6 +31,10 @@ public class ContestResultsViewModel
 
     public bool UserHasContestRights { get; set; }
 
+    public int ItemsPerPage { get; set; }
+
+    public int PagesCount { get; set; }
+
     public ContestResultsViewModel ToPagedResults(int page, int pageSize)
     {
         this.PagedResults = this.Results.ToPagedList(page, pageSize);

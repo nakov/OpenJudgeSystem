@@ -7,6 +7,7 @@ using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using X.PagedList;
@@ -56,13 +57,17 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
                                              contestResultsModel.Official)
                                          .Count();
 
+        contestResults.PagesCount = totalParticipantsCount > contestResultsModel.ItemsPerPage
+            ? (int)Math.Ceiling((double)totalParticipantsCount / contestResultsModel.ItemsPerPage)
+            : 1;
+
         // Get the requested participants without their problem results.
         // Splitting the queries improves performance and avoids unexpected results from joins with Scores.
         var participants = this.GetParticipantsPage(
                 contestResultsModel.Contest,
                 contestResultsModel.Official,
                 contestResultsModel.Page,
-                contestResultsModel.ItemsInPage)
+                contestResultsModel.ItemsPerPage)
             .Select(ParticipantResultViewModel.FromParticipant)
             .ToList();
 
@@ -101,7 +106,7 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
         var results = new StaticPagedList<ParticipantResultViewModel>(
             participants,
             contestResultsModel.Page,
-            contestResultsModel.ItemsInPage,
+            contestResultsModel.ItemsPerPage,
             totalParticipantsCount);
 
         contestResults.Problems = problems;

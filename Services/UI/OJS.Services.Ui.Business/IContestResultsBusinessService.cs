@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public interface IContestResultsBusinessService : IService
 {
-    Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults);
+    Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults, int page);
 
     Task<IEnumerable<UserPercentageResultsServiceModel?>> GetAllUserResultsPercentageByForContest(int? contestId);
 }

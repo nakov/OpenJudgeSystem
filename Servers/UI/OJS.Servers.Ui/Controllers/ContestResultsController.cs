@@ -24,12 +24,13 @@ public class ContestResultsController : BaseApiController
     /// <param name="id">The id of the contest.</param>
     /// <param name="official">Indicates if the results are for compete or practice mode of the contest.</param>
     /// <param name="full">Full results with test run details or just the scores.</param>
+    /// <param name="page">The page number for pagination of results.</param>
     /// <returns>A complete collection of all the participants and their results.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestResultsViewModel), Status200OK)]
-    public async Task<IActionResult> GetResults(int id, bool official, bool full)
+    public async Task<IActionResult> GetResults(int id, bool official, bool full, int page)
         => await this.contestResultsBusiness
-            .GetContestResults(id, official, full)
+            .GetContestResults(id, official, full, page)
             .ToOkResult();
 
     /// <summary>
