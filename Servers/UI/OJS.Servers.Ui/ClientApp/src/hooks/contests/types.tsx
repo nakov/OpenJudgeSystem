@@ -5,6 +5,8 @@ interface IContestResultsType {
     userIsInRoleForContest: boolean;
     problems: IContestResultsProblemType[];
     results: IContestResultsParticipationType[];
+    pagesCount: number;
+    itemsPerPage: number;
 }
 
 interface IContestResultsProblemType {

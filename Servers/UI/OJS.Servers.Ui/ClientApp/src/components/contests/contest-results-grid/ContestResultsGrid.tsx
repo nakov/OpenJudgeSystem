@@ -15,9 +15,11 @@ import styles from './ContestResultsGrid.module.scss';
 
 interface IContestResultsGridProps {
     items: IContestResultsType | null;
+    itemsPerPage: number;
+    page: number;
 }
 
-const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
+const ContestResultsGrid = ({ items, itemsPerPage, page }: IContestResultsGridProps) => {
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
 
     const { internalUser } = useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
@@ -120,7 +122,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                                   : '',
                           )}
                         >
-                            <td>{index + 1}</td>
+                            <td>{(itemsPerPage * (page - 1)) + index + 1}</td>
                             <td>{participantResult.participantUsername}</td>
                             {
                                 items?.problems
