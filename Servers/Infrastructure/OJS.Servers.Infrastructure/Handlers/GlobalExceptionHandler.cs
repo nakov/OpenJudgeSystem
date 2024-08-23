@@ -55,7 +55,7 @@
                     break;
             }
 
-            await httpContext.Response.WriteJson(problemDetails);
+            await httpContext.Response.WriteJson(problemDetails, cancellationToken);
             return true;
         }
 
