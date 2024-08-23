@@ -8,6 +8,7 @@ using OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypeDocuments;
 using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
+using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
@@ -17,12 +18,12 @@ using System.Threading.Tasks;
 public class SubmissionTypeDocumentsBusinessService : AdministrationOperationService<SubmissionTypeDocument, int, SubmissionTypeDocumentAdministrationModel>, ISubmissionTypeDocumentsBusinessService
 {
     private readonly HtmlSanitizer sanitizer;
-    private readonly ISubmissionTypeDocumentsDataService submissionTypeDocumentsDataService;
+    private readonly IDataService<SubmissionTypeDocument> submissionTypeDocumentsDataService;
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
     private readonly ISubmissionTypesInSubmissionDocumentsBusinessService submissionTypesInSubmissionDocumentsBusinessService;
 
     public SubmissionTypeDocumentsBusinessService(
-        ISubmissionTypeDocumentsDataService submissionTypeDocumentsDataService,
+        IDataService<SubmissionTypeDocument> submissionTypeDocumentsDataService,
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         ISubmissionTypesInSubmissionDocumentsBusinessService submissionTypesInSubmissionDocumentsBusinessService)
     {

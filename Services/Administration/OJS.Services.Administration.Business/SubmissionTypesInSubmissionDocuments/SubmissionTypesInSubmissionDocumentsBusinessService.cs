@@ -4,16 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
+using OJS.Services.Common.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 public class SubmissionTypesInSubmissionDocumentsBusinessService : ISubmissionTypesInSubmissionDocumentsBusinessService
 {
-    private readonly ISubmissionTypesInSubmissionDocumentsDataService submissionTypesInSubmissionDocumentsDataService;
+    private readonly IDataService<SubmissionTypeInSubmissionDocument> submissionTypesInSubmissionDocumentsDataService;
 
     public SubmissionTypesInSubmissionDocumentsBusinessService(
-        ISubmissionTypesInSubmissionDocumentsDataService submissionTypesInSubmissionDocumentsDataService)
+        IDataService<SubmissionTypeInSubmissionDocument> submissionTypesInSubmissionDocumentsDataService)
         => this.submissionTypesInSubmissionDocumentsDataService = submissionTypesInSubmissionDocumentsDataService;
 
     public async Task DeleteByIdAndSubmissionTypeId(int submissionTypeDocumentId, int submissionTypeId)

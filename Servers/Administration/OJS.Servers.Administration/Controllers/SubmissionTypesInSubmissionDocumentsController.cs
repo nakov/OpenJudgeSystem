@@ -1,6 +1,9 @@
 ﻿namespace OJS.Servers.Administration.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common;
+using OJS.Data.Models;
 using OJS.Servers.Administration.Attributes;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Services.Administration.Business.SubmissionTypes;
@@ -8,6 +11,7 @@ using OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments.GridData;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;
@@ -15,15 +19,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+[Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
 public class SubmissionTypesInSubmissionDocumentsController : BaseApiController
 {
-    private readonly ISubmissionTypesInSubmissionDocumentsDataService submissionTypesInSubmissionDocumentsDataService;
+    private readonly IDataService<SubmissionTypeInSubmissionDocument> submissionTypesInSubmissionDocumentsDataService;
     private readonly ISubmissionTypesInSubmissionDocumentsGridDataService submissionTypesInSubmissionDocumentsGridDataService;
     private readonly ISubmissionTypesInSubmissionDocumentsBusinessService submissionTypesInSubmissionDocumentsBusinessService;
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
 
     public SubmissionTypesInSubmissionDocumentsController(
-        ISubmissionTypesInSubmissionDocumentsDataService submissionTypesInSubmissionDocumentsDataService,
+        IDataService<SubmissionTypeInSubmissionDocument> submissionTypesInSubmissionDocumentsDataService,
         ISubmissionTypesInSubmissionDocumentsGridDataService submissionTypesInSubmissionDocumentsGridDataService,
         ISubmissionTypesInSubmissionDocumentsBusinessService submissionTypesInSubmissionDocumentsBusinessService,
         ISubmissionTypesBusinessService submissionTypesBusinessService)

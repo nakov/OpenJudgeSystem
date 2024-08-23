@@ -10,7 +10,7 @@ using OJS.Services.Common.Data.Pagination;
 public class SubmissionTypeDocumentsGridDataService : GridDataService<SubmissionTypeDocument>, ISubmissionTypeDocumentsGridDataService
 {
     public SubmissionTypeDocumentsGridDataService(
-        ISubmissionTypeDocumentsDataService dataService,
+        IDataService<SubmissionTypeDocument> dataService,
         ISortingService sortingService,
         IFilteringService filteringService,
         IExcelService excelService)
