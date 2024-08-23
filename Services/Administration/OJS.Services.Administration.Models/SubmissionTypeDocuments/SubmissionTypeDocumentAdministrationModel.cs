@@ -23,21 +23,6 @@ public class SubmissionTypeDocumentAdministrationModel : BaseAdministrationModel
         configuration
             .CreateMap<SubmissionTypeDocument, SubmissionTypeDocumentAdministrationModel>()
             .ForMember(
-                dest => dest.Id,
-                opt => opt
-                    .MapFrom(s => s.Id))
-            .ForMember(
-                dest => dest.Title,
-                opt => opt
-                    .MapFrom(s => s.Title))
-            .ForMember(
-                dest => dest.Content,
-                opt => opt
-                    .MapFrom(s => s.Content))
-            .ForMember(
-                dest => dest.OrderBy,
-                opt => opt.MapFrom(s => s.OrderBy))
-            .ForMember(
                 dest => dest.SubmissionTypesInSubmissionDocuments,
                 opt => opt
                     .MapFrom(s => s.SubmissionTypesInSubmissionDocuments.Select(stsd => new SubmissionTypeInSubmissionDocumentAdministrationModel

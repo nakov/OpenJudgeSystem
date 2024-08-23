@@ -11,17 +11,8 @@ public class SubmissionTypeInSubmissionDocumentAdministrationModel : IMapExplici
     public int SubmissionTypeDocumentId { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-    {
-        configuration
+        => configuration
             .CreateMap<SubmissionTypeInSubmissionDocumentAdministrationModel, SubmissionTypeInSubmissionDocument>()
-            .ForMember(
-                dest => dest.SubmissionTypeId,
-                opt => opt
-                    .MapFrom(s => s.SubmissionTypeId))
-            .ForMember(
-                dest => dest.SubmissionTypeDocumentId,
-                opt => opt
-                    .MapFrom(s => s.SubmissionTypeDocumentId))
             .ForMember(
                 dest => dest.SubmissionType,
                 opt => opt
@@ -29,17 +20,6 @@ public class SubmissionTypeInSubmissionDocumentAdministrationModel : IMapExplici
             .ForMember(
                 dest => dest.SubmissionTypeDocument,
                 opt => opt
-                    .Ignore());
-
-        configuration
-            .CreateMap<SubmissionTypeInSubmissionDocument, SubmissionTypeInSubmissionDocumentAdministrationModel>()
-            .ForMember(
-                dest => dest.SubmissionTypeId,
-                opt => opt
-                    .MapFrom(s => s.SubmissionTypeId))
-            .ForMember(
-                dest => dest.SubmissionTypeDocumentId,
-                opt => opt
-                    .MapFrom(s => s.SubmissionTypeDocumentId));
-    }
+                    .Ignore())
+            .ReverseMap();
 }
