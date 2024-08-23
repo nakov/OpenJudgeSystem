@@ -12,6 +12,7 @@ import { useCreateProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutat
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import FileUpload from '../../common/file-upload/FileUpload';
@@ -97,8 +98,25 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
 
     const { data: submissionTypes } = useGetForProblemQuery(null);
 
-    const [ updateProblem, { data: updateData, error: updateError, isSuccess: isSuccessfullyUpdated } ] = useUpdateProblemMutation();
-    const [ createProblem, { data: createData, error: createError, isSuccess: isSuccessfullyCreated } ] = useCreateProblemMutation();
+    const [
+        updateProblem,
+        {
+            data: updateData,
+            error: updateError,
+            isSuccess: isSuccessfullyUpdated,
+            isLoading: isUpdating,
+        },
+    ] = useUpdateProblemMutation();
+
+    const [
+        createProblem,
+        {
+            data: createData,
+            error: createError,
+            isSuccess: isSuccessfullyCreated,
+            isLoading: isCreating,
+        },
+    ] = useCreateProblemMutation();
 
     const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
 
@@ -111,6 +129,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {
@@ -139,8 +158,8 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
 
     useEffect(() => {
         getAndSetExceptionMessage([ gettingDataError, createError, updateError ], setErrorMessages);
-        setSuccessMessage(null);
-    }, [ updateError, createError, gettingDataError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ updateError, createError, gettingDataError, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;

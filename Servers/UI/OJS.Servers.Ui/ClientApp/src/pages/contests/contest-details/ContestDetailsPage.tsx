@@ -173,7 +173,12 @@ const ContestDetailsPage = () => {
             />
             <ContestBreadcrumbs />
             <Heading className={styles.heading} type={HeadingType.primary}>{name}</Heading>
-            { isLoggedIn && <LegacyInfoMessage />}
+            { isLoggedIn &&
+                // Legacy message will probably be removed in the near future
+                // This value is based contests from current moment
+                // seems like there are no future contests created before this id
+                (id && id < 4973) &&
+                <LegacyInfoMessage />}
             <div className={styles.descriptionBoxWrapper}>
                 <div>
                     <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>

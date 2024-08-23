@@ -41,6 +41,7 @@ const AdministrationSubmissionsPage = () => {
             data: retestData,
             error: retestError,
             isSuccess: isSuccessFullyRetested,
+            isLoading: isRetesting,
         },
     ] = useRetestMutation();
 
@@ -59,6 +60,7 @@ const AdministrationSubmissionsPage = () => {
             { message: retestData, shouldGet: isSuccessFullyRetested },
         ],
         setSuccessMessage,
+        clearFlags: [ isRetesting ],
     });
 
     useEffect(() => {

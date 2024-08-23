@@ -13,6 +13,7 @@ import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../..
 import { useAppSelector } from '../../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -62,21 +63,22 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ deleteByContest,
         {
             data: deleteAllData,
-            isSuccess: isSuccesfullyDeletedAll,
+            isSuccess: isSuccessfullyDeletedAll,
             isLoading: isDeletingAll,
             error: deleteAllError,
         } ] = useDeleteByContestMutation();
 
     useSuccessMessageEffect({
         data: [
-            { message: deleteAllData, shouldGet: isSuccesfullyDeletedAll },
+            { message: deleteAllData, shouldGet: isSuccessfullyDeletedAll },
         ],
         setSuccessMessage,
+        clearFlags: [ isDeletingAll ],
     });
 
     useEffect(() => {
         getAndSetExceptionMessage([ deleteAllError, getContestError ], setErrorMessages);
-        setSuccessMessage(null);
+        clearSuccessMessages({ setSuccessMessage });
     }, [ deleteAllError, getContestError ]);
 
     const onEditClick = (id: number) => {
@@ -85,10 +87,10 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     };
 
     useEffect(() => {
-        if (isSuccesfullyDeletedAll) {
+        if (isSuccessfullyDeletedAll) {
             retakeData();
         }
-    }, [ isSuccesfullyDeletedAll, retakeData ]);
+    }, [ isSuccessfullyDeletedAll, retakeData ]);
 
     const openCopyModal = (id: number) => {
         setShowCopyModal(true);

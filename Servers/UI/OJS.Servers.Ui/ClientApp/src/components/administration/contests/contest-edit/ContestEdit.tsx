@@ -47,6 +47,7 @@ import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/a
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ExternalLink from '../../../guidelines/buttons/ExternalLink';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
@@ -151,18 +152,6 @@ const ContestEdit = (props:IContestEditProps) => {
             isLoading: isCreating,
         } ] = useCreateContestMutation();
 
-    useDisableMouseWheelOnNumberInputs();
-
-    useSuccessMessageEffect({
-        data: [
-            { message: createData, shouldGet: isSuccessfullyCreated },
-            { message: updateData, shouldGet: isSuccessfullyUpdated },
-        ],
-        setParentSuccessMessage,
-    });
-
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
-
     const getDefaultContestCategory = useCallback(() => {
         const defaultCategory = contestCategories![0];
         const categoryName = defaultCategory.name;
@@ -183,6 +172,19 @@ const ContestEdit = (props:IContestEditProps) => {
         return defaultCategory;
     }, [ contestCategories ]);
 
+    useDisableMouseWheelOnNumberInputs();
+
+    useSuccessMessageEffect({
+        data: [
+            { message: createData, shouldGet: isSuccessfullyCreated },
+            { message: updateData, shouldGet: isSuccessfullyUpdated },
+        ],
+        setParentSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
+    });
+
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+
     useEffect(
         () => {
             if (isEditMode && currentContest) {
@@ -201,7 +203,7 @@ const ContestEdit = (props:IContestEditProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
-        setParentSuccessMessage(null);
+        clearSuccessMessages({ setParentSuccessMessage });
     }, [ updateError, createError, setParentSuccessMessage ]);
 
     const validateForm = () => {

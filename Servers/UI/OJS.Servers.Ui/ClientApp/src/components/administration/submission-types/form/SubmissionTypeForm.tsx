@@ -34,6 +34,7 @@ import useSuccessMessageEffect from '../../../../hooks/common/use-success-messag
 import { useCreateSubmissionTypeMutation, useGetByIdQuery, useGetCompilersQuery, useGetExecutionStrategiesQuery, useUpdateSubmissionTypeMutation } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
@@ -114,15 +115,17 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
         ],
         setParentSuccessMessage,
         setSuccessMessage,
+        clearFlags: [ isCreating, isUpdating ],
     });
 
     useEffect(() => {
-        getAndSetExceptionMessage([
-            compilerGetError, createError, updateError, gettingSubmissionTypeError, strategiesError,
-        ], setErrorMessages);
+        getAndSetExceptionMessage(
+            [ compilerGetError, createError, updateError, gettingSubmissionTypeError, strategiesError ],
+            setErrorMessages,
+        );
 
-        setSuccessMessage(null);
-    }, [ updateError, createError, compilerGetError, gettingSubmissionTypeError, strategiesError ]);
+        clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
+    }, [ updateError, createError, compilerGetError, gettingSubmissionTypeError, strategiesError, setParentSuccessMessage ]);
 
     useEffect(() => {
         if (submissionType) {

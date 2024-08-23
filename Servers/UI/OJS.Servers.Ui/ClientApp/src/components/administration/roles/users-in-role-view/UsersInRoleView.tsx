@@ -12,6 +12,7 @@ import { useGetUsersAutocompleteQuery, useGetUsersByRoleQuery } from '../../../.
 import { useAppSelector } from '../../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -95,6 +96,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
             { message: removeData, shouldGet: isSuccessfullyRemoved },
         ],
         setSuccessMessage,
+        clearFlags: [ isAddingToRole, isRemovingFromRole ],
     });
 
     useEffect(() => {
@@ -105,7 +107,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getUsersDataError, addError, removeError ], setErrorMessages);
-        setSuccessMessage(null);
+        clearSuccessMessages({ setSuccessMessage });
     }, [ addError, getUsersDataError, removeError ]);
 
     useEffect(() => {
