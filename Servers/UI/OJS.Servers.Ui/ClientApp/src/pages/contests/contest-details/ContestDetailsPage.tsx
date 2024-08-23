@@ -6,6 +6,7 @@ import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType } from '../../../common/types';
 import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
 import { getAllContestsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
+import MetaTags from '../../../components/common/MetaTags';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
@@ -21,8 +22,6 @@ import { useGetContestByIdQuery } from '../../../redux/services/contestsService'
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { setLayout } from '../../shared/set-layout';
-import withTitle from '../../shared/with-title';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -165,6 +164,13 @@ const ContestDetailsPage = () => {
     }
     return (
         <div className={`${styles.contestDetailsWrapper} ${textColorClassName}`}>
+            <MetaTags
+              title={`Contest #${contestId} - SoftUni Judge`}
+              description={
+                    `Join Contest #${contestId} on SoftUni Judge. Solve challenging problems, ` +
+                    'compete with others, and enhance your coding skills. Explore contest details.'
+                }
+            />
             <ContestBreadcrumbs />
             <Heading className={styles.heading} type={HeadingType.primary}>{name}</Heading>
             { isLoggedIn && <LegacyInfoMessage />}
@@ -199,4 +205,4 @@ const ContestDetailsPage = () => {
     );
 };
 
-export default setLayout(withTitle(ContestDetailsPage, (params) => `Contest #${params.contestId}`));
+export default ContestDetailsPage;

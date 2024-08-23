@@ -21,7 +21,6 @@ import { useGetAllContestsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
-import withTitle from '../shared/with-title';
 
 import styles from './ContestsPage.module.scss';
 
@@ -133,8 +132,15 @@ const ContestsPage = () => {
     return (
         <div className={styles.contestsContainer}>
             <MetaTags
-              title="SoftUni Judge Contests"
-              description="List of contests available on the Judge platform. Filter by category and execution strategy."
+              title={`Contests ${selectedCategory?.name
+                  ? `in ${selectedCategory?.name}`
+                  : ''}${selectedPage > 1
+                  ? ` - page ${selectedPage}`
+                  : ''} - SoftUni Judge`}
+              description={
+                    'Explore coding contests on SoftUni Judge. Filter by category and strategy ' +
+                    'to find your perfect challenge. Participate and improve your programming skills.'
+                }
             />
             <div style={{ width: '100%' }}>
                 <div className={`${styles.headingWrapper} ${textColorClassName}`}>
@@ -162,15 +168,4 @@ const ContestsPage = () => {
     );
 };
 
-export default withTitle(
-    ContestsPage,
-    (params, searchParams) => {
-        const pageTitle = `Contests in ${params.slug || 'all categories'}`;
-        const currentPage = parseInt(searchParams.get('page') || '', 10);
-        const pageSuffix = currentPage >= 1
-            ? ` - page ${currentPage}`
-            : '';
-
-        return `${pageTitle}${pageSuffix}`;
-    },
-);
+export default ContestsPage;

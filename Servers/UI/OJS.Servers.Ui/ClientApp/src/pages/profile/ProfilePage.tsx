@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import MetaTags from '../../components/common/MetaTags';
 import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import Button, { ButtonType } from '../../components/guidelines/buttons/Button';
@@ -18,8 +18,6 @@ import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import { decodeFromUrlParam } from '../../utils/urls';
-import { setLayout } from '../shared/set-layout';
-import withTitle from '../shared/with-title';
 
 import styles from './ProfilePage.module.scss';
 
@@ -89,32 +87,45 @@ const ProfilePage = () => {
     }, [ isError ]);
 
     return (
-        isProfileInfoLoading || !isGetUserInfoCompleted
-            ? <SpinningLoader />
-            : isNil(profile)
-                ? renderError()
-                : (
-                    <div className={getColorClassName(themeColors.textColor)}>
-                        <PageBreadcrumbs
-                          keyPrefix="profile"
-                          items={[
-                                {
-                                    text: `${currentUserIsProfileOwner
-                                        ? 'My'
-                                        : ''} Profile`,
-                                    to: '/profile',
-                                } as IPageBreadcrumbsItem,
-                          ]}
-                        />
-                        <ProfileAboutInfo
-                          userProfile={profile}
-                          isUserAdmin={internalUser.isAdmin}
-                          isUserLecturer={internalUser.isInRole}
-                          isUserProfileOwner={currentUserIsProfileOwner}
-                        />
-                        {currentUserIsProfileOwner && <LegacyInfoMessage />}
-                        {
-                            (currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
+        <>
+            <MetaTags
+              title={`${currentUserIsProfileOwner
+                  ? 'My'
+                  : `${profileUsername}'s`} Profile - SoftUni Judge`}
+              description={
+                    `Explore ${currentUserIsProfileOwner
+                        ? 'your'
+                        : `${profileUsername}'s`} SoftUni Judge profile. ` +
+                    'View submissions, contest participations, and track coding progress.'
+                }
+            />
+            {isProfileInfoLoading || !isGetUserInfoCompleted
+                ? (
+                    <SpinningLoader />
+                )
+                : isNil(profile)
+                    ? renderError()
+                    : (
+                        <div className={getColorClassName(themeColors.textColor)}>
+                            <PageBreadcrumbs
+                              keyPrefix="profile"
+                              items={[
+                            {
+                                text: `${currentUserIsProfileOwner
+                                    ? 'My'
+                                    : ''} Profile`,
+                                to: '/profile',
+                            } as IPageBreadcrumbsItem,
+                              ]}
+                            />
+                            <ProfileAboutInfo
+                              userProfile={profile}
+                              isUserAdmin={internalUser.isAdmin}
+                              isUserLecturer={internalUser.isInRole}
+                              isUserProfileOwner={currentUserIsProfileOwner}
+                            />
+                            {currentUserIsProfileOwner && <LegacyInfoMessage />}
+                            {(currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
                             <div className={styles.submissionsAndParticipationsToggle}>
                                 <Button
                                   type={toggleValue === 1
@@ -137,21 +148,19 @@ const ProfilePage = () => {
                                   onClick={() => setToggleValue(2)}
                                 />
                             </div>
-                            )
-                        }
-                        <ProfileSubmissions
-                          userIsProfileOwner={currentUserIsProfileOwner}
-                          isChosenInToggle={toggleValue === 1}
-                        />
-                        <ProfileContestParticipations
-                          userIsProfileOwner={currentUserIsProfileOwner}
-                          isChosenInToggle={toggleValue === 2}
-                        />
-                    </div>
-                )
+                            )}
+                            <ProfileSubmissions
+                              userIsProfileOwner={currentUserIsProfileOwner}
+                              isChosenInToggle={toggleValue === 1}
+                            />
+                            <ProfileContestParticipations
+                              userIsProfileOwner={currentUserIsProfileOwner}
+                              isChosenInToggle={toggleValue === 2}
+                            />
+                        </div>
+                    )}
+        </>
     );
 };
 
-export default setLayout(withTitle(ProfilePage, (params) => !isEmpty(params.username)
-    ? `${params.username}'s profile`
-    : 'My Profile'));
+export default ProfilePage;

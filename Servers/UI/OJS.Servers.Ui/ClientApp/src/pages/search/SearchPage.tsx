@@ -9,6 +9,7 @@ import {
     IUSerSearchCardProps,
     IUserType,
 } from '../../common/types';
+import MetaTags from '../../components/common/MetaTags';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
@@ -27,7 +28,6 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import getTotalHeight from '../../utils/dom-element-utils';
 import { getErrorMessage } from '../../utils/http-utils';
-import withTitle from '../shared/with-title';
 
 import styles from './SearchPage.module.scss';
 
@@ -250,6 +250,13 @@ const SearchPage = () => {
 
     return (
         <div className={`${styles.searchPageWrapper} ${textColorClassName}`}>
+            <MetaTags
+              title={`Search results for "${searchParams.get('searchTerm')}" - SoftUni Judge`}
+              description={
+                    `Browse SoftUni Judge search results for "${searchParams.get('searchTerm')}". ` +
+                    'Find relevant contests, problems, and user profiles.'
+                }
+            />
             {searchValue.length < 3
                 ? <div>The search term must be at least 3 characters!</div>
                 : (
@@ -271,7 +278,4 @@ const SearchPage = () => {
     );
 };
 
-export default withTitle(
-    SearchPage,
-    (params, searchParams) => `Search results for ${searchParams.get('searchTerm')}`,
-);
+export default SearchPage;
