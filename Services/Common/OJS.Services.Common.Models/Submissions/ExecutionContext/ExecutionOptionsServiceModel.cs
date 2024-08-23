@@ -4,7 +4,7 @@
     {
         public bool KeepDetails { get; set; } = true;
 
-        public bool EscapeTests { get; set; } = false;
+        public bool EscapeTests { get; set; }
 
         public bool EscapeLineEndings { get; set; } = true;
 
