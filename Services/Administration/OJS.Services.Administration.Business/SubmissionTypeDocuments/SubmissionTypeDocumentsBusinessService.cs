@@ -62,8 +62,7 @@ public class SubmissionTypeDocumentsBusinessService : AdministrationOperationSer
     public override async Task<SubmissionTypeDocumentAdministrationModel> Edit(SubmissionTypeDocumentAdministrationModel model)
     {
         var submissionTypeDocument = await this.submissionTypeDocumentsDataService
-            .GetByIdQuery(model.Id)
-            .FirstOrDefaultAsync();
+            .OneById(model.Id);
 
         if (submissionTypeDocument is null)
         {
@@ -119,6 +118,6 @@ public class SubmissionTypeDocumentsBusinessService : AdministrationOperationSer
         }
     }
 
-    private string SanitizeString(string desanitizedString)
-        => this.sanitizer.Sanitize(System.Net.WebUtility.HtmlDecode(desanitizedString));
+    private string SanitizeString(string unsanitizedString)
+        => this.sanitizer.Sanitize(System.Net.WebUtility.HtmlDecode(unsanitizedString));
 }

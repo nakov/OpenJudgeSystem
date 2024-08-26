@@ -56,15 +56,12 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
 
     public async Task<bool> AllExist(IEnumerable<SubmissionTypeInSubmissionDocumentAdministrationModel> submissionTypes)
     {
-        foreach (var submissionType in submissionTypes)
-        {
-            if (!await this.submissionTypesDataService.ExistsById(submissionType.SubmissionTypeId))
-            {
-                return false;
-            }
-        }
+        var idsToCheck = submissionTypes.Select(st => st.SubmissionTypeId).ToHashSet();
 
-        return true;
+        var matchingEntities = await this.submissionTypesDataService
+            .All(st => idsToCheck.Contains(st.Id));
+
+        return matchingEntities.Count() == idsToCheck.Count;
     }
 
     public async Task<bool> ExistsById(int submissionTypeId)
