@@ -108,6 +108,27 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.GetNodeResourcePath(executionStrategyType, this.settings.JsDomModulePath),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.JQueryModulePath),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.HandlebarsModulePath))
+                as TSettings,
+
+            ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy => new
+                    NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings(
+                        GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds),
+                        GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
+                        this.GetNodeJsExecutablePath(executionStrategyType),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.ChaiModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.SinonModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.SinonChaiModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.SinonJsDomModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.JsDomModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.JQueryModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.HandlebarsModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.BabelCoreModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.ReactJsxPluginPath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.ReactModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.ReactDomModulePath),
+                        this.GetNodeResourcePath(executionStrategyType, this.settings.NodeFetchModulePath))
 
                 as TSettings,
             ExecutionStrategyType.MySqlPrepareDatabaseAndRunQueries => new
