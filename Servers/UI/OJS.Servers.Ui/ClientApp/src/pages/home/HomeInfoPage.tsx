@@ -3,13 +3,13 @@ import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 
+import MetaTags from '../../components/common/MetaTags';
 import IconSize from '../../components/guidelines/icons/common/icon-sizes';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';
 import { useGetHomeStatisticsQuery } from '../../redux/services/homeStatisticsService';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
-import withTitle from '../shared/with-title';
 
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import styles from './HomeInfoPage.module.scss';
@@ -101,9 +101,12 @@ const HomePage = () => {
 
     return (
         <div className={styles.homePageContentWrapper}>
-            <meta
-              name="description"
-              content="SoftUni Judge Platform. A platform used by SoftUni students for testing and evaluating their programming skills."
+            <MetaTags
+              title="SoftUni Judge Platform"
+              description={
+                    'Improve your programming skills on SoftUni Judge. Solve coding challenges, ' +
+                    'submit solutions, and track your progress with detailed statistics.'
+                }
             />
             <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
             <LiteYouTubeEmbed
@@ -120,4 +123,4 @@ const HomePage = () => {
     );
 };
 
-export default withTitle(HomePage, 'Home');
+export default HomePage;
