@@ -11,7 +11,7 @@ interface ILoginDetailsType {
     rememberMe: boolean;
 }
 
-export const authorizationService = createApi({
+const authorizationService = createApi({
     reducerPath: authorizationServiceName,
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_UI_SERVER_URL}/${defaultPathIdentifier}/`,

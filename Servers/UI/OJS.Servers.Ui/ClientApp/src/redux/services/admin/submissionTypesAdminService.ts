@@ -6,17 +6,23 @@ import {
     IPagedResultType,
     IReplaceSubmissionTypeModel,
     ISubmissionTypeAdministrationModel,
+    ISubmissionTypeInDocument,
     ISubmissionTypeInProblem,
     ISubmissionTypesInListModel,
 } from '../../../common/types';
-import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import {
+    CREATE_ENDPOINT,
+    EXCEL_RESULTS_ENDPOINT,
+    UPDATE_ENDPOINT,
+} from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const submissionTypesAdminService = createApi({
+const submissionTypesAdminService = createApi({
     reducerPath: 'submissionTypes',
     baseQuery: getCustomBaseQuery('submissionTypes'),
     endpoints: (builder) => ({
         getForProblem: builder.query<Array<ISubmissionTypeInProblem>, null>({ query: () => ({ url: '/GetForProblem' }) }),
+        getForDocument: builder.query<Array<ISubmissionTypeInDocument>, null>({ query: () => ({ url: '/GetForDocument' }) }),
         getAllSubmissionTypes: builder.query<IPagedResultType<ISubmissionTypesInListModel>, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: 'GetAll',
@@ -44,17 +50,17 @@ export const submissionTypesAdminService = createApi({
             }),
         }),
         updateSubmissionType: builder.mutation<string, ISubmissionTypeAdministrationModel >({
-            query: (problemGroup) => ({
+            query: (submissionType) => ({
                 url: `/${UPDATE_ENDPOINT}`,
                 method: 'PATCH',
-                body: problemGroup,
+                body: submissionType,
             }),
         }),
         createSubmissionType: builder.mutation<string, ISubmissionTypeAdministrationModel >({
-            query: (problemGroup) => ({
+            query: (submissionType) => ({
                 url: `/${CREATE_ENDPOINT}`,
                 method: 'POST',
-                body: problemGroup,
+                body: submissionType,
             }),
         }),
         exportSubmissionTypesToExcel: builder.query<IFileModel, IGetAllAdminParams>({
@@ -74,6 +80,7 @@ export const submissionTypesAdminService = createApi({
 
 export const {
     useGetForProblemQuery,
+    useGetForDocumentQuery,
     useGetAllSubmissionTypesQuery,
     useDeleteSubmissionTypeMutation,
     useGetCompilersQuery,
@@ -83,6 +90,5 @@ export const {
     useUpdateSubmissionTypeMutation,
     useCreateSubmissionTypeMutation,
     useLazyExportSubmissionTypesToExcelQuery,
-
 } = submissionTypesAdminService;
 export default submissionTypesAdminService;

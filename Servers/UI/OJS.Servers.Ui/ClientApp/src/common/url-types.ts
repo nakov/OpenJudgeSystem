@@ -151,6 +151,10 @@ interface IContestEditUrlParams {
     id: number;
 }
 
+interface ISubmissionTypeDocumentUrlById {
+    id: number;
+}
+
 interface ITerm {
     key: string;
     value: string;
@@ -201,6 +205,7 @@ export type {
     IGetByContestId,
     IProblemUrlById,
     IGetByProblemId,
+    ISubmissionTypeDocumentUrlById,
     IExamGroupUrlParams,
     IUserUrlParams,
     IGetByTestId,

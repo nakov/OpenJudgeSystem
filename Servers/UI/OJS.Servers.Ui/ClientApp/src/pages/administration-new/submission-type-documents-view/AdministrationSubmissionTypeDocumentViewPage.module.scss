@@ -1,0 +1,185 @@
+﻿/* stylelint-disable no-descending-specificity */
+
+@import url('quill/dist/quill.snow.css');
+
+.container {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  width: 100%;
+}
+
+.submissionTypeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style-type: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.submissionTypeItem {
+  border: 0;
+  border-radius: 15px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  font-weight: bold;
+  padding: 5px 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.submissionTypeItem:hover {
+  background-color: #06c;
+  color: #fff;
+}
+
+.entityContainer {
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  padding: 15px;
+  position: relative;
+}
+
+.title {
+  border-radius: 5px;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  position: relative;
+  z-index: 1;
+}
+
+.content {
+  font-size: 16px;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  ul,
+  ol {
+    margin-bottom: 10px;
+    margin-left: 20px;
+  }
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  margin: 30px 0;
+  width: 100%;
+}
+
+.noDocumentsMessage {
+  align-items: center;
+  border-radius: 8px;
+  display: flex;
+  font-size: 1.7rem;
+  font-weight: bold;
+  height: 200px;
+  justify-content: center;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.light {
+  color: #333;
+
+  .noDocumentsMessage {
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    color: #333;
+  }
+
+  .submissionTypeItem {
+    background-color: #f0f0f0;
+    color: #4a4a4a;
+  }
+
+  .submissionTypeItem:hover {
+    background-color: #d9d9d9;
+    color: #4a4a4a;
+  }
+
+  .entityContainer {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 5%);
+  }
+
+  .title {
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    color: #333;
+  }
+
+  .content {
+    color: #4a4a4a;
+
+    a {
+      color: #06c;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    a:hover {
+      color: #004999;
+    }
+  }
+
+  .divider {
+    background-color: #e0e0e0;
+  }
+}
+
+.dark {
+  color: #e0e0e0;
+
+  .noDocumentsMessage {
+    background-color: #2c2c2c;
+    box-shadow: 0 2px 4px rgb(255 255 255 / 10%);
+    color: #e0e0e0;
+  }
+
+  .submissionTypeItem {
+    background-color: #1a4a7a;
+    color: #e6f2ff;
+  }
+
+  .submissionTypeItem:hover {
+    background-color: #0d3b5e;
+    color: #fff;
+  }
+
+  .entityContainer {
+    background-color: #2c2c2c;
+    box-shadow: 0 2px 4px rgb(255 255 255 / 10%);
+  }
+
+  .title {
+    background-color: #3a3a3a;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+    color: #bdc3c7;
+  }
+
+  .content {
+    color: #ccc;
+
+    a {
+      color: #3498db;
+    }
+
+    a:hover {
+      color: #2980b9;
+    }
+  }
+
+  .divider {
+    background-color: #444;
+  }
+}

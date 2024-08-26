@@ -7,6 +7,7 @@ import { IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import ArticleIcon from '@mui/icons-material/Article';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
@@ -56,6 +57,8 @@ import {
     PROBLEMS_PATH,
     ROLES_PATH,
     SETTINGS_PATH,
+    SUBMISSION_TYPE_DOCUMENTS_PATH,
+    SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH,
     SUBMISSION_TYPES_PATH,
     SUBMISSIONS_FOR_PROCESSING_PATH,
     SUBMISSIONS_PATH,
@@ -77,6 +80,10 @@ import AdministrationProblemResourcesPage
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationRolesPage from '../../../pages/administration-new/roles/AdministrationRolesPage';
 import AdministrationSettingsPage from '../../../pages/administration-new/settings/SettingsAdministrationPage';
+import AdministrationSubmissionTypeDocumentsPage
+    from '../../../pages/administration-new/submission-type-documents/AdministrationSubmissionTypeDocumentsPage';
+import AdministrationSubmissionTypeDocumentViewPage
+    from '../../../pages/administration-new/submission-type-documents-view/AdministrationSubmissionTypeDocumentViewPage';
 import AdministrationReplaceDeleteSubmissionTypesPage
     from '../../../pages/administration-new/submission-types/AdministrationReplaceDeleteSubmissionTypesPage';
 import AdministrationSubmissionTypesPage
@@ -99,6 +106,8 @@ import AdministrationProblemGroup from '../../administration/problem-groups/Admi
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../administration/problems/AdministrationProblem';
 import AdministrationRole from '../../administration/roles/AdministrationRole';
+import AdministrationSubmissionTypeDocumentPage
+    from '../../administration/submission-type-documents/AdministrationSubmissionTypeDocumentPage';
 import AdministrationTest from '../../administration/tests/AdministrationTest';
 import AdministrationUser from '../../administration/users/AdministrationUser';
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -217,32 +226,34 @@ const administrationItems = [
 
     },
     {
+        name: 'Submission Type Documents',
+        icon: <ArticleIcon />,
+        path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}`,
+        visibleOnlyForAdmin: false,
+    },
+    {
         name: 'Checkers',
         icon: <FaCheckDouble />,
         path: `${CHECKERS_PATH}`,
         visibleOnlyForAdmin: true,
-
     },
     {
         name: 'Participants',
         icon: <MdOutlineRememberMe />,
         path: `${PARTICIPANTS_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Roles',
         icon: <MdOutlineAirlineStops />,
         path: `${ROLES_PATH}`,
         visibleOnlyForAdmin: true,
-
     },
     {
         name: 'Users',
         icon: <FaUsers />,
         path: `${USERS_PATH}`,
         visibleOnlyForAdmin: true,
-
     },
     {
         name: 'Exam Groups',
@@ -454,6 +465,21 @@ const AdministrationPortal = () => {
             path: `${SUBMISSION_TYPES_PATH}`,
             Element: AdministrationSubmissionTypesPage,
             visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}`,
+            Element: AdministrationSubmissionTypeDocumentsPage,
+            visibleOnlyForAdmin: false,
+        },
+        {
+            path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}/:id`,
+            Element: AdministrationSubmissionTypeDocumentPage,
+            visibleOnlyForAdmin: false,
+        },
+        {
+            path: `${SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH}`,
+            Element: AdministrationSubmissionTypeDocumentViewPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${SUBMISSION_TYPES_PATH}/deleteReplaceSubmissionTypes`,

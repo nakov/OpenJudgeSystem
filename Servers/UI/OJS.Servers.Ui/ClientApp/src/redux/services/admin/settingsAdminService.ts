@@ -4,7 +4,7 @@ import { IFileModel, IGetAllAdminParams, IPagedResultType, ISettingAdministratio
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import customBaseQuery from '../../middlewares/customBaseQuery';
 
-export const settingsAdminService = createApi({
+const settingsAdminService = createApi({
     reducerPath: 'settings',
     baseQuery: customBaseQuery('settings'),
     endpoints: (builder) => ({

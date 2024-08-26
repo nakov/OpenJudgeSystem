@@ -41,6 +41,8 @@ public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, I
             .ForMember(st => st.SubmissionTypesInProblems, opt
                 => opt.Ignore())
             .ForMember(st => st.AllowedFileExtensionsList, opt
+                => opt.Ignore())
+            .ForMember(st => st.SubmissionTypesInSubmissionDocuments, opt
                 => opt.Ignore());
     }
 }

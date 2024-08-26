@@ -9,16 +9,16 @@ import {
     IPagedResultType,
 } from '../../../common/types';
 import { IContestCategoriesUrlParams } from '../../../common/url-types';
-import { EXCEL_RESULTS_ENDPOINT, GETALL_ENDPOINT } from '../../../common/urls/administration-urls';
+import { EXCEL_RESULTS_ENDPOINT, GET_ALL_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const contestCategoriesAdminService = createApi({
+const contestCategoriesAdminService = createApi({
     reducerPath: 'contestCategories',
     baseQuery: getCustomBaseQuery('contestCategories'),
     endpoints: (builder) => ({
         getAllAdminContestCategories: builder.query<IPagedResultType<IIndexContestCategoriesType>, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
-                url: `/${GETALL_ENDPOINT}`,
+                url: `/${GET_ALL_ENDPOINT}`,
                 params: {
                     filter,
                     page,
