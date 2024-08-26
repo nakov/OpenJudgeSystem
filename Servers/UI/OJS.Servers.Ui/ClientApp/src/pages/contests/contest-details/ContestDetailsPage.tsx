@@ -22,6 +22,7 @@ import { useGetContestByIdQuery } from '../../../redux/services/contestsService'
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -210,4 +211,4 @@ const ContestDetailsPage = () => {
     );
 };
 
-export default ContestDetailsPage;
+export default setLayout(ContestDetailsPage);

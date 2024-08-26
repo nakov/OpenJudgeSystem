@@ -3,6 +3,7 @@ import React from 'react';
 import MetaTags from '../../components/common/MetaTags';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import RecentSubmissions from '../../components/submissions/recent-submissions/RecentSubmissions';
+import { setLayout } from '../shared/set-layout';
 
 const SubmissionsPage = () => (
     <>
@@ -27,4 +28,4 @@ const SubmissionsPage = () => (
 
 );
 
-export default SubmissionsPage;
+export default setLayout(SubmissionsPage);
