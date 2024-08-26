@@ -15,11 +15,9 @@ import styles from './ContestResultsGrid.module.scss';
 
 interface IContestResultsGridProps {
     items: IContestResultsType | null;
-    itemsPerPage: number;
-    page: number;
 }
 
-const ContestResultsGrid = ({ items, itemsPerPage, page }: IContestResultsGridProps) => {
+const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
 
     const { internalUser } = useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
@@ -110,7 +108,7 @@ const ContestResultsGrid = ({ items, itemsPerPage, page }: IContestResultsGridPr
                 </thead>
                 <tbody>
                     {
-                    !isNil(items) && !isEmpty(items) && items.results.map((participantResult, index) => (
+                    !isNil(items) && !isEmpty(items) && (items.pagedResults.items ?? []).map((participantResult, index) => (
                         <tr
                           key={`t-r-i-${participantResult.participantUsername}`}
                           className={concatClassNames(
@@ -122,7 +120,7 @@ const ContestResultsGrid = ({ items, itemsPerPage, page }: IContestResultsGridPr
                                   : '',
                           )}
                         >
-                            <td>{(itemsPerPage * (page - 1)) + index + 1}</td>
+                            <td>{(items.pagedResults.itemsPerPage * (items.pagedResults.pageNumber - 1)) + index + 1}</td>
                             <td>{participantResult.participantUsername}</td>
                             {
                                 items?.problems

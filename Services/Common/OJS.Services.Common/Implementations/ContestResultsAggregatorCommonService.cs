@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Common.Implementations;
 
+using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Data;
 using OJS.Data.Models.Contests;
@@ -50,30 +51,17 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
             .Select(ContestProblemListViewModel.FromProblem)
             .ToList();
 
-        var totalParticipantsCount = contestResultsModel.TotalResultsCount
-                                     ?? this.participantsCommonData
-                                         .GetAllByContestAndIsOfficial(
-                                             contestResultsModel.Contest.Id,
-                                             contestResultsModel.Official)
-                                         .Count();
-
-        contestResults.PagesCount = totalParticipantsCount > contestResultsModel.ItemsPerPage
-            ? (int)Math.Ceiling((double)totalParticipantsCount / contestResultsModel.ItemsPerPage)
-            : 1;
-
         // Get the requested participants without their problem results.
         // Splitting the queries improves performance and avoids unexpected results from joins with Scores.
         var participants = this.GetParticipantsPage(
                 contestResultsModel.Contest,
-                contestResultsModel.Official,
-                contestResultsModel.Page,
-                contestResultsModel.ItemsPerPage)
+                contestResultsModel.Official)
             .Select(ParticipantResultViewModel.FromParticipant)
-            .ToList();
+            .ToPagedResult(contestResultsModel.ItemsPerPage, contestResultsModel.Page);
 
         // Get the ParticipantScores with another query and map problem results for each participant.
         var participantScores = this.participantScoresCommonDataService
-            .GetAllByParticipants(participants.Select(p => p.Id))
+            .GetAllByParticipants(participants.Items.Select(p => p.Id))
             .Include(x => x.Participant)
             .Include(x => x.Submission)
             .Include(x => x.Problem)
@@ -100,17 +88,11 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
                 .ToList();
         }
 
-        participants.ForEach(p =>
+        participants.Items.ForEach(p =>
             p.ProblemResults = problemResults.Where(pr => pr.ParticipantId == p.Id));
 
-        var results = new StaticPagedList<ParticipantResultViewModel>(
-            participants,
-            contestResultsModel.Page,
-            contestResultsModel.ItemsPerPage,
-            totalParticipantsCount);
-
         contestResults.Problems = problems;
-        contestResults.Results = results;
+        contestResults.PagedResults = participants;
 
         return contestResults;
     }
@@ -118,12 +100,10 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
     /// <summary>
     /// Gets IQueryable results with one page of participants, ordered by top score.
     /// </summary>
-    private IQueryable<Participant> GetParticipantsPage(Contest contest, bool official, int page, int itemsInPage) =>
+    private IQueryable<Participant> GetParticipantsPage(Contest contest, bool official) =>
         this.participantsCommonData
             .GetAllByContestAndIsOfficial(contest.Id, official)
             .AsNoTracking()
             .OrderByDescending(p => p.TotalScoreSnapshot)
-            .ThenBy(p => p.TotalScoreSnapshotModifiedOn)
-            .Skip((page - 1) * itemsInPage)
-            .Take(itemsInPage);
+            .ThenBy(p => p.TotalScoreSnapshotModifiedOn);
 }

@@ -114,7 +114,7 @@ const ContestResultsPage = () => {
                             />
                         </Heading>
                         <PaginationControls
-                          count={contestResults?.pagesCount ?? 0}
+                          count={contestResults?.pagedResults.pagesCount ?? 0}
                           page={selectedPage}
                           onChange={(page:number) => {
                               searchParams.set('page', page.toString());
@@ -124,11 +124,9 @@ const ContestResultsPage = () => {
                         />
                         <ContestResultsGrid
                           items={contestResults ?? null}
-                          itemsPerPage={contestResults?.itemsPerPage ?? 50}
-                          page={selectedPage}
                         />
                         <PaginationControls
-                          count={contestResults?.pagesCount ?? 0}
+                          count={contestResults?.pagedResults.pagesCount ?? 0}
                           page={selectedPage}
                           onChange={(page:number) => {
                               searchParams.set('page', page.toString());
