@@ -38,7 +38,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         this.participantsDataService = participantsDataService;
     }
 
-    public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool full)
+    public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool full, int page)
     {
         var contest = await this.contestsData.GetByIdWithProblems(contestId);
 
@@ -65,7 +65,8 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             IsFullResults = full,
             TotalResultsCount = null,
             IsExportResults = false,
-            ItemsInPage = official ? this.itemsPerPageCompete : this.itemsPerPagePractice,
+            ItemsPerPage = official ? this.itemsPerPageCompete : this.itemsPerPagePractice,
+            Page = page,
         };
 
         var results = this.contestResultsAggregator.GetContestResults(contestResultsModel);

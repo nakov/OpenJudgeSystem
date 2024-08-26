@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
@@ -11,7 +11,9 @@ import ContestResultsGrid from '../../components/contests/contest-results-grid/C
 import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
+import usePreserveScrollOnSearchParamsChange from '../../hooks/common/usePreserveScrollOnSearchParamsChange';
 import { setContestCategories, setContestDetails } from '../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery, useGetContestResultsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
@@ -28,12 +30,20 @@ import styles from './ContestResultPage.module.scss';
 const ContestResultsPage = () => {
     const params = useParams();
     const { contestId, participationType: participationUrlType, resultType } = params;
+    const [ searchParams, setSearchParams ] = usePreserveScrollOnSearchParamsChange([ 'page' ]);
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
 
     const participationType = contestParticipationType(official);
 
     const { contestDetails } = useAppSelector((state) => state.contests);
+
+    const selectedPage = useMemo(() => {
+        if (!searchParams.get('page')) {
+            return 1;
+        }
+        return Number(searchParams.get('page'));
+    }, [ searchParams ]);
 
     const {
         data: contestResults,
@@ -44,6 +54,7 @@ const ContestResultsPage = () => {
         id: Number(contestId),
         official,
         full,
+        page: selectedPage,
     }, { skip: !contestId });
 
     const { data: contestCategories } = useGetContestCategoriesQuery();
@@ -102,7 +113,27 @@ const ContestResultsPage = () => {
                               className={styles.contestName}
                             />
                         </Heading>
-                        <ContestResultsGrid items={contestResults ?? null} />
+                        <PaginationControls
+                          count={contestResults?.pagedResults.pagesCount ?? 0}
+                          page={selectedPage}
+                          onChange={(page:number) => {
+                              searchParams.set('page', page.toString());
+                              setSearchParams(searchParams);
+                          }}
+                          className={`${styles.paginationControlsUpper}`}
+                        />
+                        <ContestResultsGrid
+                          items={contestResults ?? null}
+                        />
+                        <PaginationControls
+                          count={contestResults?.pagedResults.pagesCount ?? 0}
+                          page={selectedPage}
+                          onChange={(page:number) => {
+                              searchParams.set('page', page.toString());
+                              setSearchParams(searchParams);
+                          }}
+                          className={`${styles.paginationControlsLower}`}
+                        />
                     </>
                 )
                 : (
