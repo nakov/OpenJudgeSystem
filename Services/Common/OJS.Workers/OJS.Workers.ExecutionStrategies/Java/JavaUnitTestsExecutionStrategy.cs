@@ -359,7 +359,7 @@ public class _$TestRunner {{
         private void ExtractUserTestFiles(string submissionFilePath)
         {
             var fileNames = FileHelpers.GetFilePathsFromZip(submissionFilePath)
-                .Where(x => x.EndsWith(javaSourceFileExtension, StringComparison.Ordinal));
+                .Where(x => x.EndsWith(javaSourceFileExtension));
             this.TestNames.AddRange(fileNames);
         }
 

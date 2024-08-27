@@ -12,17 +12,17 @@ namespace OJS.Workers.ExecutionStrategies.CodeSanitizers
         private static readonly string[] SourceArray =
         [
             "OpenProcess",
-                "OpenThread",
-                "GetProcessId",
-                "GetThreadId",
-                "GetCurrentProcess",
-                "GetCurrentThread",
-                "GetCurrentProcessId",
-                "GetCurrentThreadId",
-                "TerminateProcess",
-                "TerminateThread",
-                "SwitchToThread",
-                "SuspendThread"
+            "OpenThread",
+            "GetProcessId",
+            "GetThreadId",
+            "GetCurrentProcess",
+            "GetCurrentThread",
+            "GetCurrentProcessId",
+            "GetCurrentThreadId",
+            "TerminateProcess",
+            "TerminateThread",
+            "SwitchToThread",
+            "SuspendThread"
         ];
 
         /// <inheritdoc/>
@@ -37,8 +37,9 @@ namespace OJS.Workers.ExecutionStrategies.CodeSanitizers
 
         private static string RemoveProcessAndThreadAccessFunctions(string content)
         {
-            var functionsToDisable = SourceArray.Select(f => f + "\\s*\\(")
-            .ToList();
+            var functionsToDisable = SourceArray
+                .Select(f => f + @"\s*\(")
+                .ToList();
 
             var functionsToDisableRegexPattern = string.Join("|", functionsToDisable);
 

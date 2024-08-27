@@ -70,7 +70,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             this.ReplacePom(pomXmlFilePath);
             var mainClassFolderPathInZip = Path.GetDirectoryName(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
-                .FirstOrDefault(f => f.EndsWith(PomXmlFileNameAndExtension, StringComparison.Ordinal)));
+                .FirstOrDefault(f => f.EndsWith(PomXmlFileNameAndExtension)));
 
             FileHelpers.AddFilesToZipArchive(submissionFilePath, mainClassFolderPathInZip, pomXmlFilePath);
             DirectoryHelpers.SafeDeleteDirectory(extractionDirectory, true);
@@ -215,7 +215,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
             var pathsInZip = FileHelpers.GetFilePathsFromZip(submissionZipFilePath);
 
-            var resourceDirectory = Path.GetDirectoryName(pathsInZip.FirstOrDefault(f => f.EndsWith(ApplicationPropertiesFileName, StringComparison.Ordinal)));
+            var resourceDirectory = Path.GetDirectoryName(pathsInZip.FirstOrDefault(f => f.EndsWith(ApplicationPropertiesFileName)));
 
             if (string.IsNullOrEmpty(resourceDirectory))
             {
@@ -285,7 +285,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected override void ExtractUserClassNames(string submissionFilePath) =>
             this.UserClassNames.AddRange(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
-                .Where(x => !x.EndsWith('/') && x.EndsWith(javaSourceFileExtension, StringComparison.Ordinal))
+                .Where(x => !x.EndsWith('/') && x.EndsWith(javaSourceFileExtension))
                 .Select(x => x.Contains(IntelliJProjectTemplatePattern)
                     ? x.Substring(x.LastIndexOf(
                                       IntelliJProjectTemplatePattern,
@@ -302,7 +302,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
             foreach (var line in testOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                          .Where(x => x
-                             .StartsWith("[ERROR]", StringComparison.Ordinal) || x.StartsWith("[FAILURE]", StringComparison.Ordinal)))
+                             .StartsWith("[ERROR]") || x.StartsWith("[FAILURE]")))
             {
                 sb.Append("\t" + line);
             }
@@ -327,7 +327,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         {
             var paths = FileHelpers.GetFilePathsFromZip(submissionFilePath).ToList();
 
-            return paths.Any(x => x.StartsWith(MainCodeFolderPattern, StringComparison.Ordinal)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension, StringComparison.Ordinal));
+            return paths.Any(x => x.StartsWith(MainCodeFolderPattern)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension));
         }
 
         private void ReplacePom(string pomXmlFilePath)

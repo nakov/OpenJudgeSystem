@@ -496,7 +496,7 @@ finally:
         private string PreprocessTestInput(string testInput)
         {
             testInput = this.ReplaceNodeModulesRequireStatementsInTests(testInput)
-                .Replace(UserApplicationHttpPortPlaceholder, this.PortNumber.ToString(CultureInfo.InvariantCulture));
+                .Replace(UserApplicationHttpPortPlaceholder, this.PortNumber.ToString());
 
             return OsPlatformHelpers.IsDocker()
                 ? testInput.Replace("localhost", "host.docker.internal")

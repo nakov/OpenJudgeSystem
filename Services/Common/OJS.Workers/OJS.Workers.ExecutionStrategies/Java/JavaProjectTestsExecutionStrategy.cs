@@ -436,7 +436,7 @@ public class _$TestRunner {{
                 throw new InvalidOperationException("Unexpected end of output. Please verify that all test cases are executed correctly and produce the expected results.");
             }
 
-            if (line.StartsWith(InvalidNumberOfTestCasesPrefix, StringComparison.OrdinalIgnoreCase))
+            if (line.StartsWith(InvalidNumberOfTestCasesPrefix))
             {
                 throw new InvalidOperationException(line);
             }

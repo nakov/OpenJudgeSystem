@@ -113,7 +113,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 "_",
                 Regex
                     .Split(className, UpperCaseSplitRegexPattern)
-                    .Select(x => x.ToLower(CultureInfo.InvariantCulture)))
+                    .Select(x => x.ToLower()))
                 + PythonFileExtension;
 
         /// <summary>
