@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { IGetAllAdminParams, IUserAutocompleteData } from '../../../../common/types';
-import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { getColors } from '../../../../hooks/use-administration-theme-provider';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
