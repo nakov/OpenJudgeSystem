@@ -106,6 +106,7 @@ public class OjsWorkersConfig : BaseConfig
     [Required]
     public string SinonModulePath { get; set; } = string.Empty;
 
+    [Required]
     public string SinonJsDomModulePath { get; set; } = string.Empty;
 
     [Required]
@@ -114,14 +115,19 @@ public class OjsWorkersConfig : BaseConfig
     [Required]
     public string UnderscoreModulePath { get; set; } = string.Empty;
 
+    [Required]
     public string BabelCoreModulePath { get; set; } = string.Empty;
 
+    [Required]
     public string ReactJsxPluginPath { get; set; } = string.Empty;
 
+    [Required]
     public string ReactModulePath { get; set; } = string.Empty;
 
+    [Required]
     public string ReactDomModulePath { get; set; } = string.Empty;
 
+    [Required]
     public string NodeFetchModulePath { get; set; } = string.Empty;
 
     [Required]
