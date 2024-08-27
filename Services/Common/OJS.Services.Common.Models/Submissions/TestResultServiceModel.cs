@@ -33,6 +33,7 @@
                 .ForMember(
                     d => d.Output,
                     opt =>
-                        opt.MapFrom(s => s.CheckerDetails.UserOutputFragment));
+                        opt.MapFrom(s => s.CheckerDetails.UserOutputFragment))
+                .ReverseMap();
     }
 }
