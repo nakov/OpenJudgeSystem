@@ -1,6 +1,7 @@
 import { SyntheticEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import useScrollToTab from '../../../hooks/common/use-scroll-to-tab';
 import TabsInView from '../common/tabs/TabsInView';
 
 import ProblemGroupForm from './problem-group-form/ProblemGroupForm';
@@ -11,7 +12,7 @@ enum PROBLEM_GROUP_LISTED_DATA {
 }
 
 const AdministrationProblemGroup = () => {
-    const { pathname } = useLocation();
+    const { pathname, hash } = useLocation();
     const [ , , , problemGroupId ] = pathname.split('/');
 
     const [ tabName, setTabName ] = useState(PROBLEM_GROUP_LISTED_DATA.PROBLEMS);
@@ -20,12 +21,16 @@ const AdministrationProblemGroup = () => {
         setTabName(newValue);
     };
 
+    useScrollToTab({ hash, tabName, setTabName, tabNames: Object.values(PROBLEM_GROUP_LISTED_DATA) });
+
     const returnProblemGroupForm = () => (
         <ProblemGroupForm id={Number(problemGroupId)} />
     );
 
     const returnProblems = (key:string) => (
-        <ProblemsInProblemGroupView key={key} problemGroupId={Number(problemGroupId)} />
+        <div id={PROBLEM_GROUP_LISTED_DATA.PROBLEMS}>
+            <ProblemsInProblemGroupView key={key} problemGroupId={Number(problemGroupId)} />
+        </div>
     );
 
     return (
