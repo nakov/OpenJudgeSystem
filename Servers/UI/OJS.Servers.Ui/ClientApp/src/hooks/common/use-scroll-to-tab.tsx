@@ -77,7 +77,7 @@ const useScrollToTab = <T extends string>({ hash, tabName, setTabName, tabNames 
                        before scrolling, which improves the user experience.
                     */
                     setTimeout(() => {
-                        smoothScroll(element, 2000);
+                        smoothScroll(element, 700);
                         setHasScrolled(true);
                         observer.disconnect();
                     }, 50);
