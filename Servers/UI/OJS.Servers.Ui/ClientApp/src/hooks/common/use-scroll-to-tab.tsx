@@ -51,13 +51,13 @@ const useScrollToTab = <T extends string>({ hash, tabName, setTabName, tabNames 
     const [ hasScrolled, setHasScrolled ] = useState(false);
     const targetTab = tabNames.find((t) => t.toLowerCase() === hash.replace('#', '').toLowerCase());
     const shouldScroll = useMemo(
-        () => (!hasScrolled && hash) && tabNames.some((t) => t.toLowerCase() === targetTab),
-        [ hasScrolled, hash, tabNames, targetTab ],
+        () => (!hasScrolled && hash) && targetTab,
+        [ hasScrolled, hash, targetTab ],
     );
 
     useEffect(() => {
-        if (shouldScroll && targetTab) {
-            setTabName(targetTab);
+        if (shouldScroll) {
+            setTabName(targetTab!);
         }
     }, [ setTabName, shouldScroll, targetTab ]);
 
