@@ -23,18 +23,18 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
         this.notDefaultValueValidationService = notDefaultValueValidationService;
     }
 
-    public string BuildCodeFromTemplate(SubmissionServiceModel submission)
+    public string BuildCodeFromTemplate(SubmissionServiceModel submissionServiceModel)
     {
-        var template = this.codeTemplatesProvider.GetDefaultCodeTemplate(submission.ExecutionStrategy);
+        var template = this.codeTemplatesProvider.GetDefaultCodeTemplate(submissionServiceModel.ExecutionStrategy);
 
         this.notDefaultValueValidationService
             .GetValidationResult(
                 template,
                 null!,
-                string.Format(CodeTemplateNotFoundTemplate, submission.ExecutionStrategy))
+                string.Format(null, CodeTemplateNotFoundTemplate, submissionServiceModel.ExecutionStrategy))
             .VerifyResult();
 
-        return template.Replace(TemplatePlaceholders.CodePlaceholder, submission.Code);
+        return template.Replace(TemplatePlaceholders.CodePlaceholder, submissionServiceModel.Code);
     }
 
     public OjsSubmission<TInput> BuildOjsSubmission<TInput>(SubmissionServiceModel submissionServiceModel)
@@ -45,7 +45,7 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
             .GetValidationResult(
                 submission.Input,
                 nameof(submission.Input),
-                string.Format(CannotCreateInputTemplate, submissionServiceModel.ExecutionType))
+                string.Format(null, CannotCreateInputTemplate, submissionServiceModel.ExecutionType))
             .VerifyResult();
 
         submission.AdditionalCompilerArguments = this.executionContextValuesProvider

@@ -312,7 +312,7 @@ public class _$TestRunner {{
         protected override string CreateSubmissionFile<TInput>(IExecutionContext<TInput> executionContext)
         {
             var trimmedAllowedFileExtensions = executionContext.AllowedFileExtensions?.Trim();
-            var allowedFileExtensions = (!trimmedAllowedFileExtensions?.StartsWith(".") ?? false)
+            var allowedFileExtensions = (!trimmedAllowedFileExtensions?.StartsWith('.') ?? false)
                 ? $".{trimmedAllowedFileExtensions}"
                 : trimmedAllowedFileExtensions;
 
@@ -343,8 +343,8 @@ public class _$TestRunner {{
                 throw new ArgumentException("Process output was incorrect or empty.");
             }
 
-            totalTests = int.Parse(res.Groups[1].Value);
-            passedTests = int.Parse(res.Groups[2].Value);
+            totalTests = int.Parse(res.Groups[1].Value, null);
+            passedTests = int.Parse(res.Groups[2].Value, null);
         }
 
         private void AddTestRunnerTemplate(string submissionFilePath)
@@ -359,7 +359,7 @@ public class _$TestRunner {{
         private void ExtractUserTestFiles(string submissionFilePath)
         {
             var fileNames = FileHelpers.GetFilePathsFromZip(submissionFilePath)
-                .Where(x => x.EndsWith(javaSourceFileExtension));
+                .Where(x => x.EndsWith(javaSourceFileExtension, StringComparison.Ordinal));
             this.TestNames.AddRange(fileNames);
         }
 

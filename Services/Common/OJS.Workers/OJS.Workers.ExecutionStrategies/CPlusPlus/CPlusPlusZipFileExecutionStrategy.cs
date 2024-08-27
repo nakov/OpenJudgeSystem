@@ -87,7 +87,7 @@
             return result;
         }
 
-        private IEnumerable<string> ExtractTaskSkeleton(string executionContextTaskSkeletonAsString)
+        private List<string> ExtractTaskSkeleton(string executionContextTaskSkeletonAsString)
         {
             var headersAndCppFiles = executionContextTaskSkeletonAsString.Split(
                 new[] { Constants.classDelimiterUnix, Constants.classDelimiterWin },

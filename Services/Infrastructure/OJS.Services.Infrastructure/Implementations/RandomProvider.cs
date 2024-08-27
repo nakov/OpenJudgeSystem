@@ -2,6 +2,7 @@ namespace OJS.Services.Infrastructure.Implementations
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     public class RandomProvider : IRandomProvider
@@ -12,7 +13,7 @@ namespace OJS.Services.Infrastructure.Implementations
         private static readonly Random RandomInstance = new Random();
 
         public int GetRandomRightPaddedNumber(int maxValue, int length, char paddingCharacter)
-            => int.Parse($"{RandomInstance.Next(1, maxValue)}".PadRight(length, paddingCharacter));
+            => int.Parse($"{RandomInstance.Next(1, maxValue)}".PadRight(length, paddingCharacter), null);
 
         public int GetRandomInteger(int length)
         {
@@ -21,8 +22,8 @@ namespace OJS.Services.Infrastructure.Implementations
             return RandomInstance.Next(min, max);
         }
 
-        public int GetRandomIntegerFromTo(int @from, int to)
-            => RandomInstance.Next(from, to);
+        public int GetRandomIntegerFromTo(int fromValue, int toValue)
+            => RandomInstance.Next(fromValue, toValue);
 
         public T GetRandomElement<T>(IEnumerable<T> collection)
             => collection.ElementAt(this.GetRandomIntegerFromTo(0, collection.Count() - 1));

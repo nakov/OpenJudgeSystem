@@ -6,6 +6,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql
     using System.Data;
     using System.Globalization;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
@@ -30,17 +31,17 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         {
             if (string.IsNullOrWhiteSpace(this.Settings.MasterDbConnectionString))
             {
-                throw new ArgumentException("Invalid master DB connection string!", nameof(this.Settings.MasterDbConnectionString));
+                throw new InvalidSettingException("Invalid master DB connection string!", nameof(this.Settings.MasterDbConnectionString));
             }
 
             if (string.IsNullOrWhiteSpace(this.Settings.RestrictedUserId))
             {
-                throw new ArgumentException("Invalid restricted user ID!", nameof(this.Settings.RestrictedUserId));
+                throw new InvalidSettingException("Invalid restricted user ID!", nameof(this.Settings.RestrictedUserId));
             }
 
             if (string.IsNullOrWhiteSpace(this.Settings.RestrictedUserPassword))
             {
-                throw new ArgumentException("Invalid restricted user password!", nameof(this.Settings.RestrictedUserPassword));
+                throw new InvalidSettingException("Invalid restricted user password!", nameof(this.Settings.RestrictedUserPassword));
             }
 
             this.RestrictedUserId = this.Settings.RestrictedUserId;

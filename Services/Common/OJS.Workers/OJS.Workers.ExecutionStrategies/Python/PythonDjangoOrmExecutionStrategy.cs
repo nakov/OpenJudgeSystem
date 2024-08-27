@@ -11,6 +11,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
+    using System.Text;
 
     public class PythonDjangoOrmExecutionStrategy<TSettings> : PythonProjectTestsExecutionStrategy<TSettings>
         where TSettings : PythonDjangoOrmExecutionStrategySettings
@@ -21,8 +22,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string RequirementsFileName = "requirements.txt";
         private const int MaximumTimeForEnvDeletion = 10000;
 
-        private const string InvalidProjectStructureErrorMessage =
-            "Folder project structure is invalid! Please check your zip file! It should contain requirements.txt in root of the zip and {0}/settings.py";
+        private static CompositeFormat InvalidProjectStructureErrorMessage =>
+            CompositeFormat.Parse("Folder project structure is invalid! Please check your zip file! It should contain requirements.txt in root of the zip and {0}/settings.py");
 
         private const string DatabaseConfigRegexPattern = @"(?:^|^\n\s*)DATABASES\s*=\s*\{[\s\S]*?\}\s*(?=\n{1,2}#|\n{2,}|\Z)(?!\s*\Z)";
         private const string TestResultsRegexPattern = @"(FAIL|OK)";
@@ -59,7 +60,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
             if (!File.Exists(requirementsFilePath) || !File.Exists(pathToSettingsFile))
             {
-                throw new ArgumentException(string.Format(InvalidProjectStructureErrorMessage, ProjectSettingsFolder));
+                throw new ArgumentException(string.Format(null, InvalidProjectStructureErrorMessage, ProjectSettingsFolder));
             }
 
             var executor = this.CreateExecutor();
@@ -204,7 +205,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         {
             var result = await this.Execute(
                 this.Settings.PythonExecutablePath,
-                this.ExecutionArguments.Concat(new[] { "manage.py migrate" }),
+                this.ExecutionArguments.Concat([ "manage.py migrate" ]),
                 executor,
                 executionContext);
 

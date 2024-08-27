@@ -19,6 +19,8 @@
 
         private static Regex InsertStatementRegex => new Regex(InsertIntoTableRegexPattern, RegexOptions.IgnoreCase);
 
+        private static readonly string[] Separator = ["\n", "\r\n"];
+
         public static bool TryOptimizeQuery(string query, out string result)
         {
             if (string.IsNullOrWhiteSpace(query) || !QueryCanBeOptimized(query))
@@ -27,7 +29,7 @@
                 return false;
             }
 
-            var lines = query.Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var lines = query.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
             var newQuery = new StringBuilder();
             var wasOptimized = false;
 

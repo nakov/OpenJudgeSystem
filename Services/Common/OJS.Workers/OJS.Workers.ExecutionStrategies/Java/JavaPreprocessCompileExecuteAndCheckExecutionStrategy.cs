@@ -34,12 +34,12 @@
         {
             if (!File.Exists(this.Settings.JavaExecutablePath))
             {
-                throw new ArgumentException($"Java not found in: {this.Settings.JavaExecutablePath}!", nameof(this.Settings.JavaExecutablePath));
+                throw new FileNotFoundException($"Java not found in: {this.Settings.JavaExecutablePath}!", nameof(this.Settings.JavaExecutablePath));
             }
 
             if (!Directory.Exists(this.Settings.JavaLibrariesPath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Java libraries not found in: {this.Settings.JavaLibrariesPath}",
                     nameof(this.Settings.JavaLibrariesPath));
             }

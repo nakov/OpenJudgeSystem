@@ -75,9 +75,9 @@ namespace OJS.Services.Administration.Data.Implementations
             Expression<Func<Participant, Participant>> updateExpression)
             => participantsQuery.UpdateFromQueryAsync(updateExpression);
 
-        public async Task Delete(IEnumerable<Participant> participantsForDeletion)
+        public async Task Delete(IEnumerable<Participant> participants)
         {
-            this.DeleteMany(participantsForDeletion);
+            this.DeleteMany(participants);
 
             await this.SaveChanges();
         }

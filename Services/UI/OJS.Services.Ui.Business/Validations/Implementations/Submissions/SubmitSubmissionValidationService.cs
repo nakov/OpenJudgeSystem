@@ -11,6 +11,7 @@ using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Submissions;
+using System.Globalization;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
@@ -28,9 +29,9 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         this.submissionsData = submissionsData;
     }
 
-    public ValidationResult GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel) validationInput)
+    public ValidationResult GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel) item)
     {
-        var (problem, participant, submitSubmissionServiceModel) = validationInput;
+        var (problem, participant, submitSubmissionServiceModel) = item;
 
         if (problem == null)
         {
@@ -64,7 +65,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipationNotActive);
         }
 
-        var problemIdToString = problem.Id.ToString();
+        var problemIdToString = problem.Id.ToString(CultureInfo.InvariantCulture);
 
         var userHasUnprocessedSubmissionForProblem =
             this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, participant.UserId);

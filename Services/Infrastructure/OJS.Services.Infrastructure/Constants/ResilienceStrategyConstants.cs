@@ -1,5 +1,7 @@
 ﻿namespace OJS.Services.Infrastructure.Constants;
 
+using System.Text;
+
 public static class ResilienceStrategyConstants
 {
     public static class Common
@@ -9,7 +11,7 @@ public static class ResilienceStrategyConstants
 
     public static class RedisCircuitBreakerOperations
     {
-        public const string GetItem = "Get_{0}";
-        public const string RemoveItem = "Remove_{0}";
+        public static CompositeFormat GetItem => CompositeFormat.Parse("Get_{0}");
+        public static CompositeFormat RemoveItem => CompositeFormat.Parse("Remove_{0}");
     }
 }

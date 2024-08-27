@@ -103,7 +103,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     public async Task<ServiceResult<ICollection<string>>>
         UpdateParticipationsEndTimeByContestByParticipationStartTimeRangeAndTimeInMinutes(
             int contestId,
-            int timeInMinutes,
+            int minutes,
             DateTime participationStartTimeRangeStart,
             DateTime participationStartTimeRangeEnd)
     {
@@ -128,7 +128,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                     participationStartTimeRangeStart,
                     participationStartTimeRangeEnd)
                 .Where(p =>
-                    p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes) <
+                    p.ParticipationEndTime!.Value.AddMinutes(minutes) <
                     p.ParticipationStartTime!.Value.AddMinutes(contestTotalDurationInMinutes))
                 .Select(p => p.User.UserName!)
                 .ToList();
@@ -142,9 +142,9 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         await this.participantsData.Update(
             participantsInTimeRange
                 .Where(p =>
-                    p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes) >=
+                    p.ParticipationEndTime!.Value.AddMinutes(minutes) >=
                     p.ParticipationStartTime!.Value.AddMinutes(contestTotalDurationInMinutes)),
-            p => new Participant { ParticipationEndTime = p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes), });
+            p => new Participant { ParticipationEndTime = p.ParticipationEndTime!.Value.AddMinutes(minutes), });
 
         return ServiceResult<ICollection<string>>.Success(invalidForUpdateParticipantUsernames);
     }

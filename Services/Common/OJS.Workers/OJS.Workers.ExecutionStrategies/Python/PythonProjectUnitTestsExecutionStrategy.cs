@@ -13,7 +13,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
-
+    using System.Globalization;
+    using System.Text;
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
@@ -24,8 +25,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string ProjectFilesCountPlaceholder = "# project_files_count ";
         private const string ClassNameRegexPattern = @"^class\s+(\w+)";
         private const string UpperCaseSplitRegexPattern = @"(?<!^)(?=[A-Z])";
-        private const string ProjectFilesNotCapturedCorrectlyErrorMessageTemplate =
-            "There should be {0} classes in test #{1}, but found {2}. Ensure the test is correct";
+        private static CompositeFormat ProjectFilesNotCapturedCorrectlyErrorMessageTemplate =>
+            CompositeFormat.Parse("There should be {0} classes in test #{1}, but found {2}. Ensure the test is correct");
 
         private readonly string classesInSubfoldersRegexPattern =
             $@"^from\s+{ProjectFolderName}\.(\w+.+)(?:\.\w+\s+import)\s+(\w+)\s*$";
@@ -112,7 +113,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 "_",
                 Regex
                     .Split(className, UpperCaseSplitRegexPattern)
-                    .Select(x => x.ToLower()))
+                    .Select(x => x.ToLower(CultureInfo.InvariantCulture)))
                 + PythonFileExtension;
 
         /// <summary>
@@ -129,6 +130,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             if (projectFilesToBeCreated.Count != expectedFilesCount)
             {
                 throw new ArgumentException(string.Format(
+                    null,
                     ProjectFilesNotCapturedCorrectlyErrorMessageTemplate,
                     expectedFilesCount,
                     test.Id,

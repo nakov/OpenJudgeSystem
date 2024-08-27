@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Models.Tests;
 
-public enum TestTypeEnum
+public enum TestType
 {
     Standard = 0,
     Trial = 1,

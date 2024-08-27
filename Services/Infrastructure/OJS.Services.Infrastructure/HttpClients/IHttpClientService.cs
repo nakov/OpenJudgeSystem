@@ -29,8 +29,8 @@ namespace OJS.Services.Infrastructure.HttpClients
         /// <typeparam name="TResponse">Type to which the response of the request will be deserialized.</typeparam>
         /// <param name="url">Request url.</param>
         /// <returns>The response of the request deserialized to object of type TResponse.</returns>
-        Task<TResponse?> Get<TResponse>(string url);
+        Task<TResponse?> Fetch<TResponse>(string url);
 
-        Task<byte[]> Get(string url);
+        Task<byte[]> Fetch(string url);
     }
 }

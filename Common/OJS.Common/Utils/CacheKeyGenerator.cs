@@ -1,6 +1,7 @@
 namespace OJS.Common.Utils;
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,13 +20,12 @@ public static class CacheKeyGenerator
     {
         var concatenatedString = string.Join(",", values);
 
-        using SHA256 sha256Hash = SHA256.Create();
-        var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(concatenatedString));
 
         StringBuilder builder = new StringBuilder();
         foreach (var t in bytes)
         {
-            builder.Append(t.ToString("x2"));
+            builder.Append(t.ToString("x2", CultureInfo.InvariantCulture));
         }
 
         return builder.ToString();

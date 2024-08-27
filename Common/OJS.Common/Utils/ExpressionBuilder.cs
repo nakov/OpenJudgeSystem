@@ -22,15 +22,8 @@ namespace OJS.Common.Utils
             IEnumerable<TValue> values,
             Expression<Func<TElement, TValue>> valueSelector)
         {
-            if (valueSelector == null)
-            {
-                throw new ArgumentNullException(nameof(valueSelector));
-            }
-
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
+            ArgumentNullException.ThrowIfNull(valueSelector);
+            ArgumentNullException.ThrowIfNull(values);
 
             var parameterExpression = valueSelector.Parameters.Single();
 

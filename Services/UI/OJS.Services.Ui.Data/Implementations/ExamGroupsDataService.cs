@@ -33,8 +33,8 @@ namespace OJS.Services.Ui.Data.Implementations
         public IQueryable<ExamGroup> GetAllByLecturer(string lecturerId) =>
             this.GetQuery(eg =>
                     eg.Contest == null ||
-                    (eg.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
-                     eg.Contest.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId)));
+                    eg.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
+                    eg.Contest.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
 
         public IQueryable<UserProfile> GetUsersByIdQuery(int id) =>
             this.GetByIdQuery(id)

@@ -14,6 +14,7 @@ namespace OJS.Workers.ExecutionStrategies
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.ExecutionStrategies.Python;
     using OJS.Workers.Executors;
+    using System.Globalization;
     using static OJS.Workers.Common.Constants;
 
     public class RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<TSettings> : PythonExecuteAndCheckExecutionStrategy<TSettings>
@@ -275,7 +276,7 @@ finally:
             var match = Regex.Match(preExecutionResult.ReceivedOutput, @"Container port: (\d+);Container name: ([a-zA-Z-_]+);");
             if (match.Success)
             {
-                this.PortNumber = int.Parse(match.Groups[1].Value);
+                this.PortNumber = int.Parse(match.Groups[1].Value, null);
                 this.ContainerName = match.Groups[2].Value;
             }
             else
@@ -364,14 +365,14 @@ finally:
                     .Substring(exception.Message.IndexOf(keyStr, StringComparison.Ordinal) + keyStr.Length)
                     .Trim();
 
-                throw new Exception($"Duplicate naming of tests: {testName}");
+                throw new InvalidOperationException($"Duplicate naming of tests: {testName}");
             }
         }
 
         private static void ValidateAllowedFileExtension<TInput>(IExecutionContext<TInput> executionContext)
         {
             var trimmedAllowedFileExtensions = executionContext.AllowedFileExtensions?.Trim();
-            var allowedFileExtensions = (!trimmedAllowedFileExtensions?.StartsWith(".") ?? false)
+            var allowedFileExtensions = (!trimmedAllowedFileExtensions?.StartsWith('.') ?? false)
                 ? $".{trimmedAllowedFileExtensions}"
                 : trimmedAllowedFileExtensions;
 
@@ -389,7 +390,7 @@ finally:
                 .Replace("}'", "}")
                 .Replace("}None", "}");
 
-        private static IEnumerable<(string, string)> GetNodeModules(string testInputContent)
+        private static List<(string, string)> GetNodeModules(string testInputContent)
         {
             var requirePattern = new Regex(NodeModulesRequirePattern);
             var results = requirePattern.Matches(testInputContent);
@@ -424,7 +425,7 @@ finally:
             Directory.CreateDirectory(this.NginxConfFileDirectory);
         }
 
-        private ICollection<TestResult> ExtractTestResultsFromReceivedOutput(string receivedOutput, IEnumerable<TestContext> tests)
+        private List<TestResult> ExtractTestResultsFromReceivedOutput(string receivedOutput, IEnumerable<TestContext> tests)
         {
             JsonExecutionResult mochaResult = JsonExecutionResult.Parse(PreproccessReceivedExecutionOutput(receivedOutput));
             if (mochaResult.TotalTests == 0)
@@ -532,7 +533,7 @@ finally:
         private string PreprocessTestInput(string testInput)
         {
             testInput = this.ReplaceNodeModulesRequireStatementsInTests(testInput)
-                .Replace(UserApplicationHttpPortPlaceholder, this.PortNumber.ToString());
+                .Replace(UserApplicationHttpPortPlaceholder, this.PortNumber.ToString(CultureInfo.InvariantCulture));
 
             return testInput.Replace("localhost", "host.docker.internal");
         }

@@ -76,7 +76,7 @@ public class ExcelService : IExcelService
             {
                 var cellName = property.Name;
                 var attributes = property.GetCustomAttributes(typeof(DisplayAttribute), true);
-                if (attributes.Any())
+                if (attributes.Length != 0)
                 {
                     if (attributes[0] is DisplayAttribute attribute)
                     {
@@ -124,7 +124,7 @@ public class ExcelService : IExcelService
                             var propertyValueAsString = propertyValue.ToString()!;
                             if (propertyValue.ToString()!.Length > 10000)
                             {
-                                propertyValueAsString = "THIS CELL DOES NOT CONTAIN FULL INFORMATION: " + propertyValueAsString.Substring(0, 10000);
+                                propertyValueAsString = string.Concat("THIS CELL DOES NOT CONTAIN FULL INFORMATION: ", propertyValueAsString.AsSpan(0, 10000));
                             }
 
                             sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValueAsString;

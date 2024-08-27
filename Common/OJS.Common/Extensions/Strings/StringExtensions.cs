@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -25,13 +26,6 @@
         {
             var encoding = new UTF8Encoding();
             return encoding.GetBytes(sourceString);
-        }
-
-        public static int ToInteger(this string input)
-        {
-            int integerValue;
-            int.TryParse(input, out integerValue);
-            return integerValue;
         }
 
         public static string ToUrl(this string uglyString)
@@ -79,7 +73,7 @@
                 return stringToTrim;
             }
 
-            return stringToTrim.Substring(0, maxLength) + "...";
+            return string.Concat(stringToTrim.AsSpan(0, maxLength), "...");
         }
 
         // TODO: Test
@@ -97,7 +91,7 @@
         public static string? GetStringBetween(this string stringToParse, string beforeString, string afterString)
         {
             var strings = stringToParse.GetStringsBetween(beforeString, afterString).ToList();
-            if (!strings.Any())
+            if (strings.Count == 0)
             {
                 return null;
             }
@@ -162,7 +156,7 @@
                 {
                     abbreviation.Append(symbolToAdd);
                     currentWord.Append(whiteSpace);
-                    symbolToAdd = char.ToLower(symbolToAdd);
+                    symbolToAdd = char.ToLower(symbolToAdd, CultureInfo.InvariantCulture);
                 }
                 else if (char.IsLower(symbolToAdd) && inWord)
                 {

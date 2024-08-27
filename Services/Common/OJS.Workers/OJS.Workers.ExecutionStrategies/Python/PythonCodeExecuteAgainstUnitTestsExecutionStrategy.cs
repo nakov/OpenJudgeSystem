@@ -65,10 +65,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
             IExecutionContext<TInput> executionContext,
             IExecutor executor,
             string codeSavePath,
-            string input = null,
+            string inputData = null,
             string directory = null)
         {
-            var processExecutionResult = await base.Execute(executionContext, executor, codeSavePath, input, directory);
+            var processExecutionResult = await base.Execute(executionContext, executor, codeSavePath, inputData, directory);
             this.FixReceivedOutput(processExecutionResult);
             return processExecutionResult;
         }

@@ -22,10 +22,10 @@ public static class ServiceRegistrationServiceCollectionExtensions
     {
         var assemblyPrefix = programType.GetAssemblyPrefix();
 
-        var businessServicesRegexPattern = string.Format(BusinessServicesRegexPatternTemplate, assemblyPrefix);
-        var dataServicesRegexPattern = string.Format(DataServicesRegexPatternTemplate, assemblyPrefix);
-        var commonServicesRegexPattern = string.Format(CommonServicesRegexPatternTemplate, assemblyPrefix);
-        var infrastructureServicesRegexPattern = string.Format(InfrastructureServicesRegexPatternTemplate, assemblyPrefix);
+        var businessServicesRegexPattern = string.Format(null, BusinessServicesRegexPatternTemplate, assemblyPrefix);
+        var dataServicesRegexPattern = string.Format(null, DataServicesRegexPatternTemplate, assemblyPrefix);
+        var commonServicesRegexPattern = string.Format(null, CommonServicesRegexPatternTemplate, assemblyPrefix);
+        var infrastructureServicesRegexPattern = string.Format(null, InfrastructureServicesRegexPatternTemplate, assemblyPrefix);
 
         var serviceAssemblies = programType.Assembly
             .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(
@@ -113,7 +113,7 @@ public static class ServiceRegistrationServiceCollectionExtensions
         }
     }
 
-    private static IEnumerable<Type> GetInterfacesForService(MemberInfo type, ICollection<Type> interfaces)
+    private static List<Type> GetInterfacesForService(MemberInfo type, ICollection<Type> interfaces)
     {
         var interfaceBySameName = interfaces.FirstOrDefault(i => i.Name == $"I{type.Name}");
 
@@ -124,18 +124,18 @@ public static class ServiceRegistrationServiceCollectionExtensions
 
         var transientServiceInterface = GetInterfacesForServiceType(ServiceType, interfaces);
 
-        if (transientServiceInterface.Any())
+        if (transientServiceInterface.Count != 0)
         {
             return transientServiceInterface;
         }
 
         var scopedServiceInterface = GetInterfacesForServiceType(ScopedServiceType, interfaces);
 
-        return scopedServiceInterface.Any()
+        return scopedServiceInterface.Count != 0
             ? scopedServiceInterface
             : GetInterfacesForServiceType(SingletonServiceType, interfaces);
     }
 
-    private static IList<Type> GetInterfacesForServiceType(Type serviceType, IEnumerable<Type> interfaces)
+    private static List<Type> GetInterfacesForServiceType(Type serviceType, IEnumerable<Type> interfaces)
         => interfaces.Where(i => i != serviceType && serviceType.IsAssignableFrom(i)).ToList();
 }

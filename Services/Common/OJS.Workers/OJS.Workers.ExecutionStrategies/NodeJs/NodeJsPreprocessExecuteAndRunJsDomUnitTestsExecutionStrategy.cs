@@ -28,21 +28,21 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         {
             if (!Directory.Exists(this.Settings.JsDomModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"jsDom not found in: {this.Settings.JsDomModulePath}",
                     nameof(this.Settings.JsDomModulePath));
             }
 
             if (!Directory.Exists(this.Settings.JQueryModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"jQuery not found in: {this.Settings.JQueryModulePath}",
                     nameof(this.Settings.JQueryModulePath));
             }
 
             if (!Directory.Exists(this.Settings.HandlebarsModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Handlebars not found in: {this.Settings.HandlebarsModulePath}",
                     nameof(this.Settings.HandlebarsModulePath));
             }
@@ -128,10 +128,10 @@ it('Test{testsCount++}', function(done) {{
             return testResults;
         }
 
-        protected override string PreprocessJsSubmission<TInput>(string template, IExecutionContext<TInput> context)
+        protected override string PreprocessJsSubmission<TInput>(string codeTemplate, IExecutionContext<TInput> context)
         {
             var code = context.Code.Trim(';');
-            var processedCode = template
+            var processedCode = codeTemplate
                 .Replace(RequiredModules, this.JsCodeRequiredModules)
                 .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                 .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)

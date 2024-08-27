@@ -111,8 +111,8 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ThenInclude(c => c.Category)
                 .Where(p => p.Name.Contains(model.SearchTerm ?? string.Empty) &&
                             (p.ProblemGroup.Contest.IsVisible || p.ProblemGroup.Contest.VisibleFrom <= this.dates.GetUtcNow()) &&
-                            (p.ProblemGroup.Contest.Category != null &&
-                             p.ProblemGroup.Contest.Category.IsVisible));
+                            p.ProblemGroup.Contest.Category != null &&
+                            p.ProblemGroup.Contest.Category.IsVisible);
 
             var searchProblems = await allProblemsQueryable
                 .MapCollection<ProblemSearchServiceModel>()

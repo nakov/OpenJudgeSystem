@@ -14,9 +14,9 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
     public class HttpClientService : IHttpClientService
     {
-#pragma warning disable SA1401
+#pragma warning disable CA1051
         protected readonly HttpClient Client;
-#pragma warning restore SA1401
+#pragma warning restore CA1051
 
         protected HttpClientService(
             HttpClient client,
@@ -64,13 +64,13 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             return await this.Post<TResponse>(form, url);
         }
 
-        public async Task<TResponse?> Get<TResponse>(string url)
+        public async Task<TResponse?> Fetch<TResponse>(string url)
         {
             var responseMessage = await this.GetResponse(url);
             return await responseMessage.Content.ReadFromJsonAsync<TResponse>();
         }
 
-        public async Task<byte[]> Get(string url)
+        public async Task<byte[]> Fetch(string url)
         {
             var responseMessage = await this.GetResponse(url);
             return await responseMessage.Content.ReadAsByteArrayAsync();
@@ -80,7 +80,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
         {
             if (string.IsNullOrWhiteSpace(endpoint))
             {
-                throw new ArgumentException(string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, nameof(endpoint)));
+                throw new ArgumentException(string.Format(null, ValueCannotBeNullOrWhiteSpaceTemplate, nameof(endpoint)));
             }
 
             return this.InternalPostAsync<TData>(requestData, endpoint);
@@ -109,7 +109,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                     }
                 }
 
-                throw new Exception(errorMessage);
+                throw new HttpRequestException(errorMessage);
             }
         }
 
@@ -123,7 +123,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
             try
             {
-                this.Logger.LogInformation($"Sending {HttpMethod.Post} {requestUrl} to {this.Client.BaseAddress}");
+                this.Logger.LogInformation("Sending {HttpMethod} {RequestUrl} to {BaseAddress}", HttpMethod.Post, requestUrl, this.Client.BaseAddress);
                 var response = await this.Client
                     .PostAsJsonAsync(requestUrl, requestData, cancellationToken: CancellationToken.None)
                     .ConfigureAwait(continueOnCapturedContext: false);
@@ -136,13 +136,13 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 else
                 {
                     externalDataResult.ErrorMessage = await response.Content.ReadAsStringAsync();
-                    this.Logger.LogError(externalDataResult.ErrorMessage);
+                    this.Logger.LogError("Received error in response: {ErrorMessage}", externalDataResult.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
                 externalDataResult.ErrorMessage = ex.InnerException?.Message ?? ex.Message;
-                this.Logger.LogError(externalDataResult.ErrorMessage);
+                this.Logger.LogError("Error has occured while posting: {ErrorMessage}", externalDataResult.ErrorMessage);
             }
 
             return externalDataResult;

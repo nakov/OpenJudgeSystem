@@ -52,7 +52,7 @@
             using var process = Process.Start(processStartInfo);
             if (process == null)
             {
-                throw new Exception($"Could not start process: {fileName}!");
+                throw new InvalidOperationException($"Could not start process: {fileName}!");
             }
 
             var processStartTime = process.StartTime;
@@ -94,13 +94,13 @@
 
             try
             {
-                this.TasksService.Stop(resourceConsumptionSamplingThread);
+                this.TasksService.StopTask(resourceConsumptionSamplingThread);
             }
             catch (AggregateException ex)
             {
                 if (!(ex.InnerException is TaskCanceledException))
                 {
-                    this.logger.LogWarning($"AggregateException caught: {ex.InnerException}");
+                    this.logger.LogWarning(ex.InnerException, "AggregateException caught");
                 }
             }
 
@@ -141,7 +141,7 @@
                 }
                 catch (Exception ex)
                 {
-                    this.logger.LogWarning($"Exception caught while closing the standard input: {ex}");
+                    this.logger.LogWarning(ex, "Exception caught while closing the standard input");
                 }
             }
         }
@@ -163,7 +163,7 @@
             }
             catch (Exception ex)
             {
-                this.logger.LogWarning($"Exception caught while reading the process error output: {ex}");
+                this.logger.LogWarning(ex, "Exception caught while reading the process error output");
                 return $"Error while reading the {outputName} of the underlying process: {ex.Message}";
             }
         }

@@ -32,15 +32,8 @@ public abstract class Compiler : ICompiler
         string additionalArguments,
         bool useInputFileDirectoryAsWorking = false)
     {
-        if (compilerPath == null)
-        {
-            throw new ArgumentNullException(nameof(compilerPath));
-        }
-
-        if (inputFile == null)
-        {
-            throw new ArgumentNullException(nameof(inputFile));
-        }
+        ArgumentNullException.ThrowIfNull(compilerPath);
+        ArgumentNullException.ThrowIfNull(inputFile);
 
         if (!File.Exists(compilerPath))
         {

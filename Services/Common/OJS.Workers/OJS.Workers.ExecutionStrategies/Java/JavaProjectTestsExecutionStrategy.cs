@@ -11,7 +11,6 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -424,8 +423,8 @@ public class _$TestRunner {{
         protected virtual void ExtractUserClassNames(string submissionFilePath)
             => this.UserClassNames.AddRange(
                 FileHelpers.GetFilePathsFromZip(submissionFilePath)
-                    .Where(x => !x.EndsWith("/") && x.EndsWith(javaSourceFileExtension))
-                    .Select(x => x.Contains(".") ? x.Substring(0, x.LastIndexOf(".", StringComparison.Ordinal)) : x)
+                    .Where(x => !x.EndsWith('/') && x.EndsWith(javaSourceFileExtension, StringComparison.OrdinalIgnoreCase))
+                    .Select(x => x.Contains('.') ? x.Substring(0, x.LastIndexOf('.')) : x)
                     .Select(x => x.Replace("/", ".")));
 
         private static string ReadAndValidateLine(StringReader output)
@@ -437,7 +436,7 @@ public class _$TestRunner {{
                 throw new InvalidOperationException("Unexpected end of output. Please verify that all test cases are executed correctly and produce the expected results.");
             }
 
-            if (line.StartsWith(InvalidNumberOfTestCasesPrefix))
+            if (line.StartsWith(InvalidNumberOfTestCasesPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(line);
             }
@@ -460,7 +459,7 @@ public class _$TestRunner {{
             {
                 var line = ReadAndValidateLine(output);
 
-                var firstSpaceIndex = line.IndexOf(" ", StringComparison.Ordinal);
+                var firstSpaceIndex = line.IndexOf(' ');
                 var fileName = line.Substring(0, firstSpaceIndex);
 
                 // Validating that test name is the same as the one from the output

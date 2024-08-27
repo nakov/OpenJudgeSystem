@@ -67,11 +67,12 @@
             }
 
             var errors = result.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error);
-            var errorsString = string.Join(",", errors.Select(x => x.GetMessage()));
+            var errorsString = string.Join(",", errors.Select(x => x.GetMessage(null)));
 
             // TODO: Introduce class CompilerException and throw exception of this type
-            throw new Exception(
+            throw new InvalidOperationException(
                 string.Format(
+                    null,
                     "Could not compile checker!{0}Errors:{0}{1}",
                     Environment.NewLine,
                     errorsString));

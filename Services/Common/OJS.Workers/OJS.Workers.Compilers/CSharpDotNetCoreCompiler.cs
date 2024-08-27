@@ -29,24 +29,24 @@
             var arguments = new StringBuilder();
 
             // Use dotnet.exe to run the csc.dll
-            arguments.Append($"\"{this.cSharpDotNetCoreCompilerPath}\" ");
+            arguments.Append(null, $"\"{this.cSharpDotNetCoreCompilerPath}\" ");
 
             // Give it all System references
             var references = Directory.GetFiles(this.dotNetCoreSharedAssembliesPath)
                 .Where(f => f.Contains("System"))
-                .Where(f => f.EndsWith(Constants.ClassLibraryFileExtension));
+                .Where(f => f.EndsWith(Constants.ClassLibraryFileExtension, StringComparison.InvariantCultureIgnoreCase));
 
             // var references = new List<string> { "System" };
             foreach (var reference in references)
             {
-                arguments.Append($"-r:\"{reference}\" ");
+                arguments.Append(null, $"-r:\"{reference}\" ");
             }
 
             // Output file argument
-            arguments.Append($"/out:\"{outputFile}\" ");
+            arguments.Append(null, $"/out:\"{outputFile}\" ");
 
             // Input file argument
-            arguments.Append($"\"{inputFile}\" ");
+            arguments.Append(null, $"\"{inputFile}\" ");
 
             arguments.Append(additionalArguments);
 

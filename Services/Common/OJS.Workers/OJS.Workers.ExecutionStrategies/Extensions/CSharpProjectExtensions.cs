@@ -80,7 +80,7 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
         {
             foreach (var reference in references)
             {
-                var referenceName = reference.Substring(0, reference.IndexOf(","));
+                var referenceName = reference.Substring(0, reference.IndexOf(','));
                 var existingReference = project.Items.FirstOrDefault(x => x.EvaluatedInclude.Contains(referenceName));
                 if (existingReference != null)
                 {
@@ -96,7 +96,7 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
             var namespaceManager = new XmlNamespaceManager(csprojXml.NameTable);
             namespaceManager.AddNamespace("msns", MicrosoftCsProjXmlNamespace);
 
-            XmlNode rootNode = csprojXml.DocumentElement;
+            XmlElement rootNode = csprojXml.DocumentElement;
             var targetNode = rootNode.SelectSingleNode(xpathExpression, namespaceManager);
             rootNode.RemoveChild(targetNode);
             csprojXml.Save(csprojPath);

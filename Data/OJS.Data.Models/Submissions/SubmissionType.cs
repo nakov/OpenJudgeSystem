@@ -52,8 +52,9 @@ namespace OJS.Data.Models.Submissions
         {
             get
             {
+                char[] separator = [',', ';', ' '];
                 var list =
-                    this.AllowedFileExtensions?.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    this.AllowedFileExtensions?.Split(separator, StringSplitOptions.RemoveEmptyEntries)
                         .Select(x => x.Trim());
                 return list?.ToArray() ?? Enumerable.Empty<string>();
             }

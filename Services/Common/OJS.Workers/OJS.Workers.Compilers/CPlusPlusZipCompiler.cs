@@ -32,7 +32,7 @@
         {
             var arguments = new StringBuilder();
 
-            arguments.Append($"-o \"{outputFile}\"");
+            arguments.Append(null, $"-o \"{outputFile}\"");
             arguments.Append(' ');
 
             arguments.Append(additionalArguments);
@@ -45,12 +45,12 @@
                     "*.*",
                     SearchOption.AllDirectories)
                 .Where(f =>
-                    f.EndsWith(CClassFileExtension) ||
-                    f.EndsWith(CPlusPlusClassFileExtension));
+                    f.EndsWith(CClassFileExtension, StringComparison.InvariantCultureIgnoreCase) ||
+                    f.EndsWith(CPlusPlusClassFileExtension, StringComparison.InvariantCultureIgnoreCase));
 
             foreach (var file in filesToCompile)
             {
-                arguments.Append($"\"{file}\"");
+                arguments.Append(null, $"\"{file}\"");
                 arguments.Append(' ');
             }
 

@@ -15,6 +15,7 @@ using OJS.Workers.ExecutionStrategies.Sql.MySql;
 using OJS.Workers.ExecutionStrategies.Sql.PostgreSql;
 using OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase;
 using System;
+using System.Globalization;
 
 public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvider
 {
@@ -26,7 +27,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         IOptions<ApplicationConfig> appConfigAccessor)
     {
         this.settings = ojsWorkersConfigAccessor.Value;
-        this.submissionProcessorIdentifier = appConfigAccessor.Value.SubmissionsProcessorIdentifierNumber.ToString();
+        this.submissionProcessorIdentifier = appConfigAccessor.Value.SubmissionsProcessorIdentifierNumber.ToString(CultureInfo.InvariantCulture);
     }
 
     public TSettings? GetSettings<TSettings>(IOjsSubmission submission)
@@ -407,8 +408,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.DoNothing => new DoNothingExecutionStrategySettings() as TSettings,
             ExecutionStrategyType.NotFound => throw new ArgumentException(
                 $"Cannot get settings for {ExecutionStrategyType.NotFound} strategy.",
-                nameof(executionStrategyType)),
-            _ => throw new ArgumentOutOfRangeException(nameof(executionStrategyType), executionStrategyType, null),
+                nameof(submission)),
+            _ => throw new ArgumentOutOfRangeException(nameof(submission), executionStrategyType, null),
         };
     }
 

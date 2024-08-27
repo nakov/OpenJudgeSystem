@@ -20,7 +20,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         private readonly string databaseNameForSubmissionProcessor;
         private string workerDbConnectionString;
-        private IDbConnection currentConnection;
+        private NpgsqlConnection currentConnection;
         private bool isDisposed;
 
         protected BasePostgreSqlExecutionStrategy(

@@ -317,8 +317,8 @@ public class ZippedTestsParserService : IZippedTestsParserService
             var inputFile = ZipFile.OpenRead($"{tempDir}\\{input.Name}");
             var outputFile = ZipFile.OpenRead($"{tempDir}\\{output.Name}");
 
-            var inputEntries = inputFile.Entries.Where(x => !x.Name.EndsWith("/"));
-            var outputEntries = outputFile.Entries.Where(x => !x.Name.EndsWith("/"));
+            var inputEntries = inputFile.Entries.Where(x => !x.Name.EndsWith('/'));
+            var outputEntries = outputFile.Entries.Where(x => !x.Name.EndsWith('/'));
 
             foreach (var entry in inputEntries)
             {

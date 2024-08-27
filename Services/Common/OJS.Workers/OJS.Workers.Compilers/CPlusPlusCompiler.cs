@@ -18,11 +18,11 @@
             var arguments = new StringBuilder();
 
             // Input file argument
-            arguments.Append($"\"{inputFile}\"");
+            arguments.Append(null, $"\"{inputFile}\"");
             arguments.Append(' ');
 
             // Output file argument
-            arguments.Append($"-o \"{outputFile}\"");
+            arguments.Append(null, $"-o \"{outputFile}\"");
             arguments.Append(' ');
 
             // Additional compiler arguments

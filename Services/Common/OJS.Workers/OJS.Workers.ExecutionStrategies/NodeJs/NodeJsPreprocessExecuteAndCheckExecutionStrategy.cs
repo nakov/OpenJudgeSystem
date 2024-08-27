@@ -34,26 +34,16 @@
         {
             if (!File.Exists(this.Settings.NodeJsExecutablePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"NodeJS not found in: {this.Settings.NodeJsExecutablePath}",
                     nameof(this.Settings.NodeJsExecutablePath));
             }
 
             if (!Directory.Exists(this.Settings.UnderscoreModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Underscore not found in: {this.Settings.UnderscoreModulePath}",
                     nameof(this.Settings.UnderscoreModulePath));
-            }
-
-            if (this.Settings.BaseTimeUsed < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(this.Settings.BaseTimeUsed));
-            }
-
-            if (this.Settings.BaseMemoryUsed < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(this.Settings.BaseMemoryUsed));
             }
         }
 
@@ -222,7 +212,7 @@ process.stdin.on('end', function() {
             return testResults;
         }
 
-        protected virtual string PreprocessJsSubmission<TInput>(string template, IExecutionContext<TInput> context)
+        protected virtual string PreprocessJsSubmission<TInput>(string codeTemplate, IExecutionContext<TInput> context)
         {
             var problemSkeleton = !string.IsNullOrEmpty((context.Input as SimpleInputModel)?.TaskSkeletonAsString)
                 ? (context.Input as SimpleInputModel)?.TaskSkeletonAsString
@@ -232,7 +222,7 @@ process.stdin.on('end', function() {
 
             var code = context.Code.Trim(';');
 
-            var processedCode = template
+            var processedCode = codeTemplate
                 .Replace(RequiredModules, this.JsCodeRequiredModules)
                 .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                 .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)

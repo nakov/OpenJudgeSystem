@@ -180,7 +180,7 @@ namespace OJS.Services.Common.Data.Implementations
             }
             finally
             {
-                this.db.Database.SetCommandTimeout(originalTimeout);
+                this. db.Database.SetCommandTimeout(   originalTimeout  );
             }
         }
 

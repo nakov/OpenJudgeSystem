@@ -43,12 +43,12 @@
 
             if (processReceivedOutput.Contains(JvmInitializationErrorMessage))
             {
-                throw new Exception(JvmInitializationErrorMessage + errorMessageAppender);
+                throw new InvalidOperationException(JvmInitializationErrorMessage + errorMessageAppender);
             }
 
             if (Regex.IsMatch(processReceivedOutput, JvmThreadInitializationErrorPattern))
             {
-                throw new Exception(JvmThreadInitializationErrorMessage + errorMessageAppender);
+                throw new InvalidOperationException(JvmThreadInitializationErrorMessage + errorMessageAppender);
             }
         }
     }

@@ -326,7 +326,7 @@ namespace OJS.Services.Worker.Business.Implementations
                     break;
                 case ExecutionStrategyType.NotFound:
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(executionStrategy), "Invalid execution strategy type.");
+                    throw new ArgumentOutOfRangeException(nameof(submission), "Invalid execution strategy type.");
             }
 
             return executionStrategy;

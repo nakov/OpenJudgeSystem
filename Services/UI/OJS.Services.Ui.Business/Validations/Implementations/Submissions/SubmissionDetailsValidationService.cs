@@ -8,9 +8,9 @@ using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 public class SubmissionDetailsValidationService : ISubmissionDetailsValidationService
 {
-    public ValidationResult GetValidationResult((SubmissionDetailsServiceModel?, UserInfoModel, bool) validationInput)
+    public ValidationResult GetValidationResult((SubmissionDetailsServiceModel?, UserInfoModel, bool) item)
     {
-        var (submissionDetailsServiceModel, userInfoModel, userIsInRoleForContest) = validationInput;
+        var (submissionDetailsServiceModel, userInfoModel, userIsInRoleForContest) = item;
 
         if (submissionDetailsServiceModel == null)
         {

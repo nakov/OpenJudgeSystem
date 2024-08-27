@@ -14,17 +14,17 @@ using ValidationResult = OJS.Services.Infrastructure.Models.ValidationResult;
 
 public class SubmissionsValidationService : ISubmissionsValidationService
 {
-    public ValidationResult GetValidationResult(SubmissionServiceModel? submission)
+    public ValidationResult GetValidationResult(SubmissionServiceModel? item)
     {
         var validationResults = new List<ValidationResult>
         {
-            IsExecutionTypeValid(submission!.ExecutionType),
-            IsExecutionStrategyTypeNameValid(submission.ExecutionStrategy),
+            IsExecutionTypeValid(item!.ExecutionType),
+            IsExecutionStrategyTypeNameValid(item.ExecutionStrategy),
         };
 
-        if (submission.ExecutionType == ExecutionType.TestsExecution)
+        if (item.ExecutionType == ExecutionType.TestsExecution)
         {
-            ValidateTestsExecution(submission.TestsExecutionDetails!, validationResults);
+            ValidateTestsExecution(item.TestsExecutionDetails!, validationResults);
         }
 
         return CompositeValidationResult.Compose(validationResults);
@@ -32,7 +32,7 @@ public class SubmissionsValidationService : ISubmissionsValidationService
 
     private static void ValidateTestsExecution(
         TestsExecutionDetailsServiceModel? testsExecutionDetails,
-        ICollection<ValidationResult> validationResults)
+        List<ValidationResult> validationResults)
     {
         if (testsExecutionDetails == null)
         {
@@ -65,5 +65,5 @@ public class SubmissionsValidationService : ISubmissionsValidationService
             .All
             .Contains(checkerType.ToLowerInvariant().TrimFromEnd("checker"))
             ? ValidationResult.Valid()
-            : ValidationResult.Invalid(string.Format(CheckerTypeNotValidTemplate, checkerType));
+            : ValidationResult.Invalid(string.Format(null, CheckerTypeNotValidTemplate, checkerType));
 }

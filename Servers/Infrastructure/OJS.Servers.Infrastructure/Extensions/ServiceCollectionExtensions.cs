@@ -343,7 +343,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                                   "Retry attempt #{RetryAttempt}. Operation: Retry_{OperationKey} Outcome: [{ResilienceOutcome}]. Duration: {RetryDuration}ms. Delay: {RetryDelay}ms.",
                                   args.AttemptNumber + 1,
                                   args.Context.Properties.GetValue(new ResiliencePropertyKey<string>(OperationKey), string.Empty),
-                                  args.Outcome.Exception?.Message ?? (args.Outcome.Result ?? "No result."),
+                                  args.Outcome.Exception?.Message ?? args.Outcome.Result ?? "No result.",
                                   args.Duration.Milliseconds,
                                   args.RetryDelay.Milliseconds);
                               return default;

@@ -252,18 +252,18 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
 
     private static void UpdateType(Test entity, TestAdministrationModel model)
     {
-        Enum.TryParse<TestTypeEnum>(model.Type, out var testType);
+        Enum.TryParse<TestType>(model.Type, out var testType);
         switch (testType)
         {
-            case TestTypeEnum.Trial:
+            case TestType.Trial:
                 entity.IsTrialTest = true;
                 entity.IsOpenTest = false;
                 break;
-            case TestTypeEnum.Open:
+            case TestType.Open:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = true;
                 break;
-            case TestTypeEnum.Standard:
+            case TestType.Standard:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = false;
                 break;

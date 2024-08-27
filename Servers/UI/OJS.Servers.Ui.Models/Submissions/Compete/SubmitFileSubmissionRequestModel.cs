@@ -14,7 +14,7 @@ public class SubmitFileSubmissionRequestModel : IMapExplicitly
 
     public int SubmissionTypeId { get; set; }
 
-    public IFormFile? Content { get; set; } = null;
+    public IFormFile? Content { get; set; } = null!;
 
     public bool Official { get; set; }
 

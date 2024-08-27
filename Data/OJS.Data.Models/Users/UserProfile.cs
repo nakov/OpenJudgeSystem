@@ -12,7 +12,7 @@ namespace OJS.Data.Models.Users
         [Required]
         [MaxLength(EmailMaxLength)]
         [MinLength(EmailMinLength)]
-        [RegularExpression(EmailRegEx)]
+        [RegularExpression(EmailRegExpression)]
         [DataType(DataType.EmailAddress)]
         public override string? Email { get; set; } = string.Empty;
 

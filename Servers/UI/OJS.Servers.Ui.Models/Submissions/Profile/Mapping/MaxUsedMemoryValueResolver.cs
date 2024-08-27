@@ -6,8 +6,6 @@
 
     public class MaxUsedMemoryValueResolver : IValueResolver<SubmissionForProfileServiceModel, SubmissionForProfileResponseModel, double>
     {
-        private readonly double defaultValue = 0.0;
-
         public double Resolve(
             SubmissionForProfileServiceModel source,
             SubmissionForProfileResponseModel destination,
@@ -15,6 +13,6 @@
             ResolutionContext context)
             => source.TestRuns.Any()
                 ? source.TestRuns.Max(tr => tr.MemoryUsed)
-                : this.defaultValue;
+                : default;
     }
 }

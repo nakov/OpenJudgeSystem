@@ -18,26 +18,26 @@
         public IQueryable<UserProfile> GetAll()
             => this.GetQuery(u => !u.IsDeleted);
 
-        public async Task<TServiceModel> AddOrUpdate<TServiceModel>(UserProfile user)
+        public async Task<TServiceModel> AddOrUpdate<TServiceModel>(UserProfile userProfile)
         {
             var existingUser = await this
-                .GetByUsername(user.UserName)
+                .GetByUsername(userProfile.UserName)
                 .FirstOrDefaultAsync();
 
             if (existingUser == null)
             {
-                existingUser = user;
+                existingUser = userProfile;
                 await this.Add(existingUser);
             }
             else
             {
-                existingUser.PasswordHash = user.PasswordHash;
-                existingUser.SecurityStamp = user.SecurityStamp;
-                existingUser.Email = user.Email;
-                existingUser.IsDeleted = user.IsDeleted;
-                existingUser.DeletedOn = user.DeletedOn;
-                existingUser.ModifiedOn = user.ModifiedOn;
-                existingUser.UserSettings = user.UserSettings;
+                existingUser.PasswordHash = userProfile.PasswordHash;
+                existingUser.SecurityStamp = userProfile.SecurityStamp;
+                existingUser.Email = userProfile.Email;
+                existingUser.IsDeleted = userProfile.IsDeleted;
+                existingUser.DeletedOn = userProfile.DeletedOn;
+                existingUser.ModifiedOn = userProfile.ModifiedOn;
+                existingUser.UserSettings = userProfile.UserSettings;
 
                 this.Update(existingUser);
             }

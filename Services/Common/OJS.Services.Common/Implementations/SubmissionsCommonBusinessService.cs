@@ -76,7 +76,7 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         catch (Exception ex)
         {
-            this.logger.LogError($"Exception in submitting solution {submission.Id} by {Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.InnerException}");
+            this.logger.LogError(ex, "Exception in submitting solution for submission #{SubmissionId}", submission.Id);
             throw;
         }
     }
@@ -93,7 +93,7 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         catch (Exception ex)
         {
-            this.logger.LogError($"Exception in submitting solution {submissions} by {Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.InnerException}");
+            this.logger.LogError(ex, "Exception in submitting solutions for multiple submissions");
             throw;
         }
     }

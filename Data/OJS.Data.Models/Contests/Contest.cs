@@ -151,7 +151,7 @@ namespace OJS.Data.Models.Contests
             if (contest.StartTime.HasValue && contest.EndTime.HasValue && contest.StartTime.Value > contest.EndTime.Value)
             {
                 validationResults.Add(
-                    new ValidationResult("StartTime can not be after EndTime", new[] { "StartTime", "EndTime" }));
+                    new ValidationResult("StartTime can not be after EndTime", [ "StartTime", "EndTime" ]));
             }
 
             return validationResults;

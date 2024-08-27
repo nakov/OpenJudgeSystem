@@ -13,7 +13,7 @@ public class NotDefaultValueValidationService : INotDefaultValueValidationServic
             ? ValidationResult.Invalid(
                 customErrorMessage
                     ?? (value == null
-                        ? string.Format(CannotBeNullTemplate, valueName)
-                        : string.Format(CannotBeTemplate, valueName, value)))
+                        ? string.Format(null, CannotBeNullTemplate, valueName)
+                        : string.Format(null, CannotBeTemplate, valueName, value)))
             : ValidationResult.Valid();
 }

@@ -93,8 +93,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
                 throw new InvalidProcessExecutionOutputException();
             }
 
-            var failedTestsCount = int.Parse(testsSummaryMatches[testsSummaryMatches.Count - 1].Groups[3].Value);
-            var totalTestsCount = int.Parse(testsSummaryMatches[testsSummaryMatches.Count - 1].Groups[1].Value);
+            var failedTestsCount = int.Parse(testsSummaryMatches[testsSummaryMatches.Count - 1].Groups[3].Value, null);
+            var totalTestsCount = int.Parse(testsSummaryMatches[testsSummaryMatches.Count - 1].Groups[1].Value, null);
             return (totalTestsCount, failedTestsCount);
         }
 
@@ -106,8 +106,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             // preventing the user from tampering with it
             var lastMatch = matches[matches.Count - 1];
 
-            var totalTests = int.Parse(lastMatch.Groups[1].Value);
-            var passedTests = int.Parse(lastMatch.Groups[2].Value);
+            var totalTests = int.Parse(lastMatch.Groups[1].Value, null);
+            var passedTests = int.Parse(lastMatch.Groups[2].Value, null);
 
             return (totalTests, passedTests);
         }
@@ -220,9 +220,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             {
                 var message = TestPassedMessage;
                 var testFile = this.TestNames[testIndex++];
-                if (errorsByFiles.ContainsKey(testFile))
+                if (errorsByFiles.TryGetValue(testFile, out var value))
                 {
-                    message = errorsByFiles[testFile];
+                    message = value;
                 }
 
                 var testResult = CheckAndGetTestResult(test, processExecutionResult, checker, message);
@@ -245,13 +245,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
                 var fileName = error.Groups[2].Value;
                 var output = $"{failedAssert} : {cause}".ToSingleLine();
 
-                if (errorsByFiles.ContainsKey(fileName))
+                if (!errorsByFiles.TryAdd(fileName, output))
                 {
                     errorsByFiles[fileName] += ". " + output;
-                }
-                else
-                {
-                    errorsByFiles.Add(fileName, output);
                 }
             }
 

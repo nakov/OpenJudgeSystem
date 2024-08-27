@@ -17,9 +17,9 @@
 
         protected const string ZippedSubmissionName = "Submission.zip";
 
-#pragma warning disable SA1401
+#pragma warning disable CA1051
         protected readonly IProcessExecutorFactory ProcessExecutorFactory;
-#pragma warning restore SA1401
+#pragma warning restore CA1051
 
         protected BaseCodeExecutionStrategy(
             IOjsSubmission submission,

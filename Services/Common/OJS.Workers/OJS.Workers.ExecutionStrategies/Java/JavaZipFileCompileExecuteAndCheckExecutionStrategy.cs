@@ -29,7 +29,7 @@
         {
             var trimmedAllowedFileExtensions = executionContext.AllowedFileExtensions?.Trim();
 
-            var allowedFileExtensions = (!trimmedAllowedFileExtensions?.StartsWith(".") ?? false)
+            var allowedFileExtensions = (!trimmedAllowedFileExtensions?.StartsWith('.') ?? false)
                 ? $".{trimmedAllowedFileExtensions}"
                 : trimmedAllowedFileExtensions;
 

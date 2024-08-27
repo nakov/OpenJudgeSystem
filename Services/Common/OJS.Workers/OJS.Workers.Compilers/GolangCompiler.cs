@@ -14,7 +14,7 @@
         {
             var arguments = new StringBuilder();
             arguments.Append($"build ");
-            arguments.Append($"\"{inputFile}\" ");
+            arguments.Append(null, $"\"{inputFile}\" ");
             arguments.Append(additionalArguments);
             return arguments.ToString().Trim();
         }

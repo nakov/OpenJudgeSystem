@@ -36,9 +36,9 @@ public class SubmissionResultsServiceModel : IMapExplicitly
             .ForMember(d => d.SubmissionType, opt => opt.MapFrom(s => s.SubmissionType!.Name))
             .ForMember(
                 d => d.MaxMemoryUsed,
-                opt => opt.MapFrom(s => s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.MemoryUsed) : (long?)null))
+                opt => opt.MapFrom(s => s.TestRuns.Count() != 0 ? s.TestRuns.Max(testRun => testRun.MemoryUsed) : (long?)null))
             .ForMember(
                 d => d.MaxTimeUsed,
                 opt => opt.MapFrom(s =>
-                    s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null));
+                    s.TestRuns.Count() != 0 ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null));
 }

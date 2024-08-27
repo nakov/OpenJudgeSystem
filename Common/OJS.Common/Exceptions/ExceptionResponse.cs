@@ -5,7 +5,7 @@ using System.Linq;
 
 public class ExceptionResponse
 {
-    public List<ExceptionResponseModel> Errors { get; set; } = new();
+    public List<ExceptionResponseModel> Errors { get; set; } = [];
 
-    public bool IsValid => !this.Errors.Any();
+    public bool IsValid => this.Errors.Count == 0;
 }

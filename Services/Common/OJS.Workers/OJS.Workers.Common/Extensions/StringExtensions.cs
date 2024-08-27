@@ -1,6 +1,7 @@
 ﻿namespace OJS.Workers.Common.Extensions
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
 
@@ -26,6 +27,7 @@
                     const string ellipsis = "...";
 
                     result = string.Format(
+                        null,
                         "{0}{1}{2}",
                         startIndex > ellipsis.Length ? ellipsis : string.Empty,
                         input.Substring(startIndex, endIndex - startIndex),
@@ -80,7 +82,7 @@
                     str.Select((x, i) => i > 0 && char.IsUpper(x)
                         ? "-" + x
                         : x.ToString()))
-                .ToLower();
+                .ToLower(CultureInfo.InvariantCulture);
 
         public static string TrimFromEnd(this string source, string wordToTrim)
         {

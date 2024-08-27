@@ -26,7 +26,7 @@
             arguments.Append(' ');
 
             // Input file argument
-            arguments.Append($"\"{inputFile}\"");
+            arguments.Append(null, $"\"{inputFile}\"");
 
             return arguments.ToString().Trim();
         }

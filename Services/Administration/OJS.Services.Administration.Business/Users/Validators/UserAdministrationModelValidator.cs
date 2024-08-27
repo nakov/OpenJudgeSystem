@@ -19,7 +19,7 @@ public class UserAdministrationModelValidator : BaseAdministrationModelValidator
 
         this.RuleFor(x => x.Email)
             .Length(EmailMinLength, EmailMaxLength)
-            .Matches(EmailRegEx)
+            .Matches(EmailRegExpression)
             .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(x => x.UserSettings!.FirstName)

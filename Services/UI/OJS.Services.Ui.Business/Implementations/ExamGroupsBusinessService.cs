@@ -152,7 +152,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (examGroup == null)
             {
-                throw new ArgumentNullException(nameof(examGroup), ExamGroupCannotBeNullMessage);
+                throw new ArgumentNullException(nameof(examGroupId), ExamGroupCannotBeNullMessage);
             }
 
             return examGroup;

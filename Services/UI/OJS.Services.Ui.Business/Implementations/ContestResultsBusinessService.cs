@@ -38,7 +38,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         this.participantsDataService = participantsDataService;
     }
 
-    public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool full)
+    public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults)
     {
         var contest = await this.contestsData.GetByIdWithProblems(contestId);
 
@@ -47,7 +47,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             throw new BusinessServiceException("Contest does not exist or is deleted.");
         }
 
-        var validationResult = this.contestResultsValidation.GetValidationResult((contest, full, official));
+        var validationResult = this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
 
         if (!validationResult.IsValid)
         {
@@ -62,7 +62,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             CategoryId = contest.CategoryId.GetValueOrDefault(),
             Official = official,
             IsUserAdminOrLecturer = user.IsAdminOrLecturer,
-            IsFullResults = full,
+            IsFullResults = isFullResults,
             TotalResultsCount = null,
             IsExportResults = false,
             ItemsInPage = official ? this.itemsPerPageCompete : this.itemsPerPagePractice,

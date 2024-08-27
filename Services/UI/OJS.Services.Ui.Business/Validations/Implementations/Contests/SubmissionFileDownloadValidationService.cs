@@ -9,9 +9,9 @@ using OJS.Services.Ui.Models.Submissions;
 
 public class SubmissionFileDownloadValidationService : ISubmissionFileDownloadValidationService
 {
-    public ValidationResult GetValidationResult((SubmissionFileDetailsServiceModel?, UserInfoModel) validationInput)
+    public ValidationResult GetValidationResult((SubmissionFileDetailsServiceModel?, UserInfoModel) item)
     {
-        var (submissionDetailsServiceModel, userInfoModel) = validationInput;
+        var (submissionDetailsServiceModel, userInfoModel) = item;
 
         if (submissionDetailsServiceModel == null)
         {

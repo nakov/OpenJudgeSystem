@@ -26,13 +26,11 @@ namespace OJS.Workers.ExecutionStrategies.Java
         private const string PropertySourcePattern = @"(@PropertySources?\((?:.*?)\))";
         private const string PomXmlNamespace = @"http://maven.apache.org/POM/4.0.0";
         private const string StartClassNodeXPath = @"//pomns:properties/pomns:start-class";
-        private const string MavenTestCommand = "-o test -f {0} -Dtest=\"{1}\"";
+        private readonly CompositeFormat mavenTestCommand = CompositeFormat.Parse("-o test -f {0} -Dtest=\"{1}\"");
         private const string MavenBuild = "-o compile";
         private const string TestsFolderPattern = @"src/test/java/*";
         private const string MainCodeFolderPattern = @"src/main/java/";
-
-        private static readonly string MavenErrorFailurePattern =
-            $@"\[ERROR\]";
+        private const string MavenErrorFailurePattern = $@"\[ERROR\]";
 
         public JavaSpringAndHibernateProjectExecutionStrategy(
             IOjsSubmission submission,
@@ -72,7 +70,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             this.ReplacePom(pomXmlFilePath);
             var mainClassFolderPathInZip = Path.GetDirectoryName(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
-                .FirstOrDefault(f => f.EndsWith(PomXmlFileNameAndExtension)));
+                .FirstOrDefault(f => f.EndsWith(PomXmlFileNameAndExtension, StringComparison.Ordinal)));
 
             FileHelpers.AddFilesToZipArchive(submissionFilePath, mainClassFolderPathInZip, pomXmlFilePath);
             DirectoryHelpers.SafeDeleteDirectory(extractionDirectory, true);
@@ -135,7 +133,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             foreach (var test in executionContext.Input.Tests)
             {
                 var testFile = this.TestNames[testIndex++];
-                mavenArgs = new[] { string.Format(MavenTestCommand, pomXmlPath, testFile) };
+                mavenArgs = new[] { string.Format(null, this.mavenTestCommand, pomXmlPath, testFile) };
 
                 var processExecutionResult = await executor.Execute(
                 this.Settings.MavenPath,
@@ -185,7 +183,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             this.MainClassFileName = this.ExtractEntryPointFromPomXml(submissionFilePath);
 
             this.PackageName = this.MainClassFileName
-                .Substring(0, this.MainClassFileName.LastIndexOf(".", StringComparison.Ordinal));
+                .Substring(0, this.MainClassFileName.LastIndexOf('.'));
 
             var normalizedPath = this.PackageName.Replace(".", "/");
 
@@ -193,7 +191,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             this.ProjectTestDirectoryInSubmissionZip = $"{IntelliJTestProjectTemplatePattern}/{normalizedPath}/";
 
             var fileNameWithoutExtension = this.MainClassFileName.Substring(
-                this.MainClassFileName.LastIndexOf(".", StringComparison.Ordinal) + 1);
+                this.MainClassFileName.LastIndexOf('.') + 1);
 
             this.MainClassFileName = fileNameWithoutExtension + javaSourceFileExtension;
         }
@@ -217,7 +215,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
             var pathsInZip = FileHelpers.GetFilePathsFromZip(submissionZipFilePath);
 
-            var resourceDirectory = Path.GetDirectoryName(pathsInZip.FirstOrDefault(f => f.EndsWith(ApplicationPropertiesFileName)));
+            var resourceDirectory = Path.GetDirectoryName(pathsInZip.FirstOrDefault(f => f.EndsWith(ApplicationPropertiesFileName, StringComparison.Ordinal)));
 
             if (string.IsNullOrEmpty(resourceDirectory))
             {
@@ -249,7 +247,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             File.WriteAllText(mainClassFilePath, mainClassContent);
             var pomXmlFolderPathInZip = Path.GetDirectoryName(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
-                .FirstOrDefault(f => f.EndsWith(this.MainClassFileName)));
+                .FirstOrDefault(f => f.EndsWith(this.MainClassFileName, StringComparison.Ordinal)));
 
             FileHelpers.AddFilesToZipArchive(submissionFilePath, pomXmlFolderPathInZip, mainClassFilePath);
             DirectoryHelpers.SafeDeleteDirectory(extractionDirectory, true);
@@ -287,7 +285,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected override void ExtractUserClassNames(string submissionFilePath) =>
             this.UserClassNames.AddRange(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
-                .Where(x => !x.EndsWith("/") && x.EndsWith(javaSourceFileExtension))
+                .Where(x => !x.EndsWith('/') && x.EndsWith(javaSourceFileExtension, StringComparison.Ordinal))
                 .Select(x => x.Contains(IntelliJProjectTemplatePattern)
                     ? x.Substring(x.LastIndexOf(
                                       IntelliJProjectTemplatePattern,
@@ -295,7 +293,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
                                   + IntelliJProjectTemplatePattern.Length
                                   + 1)
                     : x)
-                .Select(x => x.Contains(".") ? x.Substring(0, x.LastIndexOf(".", StringComparison.Ordinal)) : x)
+                .Select(x => x.Contains('.') ? x.Substring(0, x.LastIndexOf('.')) : x)
                 .Select(x => x.Replace("/", ".")));
 
         private static string GetMavenErrorsComment(string testOutput)
@@ -304,7 +302,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
             foreach (var line in testOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                          .Where(x => x
-                             .StartsWith("[ERROR]") || x.StartsWith("[FAILURE]")))
+                             .StartsWith("[ERROR]", StringComparison.Ordinal) || x.StartsWith("[FAILURE]", StringComparison.Ordinal)))
             {
                 sb.Append("\t" + line);
             }
@@ -329,7 +327,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         {
             var paths = FileHelpers.GetFilePathsFromZip(submissionFilePath).ToList();
 
-            return paths.Any(x => x.StartsWith(MainCodeFolderPattern)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension));
+            return paths.Any(x => x.StartsWith(MainCodeFolderPattern, StringComparison.Ordinal)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension, StringComparison.Ordinal));
         }
 
         private void ReplacePom(string pomXmlFilePath)

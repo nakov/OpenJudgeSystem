@@ -73,11 +73,12 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             IExecutor executor,
             IChecker checker,
             IExecutionResult<TestResult> result,
-            string csProjFilePath,
+            string compiledFile,
             string additionalExecutionArguments)
         {
+            char[] separator = [ ' ' ];
             var additionalExecutionArgumentsArray = additionalExecutionArguments
-                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
             var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
             var testedCodePath = FileHelpers.BuildPath(

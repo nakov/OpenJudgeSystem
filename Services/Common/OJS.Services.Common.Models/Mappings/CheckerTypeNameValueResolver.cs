@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 public class CheckerTypeNameValueResolver : IValueResolver<TestsExecutionDetailsServiceModel, TestsInputModel, string>
 {
-    private readonly IDictionary<string, string> nameToValueMap = new Dictionary<string, string>
+    private readonly Dictionary<string, string> nameToValueMap = new()
     {
         { ServiceConstants.CheckerTypes.Trim, CheckerConstants.TypeNames.Trim },
         { ServiceConstants.CheckerTypes.TrimEnd, CheckerConstants.TypeNames.TrimEnd },
@@ -31,7 +31,8 @@ public class CheckerTypeNameValueResolver : IValueResolver<TestsExecutionDetails
         TestsExecutionDetailsServiceModel source,
         TestsInputModel destination,
         string destMember,
-        ResolutionContext context) => !string.IsNullOrEmpty(source.CheckerType) && this.nameToValueMap.ContainsKey(source.CheckerType)
-        ? this.nameToValueMap[source.CheckerType]
-        : source.CheckerType ?? this.defaultValue;
+        ResolutionContext context)
+        => !string.IsNullOrEmpty(source.CheckerType) && this.nameToValueMap.TryGetValue(source.CheckerType, out var value)
+            ? value
+            : source.CheckerType ?? this.defaultValue;
 }

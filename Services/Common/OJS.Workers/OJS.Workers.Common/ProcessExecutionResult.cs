@@ -20,7 +20,7 @@
 
         public TimeSpan UserProcessorTime { get; set; }
 
-        public bool ProcessWasKilled { get; set; } = false;
+        public bool ProcessWasKilled { get; set; }
 
         public TimeSpan TotalProcessorTime => this.PrivilegedProcessorTime + this.UserProcessorTime;
 

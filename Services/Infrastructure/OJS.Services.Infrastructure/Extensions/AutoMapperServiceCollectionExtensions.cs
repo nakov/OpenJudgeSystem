@@ -22,7 +22,7 @@ public static class AutoMapperServiceCollectionExtensions
     private static IServiceCollection AddAutoMapperConfigurations(this IServiceCollection services, Type programType)
     {
         var assemblyPrefix = programType.GetAssemblyPrefix();
-        var modelsRegexPattern = string.Format(ModelsRegexPatternTemplate, assemblyPrefix);
+        var modelsRegexPattern = string.Format(null, ModelsRegexPatternTemplate, assemblyPrefix);
 
         var mappingAssemblies = programType.Assembly
             .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(modelsRegexPattern)

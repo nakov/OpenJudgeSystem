@@ -41,8 +41,8 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
     {
         var contestIdsKey = CacheKeyGenerator.GenerateKeyForPrimitiveCollection(contestIds);
-        var cacheKey = string.Format(CacheConstants.ParticipantsCountByContestsPage, contestIdsKey, page);
-        return await this.cache.Get(
+        var cacheKey = string.Format(null, CacheConstants.ParticipantsCountByContestsPage, contestIdsKey, page);
+        return await this.cache.GetItem(
             cacheKey,
             async () => await this.GetContestsParticipantsCount(contestIds),
             cacheSeconds);
@@ -51,8 +51,8 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
     public async Task<ContestParticipantsCountCacheModel> GetParticipantsCountForContest(
         int contestId,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
-        => await this.cache.Get(
-            string.Format(CacheConstants.ParticipantsCountByContest, contestId),
+        => await this.cache.GetItem(
+            string.Format(null, CacheConstants.ParticipantsCountByContest, contestId),
             async () => (await this.GetContestsParticipantsCount(new[] { contestId }))[contestId],
             cacheSeconds);
 
@@ -60,8 +60,8 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         int contestId,
         StartContestParticipationServiceModel model,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
-        => await this.cache.Get(
-            string.Format(CacheConstants.ContestDetailsForSubmit, contestId),
+        => await this.cache.GetItem(
+            string.Format(null, CacheConstants.ContestDetailsForSubmit, contestId),
             async () => (await this.GetContestServiceModel(model)),
             cacheSeconds);
 

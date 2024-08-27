@@ -2,7 +2,6 @@
 namespace OJS.Workers.ExecutionStrategies.Python
 {
     using Microsoft.Extensions.Logging;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using OJS.Workers.Common;
@@ -24,7 +23,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         {
             if (!FileHelpers.FileExists(this.Settings.PythonExecutablePath))
             {
-                throw new ArgumentException($"Python not found in: {this.Settings.PythonExecutablePath}", nameof(this.Settings.PythonExecutablePath));
+                throw new FileNotFoundException($"Python not found in: {this.Settings.PythonExecutablePath}", nameof(this.Settings.PythonExecutablePath));
             }
         }
 

@@ -141,7 +141,8 @@ describe('Test {i} ', function(){{
                     var minTestCount = int.Parse(
                         Regex.Match(
                             test.Input,
-                            "<minTestCount>(\\d+)</minTestCount>").Groups[1].Value);
+                            "<minTestCount>(\\d+)</minTestCount>").Groups[1].Value,
+                        null);
                     if (numberOfUserTests < minTestCount)
                     {
                         message = $"Insufficient amount of tests, you have to have at least {minTestCount} tests!";
@@ -193,12 +194,12 @@ describe('Test {i} ', function(){{
             return testResults;
         }
 
-        protected override string PreprocessJsSubmission<TInput>(string template, IExecutionContext<TInput> context)
+        protected override string PreprocessJsSubmission<TInput>(string codeTemplate, IExecutionContext<TInput> context)
         {
             var code = context.Code.Trim(';');
 
             var processedCode =
-                template.Replace(RequiredModules, this.JsCodeRequiredModules)
+                codeTemplate.Replace(RequiredModules, this.JsCodeRequiredModules)
                     .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                     .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)
                     .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)

@@ -14,7 +14,7 @@ public abstract class ValuesMapOrDefaultMemberValueResolver<TSource, TDestinatio
         TSource sourceMember,
         TDestination destMember,
         ResolutionContext context)
-        => this.NameToValueMap.ContainsKey(sourceMember)
-            ? this.NameToValueMap[sourceMember]
+        => this.NameToValueMap.TryGetValue(sourceMember, out TDestination? value)
+            ? value
             : this.DefaultValue;
 }

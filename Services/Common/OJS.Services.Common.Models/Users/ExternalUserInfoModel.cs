@@ -2,6 +2,7 @@ namespace OJS.Services.Common.Models.Users
 {
     using OJS.Data.Models.Users;
     using System;
+    using System.Globalization;
 
     public class ExternalUserInfoModel
     {
@@ -42,7 +43,7 @@ namespace OJS.Services.Common.Models.Users
             {
                 Id = this.Id,
                 UserName = this.UserName,
-                NormalizedUserName = this.UserName.ToUpper(),
+                NormalizedUserName = this.UserName.ToUpper(CultureInfo.InvariantCulture),
                 PasswordHash = this.PasswordHash,
                 SecurityStamp = this.SecurityStamp,
                 Email = this.Email,

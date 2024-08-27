@@ -11,12 +11,13 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
+    using System.Text;
 
     public class PythonUnitTestsExecutionStrategy<TSettings> : PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings>
         where TSettings : PythonUnitTestsExecutionStrategySettings
     {
         private const string ClassNamePlaceholder = "# class_name ";
-        private const string ImportTargetClassRegexPattern = @"^(from\s+{0}\s+import\s.*)|^(import\s+{0}(?=\s|$).*)";
+        private static CompositeFormat ImportTargetClassRegexPattern => CompositeFormat.Parse(@"^(from\s+{0}\s+import\s.*)|^(import\s+{0}(?=\s|$).*)");
 
         private readonly string classNameInSkeletonRegexPattern = $@"{ClassNamePlaceholder}\s*([^\s]+)\s*$";
         private readonly string classNameNotFoundErrorMessage =
@@ -112,7 +113,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         protected override string SaveCodeToTempFile<TInput>(IExecutionContext<TInput> executionContext)
         {
             var className = this.GetTestCodeClassName(executionContext.Input as TestsInputModel);
-            var classImportPattern = string.Format(ImportTargetClassRegexPattern, className);
+            var classImportPattern = string.Format(null, ImportTargetClassRegexPattern, className);
 
             executionContext.Code = Regex.Replace(
                 executionContext.Code,

@@ -39,7 +39,7 @@
             }
         }
 
-        private IExecutionContext<TInput> CreateExecutionContext<TInput>(OjsSubmission<TInput> submission)
+        private ExecutionContext<TInput> CreateExecutionContext<TInput>(OjsSubmission<TInput> submission)
         {
             try
             {

@@ -8,7 +8,7 @@ namespace OJS.Workers.Checkers
     using OJS.Workers.Common;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
-
+    using System.Globalization;
     using static OJS.Workers.Common.Constants;
 
     public abstract class Checker : IChecker
@@ -46,23 +46,23 @@ namespace OJS.Workers.Checkers
 
         protected static void NormalizeEndLines(ref string output)
         {
-            if (!output?.EndsWith("\n") == true)
+            if (!output?.EndsWith('\n') == true)
             {
                 output += "\n";
             }
         }
 
         protected static bool AreEqualExactLines(string userLine, string correctLine)
-            => userLine.Equals(correctLine, StringComparison.InvariantCulture);
+            => userLine.Equals(correctLine, StringComparison.Ordinal);
 
         protected static bool AreEqualTrimmedLines(string userLine, string correctLine)
-            => userLine.Trim().Equals(correctLine.Trim(), StringComparison.InvariantCulture);
+            => userLine.Trim().Equals(correctLine.Trim(), StringComparison.Ordinal);
 
         protected static bool AreEqualEndTrimmedLines(string userLine, string correctLine)
-            => userLine.TrimEnd().Equals(correctLine.TrimEnd(), StringComparison.InvariantCulture);
+            => userLine.TrimEnd().Equals(correctLine.TrimEnd(), StringComparison.Ordinal);
 
         protected static bool AreEqualCaseInsensitiveLines(string userLine, string correctLine)
-            => userLine.ToLower().Equals(correctLine.ToLower(), StringComparison.InvariantCulture);
+            => userLine.ToLower(CultureInfo.InvariantCulture).Equals(correctLine.ToLower(CultureInfo.InvariantCulture), StringComparison.Ordinal);
 
         protected CheckerResult CheckLineByLine(
             string inputData,

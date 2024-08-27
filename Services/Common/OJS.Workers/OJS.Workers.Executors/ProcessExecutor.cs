@@ -9,9 +9,9 @@
 
     public abstract class ProcessExecutor : IExecutor
     {
-#pragma warning disable SA1401
+#pragma warning disable CA1051
         protected readonly ITasksService TasksService;
-#pragma warning restore SA1401
+#pragma warning restore CA1051
 
         private const int TimeIntervalBetweenTwoResourceConsumptionRequests = 10;
 

@@ -3,11 +3,12 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
 {
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
+    using System.Text;
 
     public static class ExecutionResultExtensions
     {
-        private const string ExceededOutputMaxLengthDefaultWarningMessageFormat =
-            "... [Output length exceeds the allowed limit of {0} characters]";
+        private static readonly CompositeFormat ExceededOutputMaxLengthDefaultWarningMessageFormat =
+            CompositeFormat.Parse("... [Output length exceeds the allowed limit of {0} characters]");
 
         public static void LimitLength(this OutputResult result, int lengthLimit, string appendMessage = null)
         {
@@ -19,7 +20,7 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
             appendMessage = result.Output.Length <= lengthLimit
                 ? string.Empty
                 : appendMessage
-                    ?? string.Format(ExceededOutputMaxLengthDefaultWarningMessageFormat, lengthLimit);
+                    ?? string.Format(null, ExceededOutputMaxLengthDefaultWarningMessageFormat, lengthLimit);
 
             result.Output = result.Output.MaxLength(lengthLimit) + appendMessage;
         }

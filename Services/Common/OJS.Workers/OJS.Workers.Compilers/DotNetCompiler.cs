@@ -35,8 +35,8 @@ namespace OJS.Workers.Compilers
 
             var arguments = new StringBuilder();
             arguments.Append("build ");
-            arguments.Append($"-o {compilingDir} ");
-            arguments.Append($"\"{inputFile}\" ");
+            arguments.Append(null, $"-o {compilingDir} ");
+            arguments.Append(null, $"\"{inputFile}\" ");
             arguments.Append(additionalArguments);
             return arguments.ToString().Trim();
         }

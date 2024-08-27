@@ -177,16 +177,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
 
                 var displayShowInput = currentTestRunTest != null
-                                       && (!currentTestRunTest.HideInput
-                                           && ((currentTestRunTest.IsTrialTest
-                                                || currentTestRunTest.IsOpenTest)
-                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+                                       && !currentTestRunTest.HideInput
+                                           && (currentTestRunTest.IsTrialTest
+                                                || currentTestRunTest.IsOpenTest
+                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
                 var showExecutionComment = currentTestRunTest != null
-                                           && (!string.IsNullOrEmpty(tr.ExecutionComment)
+                                           && !string.IsNullOrEmpty(tr.ExecutionComment)
                                                && (currentTestRunTest.IsOpenTest
                                                    || currentTestRunTest.IsTrialTest
-                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
                 if (!showExecutionComment)
                 {
@@ -228,6 +228,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             Content = submissionDetailsServiceModel!.ByteContent,
             MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
             FileName = string.Format(
+                null,
                 GlobalConstants.Submissions.SubmissionDownloadFileName,
                 submissionDetailsServiceModel.Id,
                 submissionDetailsServiceModel.FileExtension),
@@ -283,7 +284,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 var points = 0;
                 if (submissionResult.AllTestRuns != 0)
                 {
-                    points = (submissionResult.CorrectTestRuns * submissionResult.MaxPoints) /
+                    points = submissionResult.CorrectTestRuns * submissionResult.MaxPoints /
                              submissionResult.AllTestRuns;
                 }
 
@@ -292,18 +293,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
                 var participantId = submissionResult.ParticipantId;
 
-                if (!topResults.ContainsKey(participantId) || topResults[participantId].Points < points)
+                if (!topResults.TryGetValue(participantId, out ParticipantScoreModel? value) || value.Points < points)
                 {
                     topResults[participantId] = new ParticipantScoreModel
                     {
                         Points = points, SubmissionId = submission.Id,
                     };
                 }
-                else if (topResults[participantId].Points == points)
+                else if (value.Points == points)
                 {
-                    if (topResults[participantId].SubmissionId < submission.Id)
+                    if (value.SubmissionId < submission.Id)
                     {
-                        topResults[participantId].SubmissionId = submission.Id;
+                        value.SubmissionId = submission.Id;
                     }
                 }
             }
@@ -659,7 +660,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private static void HandleProcessingException(Submission submission, Exception ex, string methodName)
     {
-        submission.ProcessingComment = string.Format(ProcessingException, methodName, ex.Message);
+        submission.ProcessingComment = string.Format(null, ProcessingException, methodName, ex.Message);
         submission.IsCompiledSuccessfully = false;
         submission.CompilerComment = ProcessingExceptionCompilerComment;
         submission.TestRuns = new List<TestRun>();

@@ -20,7 +20,7 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Participant> GetAllByUsername(string username);
 
-        IQueryable<Participant> GetAllByUsernameAndContests(string usernam, IEnumerable<int> contestIds);
+        IQueryable<Participant> GetAllByUsernameAndContests(string username, IEnumerable<int> contestIds);
 
         IQueryable<Participant> GetAllByContest(int contestId);
 

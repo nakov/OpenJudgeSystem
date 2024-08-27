@@ -24,12 +24,14 @@ namespace OJS.Workers.Compilers
 
         public override string GetOutputFileName(string inputFileName) => new FileInfo(inputFileName).DirectoryName;
 
+#pragma warning disable CA1725
         public override string BuildCompilerArguments(string inputFile, string outputDirectory, string additionalArguments)
+#pragma warning restore CA1725
         {
             var arguments = new StringBuilder();
 
             // Output path argument
-            arguments.Append($"-d \"{outputDirectory}\" ");
+            arguments.Append(null, $"-d \"{outputDirectory}\" ");
 
             // Additional compiler arguments
             arguments.Append(additionalArguments);
@@ -42,14 +44,16 @@ namespace OJS.Workers.Compilers
                 Directory.GetFiles(this.CompilationDirectory, JavaSourceFilesSearchPattern, SearchOption.AllDirectories);
             for (var i = 0; i < filesToCompile.Length; i++)
             {
-                arguments.Append($"\"{filesToCompile[i]}\"");
+                arguments.Append(null, $"\"{filesToCompile[i]}\"");
                 arguments.Append(' ');
             }
 
             return arguments.ToString();
         }
 
+#pragma warning disable CA1725
         public override string ChangeOutputFileAfterCompilation(string outputDirectory)
+#pragma warning restore CA1725
         {
             var compiledFiles =
                 Directory.EnumerateFiles(outputDirectory, JavaCompiledFilesSearchPattern, SearchOption.AllDirectories);

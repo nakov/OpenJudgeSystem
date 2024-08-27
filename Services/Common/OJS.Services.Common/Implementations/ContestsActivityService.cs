@@ -176,7 +176,7 @@ public class ContestsActivityService : IContestsActivityService
             : new List<ParticipantForActivityServiceModel>();
     }
 
-    private IContestActivityServiceModel GetContestActivity(
+    private ContestActivityServiceModel GetContestActivity(
         IContestForActivityServiceModel contest,
         IReadOnlyCollection<IParticipantForActivityServiceModel> participants)
     {

@@ -18,11 +18,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
     public class PythonProjectTestsExecutionStrategy<TSettings> : PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings>
         where TSettings : PythonProjectTestsExecutionStrategySettings
     {
-#pragma warning disable SA1306
-#pragma warning disable SA1401
+#pragma warning disable CA1051
         protected string[] TestPaths;
-#pragma warning restore SA1401
-#pragma warning restore SA1306
+#pragma warning restore CA1051
         private const string TestsFolderName = "tests";
 
         public PythonProjectTestsExecutionStrategy(

@@ -69,8 +69,8 @@ public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplici
 
     private static string? MapTestType(bool isTrialTest, bool isOpenTest) =>
         isOpenTest
-            ? TestTypeEnum.Open.ToString()
+            ? TestType.Open.ToString()
             : isTrialTest
-                ? TestTypeEnum.Trial.ToString()
-                : TestTypeEnum.Standard.ToString();
+                ? TestType.Trial.ToString()
+                : TestType.Standard.ToString();
 }

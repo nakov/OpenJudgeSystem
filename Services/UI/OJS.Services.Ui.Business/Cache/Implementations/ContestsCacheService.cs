@@ -25,8 +25,8 @@ public class ContestsCacheService : IContestsCacheService
     public async Task<ContestDetailsServiceModel?> GetContestDetailsServiceModel(
         int contestId,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
-        => await this.cache.Get(
-            string.Format(CacheConstants.ContestDetails, contestId),
+        => await this.cache.GetItem(
+            string.Format(null, CacheConstants.ContestDetails, contestId),
             async () => (await this.GetContestServiceModel(contestId)),
             cacheSeconds);
 

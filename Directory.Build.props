@@ -1,29 +1,12 @@
 <Project>
   <PropertyGroup>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>CA1819, SA1011</NoWarn>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <RepoRoot>$(MsBuildThisFileDirectory)</RepoRoot>
-    <LangVersion>latest</LangVersion>
     <TargetFramework>net8.0</TargetFramework>
-    <CodeAnalysisRuleSet>$(MsBuildThisFileDirectory)Analyzers/rulesets.xml</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="$(MsBuildThisFileDirectory)/Analyzers/stylecop.json" Link="stylecop.json" />
-  </ItemGroup>
-  
-  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <RepoRoot>$(MsBuildThisFileDirectory)</RepoRoot>
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+    <AnalysisLevel>latest-Recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <NoWarn>($NoWarn);SYSLIB1045</NoWarn>
   </PropertyGroup>
-
 </Project>

@@ -24,7 +24,7 @@ namespace OJS.Workers.Executors.Implementations
             return new TaskInfo(task, cancellationToken, interval);
         }
 
-        public void Stop(TaskInfo taskInfo)
+        public void StopTask(TaskInfo taskInfo)
         {
             taskInfo.CancellationToken.Cancel();
             taskInfo.Task.Wait(taskInfo.UpdateTimeInMs);

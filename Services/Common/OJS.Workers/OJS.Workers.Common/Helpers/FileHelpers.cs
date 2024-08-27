@@ -115,7 +115,7 @@
         {
             using (var zip = new ZipFile(pathToArchive))
             {
-                var entryToExtract = zip.Entries.FirstOrDefault(f => f.FileName.EndsWith(fileName));
+                var entryToExtract = zip.Entries.FirstOrDefault(f => f.FileName.EndsWith(fileName, StringComparison.Ordinal));
                 if (entryToExtract == null)
                 {
                     throw new FileNotFoundException($"{fileName} not found in submission!");

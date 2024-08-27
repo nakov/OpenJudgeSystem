@@ -78,15 +78,15 @@ public class ContestResultsValidationService : IContestResultsValidationService
             contest.EndTime.HasValue &&
             contest.EndTime <= this.datesService.GetUtcNow();
 
-        if (isOfficial && (!contestHasStartDateAndEndTimeIsBeforeNow && this.participantsData
+        if (isOfficial && !contestHasStartDateAndEndTimeIsBeforeNow && this.participantsData
                 .GetByContestByUserAndByIsOfficial(contest.Id, user!.Id, isOfficial)
                 .GetAwaiter()
-                .GetResult() == null))
+                .GetResult() == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ResultsNotVisibleForContest);
         }
 
-        if (!isOfficial && (!contestActivity.CanBePracticed && !contestActivity.CanBeCompeted))
+        if (!isOfficial && !contestActivity.CanBePracticed && !contestActivity.CanBeCompeted)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ResultsNotVisibleForContest);
         }

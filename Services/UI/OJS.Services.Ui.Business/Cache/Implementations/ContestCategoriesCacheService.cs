@@ -24,7 +24,7 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         int categoryId,
         int? cacheSeconds)
         => this.GetFromCache(
-            string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId),
+            string.Format(null, CacheConstants.ContestSubCategoriesFormat, categoryId),
             () => this.contestCategoriesBusiness.GetAllSubcategories(categoryId),
             cacheSeconds);
 
@@ -32,7 +32,7 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         int categoryId,
         int? cacheSeconds = CacheConstants.OneDayInSeconds)
         => this.GetFromCache(
-            string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId),
+            string.Format(null, CacheConstants.ContestParentCategoriesFormat, categoryId),
             () => this.contestCategoriesBusiness.GetAllParentCategories(categoryId),
             cacheSeconds);
 
@@ -50,11 +50,11 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
 
     private Task<T> GetFromCache<T>(string cacheId, Func<Task<T>> getValueFunc, int? cacheSeconds)
         => cacheSeconds.HasValue
-            ? this.cache.Get(
+            ? this.cache.GetItem(
                 cacheId,
                 getValueFunc,
                 cacheSeconds.Value)
-            : this.cache.Get(
+            : this.cache.GetItem(
                 cacheId,
                 getValueFunc);
 }

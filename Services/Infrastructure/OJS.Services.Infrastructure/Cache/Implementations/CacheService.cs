@@ -30,7 +30,7 @@ public class CacheService : ICacheService
         this.redisConnection = redisConnection;
     }
 
-    public async Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, DateTime absoluteExpiration)
+    public async Task<T> GetItem<T>(string cacheId, Func<Task<T>> getItemCallback, DateTime absoluteExpiration)
         => await this.resilienceStrategiesService.ExecuteRedisWithCircuitBreaker(
             async (_) =>
             {
@@ -44,13 +44,13 @@ public class CacheService : ICacheService
                 return ParseValue<T>((await this.cache.GetAsync(cacheId))!);
             },
             getItemCallback,
-            string.Format(GetItem, cacheId));
+            string.Format(null, ResilienceStrategyConstants.RedisCircuitBreakerOperations.GetItem, cacheId));
 
-    public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback)
-        => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
+    public Task<T> GetItem<T>(string cacheId, Func<Task<T>> getItemCallback)
+        => this.GetItem(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
 
-    public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds)
-        => this.Get(cacheId, getItemCallback, this.datesService.GetAbsoluteExpirationBySeconds(cacheSeconds));
+    public Task<T> GetItem<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds)
+        => this.GetItem(cacheId, getItemCallback, this.datesService.GetAbsoluteExpirationBySeconds(cacheSeconds));
 
     public async Task Remove(string cacheId)
         => await this.resilienceStrategiesService.ExecuteRedisWithCircuitBreaker(
@@ -62,7 +62,7 @@ public class CacheService : ICacheService
                 return Task.CompletedTask;
             },
             () => Task.FromResult(Task.CompletedTask),
-            string.Format(RemoveItem, cacheId));
+            string.Format(null, RemoveItem, cacheId));
 
     private static T ParseValue<T>(byte[] valueAsByteArray)
         => new StreamReader(new MemoryStream(valueAsByteArray))

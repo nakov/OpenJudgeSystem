@@ -11,7 +11,7 @@ namespace OJS.Workers.Checkers.CSharpCodeCheckers
         : Checker
     {
         private const int CacheSlidingExpirationDays = 7;
-        private readonly ObjectCache cache;
+        private readonly MemoryCache cache;
         private IChecker customChecker;
 
         public CSharpCodeCheckerBase()
@@ -49,7 +49,7 @@ namespace OJS.Workers.Checkers.CSharpCodeCheckers
             }
             else
             {
-                throw new Exception($"Cannot create an instance of type {type.FullName}!");
+                throw new InvalidOperationException($"Cannot create an instance of type {type.FullName}!");
             }
         }
 
@@ -62,13 +62,13 @@ namespace OJS.Workers.Checkers.CSharpCodeCheckers
 
             if (types.Count > 1)
             {
-                throw new Exception("More than one implementation of OJS.Workers.Common.IChecker was found!");
+                throw new InvalidOperationException("More than one implementation of OJS.Workers.Common.IChecker was found!");
             }
 
             var type = types.FirstOrDefault();
             if (type == null)
             {
-                throw new Exception("Implementation of OJS.Workers.Common.IChecker not found!");
+                throw new InvalidOperationException("Implementation of OJS.Workers.Common.IChecker not found!");
             }
 
             return type;

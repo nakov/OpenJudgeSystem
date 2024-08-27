@@ -1,7 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
     using Microsoft.Extensions.Logging;
-    using System;
     using System.Collections.Generic;
     using System.IO;
 
@@ -26,28 +25,28 @@
         {
             if (!File.Exists(this.Settings.MochaModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Mocha not found in: {this.Settings.MochaModulePath}",
                     nameof(this.Settings.MochaModulePath));
             }
 
             if (!Directory.Exists(this.Settings.ChaiModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Chai not found in: {this.Settings.ChaiModulePath}",
                     nameof(this.Settings.ChaiModulePath));
             }
 
             if (!Directory.Exists(this.Settings.SinonModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Sinon not found in: {this.Settings.SinonModulePath}",
                     nameof(this.Settings.SinonModulePath));
             }
 
             if (!Directory.Exists(this.Settings.SinonChaiModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Sinon-chai not found in: {this.Settings.SinonChaiModulePath}",
                     nameof(this.Settings.SinonChaiModulePath));
             }

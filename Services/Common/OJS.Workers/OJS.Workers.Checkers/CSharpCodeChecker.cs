@@ -47,10 +47,10 @@
 
                 foreach (var diagnostic in failures)
                 {
-                    errorsStringBuilder.AppendLine($"{diagnostic.Id}: {diagnostic.GetMessage()}");
+                    errorsStringBuilder.AppendLine(null, $"{diagnostic.Id}: {diagnostic.GetMessage(null)}");
                 }
 
-                throw new Exception(
+                throw new InvalidOperationException(
                     $"Could not compile checker!{Environment.NewLine}Errors:{Environment.NewLine}{errorsStringBuilder}");
             }
 

@@ -128,7 +128,7 @@ namespace OJS.Data.Models.Submissions
         // TODO: Should be moved to a data/business service
         public void CacheTestRuns()
         {
-            if (this.TestRuns.Any())
+            if (this.TestRuns.Count != 0)
             {
                 var result = new StringBuilder();
                 var trialTests = 0;

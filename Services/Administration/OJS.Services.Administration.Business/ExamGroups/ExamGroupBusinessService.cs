@@ -104,7 +104,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
     {
         var usernames = (model.UserNames ?? string.Empty)
             .Split(new[] { ",", " ", Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-            .Where(username => Regex.IsMatch(username, ConstraintConstants.User.UsernameRegEx));
+            .Where(username => Regex.IsMatch(username, ConstraintConstants.User.UsernameRegExpression));
 
         var examGroup = await this.examGroupsDataService.GetByIdWithUsersQuery(model.ExamGroupId).FirstAsync();
 
@@ -116,7 +116,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
             .Except(users.Select(u => u.UserName!), StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        if (externalUsernames.Any())
+        if (externalUsernames.Count != 0)
         {
             this.backgroundJobsService.AddFireAndForgetJob<IExamGroupsBusinessService>(
                 x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames),
@@ -208,7 +208,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
         {
             response = await this.httpClientService.GetAsync<ExternalUserInfoModel>(
                 new { username },
-                string.Format(Urls.GetUserInfoByUsernamePath));
+                Urls.GetUserInfoByUsernamePath);
         }
         else
         {

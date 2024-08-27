@@ -16,10 +16,12 @@
         {
         }
 
+#pragma warning disable CA1725
         public override string BuildCompilerArguments(string inputFolder, string outputDirectory, string additionalArguments)
+#pragma warning restore CA1725
         {
             var arguments = new StringBuilder();
-            arguments.Append($"-d \"{outputDirectory}\" ");
+            arguments.Append(null, $"-d \"{outputDirectory}\" ");
             arguments.Append(additionalArguments);
             arguments.Append(' ');
 
@@ -27,7 +29,7 @@
                 Directory.GetFiles(inputFolder, JavaSourceFilesSearchPattern, SearchOption.AllDirectories);
             for (var i = 0; i < filesToCompile.Length; i++)
             {
-                arguments.Append($"\"{filesToCompile[i]}\"");
+                arguments.Append(null, $"\"{filesToCompile[i]}\"");
                 arguments.Append(' ');
             }
 
@@ -36,19 +38,14 @@
 
         public override CompileResult Compile(
             string compilerPath,
+#pragma warning disable CA1725
             string inputDirectory,
+#pragma warning restore CA1725
             string additionalArguments,
             bool useInputFileDirectoryAsWorking = false)
         {
-            if (compilerPath == null)
-            {
-                throw new ArgumentNullException(nameof(compilerPath));
-            }
-
-            if (inputDirectory == null)
-            {
-                throw new ArgumentNullException(nameof(inputDirectory));
-            }
+            ArgumentNullException.ThrowIfNull(compilerPath);
+            ArgumentNullException.ThrowIfNull(inputDirectory);
 
             if (!File.Exists(compilerPath))
             {

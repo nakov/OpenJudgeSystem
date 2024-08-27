@@ -59,7 +59,7 @@ namespace OJS.Services.Administration.Data.Implementations
         public Task<bool> HasContestsById(int id)
             => this.GetAllVisible()
                 .Where(cc => cc.Id == id)
-                .AnyAsync(cc => cc.Contests.Any());
+                .AnyAsync(cc => cc.Contests.Count() != 0);
 
         public void LoadChildrenRecursively(ContestCategory category)
         {

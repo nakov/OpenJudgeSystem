@@ -12,7 +12,7 @@ namespace OJS.Services.Infrastructure
 
         int GetRandomInteger(int length);
 
-        int GetRandomIntegerFromTo(int from, int to);
+        int GetRandomIntegerFromTo(int fromValue, int toValue);
 
         T GetRandomElement<T>(IEnumerable<T> collection);
     }

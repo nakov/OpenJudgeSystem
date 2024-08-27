@@ -1,6 +1,5 @@
 namespace OJS.Services.Common;
 
-using FluentExtensions.Extensions;
 using Hangfire;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -40,8 +39,7 @@ public class BackgroundJobsHostedService : IHostedService
         }
         catch (Exception e)
         {
-            this.logger.LogError("Exception in BackgroundJobsHostedService");
-            this.logger.LogError(e.GetAllMessages());
+            this.logger.LogError(e, "Exception in BackgroundJobsHostedService");
         }
 
         return Task.CompletedTask;

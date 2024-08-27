@@ -14,7 +14,7 @@ public class FilteringService : IFilteringService
 
     public virtual IQueryable<TModel> ApplyFiltering<TEntity, TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
     {
-        if (!filters.Any())
+        if (filters.Count == 0)
         {
             return query.MapCollection<TModel>();
         }
@@ -70,7 +70,7 @@ public class FilteringService : IFilteringService
         return Expression.Lambda<Func<T, bool>>(expression, parameter);
     }
 
-    private static Expression BuildEnumExpression(string filterValue, Type propertyType, MemberExpression property)
+    private static BinaryExpression BuildEnumExpression(string filterValue, Type propertyType, MemberExpression property)
     {
         if (!Enum.TryParse(propertyType, filterValue, ignoreCase: true, out object? enumValue))
         {
@@ -215,7 +215,7 @@ public class FilteringService : IFilteringService
         return expression;
     }
 
-    private static Expression GetNumberOperation(MemberExpression property,  ConstantExpression constant,  OperatorType operatorType)
+    private static BinaryExpression GetNumberOperation(MemberExpression property,  ConstantExpression constant,  OperatorType operatorType)
     {
         switch (operatorType)
         {
@@ -237,7 +237,7 @@ public class FilteringService : IFilteringService
         }
     }
 
-    private static Expression GetNullableTypesOperation(MemberExpression property,  OperatorType operatorType)
+    private static BinaryExpression GetNullableTypesOperation(MemberExpression property,  OperatorType operatorType)
     {
         switch (operatorType)
             {

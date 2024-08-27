@@ -31,28 +31,28 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         {
             if (!Directory.Exists(this.Settings.JsDomModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"jsDom not found in: {this.Settings.JsDomModulePath}",
                     nameof(this.Settings.JsDomModulePath));
             }
 
             if (!Directory.Exists(this.Settings.JQueryModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"jQuery not found in: {this.Settings.JQueryModulePath}",
                     nameof(this.Settings.JQueryModulePath));
             }
 
             if (!File.Exists(this.Settings.BootstrapModulePath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Bootstrap Module not found in: {this.Settings.BootstrapModulePath}",
                     nameof(this.Settings.BootstrapModulePath));
             }
 
             if (!File.Exists(this.Settings.BootstrapCssPath))
             {
-                throw new ArgumentException(
+                throw new FileNotFoundException(
                     $"Bootstrap CSS not found in: {this.Settings.BootstrapCssPath}",
                     nameof(this.Settings.BootstrapCssPath));
             }
@@ -173,7 +173,7 @@ fs = undefined;";
         }
 
         protected virtual string PreprocessJsSubmission(
-            string template,
+            string codeTemplate,
             IExecutionContext<TestsInputModel> context,
             string pathToFile)
         {
@@ -181,7 +181,7 @@ fs = undefined;";
             userBaseDirectory = FileHelpers.ProcessModulePath(Path.GetDirectoryName(userBaseDirectory));
 
             var processedCode =
-                template.Replace(RequiredModules, this.JsCodeRequiredModules)
+                codeTemplate.Replace(RequiredModules, this.JsCodeRequiredModules)
                     .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                     .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)
                     .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)

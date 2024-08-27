@@ -51,8 +51,8 @@ public class GridDataService<TEntity>
         PaginationRequestModel paginationRequestModel,
         Expression<Func<TEntity, object>> orderBy,
         Expression<Func<TEntity, bool>>? filter = null,
-        bool descending = false)
-        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter, orderBy, descending));
+        bool descendingOrder = false)
+        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter, orderBy, descendingOrder));
 
     public virtual Task<PagedResult<TModel>> GetAllForUser<TModel>(
         PaginationRequestModel paginationRequestModel,
@@ -93,7 +93,7 @@ public class GridDataService<TEntity>
         return this.excelService.ExportResults<TModel?>(new Dictionary<string, IEnumerable<TModel?>> { ["Results"] = results });
     }
 
-    private static IEnumerable<FilteringModel> MapFilterStringToCollection<T>(PaginationRequestModel paginationRequestModel)
+    private static List<FilteringModel> MapFilterStringToCollection<T>(PaginationRequestModel paginationRequestModel)
     {
         var filteringCollection = new List<FilteringModel>();
         if (string.IsNullOrEmpty(paginationRequestModel.Filter))

@@ -159,8 +159,8 @@ public class UsersBusinessService : IUsersBusinessService
         return modelResult;
     }
 
-    public async Task AddOrUpdateUser(UserProfile user)
-        => await this.usersProfileData.AddOrUpdate<UserProfileServiceModel>(user);
+    public async Task AddOrUpdateUser(UserProfile userEntity)
+        => await this.usersProfileData.AddOrUpdate<UserProfileServiceModel>(userEntity);
 
     public bool IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles)
     {

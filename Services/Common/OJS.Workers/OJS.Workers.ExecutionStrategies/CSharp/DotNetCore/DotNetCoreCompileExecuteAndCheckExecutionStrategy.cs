@@ -11,12 +11,13 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
+    using System.Text;
     using static OJS.Workers.Common.Constants;
 
     public class DotNetCoreCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
         where TSettings : DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
     {
-        private const string DotNetCoreCodeStringTemplate = "{0}{1}{2}";
+        private readonly CompositeFormat dotNetCoreCodeStringTemplate = CompositeFormat.Parse("{0}{1}{2}");
 
         public DotNetCoreCompileExecuteAndCheckExecutionStrategy(
             IOjsSubmission submission,
@@ -132,7 +133,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             }
 
             return string.Format(
-                DotNetCoreCodeStringTemplate,
+                null,
+                this.dotNetCoreCodeStringTemplate,
                 string.Join(
                     Environment.NewLine,
                     DotNetSixDefaultUsingNamespaces.Select(

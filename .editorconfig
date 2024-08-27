@@ -1,8 +1,17 @@
 # Suppress: EC114
 root = true
 
+[*]
+indent_style = space
+charset = utf-8
+indent_size = 4
+trim_trailing_whitespace = true
+
 # language conventions
 [*.cs]
+dotnet_analyzer_diagnostic.category-Performance.severity = error
+dotnet_analyzer_diagnostic.category-Security.severity = error
+
 dotnet_style_qualification_for_field                                     = true : error
 dotnet_style_qualification_for_property                                  = true : error
 dotnet_style_qualification_for_method                                    = true : error
@@ -105,9 +114,6 @@ dotnet_naming_rule.everything_else_naming.symbols                        = every
 dotnet_naming_rule.everything_else_naming.style                          = camel_case_style
 dotnet_naming_symbols.everything_else.applicable_kinds                   = field
 dotnet_naming_symbols.everything_else.applicable_accessibilities         = public
-
-# IDE0047: Remove unnecessary parentheses
-dotnet_diagnostic.IDE0047.severity = error
 
 # UDE0001
 dotnet_diagnostic.IDE0001.severity = none

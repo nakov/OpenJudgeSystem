@@ -30,7 +30,7 @@ public static class ExpressionExtensions
     public static Expression<Func<T, bool>> CombineMultiple<T>(
         this ICollection<Expression<Func<T, bool>>> expressions)
     {
-        if (!expressions.Any())
+        if (expressions.Count == 0)
         {
             return ex => true;
         }

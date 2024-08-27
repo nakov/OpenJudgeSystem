@@ -6,6 +6,6 @@ namespace OJS.Workers.Executors
     {
         TaskInfo RunWithInterval(int interval, Action action);
 
-        void Stop(TaskInfo taskInfo);
+        void StopTask(TaskInfo taskInfo);
     }
 }
