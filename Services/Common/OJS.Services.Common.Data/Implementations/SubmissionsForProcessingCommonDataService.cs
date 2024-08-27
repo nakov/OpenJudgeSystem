@@ -2,21 +2,19 @@ namespace OJS.Services.Common.Data.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OJS.Common;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Models.Submissions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class SubmissionsForProcessingCommonDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingCommonDataService
+public class SubmissionsForProcessingCommonDataService(
+    OjsDbContext submissionsForProcessing,
+    ILogger<SubmissionsForProcessingCommonDataService> logger)
+    : DataService<SubmissionForProcessing>(submissionsForProcessing), ISubmissionsForProcessingCommonDataService
 {
-    public SubmissionsForProcessingCommonDataService(OjsDbContext submissionsForProcessing)
-        : base(submissionsForProcessing)
-    {
-    }
-
     public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
         => this.GetQuery(s => s.SubmissionId == submissionId)
             .IgnoreQueryFilters()
@@ -33,6 +31,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
     public async Task<SubmissionForProcessing> Add(int submissionId)
     {
+        logger.LogInformation("Adding submission for processing: {SubmissionId}", submissionId);
+
         var submissionForProcessing = new SubmissionForProcessing
         {
             SubmissionId = submissionId,
@@ -47,7 +47,16 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
     public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
     {
-        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId);
+        var entity = await this.GetBySubmission(submissionId);
+
+        if (entity is null)
+        {
+            entity = await this.Add(submissionId);
+        }
+        else
+        {
+            logger.LogInformation("Updating submission for processing: {SubmissionId}", submissionId);
+        }
 
         entity.Processing = false;
         entity.Processed = false;
@@ -77,6 +86,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
     public async Task RemoveBySubmission(int submissionId)
     {
+        logger.LogInformation("Removing submission for processing: {SubmissionId}", submissionId);
+
         var submissionForProcessing = await this.GetBySubmission(submissionId);
 
         if (submissionForProcessing != null)
@@ -88,6 +99,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
     public void MarkProcessing(SubmissionForProcessing submissionForProcessing)
     {
+        logger.LogInformation("Marking submission for processing: {SubmissionId}", submissionForProcessing.SubmissionId);
+
         submissionForProcessing.Processing = true;
         submissionForProcessing.Processed = false;
 
@@ -105,6 +118,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
     public void MarkProcessed(SubmissionForProcessing submissionForProcessing)
     {
+        logger.LogInformation("Marking submission as processed: {SubmissionId}", submissionForProcessing.SubmissionId);
+
         submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;
 

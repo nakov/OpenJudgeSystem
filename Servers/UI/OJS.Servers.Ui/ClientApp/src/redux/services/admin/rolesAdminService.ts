@@ -4,7 +4,7 @@ import { IFileModel, IGetAllAdminParams, IPagedResultType, IRoleAdministrationMo
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import customBaseQuery from '../../middlewares/customBaseQuery';
 
-export const rolesAdminService = createApi({
+const rolesAdminService = createApi({
     reducerPath: 'roles',
     baseQuery: customBaseQuery('roles'),
     endpoints: (builder) => ({

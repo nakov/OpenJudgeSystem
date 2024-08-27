@@ -6,7 +6,7 @@ import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT,
 import { ITestAdministration, ITestInListData } from '../../../components/administration/tests/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const testsAdminService = createApi({
+const testsAdminService = createApi({
     reducerPath: 'tests',
     baseQuery: getCustomBaseQuery('tests'),
     endpoints: (builder) => ({
@@ -21,9 +21,8 @@ export const testsAdminService = createApi({
                 },
             }),
         }),
-        deleteTest: builder.mutation<string, number >({ query: (id) => ({ url: `/${DELETE_ENDPOINT}/${id}`, method: 'DELETE' }) }),
-        getTestById:
-        builder.query<ITestAdministration, number>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
+        deleteTest: builder.mutation<string, number>({ query: (id) => ({ url: `/${DELETE_ENDPOINT}/${id}`, method: 'DELETE' }) }),
+        getTestById: builder.query<ITestAdministration, number>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
         updateTest: builder.mutation<string, ITestAdministration >({
             query: (test) => ({
                 url: `/${UPDATE_ENDPOINT}`,

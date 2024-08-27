@@ -6,7 +6,7 @@ import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT,
 import { IProblemGroupAdministrationModel } from '../../../components/administration/problem-groups/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const problemGroupsAdminService = createApi({
+const problemGroupsAdminService = createApi({
     reducerPath: 'problemGroups',
     baseQuery: getCustomBaseQuery('problemGroups'),
     endpoints: (builder) => ({
@@ -59,7 +59,6 @@ export const problemGroupsAdminService = createApi({
 });
 
 export const {
-    useGetProblemGroupsForProblemQuery,
     useGetAllAdminProblemGroupsQuery,
     useDeleteProblemGroupMutation,
     useGetProblemGroupByIdQuery,

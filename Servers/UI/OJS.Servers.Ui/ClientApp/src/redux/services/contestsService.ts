@@ -157,11 +157,12 @@ export const contestsService = createApi({
         getContestResults: builder.query<
             IContestResultsType,
             IGetContestResultsParams>({
-                query: ({ id, official, full }) => ({
+                query: ({ id, official, full, page }) => ({
                     url: `/ContestResults/GetResults/${id}`,
                     params: {
                         official,
                         full,
+                        page,
                     },
                 }),
             }),

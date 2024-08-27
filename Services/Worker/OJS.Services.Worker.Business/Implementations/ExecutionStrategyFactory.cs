@@ -192,6 +192,13 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider,
                         this.loggerFactory.CreateLogger<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings>>());
                     break;
+                case ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy:
+                    executionStrategy = new NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings>(
+                        submission,
+                        processExecutorFactory,
+                        this.executionStrategySettingsProvider,
+                        this.loggerFactory.CreateLogger<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings>>());
+                    break;
                 case ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy:
                 case ExecutionStrategyType.NodeJsV20ZipExecuteHtmlAndCssStrategy:
                     executionStrategy = new NodeJsZipExecuteHtmlAndCssStrategy<NodeJsZipExecuteHtmlAndCssStrategySettings>(

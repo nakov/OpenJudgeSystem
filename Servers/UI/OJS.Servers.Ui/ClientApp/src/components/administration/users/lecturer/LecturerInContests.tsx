@@ -180,7 +180,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
               notFilterableGridColumnDef={
             returnLecturerInContestNonFilterableColumns(onRemoveFromRowClicked)
         }
-              specificRowIdName="contestId"
+              specificRowIdName={[ 'contestId' ]}
               legendProps={[ { color: '#FFA1A1', message: CONTEST_IS_DELETED }, { color: '#C0C0C0', message: CONTEST_IS_NOT_VISIBLE } ]}
               modals={[
                   { showModal: showCreateModal, modal: (i) => renderCreateModal(i) },

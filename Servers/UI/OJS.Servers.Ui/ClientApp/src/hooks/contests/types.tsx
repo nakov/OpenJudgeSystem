@@ -1,10 +1,12 @@
+import { IPagedResultType } from '../../common/types';
+
 interface IContestResultsType {
     id: number;
     categoryId: number;
     name: string;
     userIsInRoleForContest: boolean;
     problems: IContestResultsProblemType[];
-    results: IContestResultsParticipationType[];
+    pagedResults: IPagedResultType<IContestResultsParticipationType>;
 }
 
 interface IContestResultsProblemType {

@@ -5,12 +5,17 @@ import { FormControl, FormGroup, FormLabel, IconButton, TextareaAutosize, TextFi
 import { MEMORY_LIMIT, NAME, SOLUTION_SKELETON, TIME_LIMIT } from '../../../../common/labels';
 import { SOLUTION_SKELETON_PLACEHOLDER } from '../../../../common/messages';
 import { IProblemSubmissionType } from '../../../../common/types';
+import {
+    NEW_ADMINISTRATION_PATH,
+    SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH,
+} from '../../../../common/urls/administration-urls';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
+import ViewButton from '../../common/view/ViewButton';
 
 import styles from './ProblemSubmissionTypes.module.scss';
 
 interface IProblemSubmissionTypesProps{
-  onPropChange: Function;
+    onPropChange: Function;
     onStrategyRemoved: Function;
     strategy: IProblemSubmissionType;
 }
@@ -81,6 +86,12 @@ const ProblemSubmissionTypes = (props: IProblemSubmissionTypesProps) => {
                   onChange={(e) => onPropChange(e.target.value, strategy.id, 'memoryLimit')}
                 />
             </FormGroup>
+            <div className={styles.viewButtonWrapper}>
+                <ViewButton
+                  path={`/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH}?submissionTypeIds=${strategy.id}`}
+                  text={`View all documentation for ${strategy.name}`}
+                />
+            </div>
         </FormGroup>
     );
 };

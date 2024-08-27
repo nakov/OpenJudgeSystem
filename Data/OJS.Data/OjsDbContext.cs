@@ -58,6 +58,10 @@ namespace OJS.Data
 
         public DbSet<SubmissionTypeInProblem> SubmissionTypeProblems { get; set; } = null!;
 
+        public DbSet<SubmissionTypeDocument> SubmissionTypeDocuments { get; set; } = null!;
+
+        public DbSet<SubmissionTypeInSubmissionDocument> SubmissionTypesInSubmissionDocuments { get; set; } = null!;
+
         public DbSet<TestRun> TestRuns { get; set; } = null!;
 
         public DbSet<FeedbackReport> FeedbackReports { get; set; } = null!;

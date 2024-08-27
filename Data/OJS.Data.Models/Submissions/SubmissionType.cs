@@ -8,6 +8,7 @@ namespace OJS.Data.Models.Submissions
     using System.Linq;
     using OJS.Workers.Common.Models;
     using OJS.Data.Models.Common;
+    using OJS.Data.Validation;
     using OJS.Workers.Common.Extensions;
     using static OJS.Data.Validation.ConstraintConstants.SubmissionTypes;
 
@@ -46,6 +47,8 @@ namespace OJS.Data.Models.Submissions
         public int? MaxAllowedTimeLimitInMilliseconds { get; set; }
 
         public int? MaxAllowedMemoryLimitInBytes { get; set; }
+
+        public ICollection<SubmissionTypeInSubmissionDocument> SubmissionTypesInSubmissionDocuments { get; set; } = new HashSet<SubmissionTypeInSubmissionDocument>();
 
         [NotMapped]
         public IEnumerable<string> AllowedFileExtensionsList

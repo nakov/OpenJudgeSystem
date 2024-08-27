@@ -9,13 +9,14 @@ using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
+using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,6 +50,23 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
 
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
         await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypesInProblemView>().ToListAsync();
+
+    public async Task<List<SubmissionTypeInDocument>> GetForDocument()
+        => await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypeInDocument>().ToListAsync();
+
+    public async Task<bool> AllExist(IEnumerable<SubmissionTypeInSubmissionDocumentAdministrationModel> submissionTypes)
+    {
+        var idsToCheck = submissionTypes.Select(st => st.SubmissionTypeId).ToHashSet();
+
+        var matchingEntities = await this.submissionTypesDataService
+            .All(st => idsToCheck.Contains(st.Id));
+
+        return matchingEntities.Count() == idsToCheck.Count;
+    }
+
+    public async Task<bool> ExistsById(int submissionTypeId)
+        => await this.submissionTypesDataService
+            .ExistsById(submissionTypeId);
 
     public async Task<string> ReplaceSubmissionType(ReplaceSubmissionTypeServiceModel model)
     {

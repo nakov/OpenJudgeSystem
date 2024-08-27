@@ -33,7 +33,7 @@
     border-bottom: 1px solid colors.$dark-text-color;
 
     .isChild {
-      border-bottom: none;
+      border-bottom: 0 solid transparent;
     }
 
     .categoryListItemContent {
@@ -80,7 +80,7 @@
   }
 
   .childCategoryItem {
-    border-bottom: none;
+    border-bottom: 0 solid transparent;
     justify-content: flex-start;
   }
 

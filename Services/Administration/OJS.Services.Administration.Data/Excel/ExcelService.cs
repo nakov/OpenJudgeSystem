@@ -141,7 +141,7 @@ public class ExcelService : IExcelService
     private static void FillSheetWithParticipantResults(IXLWorksheet sheet, ContestResultsViewModel contestResults)
     {
         var rowNumber = 2;
-        foreach (var result in contestResults.Results)
+        foreach (var result in contestResults.PagedResults.Items)
         {
             var colNumber = 1;
             sheet.Cell(rowNumber, colNumber++).Value = result.ParticipantUsername;

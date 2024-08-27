@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
@@ -33,6 +34,7 @@ using static OJS.Services.Ui.Business.Constants.Comments;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
+    private readonly ILogger<SubmissionsBusinessService> logger;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsCommonDataService submissionsCommonData;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
@@ -56,6 +58,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ITransactionsProvider transactionsProvider;
 
     public SubmissionsBusinessService(
+        ILogger<SubmissionsBusinessService> logger,
         ISubmissionsDataService submissionsData,
         ISubmissionsCommonDataService submissionsCommonData,
         IUsersBusinessService usersBusiness,
@@ -76,6 +79,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IDatesService dates,
         ITransactionsProvider transactionsProvider)
     {
+        this.logger = logger;
         this.submissionsData = submissionsData;
         this.submissionsCommonData = submissionsCommonData;
         this.usersBusiness = usersBusiness;
@@ -561,6 +565,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.submissionsForProcessingData.MarkProcessed(submissionForProcessing);
             await this.submissionsData.SaveChanges();
         });
+
+        this.logger.LogInformation(
+            "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}",
+            submission.Id,
+            submissionForProcessing);
     }
 
     public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page)

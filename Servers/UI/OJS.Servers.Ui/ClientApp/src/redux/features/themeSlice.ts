@@ -23,6 +23,7 @@ export const themeSlice = createSlice({
                 : state.mode = ThemeMode.Light;
         },
         toggleAdministrationThemeMode: (state, action: PayloadAction<ThemeMode>) => {
+            // eslint-disable-next-line no-param-reassign
             state.administrationMode = action.payload;
         },
     },

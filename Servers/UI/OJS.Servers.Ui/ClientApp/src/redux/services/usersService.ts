@@ -9,7 +9,7 @@ interface IGetUserProfileUrlParams {
     username: string;
 }
 
-export const usersService = createApi({
+const usersService = createApi({
     reducerPath: usersServiceName,
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_UI_SERVER_URL}/${defaultPathIdentifier}/`,

@@ -10,7 +10,7 @@ import { IRetestSubmissionUrlParams } from '../../../common/url-types';
 import { EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const submissionsAdminService = createApi({
+const submissionsAdminService = createApi({
     reducerPath: 'submissionsAdminService',
     baseQuery: getCustomBaseQuery('submissions'),
     endpoints: (builder) => ({

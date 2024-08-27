@@ -2,13 +2,12 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 
+import MetaTags from '../../../components/common/MetaTags';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { getPlatformRegisterUrl } from '../../../utils/urls';
-import withTitle from '../../shared/with-title';
 
 const RegisterPage = () => {
-    const { isLoggedIn } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+    const { isLoggedIn } = useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,7 +18,18 @@ const RegisterPage = () => {
         window.location.href = getPlatformRegisterUrl();
     }, [ isLoggedIn, navigate ]);
 
-    return (<div />);
+    return (
+        <>
+            <MetaTags
+              title="Register - SoftUni Judge"
+              description={
+                    'Create your SoftUni Judge account to participate in coding contests, ' +
+                    'submit solutions, and track your progress. Join our community and improve your skills.'
+                }
+            />
+            <div />
+        </>
+    );
 };
 
-export default withTitle(RegisterPage, 'Register');
+export default RegisterPage;
