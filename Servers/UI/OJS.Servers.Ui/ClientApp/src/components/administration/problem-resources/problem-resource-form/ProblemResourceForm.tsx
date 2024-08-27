@@ -73,7 +73,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         error: downloadError,
     } = useDownloadResourceQuery(Number(id), { skip: skipDownload });
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
