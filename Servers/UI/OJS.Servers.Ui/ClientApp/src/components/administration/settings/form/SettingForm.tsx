@@ -6,7 +6,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import isNaN from 'lodash/isNaN';
 
 import { SettingTypeEnums } from '../../../../common/enums';
-import { CREATE, EDIT, ID, NAME, RECORD, TYPE, VALUE } from '../../../../common/labels';
+import { CREATE, EDIT, NAME, RECORD, TYPE, VALUE } from '../../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { ISettingAdministrationModel } from '../../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SETTINGS_PATH } from '../../../../common/urls/administration-urls';
@@ -240,19 +240,6 @@ const SettingForm = (props: ISettingFormProps) => {
             {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Setting administration form</Typography>
             <form className={formStyles.form}>
-                {isEditMode && (
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={ID}
-                      value={setting?.id ?? ''}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      disabled
-                    />
-                </FormControl>
-                )}
-
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"

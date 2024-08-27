@@ -22,7 +22,6 @@ import {
     COMPILER,
     DESCRIPTION,
     EXECUTION_STRATEGY,
-    ID,
     IS_SELECTED, MAX_ALLOWED_MEMORY_LIMIT, MAX_ALLOWED_TIME_LIMIT,
     NAME,
 } from '../../../../common/labels';
@@ -174,16 +173,6 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                         ? currentSubmissionType.name
                         : SUBMISSION_TYPE_FORM_NAME}
                 </Typography>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={ID}
-                      InputLabelProps={{ shrink: true }}
-                      type="number"
-                      value={id ?? 0}
-                      disabled
-                    />
-                </FormControl>
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"

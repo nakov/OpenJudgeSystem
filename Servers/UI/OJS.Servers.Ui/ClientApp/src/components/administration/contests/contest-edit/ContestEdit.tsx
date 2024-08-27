@@ -461,13 +461,6 @@ const ContestEdit = (props:IContestEditProps) => {
                     <Box className={formStyles.fieldBoxElementLeft}>
                         <TextField
                           className={formStyles.inputRow}
-                          label={ID}
-                          variant="standard"
-                          value={contest.id}
-                          disabled
-                        />
-                        <TextField
-                          className={formStyles.inputRow}
                           label={NAME}
                           variant="standard"
                           name="name"

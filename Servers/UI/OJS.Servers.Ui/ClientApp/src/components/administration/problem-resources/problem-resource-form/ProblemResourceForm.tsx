@@ -4,7 +4,7 @@ import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextFiel
 import isNaN from 'lodash/isNaN';
 
 import { ProblemResourceType } from '../../../../common/enums';
-import { ID, LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
+import { LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IProblemResourceAdministrationModel } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
@@ -167,16 +167,6 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                 <Typography variant="h4" className="centralize">
                     Problem Resource Administration Form
                 </Typography>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={ID}
-                      value={id}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      disabled
-                    />
-                </FormControl>
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Box, FormControl, FormGroup, FormLabel, TextareaAutosize, TextField, Typography } from '@mui/material';
 
-import { CLASS_NAME, DESCRIPTION, DLL_FILE, ID, NAME, PARAMETER } from '../../../../common/labels';
+import { CLASS_NAME, DESCRIPTION, DLL_FILE, NAME, PARAMETER } from '../../../../common/labels';
 import { ICheckerAdministrationModel } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
@@ -107,18 +107,6 @@ const CheckerForm = (props: ICheckerFormProps) => {
             <Typography className={formStyles.centralize} variant="h4">Checker administration form</Typography>
             <form className={formStyles.form}>
                 <Box className={formStyles.inputRow}>
-                    <FormGroup className={formStyles.inputRow}>
-                        <FormControl className={formStyles.spacing}>
-                            <TextField
-                              variant="standard"
-                              label={ID}
-                              value={checker?.id}
-                              InputLabelProps={{ shrink: true }}
-                              type="text"
-                              disabled
-                            />
-                        </FormControl>
-                    </FormGroup>
                     <FormGroup className={formStyles.inputRow}>
                         <FormControl className={formStyles.spacing}>
                             <TextField

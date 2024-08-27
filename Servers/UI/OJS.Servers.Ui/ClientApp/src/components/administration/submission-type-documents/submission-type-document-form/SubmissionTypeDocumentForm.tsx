@@ -7,7 +7,7 @@ import { Autocomplete, FormControl, FormGroup, IconButton, TextField, Tooltip, T
 import Quill from 'quill';
 
 import { ThemeMode } from '../../../../common/enums';
-import { ID, ORDER_BY, SUBMISSION_TYPES, TITLE } from '../../../../common/labels';
+import { ORDER_BY, SUBMISSION_TYPES, TITLE } from '../../../../common/labels';
 import { SUBMISSION_TYPE_DOCUMENT_FORM_NAME } from '../../../../common/messages';
 import {
     ISubmissionTypeDocumentAdministrationModel,
@@ -238,16 +238,6 @@ const SubmissionTypeDocumentForm = (props: ISubmissionTypeDocumentFormProps) => 
                 <Typography variant="h3" align="center">
                     {SUBMISSION_TYPE_DOCUMENT_FORM_NAME}
                 </Typography>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={ID}
-                      InputLabelProps={{ shrink: true }}
-                      type="number"
-                      value={id ?? 0}
-                      disabled
-                    />
-                </FormControl>
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { FormControl, TextField, Typography } from '@mui/material';
 
-import { ID, NAME } from '../../../../common/labels';
+import { NAME } from '../../../../common/labels';
 import { IRoleAdministrationModel } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
@@ -105,19 +105,6 @@ const RoleForm = (props: IRoleFormProps) => {
             {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Role administration form</Typography>
             <form className={formStyles.form}>
-                {isEditMode && (
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={ID}
-                      value={role?.id ?? ''}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      disabled
-                    />
-                </FormControl>
-                )}
-
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
