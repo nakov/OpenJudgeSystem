@@ -247,7 +247,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             File.WriteAllText(mainClassFilePath, mainClassContent);
             var pomXmlFolderPathInZip = Path.GetDirectoryName(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
-                .FirstOrDefault(f => f.EndsWith(this.MainClassFileName, StringComparison.Ordinal)));
+                .FirstOrDefault(f => f.EndsWith(this.MainClassFileName)));
 
             FileHelpers.AddFilesToZipArchive(submissionFilePath, pomXmlFolderPathInZip, mainClassFilePath);
             DirectoryHelpers.SafeDeleteDirectory(extractionDirectory, true);

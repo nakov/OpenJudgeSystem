@@ -82,7 +82,7 @@
                     str.Select((x, i) => i > 0 && char.IsUpper(x)
                         ? "-" + x
                         : x.ToString()))
-                .ToLower(CultureInfo.InvariantCulture);
+                .ToLower();
 
         public static string TrimFromEnd(this string source, string wordToTrim)
         {

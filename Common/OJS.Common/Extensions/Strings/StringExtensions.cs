@@ -156,7 +156,7 @@
                 {
                     abbreviation.Append(symbolToAdd);
                     currentWord.Append(whiteSpace);
-                    symbolToAdd = char.ToLower(symbolToAdd, CultureInfo.InvariantCulture);
+                    symbolToAdd = char.ToLower(symbolToAdd);
                 }
                 else if (char.IsLower(symbolToAdd) && inWord)
                 {
