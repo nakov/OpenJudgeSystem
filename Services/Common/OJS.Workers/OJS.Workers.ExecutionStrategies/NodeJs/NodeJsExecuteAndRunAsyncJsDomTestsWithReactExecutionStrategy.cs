@@ -80,7 +80,7 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     code = babel.transform(code, {{plugins: [reactJsxPlugin]}});
     code = code.code;
     code = `let result = ${{code}}\n`;" +
-    NodeJsConstants.UserInputPlaceholder +
+    NodeJsConstants.NodeDisablePlaceholder +
     PreevaluationPlaceholder +
     EvaluationPlaceholder +
     PostevaluationPlaceholder;
@@ -187,7 +187,7 @@ it('Test{testsCount++}', function(done) {{
 
             var processExecutionResult = await executor.Execute(
                 this.Settings.NodeJsExecutablePath,
-                0,
+                executionContext.TimeLimit,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit.ToString(),
                 arguments);
@@ -231,7 +231,7 @@ it('Test{testsCount++}', function(done) {{
                 .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)
                 .Replace(NodeJsConstants.NodeDisablePlaceholder, this.JsNodeDisableCode)
                 .Replace(TestsPlaceholder, this.BuildTests((context.Input as TestsInputModel)?.Tests!))
-                .Replace(NodeJsConstants.NodeDisablePlaceholder, code);
+                .Replace(NodeJsConstants.UserInputPlaceholder, code);
             return processedCode;
         }
     }
