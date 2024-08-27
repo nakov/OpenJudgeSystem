@@ -23,54 +23,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
             ILogger<BaseExecutionStrategy<TSettings>> logger)
             : base(submission, processExecutorFactory, settingsProvider, logger)
         {
-            // if (!File.Exists(sinonJsDomModulePath))
-            // {
-            //     throw new ArgumentException(
-            //         $"SinonPackaged not found in: {sinonJsDomModulePath}",
-            //         nameof(sinonJsDomModulePath));
-            // }
-            //
-            // if (!Directory.Exists(babelCoreModulePath))
-            // {
-            //     throw new ArgumentException(
-            //         $"Babel-Core not found in: {babelCoreModulePath}",
-            //         nameof(babelCoreModulePath));
-            // }
-            //
-            // if (!Directory.Exists(reactJsxPluginPath))
-            // {
-            //     throw new ArgumentException(
-            //         $"React JSX Plugin not found in: {reactJsxPluginPath}",
-            //         nameof(reactJsxPluginPath));
-            // }
-            //
-            // if (!Directory.Exists(reactModulePath))
-            // {
-            //     throw new ArgumentException(
-            //         $"React Module not found in: {reactModulePath}",
-            //         nameof(reactModulePath));
-            // }
-            //
-            // if (!Directory.Exists(reactDomModulePath))
-            // {
-            //     throw new ArgumentException(
-            //         $"ReactDOM Module not found in: {reactDomModulePath}",
-            //         nameof(reactDomModulePath));
-            // }
-            //
-            // if (!Directory.Exists(nodeFetchModulePath))
-            // {
-            //     throw new ArgumentException(
-            //         $"node-fetch Module not found in: {nodeFetchModulePath}",
-            //         nameof(nodeFetchModulePath));
-            // }
-
-            // this.SinonJsDomModulePath = FileHelpers.ProcessModulePath(sinonJsDomModulePath);
-            // this.BabelCoreModulePath = FileHelpers.ProcessModulePath(babelCoreModulePath);
-            // this.ReactJsxPluginPath = FileHelpers.ProcessModulePath(reactJsxPluginPath);
-            // this.ReactModulePath = FileHelpers.ProcessModulePath(reactModulePath);
-            // this.ReactDomModulePath = FileHelpers.ProcessModulePath(reactDomModulePath);
-            // this.NodeFetchModulePath = FileHelpers.ProcessModulePath(nodeFetchModulePath);
         }
 
         protected override string JsCodeTemplate =>
