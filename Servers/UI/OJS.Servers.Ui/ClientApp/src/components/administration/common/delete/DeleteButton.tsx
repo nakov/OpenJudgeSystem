@@ -3,6 +3,7 @@ import { IoMdTrash } from 'react-icons/io';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { DELETE } from '../../../../common/labels';
+import { IMappingEntityId } from '../../../../common/types';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -11,7 +12,7 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 interface IDeleteButtonProps {
     onSuccess?: () => void;
-    id: number | string;
+    id: number | string | IMappingEntityId;
     name: string;
     style?: object;
     text: string;

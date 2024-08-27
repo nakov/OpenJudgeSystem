@@ -60,6 +60,12 @@
             public const int NameMinLength = 1;
         }
 
+        public static class SubmissionTypeDocuments
+        {
+            public const int TitleMaxLength = 100;
+            public const int TitleMinLength = 1;
+        }
+
         public static class Problem
         {
             public const int NameMaxLength = 50;

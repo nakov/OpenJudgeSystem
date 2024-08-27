@@ -10,7 +10,7 @@ type ResultError = {
 }
 
 const errorStatusCodes = [ 400, 401, 403, 422, 500 ];
-const succesfullStatusCodes = [ 200, 204 ];
+const successfulStatusCodes = [ 200, 204 ];
 const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
         credentials: 'include',
@@ -54,6 +54,7 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
             data = errorsArray.data as Array<ExceptionData>;
             data.forEach((x) => {
                 if (!x.message) {
+                    // eslint-disable-next-line no-param-reassign
                     x.message = UNEXPECTED_ERROR_MESSAGE;
                 }
             });
@@ -67,7 +68,7 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
         return { error: data };
     }
 
-    if (response && succesfullStatusCodes.some((status) => status === Number(response!.status))) {
+    if (response && successfulStatusCodes.some((status) => status === Number(response!.status))) {
         const contentType = response.headers.get('Content-Type');
         if (contentType?.includes('text')) {
             return { data: result.error?.data };

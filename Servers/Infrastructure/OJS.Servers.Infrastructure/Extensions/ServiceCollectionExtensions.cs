@@ -65,6 +65,8 @@ namespace OJS.Servers.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+
             services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddConventionServices<TStartup>()

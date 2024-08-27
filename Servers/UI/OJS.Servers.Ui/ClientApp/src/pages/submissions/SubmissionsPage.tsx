@@ -1,12 +1,19 @@
 import React from 'react';
 
+import MetaTags from '../../components/common/MetaTags';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import RecentSubmissions from '../../components/submissions/recent-submissions/RecentSubmissions';
 import { setLayout } from '../shared/set-layout';
-import withTitle from '../shared/with-title';
 
 const SubmissionsPage = () => (
     <>
+        <MetaTags
+          title="Recent Submissions - SoftUni Judge"
+          description={
+                'View the latest coding submissions on SoftUni Judge. Track progress, ' +
+                'analyze recent solutions, and improve your programming skills.'
+            }
+        />
         <PageBreadcrumbs
           keyPrefix="submissions"
           items={[
@@ -21,4 +28,4 @@ const SubmissionsPage = () => (
 
 );
 
-export default setLayout(withTitle(SubmissionsPage, 'Submissions'));
+export default setLayout(SubmissionsPage);

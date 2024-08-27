@@ -127,6 +127,7 @@ interface IGetContestResultsParams {
     id: number;
     official: boolean;
     full: boolean;
+    page: number;
 }
 
 interface IGetSubmissionDetailsByIdUrlParams {
@@ -147,6 +148,10 @@ interface IProblemUrlById {
 }
 
 interface IContestEditUrlParams {
+    id: number;
+}
+
+interface ISubmissionTypeDocumentUrlById {
     id: number;
 }
 
@@ -200,6 +205,7 @@ export type {
     IGetByContestId,
     IProblemUrlById,
     IGetByProblemId,
+    ISubmissionTypeDocumentUrlById,
     IExamGroupUrlParams,
     IUserUrlParams,
     IGetByTestId,

@@ -3,7 +3,7 @@
 
 export const UNEXPECTED_ERROR_MESSAGE = 'Unexpected error. Please contact an administrator.';
 export const SOMETHING_WENT_WRONG_MESSAGE = 'Something went wrong';
-export const DELETE_CONFIRMATION_MESSAGE = 'Are you sure that you want to delete the record.';
+export const DELETE_CONFIRMATION_MESSAGE = 'Are you sure that you want to delete the record?';
 export const CLEAR_SELECTION = 'Clear selection';
 export const UNAUTHORIZED_MESSAGE = 'You do not have a permission to perform this action';
 
@@ -29,5 +29,10 @@ export const SOLUTION_SKELETON_PLACEHOLDER = 'Enter skeleton here....';
 
 // Submission Types
 export const SUBMISSION_TYPE_FORM_NAME = 'Submission type administration form';
+
+// Submission Type Documents
+export const SUBMISSION_TYPE_DOCUMENT_FORM_NAME = 'Submission type document administration form';
+// eslint-disable-next-line max-len
+export const SUBMISSION_TYPE_DOCUMENT_DELETE_CONFIRMATION_MESSAGE = 'If this is the last submission type for this document, the document will also be deleted.';
 
 export const SUBMISSION_TYPE_FILE_EXTENSION_PLACEHOLDER = 'Add file extensions separated by comma';

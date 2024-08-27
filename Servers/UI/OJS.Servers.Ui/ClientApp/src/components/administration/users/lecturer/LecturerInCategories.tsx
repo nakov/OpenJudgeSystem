@@ -157,7 +157,7 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
               notFilterableGridColumnDef={
             returnLecturerInCategoriesNonFilterableColumns(onRemoveFromRowClicked)
         }
-              specificRowIdName="contestCategoryId"
+              specificRowIdName={[ 'contestCategoryId' ]}
               legendProps={[ { color: '#FFA1A1', message: 'Contest category is deleted.' } ]}
               modals={[
                   { showModal: showCreateModal, modal: (i) => renderCreateModal(i) },

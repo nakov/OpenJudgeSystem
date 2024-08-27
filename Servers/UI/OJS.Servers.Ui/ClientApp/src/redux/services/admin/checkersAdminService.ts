@@ -4,7 +4,7 @@ import { ICheckerAdministrationModel, ICheckerInListModel, IFileModel, IGetAllAd
 import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import customBaseQuery from '../../middlewares/customBaseQuery';
 
-export const checkerAdminService = createApi({
+const checkerAdminService = createApi({
     reducerPath: 'checkersAdmin',
     baseQuery: customBaseQuery('checkers'),
     endpoints: (builder) => ({

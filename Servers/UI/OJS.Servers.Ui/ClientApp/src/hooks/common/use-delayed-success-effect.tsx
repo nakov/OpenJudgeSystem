@@ -4,9 +4,10 @@ import { useEffect } from 'react';
 interface IDelayedSuccessEffectParams {
     isSuccess: boolean;
     onSuccess?: Function;
+    timeoutDuration?: number;
 }
 
-const useDelayedSuccessEffect = ({ isSuccess, onSuccess } : IDelayedSuccessEffectParams) => {
+const useDelayedSuccessEffect = ({ isSuccess, onSuccess, timeoutDuration } : IDelayedSuccessEffectParams) => {
     /*
         We want to delay the execution of the 'onSuccess' function,
         because when we call 'onSuccess()' the pop-up will be closed.
@@ -20,7 +21,7 @@ const useDelayedSuccessEffect = ({ isSuccess, onSuccess } : IDelayedSuccessEffec
         if (isSuccess && onSuccess) {
             timeoutId = window.setTimeout(() => {
                 onSuccess();
-            }, 500);
+            }, timeoutDuration ?? 500);
         }
 
         return () => {
@@ -28,7 +29,7 @@ const useDelayedSuccessEffect = ({ isSuccess, onSuccess } : IDelayedSuccessEffec
                 clearTimeout(timeoutId);
             }
         };
-    }, [ isSuccess, onSuccess ]);
+    }, [ isSuccess, onSuccess, timeoutDuration ]);
 };
 
 export default useDelayedSuccessEffect;
