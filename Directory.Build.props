@@ -12,7 +12,6 @@
         <AnalysisLevel>latest-Recommended</AnalysisLevel>
         <AnalysisModeSecurity>All</AnalysisModeSecurity>
         <AnalysisModePerformance>All</AnalysisModePerformance>
-        <AnalysisModeStyle>Recommended</AnalysisModeStyle>
     </PropertyGroup>
 
     <PropertyGroup>
