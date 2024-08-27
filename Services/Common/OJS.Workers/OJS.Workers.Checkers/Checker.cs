@@ -53,16 +53,16 @@ namespace OJS.Workers.Checkers
         }
 
         protected static bool AreEqualExactLines(string userLine, string correctLine)
-            => userLine.Equals(correctLine, StringComparison.Ordinal);
+            => userLine.Equals(correctLine, StringComparison.InvariantCulture);
 
         protected static bool AreEqualTrimmedLines(string userLine, string correctLine)
-            => userLine.Trim().Equals(correctLine.Trim(), StringComparison.Ordinal);
+            => userLine.Trim().Equals(correctLine.Trim(), StringComparison.InvariantCulture);
 
         protected static bool AreEqualEndTrimmedLines(string userLine, string correctLine)
-            => userLine.TrimEnd().Equals(correctLine.TrimEnd(), StringComparison.Ordinal);
+            => userLine.TrimEnd().Equals(correctLine.TrimEnd(), StringComparison.InvariantCulture);
 
         protected static bool AreEqualCaseInsensitiveLines(string userLine, string correctLine)
-            => userLine.ToLower(CultureInfo.InvariantCulture).Equals(correctLine.ToLower(CultureInfo.InvariantCulture), StringComparison.Ordinal);
+            => userLine.ToLower().Equals(correctLine.ToLower(), StringComparison.InvariantCulture);
 
         protected CheckerResult CheckLineByLine(
             string inputData,

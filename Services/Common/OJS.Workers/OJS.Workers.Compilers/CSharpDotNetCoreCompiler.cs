@@ -34,7 +34,7 @@
             // Give it all System references
             var references = Directory.GetFiles(this.dotNetCoreSharedAssembliesPath)
                 .Where(f => f.Contains("System"))
-                .Where(f => f.EndsWith(Constants.ClassLibraryFileExtension, StringComparison.InvariantCultureIgnoreCase));
+                .Where(f => f.EndsWith(Constants.ClassLibraryFileExtension));
 
             // var references = new List<string> { "System" };
             foreach (var reference in references)

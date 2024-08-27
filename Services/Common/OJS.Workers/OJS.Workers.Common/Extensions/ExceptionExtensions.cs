@@ -34,9 +34,7 @@ public static class ExceptionExtensions
 
     public static Exception AddErrorCode(this Exception exception)
     {
-#pragma warning disable CA5350
         var hash = SHA1.HashData(Encoding.UTF8.GetBytes(exception.ToString()));
-#pragma warning restore CA5350
         var errorCode = string.Concat(hash[..5].Select(b => b.ToString("x", CultureInfo.InvariantCulture)));
         exception.Data[ErrorCodeKey] = errorCode;
         return exception;

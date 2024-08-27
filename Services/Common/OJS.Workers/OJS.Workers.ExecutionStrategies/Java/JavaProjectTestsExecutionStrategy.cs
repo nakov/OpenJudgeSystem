@@ -423,7 +423,7 @@ public class _$TestRunner {{
         protected virtual void ExtractUserClassNames(string submissionFilePath)
             => this.UserClassNames.AddRange(
                 FileHelpers.GetFilePathsFromZip(submissionFilePath)
-                    .Where(x => !x.EndsWith('/') && x.EndsWith(javaSourceFileExtension, StringComparison.OrdinalIgnoreCase))
+                    .Where(x => !x.EndsWith('/') && x.EndsWith(javaSourceFileExtension))
                     .Select(x => x.Contains('.') ? x.Substring(0, x.LastIndexOf('.')) : x)
                     .Select(x => x.Replace("/", ".")));
 

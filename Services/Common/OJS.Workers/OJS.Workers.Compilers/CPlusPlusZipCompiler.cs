@@ -45,8 +45,8 @@
                     "*.*",
                     SearchOption.AllDirectories)
                 .Where(f =>
-                    f.EndsWith(CClassFileExtension, StringComparison.InvariantCultureIgnoreCase) ||
-                    f.EndsWith(CPlusPlusClassFileExtension, StringComparison.InvariantCultureIgnoreCase));
+                    f.EndsWith(CClassFileExtension) ||
+                    f.EndsWith(CPlusPlusClassFileExtension));
 
             foreach (var file in filesToCompile)
             {

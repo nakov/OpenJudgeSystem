@@ -51,7 +51,7 @@
         public Task<bool> HasContestsById(int id)
             => this.GetAllVisible()
                 .Where(cc => cc.Id == id)
-                .AnyAsync(cc => cc.Contests.AsQueryable().Any());
+                .AnyAsync(cc => cc.Contests.Any());
 
         public IQueryable<ContestCategory> GetAllVisibleOrdered() =>
             this.GetQuery(cc => cc.IsVisible)

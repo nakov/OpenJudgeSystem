@@ -9,9 +9,7 @@
 
         public T? Data { get; private set; }
 
-#pragma warning disable CA1000
         public static new ServiceResult<T> Success(T data)
-#pragma warning restore CA1000
             => new(null)
             {
                 Data = data,

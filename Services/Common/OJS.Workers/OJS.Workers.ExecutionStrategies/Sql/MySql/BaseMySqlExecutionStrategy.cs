@@ -80,7 +80,7 @@
             if (!result.IsCompiledSuccessfully &&
                 (result.CompilerComment
                     ?.Trim()
-                    .Equals(concurrencyExceptionMessage, StringComparison.OrdinalIgnoreCase) ?? false))
+                    .Equals(concurrencyExceptionMessage, StringComparison.InvariantCultureIgnoreCase) ?? false))
             {
                 result.CompilerComment = "Please, re-submit your solution. If the problem persists, contact an administrator.";
             }
