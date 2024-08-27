@@ -1,12 +1,21 @@
 <Project>
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <RepoRoot>$(MsBuildThisFileDirectory)</RepoRoot>
-    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-    <AnalysisLevel>latest-Recommended</AnalysisLevel>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <NoWarn>($NoWarn);SYSLIB1045</NoWarn>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <RepoRoot>$(MsBuildThisFileDirectory)</RepoRoot>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AnalysisLevel>latest-Recommended</AnalysisLevel>
+        <AnalysisModeSecurity>All</AnalysisModeSecurity>
+        <AnalysisModePerformance>All</AnalysisModePerformance>
+        <AnalysisModeStyle>Recommended</AnalysisModeStyle>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <NoWarn>($NoWarn);SYSLIB1045</NoWarn>
+    </PropertyGroup>
 </Project>

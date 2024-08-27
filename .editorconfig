@@ -9,9 +9,6 @@ trim_trailing_whitespace = true
 
 # language conventions
 [*.cs]
-dotnet_analyzer_diagnostic.category-Performance.severity = error
-dotnet_analyzer_diagnostic.category-Security.severity = error
-
 dotnet_style_qualification_for_field                                     = true : error
 dotnet_style_qualification_for_property                                  = true : error
 dotnet_style_qualification_for_method                                    = true : error
@@ -23,6 +20,9 @@ dotnet_style_parentheses_in_arithmetic_binary_operators                  = alway
 dotnet_style_parentheses_in_relational_binary_operators                  = always_for_clarity : warning
 dotnet_style_parentheses_in_other_operators                              = never_if_unnecessary : suggestion
 
+csharp_style_namespace_declarations                                      = file_scoped: suggestion
+csharp_style_prefer_primary_constructors                                 = true : suggestion
+
 dotnet_style_prefer_conditional_expression_over_assignment               = true : suggestion
 dotnet_style_prefer_conditional_expression_over_return                   = true : suggestion
 dotnet_style_coalesce_expression                                         = true : suggestion
@@ -30,6 +30,7 @@ dotnet_style_null_propagation                                            = true 
 
 csharp_style_var_for_built_in_types                                      = true : suggestion
 csharp_style_var_when_type_is_apparent                                   = true : suggestion
+csharp_style_var_elsewhere                                               = true : suggestion
 
 csharp_style_expression_bodied_methods                                   = when_on_single_line : error
 csharp_style_expression_bodied_constructors                              = when_on_single_line : error
@@ -117,4 +118,5 @@ dotnet_naming_symbols.everything_else.applicable_accessibilities         = publi
 
 # UDE0001
 dotnet_diagnostic.IDE0001.severity = none
+dotnet_diagnostic.IDE0065.severity = none # 'using' directive placement
 
