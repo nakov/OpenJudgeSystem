@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
@@ -11,7 +12,7 @@ public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, 
 {
     public string Name { get; set; } = string.Empty;
 
-    public string? Type { get; set; }
+    public ProblemResourceType? Type { get; set; }
 
     public IFormFile? File { get; set; }
 
@@ -47,6 +48,19 @@ public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, 
             .ForMember(pr => pr.ModifiedOn, opt
                 => opt.Ignore())
             .ForMember(pr => pr.Problem, opt
-                => opt.Ignore());
+                => opt.Ignore())
+            .AfterMap((pram, pr) =>
+            {
+                /*
+                 * AutoMapper cannot automatically map the File property to null
+                 * when it's an empty byte array. Therefore, we explicitly check
+                 * after the mapping process if the File is either null or an empty
+                 * array, and if so, we set it to null manually.
+                 */
+                if (pram.File == null || pram.File.Length == 0)
+                {
+                    pr.File = null;
+                }
+            });
     }
 }

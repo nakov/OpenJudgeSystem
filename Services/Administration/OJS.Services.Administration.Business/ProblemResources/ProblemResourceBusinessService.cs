@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Common;
+using OJS.Common.Extensions;
 using System.Linq;
 
 public class ProblemResourceBusinessService : AdministrationOperationService<ProblemResource, int, ProblemResourceAdministrationModel>, IProblemResourcesBusinessService
@@ -47,12 +48,37 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
             .Include(pr => pr.Problem)
             .FirstOrDefaultAsync();
 
+        var areFileAndLinkNull = model is { File: null, Link: null };
+
+        if (resource is { File: null } && areFileAndLinkNull)
+        {
+            // This will be valid when we want to switch from a link to a file-based resource.
+            throw new BusinessServiceException("The file cannot be empty.");
+        }
+
+        // Get the value before mapping from the model.
+        var shouldKeepFile = resource is { File: not null } && areFileAndLinkNull;
+
         if (resource is null)
         {
-            throw new BusinessServiceException($"Resource with id {model.Id} not found");
+            throw new BusinessServiceException($"Resource with id {model.Id} not found.");
         }
 
         resource.MapFrom(model);
+
+        /*
+        * When updating a problem resource, the file is not sent from the frontend to avoid unnecessary data transfer
+        * and complex comparisons. If a file already exists on the backend and the current problem resource type
+        * is not 'Link' (i.e., we're not switching from a file-based resource to a link), we want to retain the file
+        * and avoid deleting or nullifying it.
+        */
+        if (shouldKeepFile)
+        {
+            var entry = this.problemResourcesDataService.GetEntry(resource);
+
+            entry.Property(pr => pr.File).IsModified = false;
+            entry.Property(pr => pr.FileExtension).IsModified = false;
+        }
 
         if (model.File != null)
         {
@@ -86,5 +112,19 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
     }
 
     private static void AssignFileExtension(ProblemResource resource, string fileName)
-        => resource!.FileExtension = fileName.Substring(fileName.LastIndexOf('.') + 1);
+    {
+        if (string.IsNullOrWhiteSpace(fileName) || !fileName.Contains('.'))
+        {
+            throw new BusinessServiceException("Invalid file name or no extension found.", nameof(fileName));
+        }
+
+        var extension = fileName.Substring(fileName.LastIndexOf('.') + 1);
+
+        if (string.IsNullOrWhiteSpace(extension) || !extension.All(char.IsLetterOrDigit))
+        {
+            throw new BusinessServiceException("Invalid file extension.", nameof(fileName));
+        }
+
+        resource!.FileExtension = extension;
+    }
 }

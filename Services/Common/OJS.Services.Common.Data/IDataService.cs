@@ -1,5 +1,6 @@
 namespace OJS.Services.Common.Data
 {
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
     using OJS.Services.Common.Models.Users;
     using OJS.Data.Models.Common;
     using OJS.Services.Infrastructure;
@@ -25,6 +26,8 @@ namespace OJS.Services.Common.Data
         Task DeleteById(object id);
 
         void Detach(TEntity entity);
+
+        public EntityEntry<TEntity> GetEntry(TEntity entity);
 
         void DeleteMany(IEnumerable<TEntity> entities);
 
