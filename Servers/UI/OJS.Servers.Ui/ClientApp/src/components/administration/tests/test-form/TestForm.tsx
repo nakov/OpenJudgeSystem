@@ -5,7 +5,6 @@ import isNaN from 'lodash/isNaN';
 
 import {
     HIDE_INPUT,
-    ID,
     INPUT,
     ORDER_BY_DECIMAL,
     OUTPUT,
@@ -112,16 +111,6 @@ const TestForm = (props: ITestFormProps) => {
             <form className={formStyles.form}>
                 <Box className={formStyles.inputRow}>
                     <FormGroup className={formStyles.inputRow}>
-                        <FormControl className={formStyles.spacing}>
-                            <TextField
-                              variant="standard"
-                              label={ID}
-                              value={test?.id}
-                              InputLabelProps={{ shrink: true }}
-                              type="text"
-                              disabled
-                            />
-                        </FormControl>
                         <FormControl className={formStyles.spacing}>
                             <TextField
                               variant="standard"

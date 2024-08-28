@@ -58,6 +58,7 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
                   showDiffOnly
                   renderContent={highlightSyntax}
                   useDarkTheme={isDarkMode}
+                  styles={{ line: { wordBreak: 'break-all' } }}
                 />
             </div>
         </>
