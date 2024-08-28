@@ -63,7 +63,7 @@ const TestForm = (props: ITestFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [

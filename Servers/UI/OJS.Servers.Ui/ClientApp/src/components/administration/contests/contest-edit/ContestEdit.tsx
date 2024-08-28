@@ -183,7 +183,7 @@ const ContestEdit = (props:IContestEditProps) => {
         clearFlags: [ isCreating, isUpdating ],
     });
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useEffect(
         () => {

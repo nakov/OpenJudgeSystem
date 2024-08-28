@@ -73,7 +73,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [

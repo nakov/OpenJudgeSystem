@@ -106,7 +106,7 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
