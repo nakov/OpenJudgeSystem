@@ -27,7 +27,7 @@ namespace OJS.Services.Common.Data
 
         void Detach(TEntity entity);
 
-        public EntityEntry<TEntity> GetEntry(TEntity entity);
+        EntityEntry<TEntity> GetEntry(TEntity entity);
 
         void DeleteMany(IEnumerable<TEntity> entities);
 

@@ -50,6 +50,11 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
         var areFileAndLinkNull = model is { File: null, Link: null };
 
+        if (resource is null)
+        {
+            throw new BusinessServiceException($"Resource with id {model.Id} not found.");
+        }
+
         if (resource is { File: null } && areFileAndLinkNull)
         {
             // This will be valid when we want to switch from a link to a file-based resource.
@@ -58,11 +63,6 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
         // Get the value before mapping from the model.
         var shouldKeepFile = resource is { File: not null } && areFileAndLinkNull;
-
-        if (resource is null)
-        {
-            throw new BusinessServiceException($"Resource with id {model.Id} not found.");
-        }
 
         resource.MapFrom(model);
 
