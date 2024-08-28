@@ -162,7 +162,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                                       createdOn: false,
                                       modifiedOn: false,
                                       ...filterableGridColumnDef.reduce((acc, column) => {
-                                          if (/\b(id|(?:\S+\s+id))\b/i.test(column.headerName)) {
+                                          if (/\b(id|(?:\S+\s+id))\b/i.test(column.headerName ?? '')) {
                                               acc[column.field] = false;
                                           }
                                           return acc;
