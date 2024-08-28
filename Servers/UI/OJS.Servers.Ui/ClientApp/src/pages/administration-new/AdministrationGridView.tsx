@@ -37,6 +37,10 @@ interface IAdministrationGridViewProps<T> {
     defaultSorter?: string;
 }
 
+interface IVisibleColumns {
+    [key: string]: boolean;
+}
+
 const defaultFilterToAdd = 'isdeleted~equals~false';
 const defaultSorterToAdd = 'id=DESC';
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -128,6 +132,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
             setQueryParams({ ...queryParams, page: model.page + 1, itemsPerPage: model.pageSize });
         }
     };
+
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div>
@@ -156,6 +161,12 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                                       isVisible: false,
                                       createdOn: false,
                                       modifiedOn: false,
+                                      ...filterableGridColumnDef.reduce((acc, column) => {
+                                          if (/\b(id|(?:\S+\s+id))\b/i.test(column.headerName)) {
+                                              acc[column.field] = false;
+                                          }
+                                          return acc;
+                                      }, {} as IVisibleColumns),
                                   },
                               },
                               pagination: {
