@@ -136,6 +136,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                         <ProblemForm
                           problemId={problemId}
                           contestType={null}
+                          onSuccess={onProblemCreate}
+                          setParentSuccessMessage={setSuccessMessage}
                         />
                     )}
             </AdministrationModal>

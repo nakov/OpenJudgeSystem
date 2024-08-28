@@ -42,7 +42,11 @@ const AdministrationUser = () => {
     };
 
     const renderForm = () => (
-        <UserForm id={userId} providedUser={user} onSuccessfullyUpdated={refetch} />
+        <UserForm
+          id={userId}
+          providedUser={user}
+          onSuccess={refetch}
+        />
     );
 
     const renderProblemsInContestView = (key:string) => (

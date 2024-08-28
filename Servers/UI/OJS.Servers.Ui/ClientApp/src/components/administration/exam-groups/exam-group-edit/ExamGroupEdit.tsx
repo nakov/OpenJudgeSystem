@@ -77,7 +77,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
             isLoading: isCreating,
         } ] = useCreateExamGroupMutation();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [

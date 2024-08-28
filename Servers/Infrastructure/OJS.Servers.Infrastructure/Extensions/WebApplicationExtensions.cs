@@ -7,10 +7,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
     using OJS.Common;
     using OJS.Servers.Infrastructure.Filters;
-    using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Infrastructure;
     using static OJS.Common.GlobalConstants.Urls;
     using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
@@ -19,7 +17,9 @@ namespace OJS.Servers.Infrastructure.Extensions
     {
         public static WebApplication UseDefaults(this WebApplication app)
         {
-            app.UseCustomExceptionHandling();
+            // Exception is handled in the exception handler, configured in services.
+            // Passing empty lambda as a workaround suggested here: https://github.com/dotnet/aspnetcore/issues/51888
+            app.UseExceptionHandler(_ => { });
 
             app.UseAutoMapper();
 
@@ -57,20 +57,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             {
                 options.SwaggerEndpoint($"/swagger/{name}/swagger.json", name);
             });
-
-            return app;
-        }
-
-        public static WebApplication UseCustomExceptionHandling(this WebApplication app)
-        {
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler(errorApp => errorApp.Run(new DevelopmentExceptionMiddleware().Get));
-            }
-            else
-            {
-                app.UseExceptionHandler(errorApp => errorApp.Run(new Rfc7807ExceptionMiddleware().Get));
-            }
 
             return app;
         }

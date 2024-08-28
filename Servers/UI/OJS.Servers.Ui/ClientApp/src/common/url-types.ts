@@ -127,6 +127,7 @@ interface IGetContestResultsParams {
     id: number;
     official: boolean;
     full: boolean;
+    page: number;
 }
 
 interface IGetSubmissionDetailsByIdUrlParams {
