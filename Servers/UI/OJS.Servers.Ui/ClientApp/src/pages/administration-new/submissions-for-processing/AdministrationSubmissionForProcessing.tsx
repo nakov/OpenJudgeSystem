@@ -46,7 +46,7 @@ const AdministrationSubmissionForProcessing = () => {
                     />
                     <TextField
                       className={styles.inputRow}
-                      label="Submission ID"
+                      label="Submission Id"
                       variant="standard"
                       value={submission.submissionId}
                       disabled

@@ -37,7 +37,7 @@ const dataColumns: GridColDef[] = [
     },
     {
         field: 'submissionId',
-        headerName: 'Submission ID',
+        headerName: 'Submission Id',
         align: 'center',
         headerAlign: 'center',
         type: 'number',
