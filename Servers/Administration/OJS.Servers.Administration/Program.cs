@@ -15,7 +15,7 @@ internal class Program
 
         var app = builder.Build();
 
-        app.ConfigureWebApplication();
+        app.ConfigureWebApplication(builder.Configuration);
         app.Run();
     }
 }
