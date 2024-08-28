@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 
+import useScrollToTab from '../../../hooks/common/use-scroll-to-tab';
 import { useGetContestActivityQuery } from '../../../redux/services/admin/contestsAdminService';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
@@ -15,7 +16,7 @@ enum PROBLEM_LISTED_DATA {
     RESOURCES = 'resources'
 }
 const AdministrationProblem = () => {
-    const { pathname } = useLocation();
+    const { pathname, hash } = useLocation();
     const [ , , , problemId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(PROBLEM_LISTED_DATA.RESOURCES);
     const [ problemName, setProblemName ] = useState<string>('');
@@ -29,6 +30,8 @@ const AdministrationProblem = () => {
     const onTabChange = (event: React.SyntheticEvent, newValue: PROBLEM_LISTED_DATA) => {
         setTabName(newValue);
     };
+
+    useScrollToTab({ hash, tabName, setTabName, tabNames: Object.values(PROBLEM_LISTED_DATA) });
 
     useEffect(() => {
         getAndSetExceptionMessage([ activityError ], setErrorMessages);
@@ -55,17 +58,21 @@ const AdministrationProblem = () => {
     );
 
     const returnResourceInProblemView = (key:string) => (
-        <ResourcesInProblemView key={key} problemId={Number(problemId)} />
+        <div id={PROBLEM_LISTED_DATA.RESOURCES}>
+            <ResourcesInProblemView key={key} problemId={Number(problemId)} />
+        </div>
     );
 
     const returnTests = (key: string) => (
-        <TestsInProblemView
-          key={key}
-          problemId={Number(problemId)}
-          problemName={problemName}
-          canBeCompeted={activityData!.canBeCompeted}
-          contestId={contestId}
-        />
+        <div id={PROBLEM_LISTED_DATA.TESTS}>
+            <TestsInProblemView
+              key={key}
+              problemId={Number(problemId)}
+              problemName={problemName}
+              canBeCompeted={activityData?.canBeCompeted ?? false}
+              contestId={contestId}
+            />
+        </div>
     );
 
     return (

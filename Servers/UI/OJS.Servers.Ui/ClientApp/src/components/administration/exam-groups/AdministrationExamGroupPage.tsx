@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { USERS } from '../../../common/labels';
+import useScrollToTab from '../../../hooks/common/use-scroll-to-tab';
 import TabsInView from '../common/tabs/TabsInView';
 
 import ExamGroupEdit from './exam-group-edit/ExamGroupEdit';
 import UsersInExamGroupView from './users-in-exam-group-view/UsersInExamGroupView';
 
 enum EXAM_GROUPS_LISTED_DATA {
-    USERS_TAB = 'Users',
+    USERS_TAB = 'users',
 }
 const AdministrationExamGroupPage = () => {
-    const { pathname } = useLocation();
+    const { pathname, hash } = useLocation();
     const [ , , , examGroupId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(EXAM_GROUPS_LISTED_DATA.USERS_TAB);
 
@@ -20,6 +21,8 @@ const AdministrationExamGroupPage = () => {
     const getExamGroupContestId = (contestIdToSave: number | null) => {
         setContestId(contestIdToSave);
     };
+
+    useScrollToTab({ hash, tabName, setTabName, tabNames: Object.values(EXAM_GROUPS_LISTED_DATA) });
 
     const returnExamGroupForm = () => (
         <ExamGroupEdit examGroupId={Number(examGroupId)} getContestId={getExamGroupContestId} />
@@ -30,7 +33,9 @@ const AdministrationExamGroupPage = () => {
     };
 
     const returnUsers = (key: string) => (
-        <UsersInExamGroupView key={key} examGroupId={Number(examGroupId)} isAllowedToAddUsers={contestId !== null} />
+        <div id={EXAM_GROUPS_LISTED_DATA.USERS_TAB}>
+            <UsersInExamGroupView key={key} examGroupId={Number(examGroupId)} isAllowedToAddUsers={contestId !== null} />
+        </div>
     );
 
     return (
