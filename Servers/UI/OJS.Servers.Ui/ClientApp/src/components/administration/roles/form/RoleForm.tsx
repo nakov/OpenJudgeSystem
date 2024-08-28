@@ -60,7 +60,7 @@ const RoleForm = (props: IRoleFormProps) => {
         },
     ] = useUpdateRoleMutation();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ContestVariation } from '../../../common/contest-types';
+import useScrollToTab from '../../../hooks/common/use-scroll-to-tab';
 import { useGetContestActivityQuery, useGetContestByIdQuery } from '../../../redux/services/admin/contestsAdminService';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
@@ -22,7 +23,7 @@ const AdministrationContestPage = () => {
     const [ , , , contestId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(CONTEST_LISTED_DATA.PROBLEMS);
 
-    const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
     const onTabChange = (event: React.SyntheticEvent, newValue: CONTEST_LISTED_DATA) => {
@@ -32,31 +33,13 @@ const AdministrationContestPage = () => {
     const { refetch: retake, data, isFetching, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
 
     const { data: activityData, error: activityError, isLoading: isLoadingActivity, isFetching: isFetchingActivity } =
-    useGetContestActivityQuery(Number(contestId));
+        useGetContestActivityQuery(Number(contestId));
 
-    useEffect(() => {
-        const updateTabBasedOnHash = () => {
-            const cleanHash = hash.replace('#', '').toUpperCase();
-            const sectionToDisplay = Object.keys(CONTEST_LISTED_DATA).find((x: string) => x === cleanHash);
-
-            if (sectionToDisplay) {
-                setTabName(CONTEST_LISTED_DATA[sectionToDisplay as keyof typeof CONTEST_LISTED_DATA]);
-            }
-        };
-
-        updateTabBasedOnHash();
-    }, [ hash ]);
+    useScrollToTab({ hash, tabName, setTabName, tabNames: Object.values(CONTEST_LISTED_DATA) });
 
     useEffect(() => {
         getAndSetExceptionMessage([ activityError, error ], setErrorMessages);
     }, [ activityError, error ]);
-
-    useEffect(() => {
-        const element = document.getElementById(tabName.toLowerCase());
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [ tabName ]);
 
     const renderContestEdit = () => (
         <ContestEdit
@@ -68,8 +51,8 @@ const AdministrationContestPage = () => {
         />
     );
 
-    const renderProblemsInContestView = (key:string) => (
-        <span key={key} id={CONTEST_LISTED_DATA.PROBLEMS}>
+    const renderProblemsInContestView = (key: string) => (
+        <div key={key} id={CONTEST_LISTED_DATA.PROBLEMS}>
             <ProblemsInContestView
               key={key}
               contestId={Number(contestId)}
@@ -77,14 +60,13 @@ const AdministrationContestPage = () => {
               contestType={ContestVariation[data?.type as keyof typeof ContestVariation]}
               canContestBeCompeted={activityData?.canBeCompeted || false}
             />
-        </span>
-
+        </div>
     );
 
     const renderParticipantsInContestView = (key: string) => (
-        <span key={key} id={CONTEST_LISTED_DATA.PARTICIPANTS}>
+        <div key={key} id={CONTEST_LISTED_DATA.PARTICIPANTS}>
             <ParticipantsInContestView key={key} contestId={Number(contestId)} contestName={data!.name} />
-        </span>
+        </div>
     );
 
     if (!successMessage && (isFetching || isLoading || isLoadingActivity || isFetchingActivity)) {
@@ -107,4 +89,5 @@ const AdministrationContestPage = () => {
         </>
     );
 };
+
 export default AdministrationContestPage;

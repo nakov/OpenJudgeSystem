@@ -62,7 +62,7 @@ const CheckerForm = (props: ICheckerFormProps) => {
         },
     ] = useUpdateCheckerMutation();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [

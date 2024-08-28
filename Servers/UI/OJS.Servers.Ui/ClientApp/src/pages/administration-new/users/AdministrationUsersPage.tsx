@@ -8,6 +8,7 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import { getColors } from '../../../hooks/use-administration-theme-provider';
 import { useGetAllUsersQuery, useLazyExportUsersToExcelQuery } from '../../../redux/services/admin/usersAdminService';
 import { useAppSelector } from '../../../redux/store';
+import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
 
@@ -16,9 +17,10 @@ import usersFilterableColumns, { returnUsersNonFilterableColumns } from './users
 const AdministrationUsersPage = () => {
     const [ searchParams ] = useSearchParams();
     const themeMode = useAppSelector((x) => x.theme.administrationMode);
+
     // eslint-disable-next-line max-len
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd, searchParams));
-
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ showEditModal, setShowEditModal ] = useState<boolean>(false);
     const [ userId, setUserId ] = useState<string>('');
 
@@ -44,7 +46,14 @@ const AdministrationUsersPage = () => {
               retakeUsers();
           }}
         >
-            <UserForm id={userId} />
+            <UserForm
+              id={userId}
+              onSuccess={() => {
+                  setShowEditModal(false);
+                  retakeUsers();
+              }}
+              setParentSuccessMessage={setSuccessMessage}
+            />
         </AdministrationModal>
     );
 
@@ -53,21 +62,24 @@ const AdministrationUsersPage = () => {
     }
 
     return (
-        <AdministrationGridView
-          filterableGridColumnDef={usersFilterableColumns}
-          notFilterableGridColumnDef={returnUsersNonFilterableColumns(onEditClick)}
-          data={usersData}
-          error={error}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-          legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'User is deleted.' } ]}
-          modals={
-            [
-                { showModal: showEditModal, modal: (i) => renderUserModal(i) },
-            ]
-          }
-          excelMutation={useLazyExportUsersToExcelQuery}
-        />
+        <>
+            {renderSuccessfullAlert(successMessage)}
+            <AdministrationGridView
+              filterableGridColumnDef={usersFilterableColumns}
+              notFilterableGridColumnDef={returnUsersNonFilterableColumns(onEditClick)}
+              data={usersData}
+              error={error}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
+              legendProps={[ { color: getColors(themeMode).palette.deleted, message: 'User is deleted.' } ]}
+              modals={
+                   [
+                       { showModal: showEditModal, modal: (i) => renderUserModal(i) },
+                   ]
+               }
+              excelMutation={useLazyExportUsersToExcelQuery}
+            />
+        </>
     );
 };
 export default AdministrationUsersPage;
