@@ -61,7 +61,7 @@
 }
 
 .fieldBox {
-  align-items: center;
+  align-items: start;
   display: flex;
   flex-direction: row;
   height: auto;
@@ -74,6 +74,11 @@
 
   .fieldBoxElementRight {
     margin-left: 1rem;
+  }
+
+  .fieldBoxElementLeft,
+  .fieldBoxElementRight {
+    width: 50%;
   }
 
   div > div {

@@ -4,7 +4,7 @@ import { Box, FormControl, FormGroup, TextField, Typography } from '@mui/materia
 import { DateTimePicker } from '@mui/x-date-pickers';
 import isNaN from 'lodash/isNaN';
 
-import { AGE, CITY, COMPANY, DATE_OF_BIRTH, EDIT, EDUCATIONAL_INSTITUTE, EMAIL, FACULTY_NUMBER, FIRSTNAME, ID, JOB_TITLE, LASTNAME, USERNAME } from '../../../../common/labels';
+import { AGE, CITY, COMPANY, DATE_OF_BIRTH, EDIT, EDUCATIONAL_INSTITUTE, EMAIL, FACULTY_NUMBER, FIRSTNAME, JOB_TITLE, LASTNAME, USERNAME } from '../../../../common/labels';
 import { IUserAdministrationModel } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
@@ -144,16 +144,6 @@ const UserForm = (props: IUserFormProps) => {
             <form className={formStyles.form}>
                 <Box className={formStyles.inputRow}>
                     <FormGroup className={formStyles.inputRow}>
-                        <FormControl className={formStyles.spacing}>
-                            <TextField
-                              variant="standard"
-                              label={ID}
-                              value={user?.id}
-                              InputLabelProps={{ shrink: true }}
-                              type="text"
-                              disabled
-                            />
-                        </FormControl>
                         <FormControl className={formStyles.spacing}>
                             <TextField
                               variant="standard"
