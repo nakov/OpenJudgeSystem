@@ -20,7 +20,6 @@ enum CONTEST_LISTED_DATA {
 
 const AdministrationContestPage = () => {
     const { pathname, hash } = useLocation();
-    console.log(hash);
     const [ , , , contestId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(CONTEST_LISTED_DATA.PROBLEMS);
 
