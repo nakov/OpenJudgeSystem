@@ -25,7 +25,7 @@ const useScrollToTab = <T extends string>({ hash, tabName, setTabName, tabNames 
      */
     const targetTab = tabNames.find((t) => t.toLowerCase() === hash.replace('#tab-', '').toLowerCase());
 
-    const shouldScroll = useMemo(() => !hasScrolled && hash && targetTab !== null && targetTab !== '', [ hasScrolled, hash, targetTab ]);
+    const shouldScroll = useMemo(() => !hasScrolled && hash && !!targetTab, [ hasScrolled, hash, targetTab ]);
 
     useEffect(() => {
         if (shouldScroll) {
@@ -49,12 +49,10 @@ const useScrollToTab = <T extends string>({ hash, tabName, setTabName, tabNames 
                 }
             };
 
-            // Initial check if the element is already in the DOM
             scrollToElement();
 
-            // Set up MutationObserver to handle cases where the element is not yet in the DOM
             const observer = new MutationObserver(() => {
-                scrollToElement(); // Call scrollToElement when mutations are detected
+                scrollToElement();
             });
 
             observer.observe(document.body, {
