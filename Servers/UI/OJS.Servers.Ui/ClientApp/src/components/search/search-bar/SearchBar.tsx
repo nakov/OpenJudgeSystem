@@ -24,7 +24,6 @@ const SearchBar = () => {
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const [ inputValue, setInputValue ] = useState<string>('');
-    const isResetting = useRef(false); // Ref to track if reset is happening
     const initialMount = useRef(true); // Ref to track the first render
 
     const { searchValue, selectedTerms, isVisible } = useAppSelector((state) => state.search);
@@ -56,7 +55,7 @@ const SearchBar = () => {
         }
 
         // Only navigate if not resetting and search value is valid
-        if (!isResetting.current && isVisible && searchValue?.trim().length >= 3) {
+        if (isVisible && searchValue?.trim().length >= 3) {
             const searchString = composeSearchString();
             navigate(`/search${searchString}`);
         }
@@ -66,7 +65,6 @@ const SearchBar = () => {
     useEffect(() => {
         if (!location.pathname.includes('/search')) {
             setInputValue('');
-            isResetting.current = true;
             dispatch(setIsVisible(false));
             dispatch(setSearchValue(''));
             dispatch(setSelectedTerms([
@@ -74,7 +72,6 @@ const SearchBar = () => {
                 CheckboxSearchValues.problems,
                 CheckboxSearchValues.users,
             ]));
-            isResetting.current = false;
         }
     }, [ location.pathname, dispatch ]);
 
