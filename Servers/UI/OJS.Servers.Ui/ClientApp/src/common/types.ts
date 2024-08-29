@@ -2,7 +2,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/s
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { CheckboxSearchValues, FilterColumnTypeEnum } from './enums';
+import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
 interface ISubmissionTypeType {
     id: number;
@@ -153,7 +153,7 @@ interface IProblemResourceAdministrationModel {
     id: number;
     name: string;
     link: string;
-    type: string;
+    type: ProblemResourceType;
     orderBy: number;
     file: File | null;
     hasFile: boolean;

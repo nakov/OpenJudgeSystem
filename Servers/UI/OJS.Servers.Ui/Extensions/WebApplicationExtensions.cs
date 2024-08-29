@@ -1,6 +1,7 @@
 namespace OJS.Servers.Ui.Extensions
 {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
@@ -9,12 +10,13 @@ namespace OJS.Servers.Ui.Extensions
     {
         public static WebApplication ConfigureWebApplication(
             this WebApplication app,
+            IConfiguration configuration,
             string apiVersion)
         {
             app.UseCorsPolicy();
             app.UseDefaults();
 
-            app.MigrateDatabase<OjsDbContext>();
+            app.MigrateDatabase<OjsDbContext>(configuration);
 
             if (app.Environment.IsDevelopment())
             {

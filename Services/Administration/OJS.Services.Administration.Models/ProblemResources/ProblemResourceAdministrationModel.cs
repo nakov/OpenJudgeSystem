@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
@@ -11,7 +12,7 @@ public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, 
 {
     public string Name { get; set; } = string.Empty;
 
-    public string? Type { get; set; }
+    public ProblemResourceType? Type { get; set; }
 
     public IFormFile? File { get; set; }
 
@@ -28,25 +29,38 @@ public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, 
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<ProblemResource, ProblemResourceAdministrationModel>()
-            .ForMember(pram => pram.HasFile, opt
-                => opt.MapFrom(pr => pr.File != null))
-            .ForMember(pram => pram.OperationType, opt
+            .ForMember(d => d.HasFile, opt
+                => opt.MapFrom(s => s.File != null))
+            .ForMember(d => d.OperationType, opt
                 => opt.Ignore())
-            .ForMember(pram => pram.File, opt
+            .ForMember(d => d.File, opt
                 => opt.Ignore());
 
         configuration.CreateMap<ProblemResourceAdministrationModel, ProblemResource>()
-            .ForMember(pr => pr.File, opt
-                => opt.MapFrom(pram => pram.File == null ? null : pram.File.GetBytes()))
-            .ForMember(pr => pr.IsDeleted, opt
+            .ForMember(d => d.File, opt
+                => opt.MapFrom(s => s.File == null ? null : s.File.GetBytes()))
+            .ForMember(d => d.IsDeleted, opt
                 => opt.Ignore())
-            .ForMember(pr => pr.DeletedOn, opt
+            .ForMember(d => d.DeletedOn, opt
                 => opt.Ignore())
-            .ForMember(pr => pr.CreatedOn, opt
+            .ForMember(d => d.CreatedOn, opt
                 => opt.Ignore())
-            .ForMember(pr => pr.ModifiedOn, opt
+            .ForMember(d => d.ModifiedOn, opt
                 => opt.Ignore())
-            .ForMember(pr => pr.Problem, opt
-                => opt.Ignore());
+            .ForMember(d => d.Problem, opt
+                => opt.Ignore())
+            .AfterMap((s, d) =>
+            {
+                /*
+                 * AutoMapper cannot automatically map the File property to null
+                 * when it's an empty byte array. Therefore, we explicitly check
+                 * after the mapping process if the File is either null or an empty
+                 * array, and if so, we set it to null manually.
+                 */
+                if (s.File == null || s.File.Length == 0)
+                {
+                    d.File = null;
+                }
+            });
     }
 }

@@ -4,7 +4,7 @@ import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, S
 import isNaN from 'lodash/isNaN';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
-import { ID, ORDER_BY, TYPE } from '../../../../common/labels';
+import { ORDER_BY, TYPE } from '../../../../common/labels';
 import { IContestAutocomplete } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
@@ -73,7 +73,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
@@ -147,16 +147,6 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                 <Typography variant="h4" className="centralize">
                     Problem Group Administration Form
                 </Typography>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={ID}
-                      value={currentProblemGroup?.id}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      disabled
-                    />
-                </FormControl>
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"

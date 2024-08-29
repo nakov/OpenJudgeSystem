@@ -229,7 +229,7 @@ const administrationItems = [
         name: 'Submission Type Documents',
         icon: <ArticleIcon />,
         path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}`,
-        visibleOnlyForAdmin: false,
+        visibleOnlyForAdmin: true,
     },
     {
         name: 'Checkers',
@@ -469,17 +469,17 @@ const AdministrationPortal = () => {
         {
             path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}`,
             Element: AdministrationSubmissionTypeDocumentsPage,
-            visibleOnlyForAdmin: false,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}/:id`,
             Element: AdministrationSubmissionTypeDocumentPage,
-            visibleOnlyForAdmin: false,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH}`,
             Element: AdministrationSubmissionTypeDocumentViewPage,
-            visibleOnlyForAdmin: false,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${SUBMISSION_TYPES_PATH}/deleteReplaceSubmissionTypes`,

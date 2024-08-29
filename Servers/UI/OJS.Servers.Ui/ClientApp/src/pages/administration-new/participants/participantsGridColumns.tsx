@@ -32,7 +32,7 @@ const participantsFilteringColumns: GridColDef[] = [
     },
     {
         field: 'contestId',
-        headerName: 'Contest ID',
+        headerName: 'Contest Id',
         width: 10,
         headerAlign: 'center',
         align: 'center',

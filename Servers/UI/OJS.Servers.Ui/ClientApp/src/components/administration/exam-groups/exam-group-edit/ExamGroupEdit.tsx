@@ -77,7 +77,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
             isLoading: isCreating,
         } ] = useCreateExamGroupMutation();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
@@ -207,15 +207,6 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
                 {examGroup.name || 'Exam group form'}
             </Typography>
             <form className={`${formStyles.form}`}>
-                {isEditMode && (
-                <TextField
-                  className={formStyles.inputRow}
-                  label="Exam Group Id"
-                  variant="standard"
-                  value={examGroup.id}
-                  disabled
-                />
-                )}
                 <TextField
                   className={formStyles.inputRow}
                   label="Name"
