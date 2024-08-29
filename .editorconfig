@@ -32,16 +32,16 @@ csharp_style_var_for_built_in_types                                      = true 
 csharp_style_var_when_type_is_apparent                                   = true : suggestion
 csharp_style_var_elsewhere                                               = true : suggestion
 
-csharp_style_expression_bodied_methods                                   = when_on_single_line : error
-csharp_style_expression_bodied_constructors                              = when_on_single_line : error
-csharp_style_expression_bodied_properties                                = when_on_single_line : error
-csharp_style_expression_bodied_accessors                                 = true : error
+csharp_style_expression_bodied_methods                                   = when_on_single_line : warning
+csharp_style_expression_bodied_constructors                              = when_on_single_line : warning
+csharp_style_expression_bodied_properties                                = when_on_single_line : warning
+csharp_style_expression_bodied_accessors                                 = true : warning
 
 csharp_style_pattern_matching_over_as_with_null_check                    = true : suggestion
 
 csharp_style_inlined_variable_declaration                                = true : suggestion
 
-csharp_prefer_simple_default_expression                                  = false : suggestion
+csharp_prefer_simple_default_expression                                  = true : suggestion
 
 csharp_style_throw_expression                                            = false : warning
 
@@ -53,7 +53,6 @@ insert_final_newline = false
 
 # setup max line lengh - not supported yet
 max_line_length                                                          = 120
-trim_trailing_whitespace                                                 = true
 dotnet_sort_system_directives_first                                      = false
 csharp_new_line_before_open_brace                                        = all
 csharp_new_line_before_else                                              = true

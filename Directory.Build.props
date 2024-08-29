@@ -10,8 +10,6 @@
 
   <PropertyGroup>
       <AnalysisLevel>latest-Recommended</AnalysisLevel>
-      <AnalysisModeSecurity>All</AnalysisModeSecurity>
-      <AnalysisModePerformance>All</AnalysisModePerformance>
       <AnalysisLevelStyle>Recommended</AnalysisLevelStyle>
   </PropertyGroup>
 
