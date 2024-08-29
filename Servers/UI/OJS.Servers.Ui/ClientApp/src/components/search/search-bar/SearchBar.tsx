@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Checkbox, TextField } from '@mui/material';
@@ -24,6 +24,8 @@ const SearchBar = () => {
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const [ inputValue, setInputValue ] = useState<string>('');
+    const isResetting = useRef(false); // Ref to track if reset is happening
+    const initialMount = useRef(true); // Ref to track the first render
 
     const { searchValue, selectedTerms, isVisible } = useAppSelector((state) => state.search);
 
@@ -45,19 +47,26 @@ const SearchBar = () => {
         }
     }, [ isVisible ]);
 
+    // Separate effect to handle navigation when search is visible and valid
     useEffect(() => {
-        if (!isVisible || searchValue?.trim().length < 3) {
+        if (initialMount.current) {
+            // Skip navigation on initial mount
+            initialMount.current = false;
             return;
         }
 
-        const searchString = composeSearchString();
-        navigate(`/search${searchString}`);
+        // Only navigate if not resetting and search value is valid
+        if (!isResetting.current && isVisible && searchValue?.trim().length >= 3) {
+            const searchString = composeSearchString();
+            navigate(`/search${searchString}`);
+        }
     }, [ composeSearchString, isVisible, navigate, searchValue, selectedTerms ]);
 
-    // hide search bar on page change and reset state
+    // Hide search bar on page change and reset state
     useEffect(() => {
         if (!location.pathname.includes('/search')) {
             setInputValue('');
+            isResetting.current = true;
             dispatch(setIsVisible(false));
             dispatch(setSearchValue(''));
             dispatch(setSelectedTerms([
@@ -65,6 +74,7 @@ const SearchBar = () => {
                 CheckboxSearchValues.problems,
                 CheckboxSearchValues.users,
             ]));
+            isResetting.current = false;
         }
     }, [ location.pathname, dispatch ]);
 
