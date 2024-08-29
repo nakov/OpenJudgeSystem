@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
 import { BiTransfer } from 'react-icons/bi';
 import { IconButton, Tooltip } from '@mui/material';
@@ -17,10 +18,11 @@ interface ITransferParticipantsButtonProps {
     categoryName?: string;
     style?: object;
     mutation: any;
+    openDialog?: Function;
 }
 
 const TransferParticipantsButton = (props: ITransferParticipantsButtonProps) => {
-    const { onSuccess, contestId, contestName, contestOfficialParticipants, categoryName, style, mutation } = props;
+    const { onSuccess, contestId, contestName, contestOfficialParticipants, categoryName, style, mutation, openDialog } = props;
 
     const [ transfer, { data, isLoading, isSuccess, isFetching, error, reset } ] = mutation();
 
@@ -43,6 +45,12 @@ const TransferParticipantsButton = (props: ITransferParticipantsButtonProps) => 
     useEffect(() => {
         getAndSetExceptionMessage([ error ], setErrorMessages);
     }, [ error ]);
+
+    useEffect(() => {
+        if (openDialog) {
+            openDialog(setShowConfirmTransfer);
+        }
+    }, [ openDialog ]);
 
     useEffect(() => {
         if (data && onSuccess) {

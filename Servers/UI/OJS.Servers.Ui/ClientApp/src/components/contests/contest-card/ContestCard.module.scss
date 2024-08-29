@@ -78,9 +78,33 @@
   }
 }
 
+.actionsWrapper {
+  display: flex;
+  align-content: center;
+  gap: 0.7rem;
+
+  .actionsContainer {
+    font-size: 20px;
+    display: flex;
+    gap: 0.7rem;
+    align-self: center;
+
+    &.lightTheme {
+      .icon {
+        color: colors.$primary-dark-grey-color;
+      }
+    }
+
+    &.darkTheme {
+      .icon {
+        color: #bebebe;
+      }
+    }
+  }
+}
+
 .contestBtnsWrapper {
   display: flex;
-  flex-direction: column;
   font-size: variables.$f-size-16;
   margin-left: spacings.$sp-12;
 

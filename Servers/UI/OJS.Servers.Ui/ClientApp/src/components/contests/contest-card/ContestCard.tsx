@@ -1,15 +1,16 @@
+import React from 'react';
 import { concatClassnames } from 'react-alice-carousel/lib/utils';
+import { BiTransfer } from 'react-icons/bi';
 import { IoIosLock } from 'react-icons/io';
 import { Link } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
 import { Tooltip } from '@mui/material';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
-import {
-    getCompeteResultsAreVisible,
-    getPracticeResultsAreVisible,
-} from '../../../common/contest-helpers';
+import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
+import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
 import { getContestsDetailsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
@@ -20,6 +21,8 @@ import {
     isCurrentTimeAfterOrEqualTo,
     preciseFormatDate,
 } from '../../../utils/dates';
+import AdministrationLink from '../../guidelines/buttons/AdministrationLink';
+import { LinkButtonType } from '../../guidelines/buttons/Button';
 import ContestButton from '../contest-button/ContestButton';
 
 import styles from './ContestCard.module.scss';
@@ -41,7 +44,7 @@ const iconNames = {
 const ContestCard = (props: IContestCardProps) => {
     const { contest, showPoints } = props;
 
-    const { themeColors, getColorClassName } = useTheme();
+    const { themeColors, getColorClassName, isDarkMode } = useTheme();
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
 
     const textColorClass = getColorClassName(themeColors.textColor);
@@ -196,9 +199,31 @@ const ContestCard = (props: IContestCardProps) => {
     return (
         <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
-                <Link className={styles.contestCardTitle} to={getContestsDetailsPageUrl({ contestId: id, contestName: name })}>
-                    {name}
-                </Link>
+                <div className={styles.actionsWrapper}>
+                    <Link
+                      className={styles.contestCardTitle}
+                      to={getContestsDetailsPageUrl({ contestId: id, contestName: name })}
+                    >
+                        {name}
+                    </Link>
+                    <div className={`${styles.actionsContainer} ${isDarkMode
+                        ? styles.darkTheme
+                        : styles.lightTheme}`}
+                    >
+                        <AdministrationLink
+                          type={LinkButtonType.plain}
+                          to={`/${CONTESTS_PATH}/${id}?openTransfer=true`}
+                        >
+                            <BiTransfer className={styles.icon} />
+                        </AdministrationLink>
+                        <AdministrationLink
+                          type={LinkButtonType.plain}
+                          to={`/${CONTESTS_PATH}/${id}`}
+                        >
+                            <EditIcon className={styles.icon} fontSize="small" />
+                        </AdministrationLink>
+                    </div>
+                </div>
                 <div className={styles.contestCardSubTitle}>{category}</div>
                 {
                     isLoggedIn && internalUser.canAccessAdministration && <div className={styles.contestCardSubTitle}>{id}</div>
@@ -220,7 +245,7 @@ const ContestCard = (props: IContestCardProps) => {
                             true,
                             ContestParticipationType.Practice,
                         )
-}
+                    }
                     {
                         // Null compete points means user is not compete participant
                         getCompeteResultsAreVisible(contest, internalUser.canAccessAdministration) &&
@@ -247,18 +272,20 @@ const ContestCard = (props: IContestCardProps) => {
                 </div>
             </div>
             <div className={styles.contestBtnsWrapper}>
-                <div className={styles.buttonAndPointsLabelWrapper}>
-                    { shouldShowPoints && renderPointsText(competeMaximumPoints, userParticipationResult?.competePoints)}
-                    <div className={styles.buttonAndLockLabelWrapper}>
-                        {renderContestButton(true)}
-                        {renderLockIcon(true, requirePasswordForCompete)}
+                <div>
+                    <div className={styles.buttonAndPointsLabelWrapper}>
+                        {shouldShowPoints && renderPointsText(competeMaximumPoints, userParticipationResult?.competePoints)}
+                        <div className={styles.buttonAndLockLabelWrapper}>
+                            {renderContestButton(true)}
+                            {renderLockIcon(true, requirePasswordForCompete)}
+                        </div>
                     </div>
-                </div>
-                <div className={styles.buttonAndPointsLabelWrapper}>
-                    { shouldShowPoints && renderPointsText(practiceMaximumPoints, userParticipationResult?.practicePoints)}
-                    <div className={styles.buttonAndLockLabelWrapper}>
-                        {renderContestButton(false)}
-                        {renderLockIcon(false, requirePasswordForPractice)}
+                    <div className={styles.buttonAndPointsLabelWrapper}>
+                        {shouldShowPoints && renderPointsText(practiceMaximumPoints, userParticipationResult?.practicePoints)}
+                        <div className={styles.buttonAndLockLabelWrapper}>
+                            {renderContestButton(false)}
+                            {renderLockIcon(false, requirePasswordForPractice)}
+                        </div>
                     </div>
                 </div>
             </div>

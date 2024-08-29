@@ -106,6 +106,7 @@ const ContestDetailsPage = () => {
             >
                 Full Results
             </Button>
+            <AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />
         </div>
     );
 
