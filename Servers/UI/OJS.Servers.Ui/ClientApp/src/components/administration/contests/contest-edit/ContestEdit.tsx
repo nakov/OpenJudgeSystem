@@ -14,7 +14,6 @@ import {
     COMPETE_START_TIME,
     DESCRIPTION,
     DURATION,
-    ID,
     IS_VISIBLE,
     LIMIT_BETWEEN_SUBMISSIONS,
     NAME,
@@ -183,7 +182,7 @@ const ContestEdit = (props:IContestEditProps) => {
         clearFlags: [ isCreating, isUpdating ],
     });
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useEffect(
         () => {
@@ -459,13 +458,6 @@ const ContestEdit = (props:IContestEditProps) => {
             <form className={`${formStyles.form}`}>
                 <Box className={`${formStyles.fieldBox}`}>
                     <Box className={formStyles.fieldBoxElementLeft}>
-                        <TextField
-                          className={formStyles.inputRow}
-                          label={ID}
-                          variant="standard"
-                          value={contest.id}
-                          disabled
-                        />
                         <TextField
                           className={formStyles.inputRow}
                           label={NAME}

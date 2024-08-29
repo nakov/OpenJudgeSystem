@@ -4,7 +4,7 @@ import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextFiel
 import isNaN from 'lodash/isNaN';
 
 import { ProblemResourceType } from '../../../../common/enums';
-import { ID, LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
+import { LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IProblemResourceAdministrationModel } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
@@ -16,10 +16,6 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import FileUpload from '../../common/file-upload/FileUpload';
 
-/*
-The rule is disabled because the formStyles are common scss file.
-It is used in most of the forms in the administration.
-*/
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
@@ -38,7 +34,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         link: '',
         name: '',
         orderBy: 0,
-        type: 'ProblemDescription',
+        type: ProblemResourceType.ProblemDescription,
         file: null,
         hasFile: false,
         problemId: 0,
@@ -47,7 +43,12 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
-    const { data: resourceData, error: resourceError, isLoading: isGetting } = useGetProblemResourceByIdQuery(id, { skip: !isEditMode });
+    const {
+        data: resourceData,
+        error: resourceError,
+        isLoading: isGetting,
+        refetch: refetchResource,
+    } = useGetProblemResourceByIdQuery(id, { skip: !isEditMode });
     const [
         create,
         {
@@ -73,7 +74,15 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         error: downloadError,
     } = useDownloadResourceQuery(Number(id), { skip: skipDownload });
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({
+        isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated,
+        onSuccess: () => {
+            if (onSuccess) {
+                onSuccess();
+            }
+            refetchResource();
+        },
+    });
 
     useSuccessMessageEffect({
         data: [
@@ -108,6 +117,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
             ...prevState,
             file,
         }));
+        setSkipDownload(true);
     };
 
     const handleFileClearance = () => {
@@ -118,6 +128,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
             file,
         }));
     };
+
     const onChange = (e: any) => {
         const { target } = e;
         const { name, type, value, checked } = target;
@@ -129,7 +140,10 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                     ? value === ''
                         ? ''
                         : Number(value)
-                    : value,
+                    // The value for link must not be an empty string ( '' ), but null.
+                    : name === 'link' && value === ''
+                        ? null
+                        : value,
         }));
     };
 
@@ -139,7 +153,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         formData.append('id', currentResource.id?.toString() ?? '');
         formData.append('orderBy', currentResource.orderBy?.toString() || '');
         formData.append('link', currentResource.link || '');
-        formData.append('type', currentResource.type);
+        formData.append('type', currentResource.type.toString());
 
         if (currentResource.file) {
             formData.append('file', currentResource.file);
@@ -170,16 +184,6 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
-                      label={ID}
-                      value={id}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      disabled
-                    />
-                </FormControl>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
                       label={NAME}
                       name="name"
                       value={currentResource?.name}
@@ -194,14 +198,16 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       onChange={(e) => onChange(e)}
                       onBlur={(e) => onChange(e)}
                       labelId="problemGroupType"
-                      value={currentResource.type || 'None'}
+                      value={currentResource.type}
                       name="type"
                     >
-                        {Object.keys(ProblemResourceType).filter((key) => isNaN(Number(key))).map((key, i: number) => (
-                            <MenuItem key={i} value={key}>
-                                {key}
-                            </MenuItem>
-                        ))}
+                        {Object.keys(ProblemResourceType)
+                            .filter((key) => isNaN(Number(key)))
+                            .map((key) => (
+                                <MenuItem key={key} value={ProblemResourceType[key as keyof typeof ProblemResourceType]}>
+                                    {key}
+                                </MenuItem>
+                            ))}
                     </Select>
                 </FormGroup>
                 <FormControl className={formStyles.inputRow}>

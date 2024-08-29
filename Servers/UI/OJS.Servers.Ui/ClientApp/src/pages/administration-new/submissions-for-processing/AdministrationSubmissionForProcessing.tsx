@@ -39,13 +39,6 @@ const AdministrationSubmissionForProcessing = () => {
                 <Box className={`${styles.fieldBox}`}>
                     <TextField
                       className={styles.inputRow}
-                      label="ID"
-                      variant="standard"
-                      value={submission.id}
-                      disabled
-                    />
-                    <TextField
-                      className={styles.inputRow}
                       label="Submission Id"
                       variant="standard"
                       value={submission.submissionId}

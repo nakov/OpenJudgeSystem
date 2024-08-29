@@ -167,7 +167,14 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
               setShowUserEditModal(false);
           }}
         >
-            <UserForm id={userId!} />
+            <UserForm
+              id={userId!}
+              onSuccess={() => {
+                  setShowUserEditModal(false);
+                  refetch();
+              }}
+              setParentSuccessMessage={setSuccessMessage}
+            />
         </AdministrationModal>
     );
 
@@ -205,7 +212,10 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
                   disabled={userIdToAdd === null}
                   className={formStyles.buttonsWrapper}
                   buttonClassName={formStyles.button}
-                  onClick={() => addUserToRole({ userId: userIdToAdd!, roleId })}
+                  onClick={() => {
+                      addUserToRole({ userId: userIdToAdd!, roleId });
+                      setShowCreateModal(false);
+                  }}
                   name="Add"
                 />
             </form>
