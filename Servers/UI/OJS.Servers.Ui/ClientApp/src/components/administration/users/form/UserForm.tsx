@@ -248,7 +248,6 @@ const UserForm = (props: IUserFormProps) => {
                               onChange={onChange}
                             />
                         </FormControl>
-
                         <FormControl className={formStyles.spacing}>
                             <TextField
                               variant="standard"
