@@ -106,7 +106,9 @@ const ContestDetailsPage = () => {
             >
                 Full Results
             </Button>
-            <AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />
+            {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
+                (<AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />)}
+
         </div>
     );
 

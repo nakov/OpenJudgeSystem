@@ -212,16 +212,18 @@ const ContestCard = (props: IContestCardProps) => {
                     >
                         <AdministrationLink
                           type={LinkButtonType.plain}
-                          to={`/${CONTESTS_PATH}/${id}?openTransfer=true`}
-                        >
-                            <BiTransfer className={styles.icon} />
-                        </AdministrationLink>
-                        <AdministrationLink
-                          type={LinkButtonType.plain}
                           to={`/${CONTESTS_PATH}/${id}`}
                         >
                             <EditIcon className={styles.icon} fontSize="small" />
                         </AdministrationLink>
+                        {!contest.canBeCompeted && contest.competeResults > 0 && (
+                        <AdministrationLink
+                          type={LinkButtonType.plain}
+                          to={`/${CONTESTS_PATH}/${id}?openTransfer=true`}
+                        >
+                            <BiTransfer className={styles.icon} />
+                        </AdministrationLink>
+                        )}
                     </div>
                 </div>
                 <div className={styles.contestCardSubTitle}>{category}</div>
