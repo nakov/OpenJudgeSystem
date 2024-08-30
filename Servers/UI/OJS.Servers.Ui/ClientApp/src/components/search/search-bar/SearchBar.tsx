@@ -46,7 +46,6 @@ const SearchBar = () => {
         }
     }, [ isVisible ]);
 
-    // Separate effect to handle navigation when search is visible and valid
     useEffect(() => {
         if (initialMount.current) {
             // Skip navigation on initial mount
@@ -54,7 +53,6 @@ const SearchBar = () => {
             return;
         }
 
-        // Only navigate if not resetting and search value is valid
         if (isVisible && searchValue?.trim().length >= 3) {
             const searchString = composeSearchString();
             navigate(`/search${searchString}`);
