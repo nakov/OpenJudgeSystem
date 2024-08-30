@@ -31,10 +31,13 @@
   .problemResources {
     line-height: 1.5;
   }
+}
 
-  .adminBtn {
-    margin-left: spacings.$sp-16;
-  }
+.administrationButtonsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
 }
 
 .descriptionBoxWrapper {

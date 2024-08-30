@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType } from '../../../common/types';
-import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
+import { CONTESTS_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import { getAllContestsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import MetaTags from '../../../components/common/MetaTags';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -88,13 +88,12 @@ const ContestDetailsPage = () => {
     };
 
     const renderAdministrationButtons = () => (
-        <div>
+        <div className={styles.administrationButtonsWrapper}>
             <AdministrationLink
               text="Edit"
               to={`/${CONTESTS_PATH}/${id}`}
             />
             <Button
-              className={styles.adminBtn}
               type={ButtonType.secondary}
               size={ButtonSize.small}
               onClick={() => navigate(getContestsResultsPageUrl({
@@ -106,6 +105,10 @@ const ContestDetailsPage = () => {
             >
                 Full Results
             </Button>
+            <AdministrationLink
+              to={`/${PROBLEMS_PATH}?filter=contestid~equals~${contestId}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+              text="Problems"
+            />
         </div>
     );
 
