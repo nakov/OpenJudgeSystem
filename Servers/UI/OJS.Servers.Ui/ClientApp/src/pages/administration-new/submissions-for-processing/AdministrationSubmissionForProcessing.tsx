@@ -39,7 +39,7 @@ const AdministrationSubmissionForProcessing = () => {
                 <Box className={`${styles.fieldBox}`}>
                     <TextField
                       className={styles.inputRow}
-                      label="Submission ID"
+                      label="Submission Id"
                       variant="standard"
                       value={submission.submissionId}
                       disabled
