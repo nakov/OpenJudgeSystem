@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { LECTURER } from '../../../common/constants';
 import { IUserAdministrationModel } from '../../../common/types';
+import useScrollToTab from '../../../hooks/common/use-scroll-to-tab';
 import { useGetUserByIdQuery } from '../../../redux/services/admin/usersAdminService';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import TabsInView from '../common/tabs/TabsInView';
@@ -12,17 +13,17 @@ import LecturerInCategories from './lecturer/LecturerInCategories';
 import LecturerInContests from './lecturer/LecturerInContests';
 
 enum USER_LISTED_DATA {
-    LECTURER_IN_CONTEST = 'lectureInContest',
-    LECTURER_IN_CATEGORIES = 'participants'
+    LECTURER_IN_CONTESTS = 'lecturerincontests',
+    LECTURER_IN_CATEGORIES = 'lecturerincategories'
 }
 
 const AdministrationUser = () => {
-    const { pathname } = useLocation();
+    const { pathname, hash } = useLocation();
     const [ , , , userId ] = pathname.split('/');
 
     const [ user, setUser ] = useState<IUserAdministrationModel | undefined>(undefined);
 
-    const [ tabName, setTabName ] = useState(USER_LISTED_DATA.LECTURER_IN_CONTEST);
+    const [ tabName, setTabName ] = useState(USER_LISTED_DATA.LECTURER_IN_CONTESTS);
 
     const {
         refetch,
@@ -30,6 +31,8 @@ const AdministrationUser = () => {
         isLoading: isGetting,
         isSuccess,
     } = useGetUserByIdQuery(userId);
+
+    useScrollToTab({ hash, tabName, setTabName, tabNames: Object.values(USER_LISTED_DATA) });
 
     useEffect(() => {
         if (userData && isSuccess) {
@@ -51,7 +54,11 @@ const AdministrationUser = () => {
 
     const renderProblemsInContestView = (key:string) => (
         userData?.roles.find((x) => x.name === LECTURER)
-            ? <LecturerInContests key={key} userId={userData!.id} />
+            ? (
+                <div id={USER_LISTED_DATA.LECTURER_IN_CONTESTS}>
+                    <LecturerInContests key={key} userId={userData!.id} />
+                </div>
+            )
             : (
                 <>
                 </>
@@ -60,7 +67,11 @@ const AdministrationUser = () => {
 
     const renderParticipantsInContestView = (key: string) => (
         userData?.roles.find((x) => x.name === LECTURER)
-            ? <LecturerInCategories key={key} userId={userData!.id} />
+            ? (
+                <div id={USER_LISTED_DATA.LECTURER_IN_CATEGORIES}>
+                    <LecturerInCategories key={key} userId={userData!.id} />
+                </div>
+            )
             : (
                 <>
                 </>
@@ -78,7 +89,7 @@ const AdministrationUser = () => {
           tabName={tabName}
           tabs={userData?.roles.find((x) => x.name === LECTURER) && [
               {
-                  value: USER_LISTED_DATA.LECTURER_IN_CONTEST,
+                  value: USER_LISTED_DATA.LECTURER_IN_CONTESTS,
                   label: 'Lecturer in Contests',
                   node: renderProblemsInContestView,
               },

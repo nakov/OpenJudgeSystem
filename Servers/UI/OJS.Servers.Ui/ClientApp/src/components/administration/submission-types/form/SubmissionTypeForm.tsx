@@ -168,7 +168,7 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
             <form className={formStyles.form}>
-                <Typography variant="h3">
+                <Typography variant="h3" className={formStyles.centralize}>
                     {currentSubmissionType.name
                         ? currentSubmissionType.name
                         : SUBMISSION_TYPE_FORM_NAME}
@@ -255,53 +255,49 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                       value={currentSubmissionType.allowedFileExtensions}
                     />
                 </FormControl>
-                <Box className={formStyles.fieldBox}>
-                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
-                        <TextField
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          label={BASE_TIME_USED}
-                          name="baseTimeUsedInMilliseconds"
-                          onChange={(e) => onChange(e)}
-                          value={currentSubmissionType.baseTimeUsedInMilliseconds}
-                        />
-                    </FormControl>
-                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
-                        <TextField
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          label={BASE_MEMORY_USED}
-                          name="baseMemoryUsedInBytes"
-                          onChange={(e) => onChange(e)}
-                          value={currentSubmissionType.baseMemoryUsedInBytes}
-                        />
-                    </FormControl>
+                <Box className={formStyles.row}>
+                    <TextField
+                      className={formStyles.inputRow}
+                      variant="standard"
+                      InputLabelProps={{ shrink: true }}
+                      type="number"
+                      label={BASE_TIME_USED}
+                      name="baseTimeUsedInMilliseconds"
+                      onChange={(e) => onChange(e)}
+                      value={currentSubmissionType.baseTimeUsedInMilliseconds}
+                    />
+                    <TextField
+                      className={formStyles.inputRow}
+                      variant="standard"
+                      InputLabelProps={{ shrink: true }}
+                      type="number"
+                      label={BASE_MEMORY_USED}
+                      name="baseMemoryUsedInBytes"
+                      onChange={(e) => onChange(e)}
+                      value={currentSubmissionType.baseMemoryUsedInBytes}
+                    />
                 </Box>
-                <Box className={formStyles.fieldBox}>
-                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
-                        <TextField
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          label={MAX_ALLOWED_TIME_LIMIT}
-                          name="maxAllowedTimeLimitInMilliseconds"
-                          onChange={(e) => onChange(e)}
-                          value={currentSubmissionType.maxAllowedTimeLimitInMilliseconds}
-                        />
-                    </FormControl>
-                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
-                        <TextField
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          label={MAX_ALLOWED_MEMORY_LIMIT}
-                          name="maxAllowedMemoryLimitInBytes"
-                          onChange={(e) => onChange(e)}
-                          value={currentSubmissionType.maxAllowedMemoryLimitInBytes}
-                        />
-                    </FormControl>
+                <Box className={formStyles.row}>
+                    <TextField
+                      className={formStyles.inputRow}
+                      variant="standard"
+                      InputLabelProps={{ shrink: true }}
+                      type="number"
+                      label={MAX_ALLOWED_TIME_LIMIT}
+                      name="maxAllowedTimeLimitInMilliseconds"
+                      onChange={(e) => onChange(e)}
+                      value={currentSubmissionType.maxAllowedTimeLimitInMilliseconds}
+                    />
+                    <TextField
+                      className={formStyles.inputRow}
+                      variant="standard"
+                      InputLabelProps={{ shrink: true }}
+                      type="number"
+                      label={MAX_ALLOWED_MEMORY_LIMIT}
+                      name="maxAllowedMemoryLimitInBytes"
+                      onChange={(e) => onChange(e)}
+                      value={currentSubmissionType.maxAllowedMemoryLimitInBytes}
+                    />
                 </Box>
                 <FormControl className={formStyles.inputRow}>
                     <FormControlLabel

@@ -14,7 +14,14 @@ import { isDeletedClassName, isVisibleClassName } from '../../hooks/use-administ
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
-import AdministrationFilters, { addDefaultFilter, IAdministrationFilter, IAdministrationSorter, mapGridColumnsToAdministrationFilterProps, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from './administration-filters/AdministrationFilters';
+import AdministrationFilters, {
+    addDefaultFilter,
+    IAdministrationFilter,
+    IAdministrationSorter,
+    mapGridColumnsToAdministrationFilterProps,
+    mapGridColumnsToAdministrationSortingProps,
+    mapUrlToSorters,
+} from './administration-filters/AdministrationFilters';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from './AdministrationStyles.module.scss';
@@ -41,9 +48,15 @@ interface IVisibleColumns {
     [key: string]: boolean;
 }
 
+// The default visible id columns should match the column's header name
+const defaultVisibleIdColumns: Set<string> = new Set([
+    'Submission Id',
+]);
+
 const defaultFilterToAdd = 'isdeleted~equals~false';
 const defaultSorterToAdd = 'id=DESC';
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
+    const idColumnPattern = /\b(id|(?:\S+\s+id))\b/i;
     const {
         filterableGridColumnDef,
         notFilterableGridColumnDef,
@@ -76,9 +89,13 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return isDeletedClassName;
-        } if (isVisible === false) {
+        }
+
+        // Do not simplify.
+        if (isVisible === false) {
             return isVisibleClassName;
         }
+
         return '';
     };
 
@@ -99,6 +116,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
             <ExportExcel mutation={excelMutation} disabled={!excelMutation} queryParams={queryParams} />
         </div>
     );
+
     const renderGridSettings = () => {
         const sortingColumns = mapGridColumnsToAdministrationSortingProps(filterableGridColumnDef);
         const filtersColumns = mapGridColumnsToAdministrationFilterProps(filterableGridColumnDef);
@@ -133,6 +151,35 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         }
     };
 
+    const initialColumnVisibilityModel: IVisibleColumns = filterableGridColumnDef.reduce((acc, column) => {
+        const headerName = column.headerName ?? '';
+
+        if (!defaultVisibleIdColumns.has(headerName) && idColumnPattern.test(headerName)) {
+            acc[column.field] = false;
+        }
+
+        return acc;
+    }, {} as IVisibleColumns);
+
+    const initialState = {
+        columns: {
+            columnVisibilityModel: {
+                isDeleted: false,
+                isVisible: false,
+                createdOn: false,
+                modifiedOn: false,
+                deletedOn: false,
+                ...initialColumnVisibilityModel,
+            },
+        },
+        pagination: {
+            paginationModel: {
+                page: 0,
+                pageSize: DEFAULT_ITEMS_PER_PAGE,
+            },
+        },
+    };
+
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div>
@@ -154,28 +201,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                               ? specifyColumnIdName.map((colName) => row[colName]).join('')
                               : row.id}
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
-                          initialState={{
-                              columns: {
-                                  columnVisibilityModel: {
-                                      isDeleted: false,
-                                      isVisible: false,
-                                      createdOn: false,
-                                      modifiedOn: false,
-                                      ...filterableGridColumnDef.reduce((acc, column) => {
-                                          if (/\b(id|(?:\S+\s+id))\b/i.test(column.headerName ?? '')) {
-                                              acc[column.field] = false;
-                                          }
-                                          return acc;
-                                      }, {} as IVisibleColumns),
-                                  },
-                              },
-                              pagination: {
-                                  paginationModel: {
-                                      page: 0,
-                                      pageSize: DEFAULT_ITEMS_PER_PAGE,
-                                  },
-                              },
-                          }}
+                          initialState={initialState}
                         />
                     )}
             </div>
