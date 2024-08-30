@@ -24,6 +24,13 @@
   flex-direction: column;
   justify-content: center;
   margin: 1rem, auto;
+
+  :global {
+
+    .MuiFormLabel-root {
+      font-size: 20px;
+    }
+  }
 }
 
 .centralize {
