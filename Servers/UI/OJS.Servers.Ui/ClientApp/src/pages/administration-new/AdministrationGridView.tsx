@@ -89,9 +89,13 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return isDeletedClassName;
-        } if (!isVisible) {
+        }
+
+        // Do not simplify.
+        if (isVisible === false) {
             return isVisibleClassName;
         }
+
         return '';
     };
 
