@@ -42,7 +42,11 @@ const TabsInView = (props: ITabsInViewProps) => {
                         ))}
                     </Tabs>
                 </Box>
-                {tabs.map((x: IAdministrationTabModel) => tabName === x.value && x.node(x.value))}
+                {tabs.map((x: IAdministrationTabModel) => tabName === x.value && (
+                <React.Fragment key={x.value}>
+                    {x.node(x.value)}
+                </React.Fragment>
+                ))}
             </Box>
 
         </Slide>
