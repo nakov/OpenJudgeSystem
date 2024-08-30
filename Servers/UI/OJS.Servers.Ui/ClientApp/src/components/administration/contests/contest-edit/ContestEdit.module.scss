@@ -21,16 +21,19 @@
 
 @mixin underline-color($color) {
   :global {
-    .MuiInput-underline:before {
+    .MuiInput-underline::before {
       border-bottom-color: $color !important;
     }
-    .MuiInput-underline:hover:not(.Mui-disabled):before {
+
+    .MuiInput-underline:hover:not(.Mui-disabled)::before {
       border-bottom-color: $color !important;
     }
-    .MuiInput-underline:after {
+
+    .MuiInput-underline::after {
       border-bottom-color: $color !important;
     }
-    .MuiInput-underline:hover:not(.Mui-disabled):after {
+
+    .MuiInput-underline:hover:not(.Mui-disabled)::after {
       border-bottom-color: $color !important;
     }
   }
@@ -39,12 +42,15 @@
 @mixin border-color($color) {
   :global {
     flex-grow: 1;
+
     .MuiOutlinedInput-notchedOutline {
       border-color: $color !important;
     }
+
     .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
       border-color: $color !important;
     }
+
     .MuiInputBase-root, .MuiFormLabel-root {
       margin-top: 20px;
     }
