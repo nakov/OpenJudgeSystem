@@ -1,20 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-    Autocomplete,
-    Box,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextareaAutosize,
-    TextField,
-    Typography,
-} from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import isNaN from 'lodash/isNaN';
 
@@ -95,6 +82,8 @@ const ContestEdit = (props:IContestEditProps) => {
     } = props;
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
@@ -184,6 +173,14 @@ const ContestEdit = (props:IContestEditProps) => {
 
         return defaultCategory;
     }, [ contestCategories ]);
+
+    const openTransferDialog = (setOpenModal: React.Dispatch<React.SetStateAction<boolean>>) => {
+        if (queryParams.get('openTransfer') === 'true') {
+            setOpenModal(true);
+            queryParams.delete('openTransfer');
+            navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true });
+        }
+    };
 
     useDisableMouseWheelOnNumberInputs();
 
@@ -784,6 +781,7 @@ const ContestEdit = (props:IContestEditProps) => {
                   contestOfficialParticipants={contest.officialParticipants}
                   categoryName={contestCategories?.find((category) => category.id === contest.categoryId)?.name}
                   mutation={useTransferParticipantsMutation}
+                  openDialog={openTransferDialog}
                 />
                 <DeleteButton
                   id={Number(contestId!)}
