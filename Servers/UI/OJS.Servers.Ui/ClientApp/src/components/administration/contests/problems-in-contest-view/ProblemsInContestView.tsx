@@ -216,7 +216,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               : setShowCopyAllModal}
           sourceId={contestId}
           sourceName={problemsData?.items
-              ? problemsData?.items[0].contest
+              ? problemsData?.items[0]?.contest ?? ''
               : ''}
           problemToCopy={problemToCopy}
           setParentSuccessMessage={setSuccessMessage}
