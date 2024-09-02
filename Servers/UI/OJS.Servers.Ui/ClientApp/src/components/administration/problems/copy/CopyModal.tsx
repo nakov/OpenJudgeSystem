@@ -120,6 +120,7 @@ const CopyModal = (props: ICopyModalProps) => {
                             {renderErrorMessagesAlert(errorMessages)}
                             <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
                             <Autocomplete
+                              disabled={sourceName === ''}
                               options={contestAutocomplete}
                               renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                               onChange={(event, newValue) => onSelect(newValue!)}
@@ -154,7 +155,13 @@ const CopyModal = (props: ICopyModalProps) => {
                             </Box>
                             )}
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                                <Button variant="contained" disabled={contestToCopy === null} onClick={() => onSubmit()}>Copy</Button>
+                                <Button
+                                  variant="contained"
+                                  disabled={contestToCopy === null || sourceName === ''}
+                                  onClick={() => onSubmit()}
+                                >
+                                    Copy
+                                </Button>
                             </Box>
                         </>
                     )}

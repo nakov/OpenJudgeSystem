@@ -88,14 +88,12 @@ const ContestSolutionSubmitPage = () => {
     }, [ participationType, location.pathname ]);
 
     const [ submitSolution, {
-        // isSuccess: submitSolutionSuccess,
         error: submitSolutionError,
         isError: submitSolutionHasError,
         isLoading: submitSolutionIsLoading,
     } ] = useSubmitContestSolutionMutation();
 
     const [ submitSolutionFile, {
-        // isSuccess: submitSolutionFileSuccess,
         error: submitSolutionFileError,
         isError: submitSolutionFileHasError,
         isLoading: submitSolutionFileIsLoading,
@@ -309,11 +307,6 @@ const ContestSolutionSubmitPage = () => {
                 isOfficial: isCompete,
             });
         }
-        // rule is disabled because it requires adding fetchUserParticipationDetails to the
-        // dependencies which makes it to call itself endlessly, which makes recursive
-        // updates and crashes the application
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         isActiveParticipant,
         isRegisteredParticipant,
@@ -408,6 +401,14 @@ const ContestSolutionSubmitPage = () => {
                   selectedContestDetailsProblem!.id
               }`}
             />
+            {user.isAdmin && (
+            <AdministrationLink
+              text="View docs"
+              to={`/submission-type-documents-view?submissionTypeIds=${selectedContestDetailsProblem.allowedSubmissionTypes
+                  .map((st) => st.id)
+                  .join(',')}`}
+            />
+            )}
         </div>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -699,6 +700,20 @@ const ContestSolutionSubmitPage = () => {
                       text="Contest"
                       to={`/contests/${contestId}`}
                     />
+                    {user.isAdmin && (
+                    <AdministrationLink
+                      text="View docs"
+                      to={`/submission-type-documents-view?submissionTypeIds=${problems
+                          ?.flatMap((p) => p.allowedSubmissionTypes)
+                          ?.reduce((acc, st) => {
+                              if (!acc.includes(st.id)) {
+                                  acc.push(st.id);
+                              }
+                              return acc;
+                          }, [] as number[])
+                          ?.join(',') ?? ''}`}
+                    />
+                    )}
                 </div>
             ) }
             <div className={styles.problemsAndEditorWrapper}>
