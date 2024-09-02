@@ -5,7 +5,6 @@ COPY Servers/Worker/ ./Servers/Worker/
 COPY Services/Worker ./Services/Worker
 
 COPY Directory.Build.props ./Directory.Build.props
-COPY Analyzers ./Analyzers
 COPY Common ./Common
 COPY PubSub ./PubSub
 COPY Data/ ./Data/

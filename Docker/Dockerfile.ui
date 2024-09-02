@@ -10,7 +10,6 @@ COPY Servers/Infrastructure ./Servers/Infrastructure
 COPY Services/UI ./Services/UI
 
 COPY Directory.Build.props ./Directory.Build.props
-COPY Analyzers ./Analyzers
 COPY Common ./Common
 COPY Data ./Data
 COPY PubSub ./PubSub

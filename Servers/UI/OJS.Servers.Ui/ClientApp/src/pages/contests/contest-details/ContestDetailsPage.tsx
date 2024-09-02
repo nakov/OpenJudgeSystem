@@ -109,6 +109,8 @@ const ContestDetailsPage = () => {
               to={`/${PROBLEMS_PATH}?filter=contestid~equals~${contestId}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
               text="Problems"
             />
+            {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
+                (<AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />)}
         </div>
     );
 
