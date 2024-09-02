@@ -88,13 +88,12 @@ const ContestDetailsPage = () => {
     };
 
     const renderAdministrationButtons = () => (
-        <div>
+        <div className={styles.administrationButtonsWrapper}>
             <AdministrationLink
               text="Edit"
               to={`/${CONTESTS_PATH}/${id}`}
             />
             <Button
-              className={styles.adminBtn}
               type={ButtonType.secondary}
               size={ButtonSize.small}
               onClick={() => navigate(getContestsResultsPageUrl({
@@ -106,9 +105,12 @@ const ContestDetailsPage = () => {
             >
                 Full Results
             </Button>
+            <AdministrationLink
+              to={`/${CONTESTS_PATH}/${contestId}#tab-problems`}
+              text="Problems"
+            />
             {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
                 (<AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />)}
-
         </div>
     );
 
