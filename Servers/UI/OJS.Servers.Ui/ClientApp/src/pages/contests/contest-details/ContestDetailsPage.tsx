@@ -106,7 +106,7 @@ const ContestDetailsPage = () => {
                 Full Results
             </Button>
             <AdministrationLink
-              to={`/${PROBLEMS_PATH}?filter=contestid~equals~${contestId}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+              to={`/${CONTESTS_PATH}/${contestId}#tab-problems`}
               text="Problems"
             />
             {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
