@@ -70,12 +70,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Ui.Business", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{C0BBA7AB-3119-43F4-81A7-F6FDA8D888E6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{F64E659D-490D-416E-81B9-B0911C5071A7}"
-	ProjectSection(SolutionItems) = preProject
-		Analyzers\rulesets.xml = Analyzers\rulesets.xml
-		Analyzers\stylecop.json = Analyzers\stylecop.json
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{DDF8B4CB-3916-4657-8E40-688A5D7E46F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Servers.Worker", "Servers\Worker\OJS.Servers.Worker\OJS.Servers.Worker.csproj", "{4DDA1854-E593-458E-A4FF-F318DA739D7E}"
