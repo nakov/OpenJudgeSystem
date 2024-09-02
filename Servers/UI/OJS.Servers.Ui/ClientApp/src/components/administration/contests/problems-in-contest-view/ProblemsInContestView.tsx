@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MdCopyAll, MdDeleteForever } from 'react-icons/md';
+import { RiFileExcel2Fill } from 'react-icons/ri';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
@@ -11,6 +12,8 @@ import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/ad
 import problemFilterableColumns, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
+import isNilOrEmpty from '../../../../utils/check-utils';
+import concatClassNames from '../../../../utils/class-names';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
@@ -58,6 +61,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         refetch: retakeData,
         data: problemsData,
         error: getContestError,
+        isFetching: areProblemsFetching,
     } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
 
     const [ deleteByContest,
@@ -181,30 +185,42 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         />
     );
 
-    const renderGridSettings = () => (
-        <>
-            <CreateButton
-              showModal={openShowCreateProblemModal}
-              showModalFunc={setOpenShowCreateProblemModal}
-              styles={{ width: '40px', height: '40px' }}
-            />
-            <Tooltip title="Copy All">
-                <IconButton onClick={() => {
-                    setShowCopyAllModal(!showCopyAllModal);
-                }}
-                >
-                    <MdCopyAll style={{ width: '40px', height: '40px' }} />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete All">
-                <IconButton onClick={() => setShowDeleteAllConfirm(!showDeleteAllConfirm)}>
-                    <MdDeleteForever style={{ width: '40px', height: '40px', color: 'red' }} />
-                </IconButton>
-            </Tooltip>
+    const renderGridSettings = () => {
+        const isCopyFunctionalityDisabled = areProblemsFetching ||
+            (!areProblemsFetching && (!problemsData || isNilOrEmpty(problemsData.items)));
 
-            <SubmitSolution contestId={contestId} canBeCompeted={canContestBeCompeted} contestName={contestName} />
-        </>
-    );
+        return (
+            <>
+                <CreateButton
+                  showModal={openShowCreateProblemModal}
+                  showModalFunc={setOpenShowCreateProblemModal}
+                  styles={{ width: '40px', height: '40px' }}
+                />
+                <Tooltip title={isCopyFunctionalityDisabled
+                    ? 'Copy All: No problems to copy'
+                    : 'Copy All'}
+                >
+                    <span>
+                        <IconButton
+                          disabled={isCopyFunctionalityDisabled}
+                          onClick={() => {
+                              setShowCopyAllModal(!showCopyAllModal);
+                          }}
+                        >
+                            <MdCopyAll style={{ width: '40px', height: '40px' }} />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+                <Tooltip title="Delete All">
+                    <IconButton onClick={() => setShowDeleteAllConfirm(!showDeleteAllConfirm)}>
+                        <MdDeleteForever style={{ width: '40px', height: '40px', color: 'red' }} />
+                    </IconButton>
+                </Tooltip>
+
+                <SubmitSolution contestId={contestId} canBeCompeted={canContestBeCompeted} contestName={contestName} />
+            </>
+        );
+    };
 
     const renderCopyModal = (index: number, operation: AllowedOperations) => (
         <CopyModal
