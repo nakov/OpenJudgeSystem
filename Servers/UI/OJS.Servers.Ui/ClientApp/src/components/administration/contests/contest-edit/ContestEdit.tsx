@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import isNaN from 'lodash/isNaN';
@@ -43,6 +43,7 @@ import {
     useUpdateContestMutation,
 } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
+import concatClassNames from '../../../../utils/class-names';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
@@ -81,6 +82,8 @@ const ContestEdit = (props:IContestEditProps) => {
     } = props;
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
@@ -170,6 +173,14 @@ const ContestEdit = (props:IContestEditProps) => {
 
         return defaultCategory;
     }, [ contestCategories ]);
+
+    const openTransferDialog = (setOpenModal: React.Dispatch<React.SetStateAction<boolean>>) => {
+        if (queryParams.get('openTransfer') === 'true') {
+            setOpenModal(true);
+            queryParams.delete('openTransfer');
+            navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true });
+        }
+    };
 
     useDisableMouseWheelOnNumberInputs();
 
@@ -455,258 +466,304 @@ const ContestEdit = (props:IContestEditProps) => {
                 />
                 )) || 'Contest form'}
             </Typography>
-            <form className={`${formStyles.form}`}>
-                <Box className={`${formStyles.fieldBox}`}>
-                    <Box className={formStyles.fieldBoxElementLeft}>
-                        <TextField
-                          className={formStyles.inputRow}
-                          label={NAME}
-                          variant="standard"
-                          name="name"
-                          onChange={(e) => onChange(e)}
-                          value={contest.name}
-                          color={contestValidations.isNameValid && contestValidations.isNameTouched
-                              ? 'success'
-                              : 'primary'}
-                          error={(contestValidations.isNameTouched && !contestValidations.isNameValid)}
-                          helperText={(contestValidations.isNameTouched &&
+            <form className={formStyles.form}>
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        General Information
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.row}>
+                            <TextField
+                              className={formStyles.inputRow}
+                              label={NAME}
+                              variant="standard"
+                              name="name"
+                              InputLabelProps={{ shrink: true }}
+                              onChange={(e) => onChange(e)}
+                              value={contest.name}
+                              color={contestValidations.isNameValid && contestValidations.isNameTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestValidations.isNameTouched && !contestValidations.isNameValid)}
+                              helperText={(contestValidations.isNameTouched &&
                                     !contestValidations.isNameValid) && CONTEST_NAME_VALIDATION}
-                        />
-                        <TextField
-                          className={formStyles.inputRow}
-                          type="number"
-                          name="limitBetweenSubmissions"
-                          label={LIMIT_BETWEEN_SUBMISSIONS}
-                          variant="standard"
-                          onChange={(e) => onChange(e)}
-                          value={contest.limitBetweenSubmissions}
-                          InputLabelProps={{ shrink: true }}
-                          color={contestValidations.isLimitBetweenSubmissionsValid &&
-                                    contestValidations.isLimitBetweenSubmissionsTouched
-                              ? 'success'
-                              : 'primary'}
-                          error={(contestValidations.isLimitBetweenSubmissionsTouched &&
+                            />
+                            <TextField
+                              className={formStyles.inputRow}
+                              type="number"
+                              name="limitBetweenSubmissions"
+                              label={LIMIT_BETWEEN_SUBMISSIONS}
+                              variant="standard"
+                              onChange={(e) => onChange(e)}
+                              value={contest.limitBetweenSubmissions}
+                              InputLabelProps={{ shrink: true }}
+                              color={contestValidations.isLimitBetweenSubmissionsValid &&
+                                contestValidations.isLimitBetweenSubmissionsTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestValidations.isLimitBetweenSubmissionsTouched &&
                                     !contestValidations.isLimitBetweenSubmissionsValid)}
-                          helperText={(contestValidations.isLimitBetweenSubmissionsTouched &&
-                                    !contestValidations.isLimitBetweenSubmissionsValid) &&
-                                     CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION}
-                        />
-                        <TextField
-                          className={formStyles.inputRow}
-                          type="number"
-                          label={ORDER_BY}
-                          variant="standard"
-                          value={contest.orderBy}
-                          onChange={(e) => onChange(e)}
-                          InputLabelProps={{ shrink: true }}
-                          name="orderBy"
-                          color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
-                              ? 'success'
-                              : 'primary'}
-                          error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
-                          helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
-                            CONTEST_ORDER_BY_VALIDATION}
-                        />
-                        { contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
-                        <TextField
-                          className={formStyles.inputRow}
-                          type="number"
-                          label={NUMBER_OF_PROBLEM_GROUPS}
-                          variant="standard"
-                          value={contest.numberOfProblemGroups}
-                          onChange={(e) => onChange(e)}
-                          InputLabelProps={{ shrink: true }}
-                          name="numberOfProblemGroups"
-                          disabled={isEditMode}
-                          error={(contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid)}
-                          helperText={(
-                              contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid
-                          ) &&
-                          CONTEST_NUMBER_OF_PROBLEM_GROUPS}
-                        />
-                        )}
-                    </Box>
-                    <Box className={formStyles.fieldBoxElementRight}>
-                        <TextField
-                          className={formStyles.inputRow}
-                          type="text"
-                          label={COMPETE_PASSWORD}
-                          variant="standard"
-                          value={contest.contestPassword || ''}
-                          name="contestPassword"
-                          onChange={(e) => onChange(e)}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                        <TextField
-                          className={formStyles.inputRow}
-                          type="text"
-                          label={PRACTICE_PASSWORD}
-                          variant="standard"
-                          name="practicePassword"
-                          onChange={(e) => onChange(e)}
-                          value={contest.practicePassword || ''}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                        <TextField
-                          className={formStyles.inputRow}
-                          label={NEW_IP_PASSWORD}
-                          variant="standard"
-                          value={contest.newIpPassword || ''}
-                          name="newIpPassword"
-                          onChange={(e) => onChange(e)}
-                          type="text"
-                          color={contestValidations.isNewIpPasswordValid && contestValidations.isNewIpPasswordTouched
-                              ? 'success'
-                              : 'primary'}
-                          error={(contestValidations.isNewIpPasswordTouched && !contestValidations.isNewIpPasswordValid)}
-                          helperText={(contestValidations.isNewIpPasswordTouched &&
-                                    !contestValidations.isNewIpPasswordValid) && CONTEST_NEW_IP_PASSWORD_VALIDATION}
-                        />
-                        <TextField
-                          className={formStyles.inputRow}
-                          type="text"
-                          label={ALLOWED_IPS}
-                          variant="standard"
-                          placeholder="Split by ;"
-                          value={contest.allowedIps}
-                          onChange={(e) => onChange(e)}
-                          InputLabelProps={{ shrink: true }}
-                          name="allowedIps"
-                        />
-                        {contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
-                        <TextField
-                          className={formStyles.inputRow}
-                          type="string"
-                          label={DURATION}
-                          variant="standard"
-                          value={contest.duration
-                              ? contest.duration
-                              : undefined}
-                          name="duration"
-                          onChange={(e) => onChange(e)}
-                          disabled={contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
-                          InputLabelProps={{ shrink: true }}
-                          error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
-                          helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
-                            CONTEST_DURATION_VALIDATION}
-                        />
-                        )}
-                    </Box>
-                </Box>
-                <FormControl
-                  className={formStyles.inputRow}
-                >
-                    <InputLabel id="contest-type">{TYPE}</InputLabel>
-                    <Select
-                      sx={{ width: '100%' }}
-                      variant="standard"
-                      value={contest.type}
-                      className={formStyles.inputRow}
-                      name="type"
-                      labelId="contest-type"
-                      onChange={(e) => onChange(e)}
-                      onBlur={(e) => onChange(e)}
-                      color={contestValidations.isTypeValid && contestValidations.isTypeTouched
-                          ? 'success'
-                          : 'primary'}
-                      error={(contestValidations.isTypeTouched && !contestValidations.isTypeValid)}
-                    >
-                        {Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).map((key) => (
-                            <MenuItem key={key} value={key}>
-                                {key}
-                            </MenuItem>
-                        ))}
-                        helperText=
-                        {(contestValidations.isTypeTouched && !contestValidations.isTypeValid) &&
-                             CONTEST_TYPE_VALIDATION}
-                    </Select>
-                </FormControl>
-                <FormControl className={styles.textArea}>
-                    <FormLabel>{DESCRIPTION}</FormLabel>
-                    <TextareaAutosize
-                      placeholder={CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE}
-                      value={contest.description === null
-                          ? ''
-                          : contest.description}
-                      minRows={10}
-                      name="description"
-                      onChange={(e) => onChange(e)}
-                    />
-                </FormControl>
-                <FormControl className={styles.textArea} sx={{ margin: '20px 0' }}>
-                    <Autocomplete
-                      sx={{ width: '100%' }}
-                      className={formStyles.inputRow}
-                      onChange={(event, newValue) => handleAutocompleteChange('category', newValue!, 'id', onChange)}
-                      value={contestCategories?.find((category) => category.id === contest.categoryId) ?? getDefaultContestCategory()}
-                      options={contestCategories!}
-                      renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} key={params.id} />}
-                      getOptionLabel={(option) => option?.name}
-                      renderOption={(properties, option) => (
-                          <MenuItem {...properties} key={option.id} value={option.id}>
-                              {option.name}
-                          </MenuItem>
-                      )}
-                    />
-                </FormControl>
-                <Box className={formStyles.row}>
-                    <DateTimePicker
-                      sx={{ width: '48%' }}
-                      name="startTime"
-                      label={COMPETE_START_TIME}
-                      value={getDateAsLocal(contest.startTime)}
-                      onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
-                    />
-                    <DateTimePicker
-                      sx={{ width: '48%' }}
-                      name="endTime"
-                      label={COMPETE_END_TIME}
-                      value={getDateAsLocal(contest.endTime)}
-                      onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
-                    />
-                </Box>
-                <Box className={formStyles.row}>
-                    <DateTimePicker
-                      sx={{ width: '48%', margin: '20px 0' }}
-                      name="practiceStartTime"
-                      label={PRACTICE_START_TIME}
-                      value={getDateAsLocal(contest.practiceStartTime)}
-                      onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
-                    />
-                    <DateTimePicker
-                      sx={{ width: '48%', margin: '20px 0' }}
-                      name="practiceEndTime"
-                      label={PRACTICE_END_TIME}
-                      value={getDateAsLocal(contest.practiceEndTime)}
-                      onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
-                    />
-                </Box>
-                <Box className={formStyles.row}>
-                    <DateTimePicker
-                      sx={{ width: '48%', margin: '20px 0' }}
-                      name="visibleFrom"
-                      label={VISIBLE_FROM}
-                      value={getDateAsLocal(contest.visibleFrom)}
-                      onChange={(newValue) => handleDateTimePickerChange('visibleFrom', newValue, onChange)}
-                    />
-                </Box>
-                <Box className={styles.checkboxes}>
-                    <FormControlLabel
-                      control={<Checkbox checked={contest.isVisible} />}
-                      label={IS_VISIBLE}
-                      name="isVisible"
-                      onChange={(e) => onChange(e)}
-                    />
-                    <FormControlLabel
-                      control={(
-                          <Checkbox
-                            checked={contest.allowParallelSubmissionsInTasks}
-                          />
+                              helperText={(contestValidations.isLimitBetweenSubmissionsTouched &&
+                                        !contestValidations.isLimitBetweenSubmissionsValid) &&
+                                    CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION}
+                            />
+                        </Box>
+                        <Box className={formStyles.row}>
+                            <TextField
+                              className={formStyles.inputRow}
+                              type="number"
+                              label={ORDER_BY}
+                              variant="standard"
+                              value={contest.orderBy}
+                              onChange={(e) => onChange(e)}
+                              InputLabelProps={{ shrink: true }}
+                              name="orderBy"
+                              color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
+                              helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
+                                    CONTEST_ORDER_BY_VALIDATION}
+                            />
+                            <FormControl
+                              className={formStyles.inputRow}
+                            >
+                                <InputLabel
+                                  id="contest-type"
+                                  sx={{ alignSelf: 'start', left: '-14px' }}
+                                >
+                                    {TYPE}
+                                </InputLabel>
+                                <Select
+                                  sx={{ width: '100%' }}
+                                  variant="standard"
+                                  value={contest.type}
+                                  className={formStyles.inputRow}
+                                  name="type"
+                                  labelId="contest-type"
+                                  onChange={(e) => onChange(e)}
+                                  onBlur={(e) => onChange(e)}
+                                  color={contestValidations.isTypeValid && contestValidations.isTypeTouched
+                                      ? 'success'
+                                      : 'primary'}
+                                  error={(contestValidations.isTypeTouched && !contestValidations.isTypeValid)}
+                                >
+                                    {Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).map((key) => (
+                                        <MenuItem key={key} value={key}>
+                                            {key}
+                                        </MenuItem>
+                                    ))}
+                                    helperText=
+                                    {(contestValidations.isTypeTouched && !contestValidations.isTypeValid) &&
+                                        CONTEST_TYPE_VALIDATION}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        <Box className={formStyles.row}>
+                            { contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
+                                <TextField
+                                  className={formStyles.inputRow}
+                                  type="number"
+                                  label={NUMBER_OF_PROBLEM_GROUPS}
+                                  variant="standard"
+                                  value={contest.numberOfProblemGroups}
+                                  onChange={(e) => onChange(e)}
+                                  InputLabelProps={{ shrink: true }}
+                                  name="numberOfProblemGroups"
+                                  disabled={isEditMode}
+                                  error={(contestValidations.isNumberOfProblemGroupsTouched &&
+                                      !contestValidations.isNUmberOfProblemGroupsValid)}
+                                  helperText={(
+                                      contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid
+                                  ) &&
+                                        CONTEST_NUMBER_OF_PROBLEM_GROUPS}
+                                />
+                            )}
+                        </Box>
+                        <FormControl className={styles.textArea}>
+                            <FormLabel>{DESCRIPTION}</FormLabel>
+                            <TextareaAutosize
+                              placeholder={CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE}
+                              value={contest.description === null
+                                  ? ''
+                                  : contest.description}
+                              minRows={10}
+                              name="description"
+                              onChange={(e) => onChange(e)}
+                            />
+                        </FormControl>
+                        <FormControl className={styles.textArea} sx={{ margin: '20px 0' }}>
+                            <Autocomplete
+                              sx={{ width: '100%' }}
+                              className={formStyles.inputRow}
+                              onChange={(event, newValue) => handleAutocompleteChange('category', newValue!, 'id', onChange)}
+                              value={contestCategories?.find((category) => category.id === contest.categoryId) ??
+                                  getDefaultContestCategory()}
+                              options={contestCategories!}
+                              renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} key={params.id} />}
+                              getOptionLabel={(option) => option?.name}
+                              renderOption={(properties, option) => (
+                                  <MenuItem {...properties} key={option.id} value={option.id}>
+                                      {option.name}
+                                  </MenuItem>
                               )}
-                      name="allowParallelSubmissionsInTasks"
-                      onChange={(e) => onChange(e)}
-                      label={ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}
-                    />
+                            />
+                        </FormControl>
+                    </Box>
+                </Box>
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        Duration Information
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.row}>
+                            <DateTimePicker
+                              className={styles.competeBorder}
+                              name="startTime"
+                              label={COMPETE_START_TIME}
+                              value={getDateAsLocal(contest.startTime)}
+                              onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
+                            />
+                            <DateTimePicker
+                              className={styles.competeBorder}
+                              name="endTime"
+                              label={COMPETE_END_TIME}
+                              value={getDateAsLocal(contest.endTime)}
+                              onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
+                            />
+                        </Box>
+                        <Box className={formStyles.row}>
+                            <DateTimePicker
+                              className={styles.practiceBorder}
+                              name="practiceStartTime"
+                              label={PRACTICE_START_TIME}
+                              value={getDateAsLocal(contest.practiceStartTime)}
+                              onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
+                            />
+                            <DateTimePicker
+                              className={styles.practiceBorder}
+                              name="practiceEndTime"
+                              label={PRACTICE_END_TIME}
+                              value={getDateAsLocal(contest.practiceEndTime)}
+                              onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
+                            />
+                        </Box>
+                        <Box className={formStyles.row}>
+                            <DateTimePicker
+                              sx={{ width: '100%', margin: '20px 0' }}
+                              name="visibleFrom"
+                              label={VISIBLE_FROM}
+                              value={getDateAsLocal(contest.visibleFrom)}
+                              onChange={(newValue) => handleDateTimePickerChange('visibleFrom', newValue, onChange)}
+                            />
+                            {contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
+                                <TextField
+                                  className={formStyles.inputRow}
+                                  type="string"
+                                  label={DURATION}
+                                  placeholder="hh:mm:ss"
+                                  variant="standard"
+                                  value={contest.duration
+                                      ? contest.duration
+                                      : undefined}
+                                  name="duration"
+                                  onChange={(e) => onChange(e)}
+                                  disabled={contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
+                                  InputLabelProps={{ shrink: true }}
+                                  error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
+                                  helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
+                                        CONTEST_DURATION_VALIDATION}
+                                />
+                            )}
+                        </Box>
+                    </Box>
+                </Box>
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        Passwords
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.row}>
+                            <TextField
+                              className={concatClassNames(formStyles.inputRow, styles.competeUnderline)}
+                              type="text"
+                              label={COMPETE_PASSWORD}
+                              variant="standard"
+                              value={contest.contestPassword || ''}
+                              name="contestPassword"
+                              onChange={(e) => onChange(e)}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                            <TextField
+                              className={concatClassNames(formStyles.inputRow, styles.practiceUnderline)}
+                              type="text"
+                              label={PRACTICE_PASSWORD}
+                              variant="standard"
+                              name="practicePassword"
+                              onChange={(e) => onChange(e)}
+                              value={contest.practicePassword || ''}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                        </Box>
+                        <Box className={formStyles.row}>
+                            <TextField
+                              className={formStyles.inputRow}
+                              label={NEW_IP_PASSWORD}
+                              variant="standard"
+                              value={contest.newIpPassword || ''}
+                              name="newIpPassword"
+                              onChange={(e) => onChange(e)}
+                              type="text"
+                              color={contestValidations.isNewIpPasswordValid && contestValidations.isNewIpPasswordTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              InputLabelProps={{ shrink: true }}
+                              error={(contestValidations.isNewIpPasswordTouched && !contestValidations.isNewIpPasswordValid)}
+                              helperText={(contestValidations.isNewIpPasswordTouched &&
+                                    !contestValidations.isNewIpPasswordValid) && CONTEST_NEW_IP_PASSWORD_VALIDATION}
+                            />
+                            <TextField
+                              className={formStyles.inputRow}
+                              type="text"
+                              label={ALLOWED_IPS}
+                              variant="standard"
+                              placeholder="Split by ;"
+                              value={contest.allowedIps}
+                              onChange={(e) => onChange(e)}
+                              InputLabelProps={{ shrink: true }}
+                              name="allowedIps"
+                            />
+                        </Box>
+                    </Box>
+                </Box>
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        Options
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.fieldBoxCheckBoxes}>
+                            <FormControlLabel
+                              control={<Checkbox checked={contest.isVisible} />}
+                              label={IS_VISIBLE}
+                              name="isVisible"
+                              onChange={(e) => onChange(e)}
+                            />
+                            <FormControlLabel
+                              control={(
+                                  <Checkbox
+                                    checked={contest.allowParallelSubmissionsInTasks}
+                                  />
+                                )}
+                              name="allowParallelSubmissionsInTasks"
+                              onChange={(e) => onChange(e)}
+                              label={ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}
+                            />
+                        </Box>
+                    </Box>
                 </Box>
             </form>
 
@@ -724,6 +781,7 @@ const ContestEdit = (props:IContestEditProps) => {
                   contestOfficialParticipants={contest.officialParticipants}
                   categoryName={contestCategories?.find((category) => category.id === contest.categoryId)?.name}
                   mutation={useTransferParticipantsMutation}
+                  openDialog={openTransferDialog}
                 />
                 <DeleteButton
                   id={Number(contestId!)}

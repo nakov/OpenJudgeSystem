@@ -7,53 +7,25 @@ interface IUseScrollToTabParams<T> {
     tabNames: T[];
 }
 
-/*
-    This function is used to make the scroll smoother and slower,
-    we can scroll for a custom duration, which improves UX.
- */
-const smoothScroll = (element: HTMLElement, duration: number) => {
-    const startPosition = window.scrollY;
-    const targetPosition = element.getBoundingClientRect().top + startPosition;
-    const startTime = performance.now();
-
-    const easeInOutQuad = (currentTime: number, startValue: number, changeInValue: number, currentDuration: number) => {
-        // Normalize the current time to a range of 0 to 2
-        let time = currentTime / (currentDuration / 2);
-
-        if (time < 1) {
-            // First half of the animation: accelerating
-            return (changeInValue / 2) * (time * time) + startValue;
-        }
-
-        // Second half of the animation: decelerating
-        time -= 1;
-        return (-changeInValue / 2) * (time * (time - 2) - 1) + startValue;
-    };
-
-    const scroll = () => {
-        const currentTime = performance.now();
-        const timeElapsed = currentTime - startTime;
-        const nextScrollPosition = easeInOutQuad(timeElapsed, startPosition, targetPosition, duration);
-
-        window.scrollTo(0, nextScrollPosition);
-
-        if (timeElapsed < duration) {
-            requestAnimationFrame(scroll);
-        } else {
-            window.scrollTo(0, targetPosition);
-        }
-    };
-
-    scroll();
+const isElementInViewport = (element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
 };
 
 const useScrollToTab = <T extends string>({ hash, tabName, setTabName, tabNames }: IUseScrollToTabParams<T>) => {
     const [ hasScrolled, setHasScrolled ] = useState(false);
-    const targetTab = tabNames.find((t) => t.toLowerCase() === hash.replace('#', '').toLowerCase());
-    const shouldScroll = useMemo(
-        () => (!hasScrolled && hash) && targetTab,
-        [ hasScrolled, hash, targetTab ],
-    );
+    /*
+        Every fragment MUST be prefixed with 'tab-', otherwise the browser will register
+        as a 'hashchange' event and will navigate directly to the element with the corresponding id.
+     */
+    const targetTab = tabNames.find((t) => t.toLowerCase() === hash.replace('#tab-', '').toLowerCase());
+
+    const shouldScroll = useMemo(() => !hasScrolled && hash && !!targetTab, [ hasScrolled, hash, targetTab ]);
 
     useEffect(() => {
         if (shouldScroll) {
@@ -64,24 +36,23 @@ const useScrollToTab = <T extends string>({ hash, tabName, setTabName, tabNames 
     // eslint-disable-next-line consistent-return
     useEffect(() => {
         if (shouldScroll) {
-            /*
-                We use a MutationObserver to monitor the DOM and detect when the
-                target tab element has been added to the DOM. Once the element is found,
-                the observer triggers a smooth scroll to bring the element into view.
-            */
-            const observer = new MutationObserver(() => {
+            const scrollToElement = () => {
                 const element = document.getElementById(tabName);
+
                 if (element) {
-                    /*
-                       We use a small delay (50ms) to ensure the UI has finished loading
-                       before scrolling, which improves the user experience.
-                    */
-                    setTimeout(() => {
-                        smoothScroll(element, 700);
+                    const isElementVisible = isElementInViewport(element);
+                    if (!isElementVisible) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
                         setHasScrolled(true);
-                        observer.disconnect();
-                    }, 50);
+                    }
                 }
+            };
+
+            scrollToElement();
+
+            const observer = new MutationObserver(() => {
+                scrollToElement();
             });
 
             observer.observe(document.body, {

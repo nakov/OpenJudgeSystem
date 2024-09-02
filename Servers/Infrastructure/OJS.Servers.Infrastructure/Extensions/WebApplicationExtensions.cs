@@ -6,10 +6,12 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Services.Infrastructure;
+    using System;
     using static OJS.Common.GlobalConstants.Urls;
     using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
@@ -69,12 +71,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 })
                 .RequireAuthorization(ApiKeyPolicyName);
 
-        public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app)
+        public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app, IConfiguration configuration)
             where TDbContext : DbContext
         {
-            using var scope = app.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+            var timeout = configuration.GetValue("MigrationsDbTimeoutInSeconds", 60);
 
+            using var scope = app.Services.CreateScope();
+            using var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+
+            dbContext.Database.SetCommandTimeout(TimeSpan.FromSeconds(timeout));
             dbContext.Database.Migrate();
 
             return app;

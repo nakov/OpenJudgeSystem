@@ -17,7 +17,7 @@ namespace OJS.Servers.Ui
 
             var app = builder.Build();
 
-            app.ConfigureWebApplication(ApiVersion);
+            app.ConfigureWebApplication(builder.Configuration, ApiVersion);
             app.Run();
         }
     }
