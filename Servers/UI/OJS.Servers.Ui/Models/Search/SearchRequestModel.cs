@@ -1,6 +1,5 @@
 namespace OJS.Servers.Ui.Models.Search;
 
-using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Models.Search;
 using OJS.Services.Infrastructure.Models.Mapping;
 
@@ -8,8 +7,7 @@ public class SearchRequestModel : IMapTo<SearchServiceModel>
 {
     public string? SearchTerm { get; set; }
 
-    [BindProperty(Name = "page")]
-    public int PageNumber { get; set; }
+    public int Page { get; set; }
 
     public bool Contests { get; set; }
 
