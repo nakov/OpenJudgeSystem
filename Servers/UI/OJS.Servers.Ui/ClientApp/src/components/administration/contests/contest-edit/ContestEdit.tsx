@@ -86,7 +86,7 @@ const ContestEdit = (props:IContestEditProps) => {
     const queryParams = new URLSearchParams(location.search);
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
+    const [ isValidForm, setIsValidForm ] = useState<boolean>(isEditMode);
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -116,7 +116,7 @@ const ContestEdit = (props:IContestEditProps) => {
 
     const [ contestValidations, setContestValidations ] = useState({
         isNameTouched: false,
-        isNameValid: !!isEditMode,
+        isNameValid: isEditMode,
         isTypeTouched: false,
         isTypeValid: true,
         isLimitBetweenSubmissionsTouched: false,
@@ -455,7 +455,7 @@ const ContestEdit = (props:IContestEditProps) => {
     return (
         <Box className={`${styles.flex}`}>
             {renderErrorMessagesAlert(errorMessages)}
-            <Typography className={formStyles.centralize} variant="h4">
+            <Typography className={formStyles.centralize} variant="h5">
                 {(contest.name && (
                 <ExternalLink
                   to={getContestsDetailsPageUrl({
@@ -468,7 +468,7 @@ const ContestEdit = (props:IContestEditProps) => {
             </Typography>
             <form className={formStyles.form}>
                 <Box className={formStyles.fieldBox}>
-                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                    <Typography className={formStyles.fieldBoxTitle} variant="h6">
                         General Information
                     </Typography>
                     <div className={formStyles.fieldBoxDivider} />
@@ -489,43 +489,8 @@ const ContestEdit = (props:IContestEditProps) => {
                               helperText={(contestValidations.isNameTouched &&
                                     !contestValidations.isNameValid) && CONTEST_NAME_VALIDATION}
                             />
-                            <TextField
-                              className={formStyles.inputRow}
-                              type="number"
-                              name="limitBetweenSubmissions"
-                              label={LIMIT_BETWEEN_SUBMISSIONS}
-                              variant="standard"
-                              onChange={(e) => onChange(e)}
-                              value={contest.limitBetweenSubmissions}
-                              InputLabelProps={{ shrink: true }}
-                              color={contestValidations.isLimitBetweenSubmissionsValid &&
-                                contestValidations.isLimitBetweenSubmissionsTouched
-                                  ? 'success'
-                                  : 'primary'}
-                              error={(contestValidations.isLimitBetweenSubmissionsTouched &&
-                                    !contestValidations.isLimitBetweenSubmissionsValid)}
-                              helperText={(contestValidations.isLimitBetweenSubmissionsTouched &&
-                                        !contestValidations.isLimitBetweenSubmissionsValid) &&
-                                    CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION}
-                            />
                         </Box>
                         <Box className={formStyles.row}>
-                            <TextField
-                              className={formStyles.inputRow}
-                              type="number"
-                              label={ORDER_BY}
-                              variant="standard"
-                              value={contest.orderBy}
-                              onChange={(e) => onChange(e)}
-                              InputLabelProps={{ shrink: true }}
-                              name="orderBy"
-                              color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
-                                  ? 'success'
-                                  : 'primary'}
-                              error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
-                              helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
-                                    CONTEST_ORDER_BY_VALIDATION}
-                            />
                             <FormControl
                               className={formStyles.inputRow}
                             >
@@ -613,7 +578,7 @@ const ContestEdit = (props:IContestEditProps) => {
                     </Box>
                 </Box>
                 <Box className={formStyles.fieldBox}>
-                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                    <Typography className={formStyles.fieldBoxTitle} variant="h6">
                         Duration Information
                     </Typography>
                     <div className={formStyles.fieldBoxDivider} />
@@ -651,13 +616,6 @@ const ContestEdit = (props:IContestEditProps) => {
                             />
                         </Box>
                         <Box className={formStyles.row}>
-                            <DateTimePicker
-                              sx={{ width: '100%', margin: '20px 0' }}
-                              name="visibleFrom"
-                              label={VISIBLE_FROM}
-                              value={getDateAsLocal(contest.visibleFrom)}
-                              onChange={(newValue) => handleDateTimePickerChange('visibleFrom', newValue, onChange)}
-                            />
                             {contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
                                 <TextField
                                   className={formStyles.inputRow}
@@ -681,7 +639,7 @@ const ContestEdit = (props:IContestEditProps) => {
                     </Box>
                 </Box>
                 <Box className={formStyles.fieldBox}>
-                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                    <Typography className={formStyles.fieldBoxTitle} variant="h6">
                         Passwords
                     </Typography>
                     <div className={formStyles.fieldBoxDivider} />
@@ -740,17 +698,61 @@ const ContestEdit = (props:IContestEditProps) => {
                     </Box>
                 </Box>
                 <Box className={formStyles.fieldBox}>
-                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                    <Typography className={formStyles.fieldBoxTitle} variant="h6">
                         Options
                     </Typography>
                     <div className={formStyles.fieldBoxDivider} />
                     <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.row}>
+                            <TextField
+                              className={formStyles.inputRow}
+                              type="number"
+                              name="limitBetweenSubmissions"
+                              label={LIMIT_BETWEEN_SUBMISSIONS}
+                              variant="standard"
+                              onChange={(e) => onChange(e)}
+                              value={contest.limitBetweenSubmissions}
+                              InputLabelProps={{ shrink: true }}
+                              color={contestValidations.isLimitBetweenSubmissionsValid &&
+                            contestValidations.isLimitBetweenSubmissionsTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestValidations.isLimitBetweenSubmissionsTouched &&
+                                !contestValidations.isLimitBetweenSubmissionsValid)}
+                              helperText={(contestValidations.isLimitBetweenSubmissionsTouched &&
+                                    !contestValidations.isLimitBetweenSubmissionsValid) &&
+                                CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION}
+                            />
+                            <TextField
+                              className={formStyles.inputRow}
+                              type="number"
+                              label={ORDER_BY}
+                              variant="standard"
+                              value={contest.orderBy}
+                              onChange={(e) => onChange(e)}
+                              InputLabelProps={{ shrink: true }}
+                              name="orderBy"
+                              color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
+                              helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
+                                CONTEST_ORDER_BY_VALIDATION}
+                            />
+                        </Box>
                         <Box className={formStyles.fieldBoxCheckBoxes}>
                             <FormControlLabel
                               control={<Checkbox checked={contest.isVisible} />}
                               label={IS_VISIBLE}
                               name="isVisible"
                               onChange={(e) => onChange(e)}
+                            />
+                            <DateTimePicker
+                              sx={{ width: '100%', margin: '20px 0' }}
+                              name="visibleFrom"
+                              label={VISIBLE_FROM}
+                              value={getDateAsLocal(contest.visibleFrom)}
+                              onChange={(newValue) => handleDateTimePickerChange('visibleFrom', newValue, onChange)}
                             />
                             <FormControlLabel
                               control={(
