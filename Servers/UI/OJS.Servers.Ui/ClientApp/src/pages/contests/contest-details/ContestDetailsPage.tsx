@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType } from '../../../common/types';
-import { CONTESTS_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
+import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
 import { getAllContestsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import MetaTags from '../../../components/common/MetaTags';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
