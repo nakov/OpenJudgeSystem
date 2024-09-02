@@ -1,7 +1,7 @@
 import { IGetAllAdminParams } from '../../../../common/types';
 import { getColors } from '../../../../hooks/use-administration-theme-provider';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
-import problemFilterableColums from '../../../../pages/administration-new/problems/problemGridColumns';
+import problemFilterableColumns from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useGetAllAdminProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
@@ -27,7 +27,7 @@ const ProblemsInProblemGroupView = (props: IProblemsInProblemGroupViewProps) => 
 
     return (
         <AdministrationGridView
-          filterableGridColumnDef={problemFilterableColums}
+          filterableGridColumnDef={problemFilterableColumns}
           notFilterableGridColumnDef={[]}
           data={problemData}
           error={problemDataError}

@@ -17,7 +17,7 @@ import { useDeleteProblemMutation } from '../../../redux/services/admin/problems
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
-const problemFilterableColums: GridColDef[] = [
+const problemFilterableColumns: GridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -33,6 +33,16 @@ const problemFilterableColums: GridColDef[] = [
         field: 'name',
         headerName: 'Name',
         flex: 1,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'contestId',
+        headerName: 'Contest Id',
+        flex: 2,
         type: 'string',
         filterable: false,
         sortable: false,
@@ -177,4 +187,4 @@ export const returnProblemsNonFilterableColumns = (
     },
 ] as GridColDef[];
 
-export default problemFilterableColums;
+export default problemFilterableColumns;

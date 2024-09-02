@@ -8,7 +8,7 @@ import useSuccessMessageEffect from '../../../../hooks/common/use-success-messag
 import { getColors } from '../../../../hooks/use-administration-theme-provider';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
-import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
+import problemFilterableColumns, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
@@ -233,7 +233,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                     <AdministrationGridView
                       data={problemsData}
                       error={getContestError}
-                      filterableGridColumnDef={problemFilterableColums}
+                      filterableGridColumnDef={problemFilterableColumns}
                       notFilterableGridColumnDef={
                         returnProblemsNonFilterableColumns(
                             onEditClick,
