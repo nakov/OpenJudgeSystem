@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { Box, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import {
+    Autocomplete,
+    Box,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    MenuItem,
+    TextField,
+    Typography,
+} from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
@@ -26,52 +35,60 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
     const renderProblemGroups = () => {
         if (currentProblem.contestType === ContestVariation.OnlinePracticalExam) {
             return (
-                <FormGroup className={formStyles.selectFormGroup}>
-                    <InputLabel id="problemGroupOrderBy">Problem Group Order By</InputLabel>
-                    <Select
-                      onChange={(e) => onChange(e)}
-                      onBlur={(e) => onChange(e)}
-                      labelId="problemGroupId"
-                      value={currentProblem.problemGroupId}
-                      name="problemGroupId"
-                    >
-                        {problemGroups.map((pg) => (
-                            <MenuItem key={pg.id} value={pg.id}>
-                                {pg.orderBy}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormGroup>
+                <FormControl className={formStyles.inputRow}>
+                    <Autocomplete
+                      sx={{ width: '100%' }}
+                      className={formStyles.inputRow}
+                      onChange={(event, newValue) => onChange({ target: { name: 'problemGroupId', value: newValue?.id } })}
+                      value={problemGroups.find((pg) => pg.id === currentProblem.problemGroupId) ?? null}
+                      options={problemGroups}
+                      getOptionLabel={(option) => option.orderBy.toString()}
+                      renderInput={(params) => (
+                          <TextField {...params} label="Problem Group Order By" />
+                      )}
+                      renderOption={(properties, option) => (
+                          <MenuItem {...properties} key={option.id} value={option.id}>
+                              {option.orderBy}
+                          </MenuItem>
+                      )}
+                    />
+                </FormControl>
             );
         }
+
         return (
-            <FormGroup className={formStyles.selectFormGroup}>
-                <InputLabel id="problemGroupType">{PROBLEM_GROUP_TYPE}</InputLabel>
-                <Select
-                  onChange={(e) => onChange(e)}
-                  onBlur={(e) => onChange(e)}
-                  labelId="problemGroupType"
+            <FormControl className={formStyles.inputRow}>
+                <Autocomplete
+                  sx={{ width: '100%' }}
+                  className={formStyles.inputRow}
+                  onChange={(event, newValue) => onChange({ target: { name: 'problemGroupType', value: newValue } })}
                   value={currentProblem.problemGroupType}
-                  name="problemGroupType"
-                >
-                    {Object.keys(ProblemGroupTypes).filter((key) => isNaN(Number(key))).map((key) => (
-                        <MenuItem key={key} value={key}>
-                            {key}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormGroup>
+                  options={Object.keys(ProblemGroupTypes).filter((key) => isNaN(Number(key)))}
+                  renderInput={(params) => (
+                      <TextField {...params} label={PROBLEM_GROUP_TYPE} />
+                  )}
+                  getOptionLabel={(option) => option}
+                  renderOption={(properties, option) => (
+                      <MenuItem {...properties} key={option} value={option}>
+                          {option}
+                      </MenuItem>
+                  )}
+                />
+            </FormControl>
         );
     };
 
     return (
-        <Box className={formStyles.inputRow}>
-            <Typography className={formStyles.dividerLabel} variant="h4">Basic info</Typography>
-            <Divider className={formStyles.inputRow} />
-            <Box className={formStyles.row}>
-                <FormGroup className={formStyles.inlineElement}>
-                    <FormControl className={formStyles.spacing}>
+        <>
+            <Box className={formStyles.fieldBox}>
+                <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                    General Information
+                </Typography>
+                <div className={formStyles.fieldBoxDivider} />
+                <Box className={formStyles.fieldBoxElement}>
+                    <Box className={formStyles.row}>
                         <TextField
+                          className={formStyles.inputRow}
                           variant="standard"
                           label={NAME}
                           value={currentProblem?.name}
@@ -80,44 +97,8 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           name="name"
                           onChange={(e) => onChange(e)}
                         />
-                    </FormControl>
-                    <FormControl className={formStyles.spacing}>
                         <TextField
-                          variant="standard"
-                          label={MAXIMUM_POINTS}
-                          value={currentProblem?.maximumPoints}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="maximumPoints"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                    <FormControl className={formStyles.spacing}>
-                        <TextField
-                          variant="standard"
-                          label={SOURCE_CODE_SIZE_LIMIT}
-                          value={currentProblem?.sourceCodeSizeLimit}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="sourceCodeSizeLimit"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                    <FormControl className={formStyles.spacing}>
-                        <TextField
-                          variant="standard"
-                          label={ORDER_BY}
-                          value={currentProblem?.orderBy}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="orderBy"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                </FormGroup>
-                <FormGroup className={formStyles.inlineElement}>
-                    <FormControl className={formStyles.spacing}>
-                        <TextField
+                          className={formStyles.inputRow}
                           variant="standard"
                           label={CONTEST_NAME}
                           value={currentProblem?.contestName}
@@ -127,20 +108,32 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           onChange={(e) => onChange(e)}
                           disabled
                         />
-                    </FormControl>
-                    <FormControl className={formStyles.spacing}>
+                    </Box>
+                    <Box className={formStyles.row}>
                         <TextField
+                          className={formStyles.inputRow}
                           variant="standard"
-                          label={MEMORY_LIMIT}
-                          value={currentProblem?.memoryLimit}
+                          label={MAXIMUM_POINTS}
+                          value={currentProblem?.maximumPoints}
                           InputLabelProps={{ shrink: true }}
                           type="number"
-                          name="memoryLimit"
+                          name="maximumPoints"
                           onChange={(e) => onChange(e)}
                         />
-                    </FormControl>
-                    <FormControl className={formStyles.spacing}>
                         <TextField
+                          className={formStyles.inputRow}
+                          variant="standard"
+                          label={SOURCE_CODE_SIZE_LIMIT}
+                          value={currentProblem?.sourceCodeSizeLimit}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="sourceCodeSizeLimit"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </Box>
+                    <Box className={formStyles.row}>
+                        <TextField
+                          className={formStyles.inputRow}
                           variant="standard"
                           label={TIME_LIMIT}
                           value={currentProblem?.timeLimit}
@@ -149,45 +142,79 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           name="timeLimit"
                           onChange={(e) => onChange(e)}
                         />
-                    </FormControl>
-                </FormGroup>
+                        <TextField
+                          className={formStyles.inputRow}
+                          variant="standard"
+                          label={MEMORY_LIMIT}
+                          value={currentProblem?.memoryLimit}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="memoryLimit"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </Box>
+                </Box>
             </Box>
-            {renderProblemGroups()}
-            <FormGroup className={formStyles.selectFormGroup}>
-                <InputLabel id="problemGroupType">{CHECKER}</InputLabel>
-                <Select
-                  onChange={(e) => onChange(e)}
-                  onBlur={(e) => onChange(e)}
-                  labelId="checkerId"
-                  value={currentProblem.checkerId}
-                  name="checkerId"
-                >
-                    {checkers?.map((c) => (
-                        <MenuItem key={c.id} value={Number(c.id)}>
-                            {c.name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormGroup>
-            <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox checked={currentProblem.showDetailedFeedback} />}
-                  label={SHOW_DETAILED_FEEDBACK}
-                  name="showDetailedFeedback"
-                  onChange={(e) => onChange(e)}
-                />
-                <FormControlLabel
-                  control={(
-                      <Checkbox
-                        checked={currentProblem.showResults}
-                      />
-                    )}
-                  name="showResults"
-                  onChange={(e) => onChange(e)}
-                  label={SHOW_RESULTS}
-                />
-            </FormGroup>
-        </Box>
+            <Box className={formStyles.fieldBox}>
+                <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                    Settings
+                </Typography>
+                <div className={formStyles.fieldBoxDivider} />
+                <Box className={formStyles.fieldBoxElement}>
+                    <Box className={formStyles.row}>
+                        <FormControl className={formStyles.inputRow}>
+                            <Autocomplete
+                              sx={{ width: '100%' }}
+                              className={formStyles.inputRow}
+                              onChange={(event, newValue) => onChange({ target: { name: 'checkerId', value: newValue?.id } })}
+                              value={checkers?.find((c) => c.id === Number(currentProblem.checkerId)) ?? null}
+                              options={checkers ?? []}
+                              getOptionLabel={(option) => option.name}
+                              renderInput={(params) => (
+                                  <TextField {...params} label={CHECKER} />
+                              )}
+                              renderOption={(properties, option) => (
+                                  <MenuItem {...properties} key={option.id} value={option.id}>
+                                      {option.name}
+                                  </MenuItem>
+                              )}
+                            />
+                        </FormControl>
+                        {renderProblemGroups()}
+                    </Box>
+                    <Box className={formStyles.row}>
+                        <TextField
+                          className={formStyles.fieldBoxElementLeft}
+                          variant="standard"
+                          label={ORDER_BY}
+                          value={currentProblem?.orderBy}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="orderBy"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </Box>
+                    <Box className={formStyles.fieldBoxCheckBoxes}>
+                        <FormControlLabel
+                          control={<Checkbox checked={currentProblem.showDetailedFeedback} />}
+                          label={SHOW_DETAILED_FEEDBACK}
+                          name="showDetailedFeedback"
+                          onChange={(e) => onChange(e)}
+                        />
+                        <FormControlLabel
+                          control={(
+                              <Checkbox
+                                checked={currentProblem.showResults}
+                              />
+                            )}
+                          name="showResults"
+                          onChange={(e) => onChange(e)}
+                          label={SHOW_RESULTS}
+                        />
+                    </Box>
+                </Box>
+            </Box>
+        </>
     );
 };
 export default ProblemFormBasicInfo;
