@@ -14,10 +14,8 @@
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
-    <ProjectReference Include="..\OJS.Servers.Ui.Models\OJS.Servers.Ui.Models.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
   </ItemGroup>
