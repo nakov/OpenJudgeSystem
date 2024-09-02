@@ -11,12 +11,13 @@ interface IAdministrationLinkProps {
     type?: LinkButtonType;
     className?: string;
     children?: ReactNode;
+    userHasAccess?: boolean;
 }
 
-const AdministrationLink = ({ text, to, type, className, children }: IAdministrationLinkProps) => {
+const AdministrationLink = ({ text, to, type, className, children, userHasAccess = true }: IAdministrationLinkProps) => {
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
-    if (!user.canAccessAdministration) {
+    if (!user.canAccessAdministration || !userHasAccess) {
         return null;
     }
 
