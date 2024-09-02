@@ -86,6 +86,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Worker.Models"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJS.Services.Worker.Business", "Services\Worker\OJS.Services.Worker.Business\OJS.Services.Worker.Business.csproj", "{369BD97D-9875-4461-AA84-F9CA0224D528}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{44A7F2A7-9A20-4A22-81A1-CAC90357967E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployEmailGenerator", "Tools\DeployEmailGenerator\DeployEmailGenerator.csproj", "{FA2BAE46-7996-409F-B4F8-06E62F435403}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +133,7 @@ Global
 		{855E160C-C596-4D9C-920A-EB83627A59AB} = {DA2DA5BA-A8A5-4A27-8DF5-D7A9EF08B40E}
 		{CDBD0A16-E35C-43F7-A20E-A3878F26384E} = {DA2DA5BA-A8A5-4A27-8DF5-D7A9EF08B40E}
 		{4DDA1854-E593-458E-A4FF-F318DA739D7E} = {DA2DA5BA-A8A5-4A27-8DF5-D7A9EF08B40E}
+		{FA2BAE46-7996-409F-B4F8-06E62F435403} = {44A7F2A7-9A20-4A22-81A1-CAC90357967E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CDBD0A16-E35C-43F7-A20E-A3878F26384E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -267,5 +272,9 @@ Global
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA2BAE46-7996-409F-B4F8-06E62F435403}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA2BAE46-7996-409F-B4F8-06E62F435403}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA2BAE46-7996-409F-B4F8-06E62F435403}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA2BAE46-7996-409F-B4F8-06E62F435403}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
