@@ -41,7 +41,7 @@
             where TResult : ISingleCodeRunResult, new()
         {
             this.WorkingDirectory = DirectoryHelpers.CreateTempDirectoryForExecutionStrategy();
-            this.logger.LogInformation($"Execution strategy: '{this.Type}' created a working directory: '{this.WorkingDirectory}' for submission #{submissionId}");
+            this.logger.LogExecutionStrategyCreatedWorkingDirectory(this.Type.ToString(), this.WorkingDirectory, submissionId);
 
             try
             {
@@ -66,7 +66,7 @@
                         // Problems in the deletion of leftover files should not break the execution flow,
                         // because the execution is already completed and results are generated.
                         // Only log the exception and continue.
-                        this.logger.LogError($"executionStrategy.SafeDeleteDirectory has thrown an exception: {ex}");
+                        this.logger.LogSafeDeleteDirectoryException(ex);
                     }
                 });
             }
