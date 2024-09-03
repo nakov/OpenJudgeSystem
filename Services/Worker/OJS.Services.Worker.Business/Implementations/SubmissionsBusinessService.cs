@@ -180,13 +180,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         executionResult.Id = this.BuildUniqueId(submission.TestsExecutionDetails!.TaskId!);
 
-        if (submission.ExecutionOptions.KeepCheckerFragmentsForCorrectAnswers)
-        {
-            FillForCorrectAnswers(
-                Enumerable.ToList<TestResult>(executionResult.TaskResult!.TestResults.MapCollection<TestResult>()),
-                Enumerable.ToList<TestContext>(submission.TestsExecutionDetails.Tests));
-        }
-
         executionResult.TaskResult!.CalculatePoints(taskMaxPoints);
 
         if (!submission.ExecutionOptions.KeepDetails)
