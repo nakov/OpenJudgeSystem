@@ -147,6 +147,9 @@ namespace OJS.Servers.Infrastructure.Extensions
                     opt.Cookie.Domain = sharedAuthCookieDomain;
                     opt.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
                     opt.Events.OnRedirectToLogin = UnAuthorizedResponse;
+
+                    opt.ExpireTimeSpan = TimeSpan.FromDays(7); // Set the cookie to expire after a week of inactivity
+                    opt.SlidingExpiration = false; // Ensures the cookie does not renew with each request
                 });
 
             // By default, the data protection API that encrypts the authentication cookie generates a unique key for each application,
