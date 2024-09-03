@@ -4,8 +4,9 @@ import { Box, FormControl, FormGroup, TextField, Typography } from '@mui/materia
 import { DateTimePicker } from '@mui/x-date-pickers';
 import isNaN from 'lodash/isNaN';
 
-import { AGE, CITY, COMPANY, DATE_OF_BIRTH, EDIT, EDUCATIONAL_INSTITUTE, EMAIL, FACULTY_NUMBER, FIRSTNAME, ID, JOB_TITLE, LASTNAME, USERNAME } from '../../../../common/labels';
+import { AGE, CITY, COMPANY, DATE_OF_BIRTH, EDIT, EDUCATIONAL_INSTITUTE, EMAIL, FACULTY_NUMBER, FIRSTNAME, JOB_TITLE, LASTNAME, USERNAME } from '../../../../common/labels';
 import { IUserAdministrationModel } from '../../../../common/types';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '../../../../redux/services/admin/usersAdminService';
@@ -21,13 +22,13 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IUserFormProps {
     id: string;
-
     providedUser?: IUserAdministrationModel;
-    onSuccessfullyUpdated?: Function;
+    onSuccess?: Function;
+    setParentSuccessMessage?: Function;
 }
 
 const UserForm = (props: IUserFormProps) => {
-    const { id, providedUser, onSuccessfullyUpdated } = props;
+    const { id, providedUser, onSuccess, setParentSuccessMessage } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
@@ -67,10 +68,21 @@ const UserForm = (props: IUserFormProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
+    useDelayedSuccessEffect({
+        isSuccess: isSuccessfullyUpdated,
+        onSuccess: () => {
+            if (onSuccess) {
+                onSuccess();
+            }
+            refetch();
+        },
+    });
+
     useSuccessMessageEffect({
         data: [
             { message: updateData, shouldGet: isSuccessfullyUpdated },
         ],
+        setParentSuccessMessage,
         setSuccessMessage,
         clearFlags: [ isUpdating ],
     });
@@ -81,6 +93,7 @@ const UserForm = (props: IUserFormProps) => {
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
     useEffect(() => {
         if (getData) {
             setUser(getData);
@@ -90,16 +103,6 @@ const UserForm = (props: IUserFormProps) => {
     useEffect(() => {
         getAndSetExceptionMessage([ getError, updateError ], setExceptionMessages);
     }, [ updateError, getError ]);
-
-    useEffect(() => {
-        if (isSuccessfullyUpdated) {
-            if (onSuccessfullyUpdated) {
-                onSuccessfullyUpdated();
-            } else {
-                refetch();
-            }
-        }
-    }, [ updateData, isSuccessfullyUpdated, onSuccessfullyUpdated, refetch ]);
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -141,16 +144,6 @@ const UserForm = (props: IUserFormProps) => {
             <form className={formStyles.form}>
                 <Box className={formStyles.inputRow}>
                     <FormGroup className={formStyles.inputRow}>
-                        <FormControl className={formStyles.spacing}>
-                            <TextField
-                              variant="standard"
-                              label={ID}
-                              value={user?.id}
-                              InputLabelProps={{ shrink: true }}
-                              type="text"
-                              disabled
-                            />
-                        </FormControl>
                         <FormControl className={formStyles.spacing}>
                             <TextField
                               variant="standard"
@@ -248,7 +241,6 @@ const UserForm = (props: IUserFormProps) => {
                               onChange={onChange}
                             />
                         </FormControl>
-
                         <FormControl className={formStyles.spacing}>
                             <TextField
                               variant="standard"

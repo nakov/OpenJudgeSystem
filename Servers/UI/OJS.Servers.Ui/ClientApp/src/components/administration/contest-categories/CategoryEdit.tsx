@@ -79,7 +79,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
 
     useDisableMouseWheelOnNumberInputs();
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
@@ -207,7 +207,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         isFetching || isLoading || isGettingCategories || isCreating || isUpdating
             ? <SpinningLoader />
             : (
-                <div className={`${styles.flex}`}>
+                <Box className={`${styles.flex}`}>
                     {renderSuccessfullAlert(successMessage)}
                     {renderErrorMessagesAlert(errorMessages)}
                     <Typography className={styles.centralize} variant="h4">
@@ -278,7 +278,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                       onEditClick={() => edit()}
                       disabled={!isValidForm}
                     />
-                </div>
+                </Box>
             )
     );
 };

@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import LoginForm from '../../../components/auth/LoginForm';
+import MetaTags from '../../../components/common/MetaTags';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import withTitle from '../../shared/with-title';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -22,8 +22,17 @@ const LoginPage = () => {
     }, [ isLoggedIn, location, navigate, user ]);
 
     return (
-        <LoginForm />
+        <>
+            <MetaTags
+              title="Login - SoftUni Judge"
+              description={
+                    'Access your SoftUni Judge account to join coding contests, submit solutions, ' +
+                    'and track your progress. Enhance your programming skills through challenges.'
+                }
+            />
+            <LoginForm />
+        </>
     );
 };
 
-export default withTitle(LoginPage, 'Login');
+export default LoginPage;

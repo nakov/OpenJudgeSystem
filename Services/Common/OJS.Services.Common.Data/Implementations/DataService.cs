@@ -1,6 +1,7 @@
 namespace OJS.Services.Common.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
     using OJS.Common.Extensions;
     using OJS.Common.Utils;
     using OJS.Data;
@@ -51,6 +52,9 @@ namespace OJS.Services.Common.Data.Implementations
 
         public void Detach(TEntity entity)
             => this.dbSet.Entry(entity).State = EntityState.Detached;
+
+        public EntityEntry<TEntity> GetEntry(TEntity entity)
+            => this.dbSet.Entry(entity);
 
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
             => this.dbSet.RemoveRange(entities);

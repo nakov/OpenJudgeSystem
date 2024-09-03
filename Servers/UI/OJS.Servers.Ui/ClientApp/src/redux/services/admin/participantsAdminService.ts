@@ -6,7 +6,7 @@ import { IGetByContestId } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const participantsAdminService = createApi({
+const participantsAdminService = createApi({
     reducerPath: 'participants',
     baseQuery: getCustomBaseQuery('participants'),
     endpoints: (builder) => ({

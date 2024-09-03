@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
@@ -21,6 +21,7 @@ import ProblemSubmissionTypes from '../problem-submission-types/ProblemSubmissio
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
+import styles from '../../contests/contest-edit/ContestEdit.module.scss';
 
 interface IProblemFormProps {
     isEditMode?: boolean;
@@ -120,7 +121,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
 
     const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
 
-    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated, onSuccess });
+    useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
         data: [
@@ -332,50 +333,60 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         return <SpinningLoader />;
     }
     return (
-        <>
+        <Box className={`${styles.flex}`}>
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
-
-            <Typography className={formStyles.centralize} variant="h3">{currentProblem?.name}</Typography>
+            {currentProblem?.name && <Typography className={formStyles.centralize} variant="h4">{currentProblem?.name}</Typography>}
             <form className={formStyles.form}>
                 <ProblemFormBasicInfo currentProblem={currentProblem} onChange={onChange} problemGroups={problemGroupIds} />
-                <FormGroup className={formStyles.row}>
-                    {!isEditMode && (
-                        <>
-                            <Typography className={formStyles.spacing} variant="h4">{TESTS}</Typography>
-                            <Divider className={formStyles.inputRow} />
-                            <FileUpload
-                              handleFileUpload={handleFileUpload}
-                              propName="tests"
-                              setSkipDownload={() => {}}
-                              uploadButtonName={currentProblem.tests?.name}
-                              showDownloadButton={false}
-                              disableClearButton={!currentProblem.tests}
-                              onClearSelectionClicked={handleFileClearance}
-                              buttonLabel={TESTS}
-                            />
-                        </>
-                    )}
-                </FormGroup>
-                <FormGroup className={formStyles.inputRow}>
-                    <Typography className={formStyles.dividerLabel} variant="h4">{SUBMISSION_TYPES}</Typography>
-                    <Divider className={formStyles.inputRow} />
-                    <FormControl className={formStyles.row}>
-                        <Autocomplete
-                          options={filteredSubmissionTypes!}
-                          renderInput={(params) => <TextField {...params} label="Select submission type" key={params.id} />}
-                          onChange={(event, newValue) => onStrategyAdd(newValue!)}
-                          value={null}
-                          isOptionEqualToValue={(option, value) => option.id === value.id}
-                          getOptionLabel={(option) => option?.name}
-                          renderOption={(properties, option) => (
-                              <MenuItem {...properties} key={option.id} value={option.id}>
-                                  {option.name}
-                              </MenuItem>
-                          )}
-                        />
-                    </FormControl>
-                </FormGroup>
+                {!isEditMode && (
+                    <Box className={formStyles.fieldBox}>
+                        <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                            Tests
+                        </Typography>
+                        <div className={formStyles.fieldBoxDivider} />
+                        <Box className={formStyles.fieldBoxElement}>
+                            <Box className={formStyles.row}>
+                                <FileUpload
+                                  handleFileUpload={handleFileUpload}
+                                  propName="tests"
+                                  setSkipDownload={() => {}}
+                                  uploadButtonName={currentProblem.tests?.name}
+                                  showDownloadButton={false}
+                                  disableClearButton={!currentProblem.tests}
+                                  onClearSelectionClicked={handleFileClearance}
+                                  buttonLabel={TESTS}
+                                />
+                            </Box>
+                        </Box>
+                    </Box>
+                )}
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        {SUBMISSION_TYPES}
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.row}>
+                            <FormControl className={formStyles.row}>
+                                <Autocomplete
+                                  className={formStyles.inputRow}
+                                  options={filteredSubmissionTypes!}
+                                  renderInput={(params) => <TextField {...params} label="Select submission type" key={params.id} />}
+                                  onChange={(event, newValue) => onStrategyAdd(newValue!)}
+                                  value={null}
+                                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                                  getOptionLabel={(option) => option?.name}
+                                  renderOption={(properties, option) => (
+                                      <MenuItem {...properties} key={option.id} value={option.id}>
+                                          {option.name}
+                                      </MenuItem>
+                                  )}
+                                />
+                            </FormControl>
+                        </Box>
+                    </Box>
+                </Box>
                 {
             currentProblem?.submissionTypes.map((st : IProblemSubmissionType) => (
                 <ProblemSubmissionTypes
@@ -393,7 +404,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                 />
 
             </form>
-        </>
+        </Box>
     );
 };
 

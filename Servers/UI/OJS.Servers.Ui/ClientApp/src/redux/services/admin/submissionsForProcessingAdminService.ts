@@ -11,7 +11,7 @@ import {
 import { EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const submissionsForProcessingAdminService = createApi({
+const submissionsForProcessingAdminService = createApi({
     reducerPath: 'submissionsForProcessing',
     baseQuery: getCustomBaseQuery('submissionsForProcessing'),
     endpoints: (builder) => ({

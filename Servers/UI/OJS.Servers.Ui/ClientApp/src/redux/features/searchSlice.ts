@@ -1,4 +1,4 @@
-/* eslint-disable simple-import-sort/imports */
+/* eslint-disable simple-import-sort/imports,no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CheckboxSearchValues } from '../../common/enums';
 import { ISearchSliceState } from '../../common/types';
@@ -13,7 +13,7 @@ const initialState: ISearchSliceState = {
     ],
 };
 
-export const searchSlice = createSlice({
+const searchSlice = createSlice({
     name: 'search',
     initialState,
     reducers: {
@@ -38,4 +38,4 @@ export const {
     setSelectedTerms,
 } = searchSlice.actions;
 
-export default searchSlice.reducer;
+export default searchSlice;

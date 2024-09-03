@@ -6,12 +6,12 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
     using OJS.Common;
     using OJS.Servers.Infrastructure.Filters;
-    using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Infrastructure;
+    using System;
     using static OJS.Common.GlobalConstants.Urls;
     using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
@@ -19,7 +19,9 @@ namespace OJS.Servers.Infrastructure.Extensions
     {
         public static WebApplication UseDefaults(this WebApplication app)
         {
-            app.UseCustomExceptionHandling();
+            // Exception is handled in the exception handler, configured in services.
+            // Passing empty lambda as a workaround suggested here: https://github.com/dotnet/aspnetcore/issues/51888
+            app.UseExceptionHandler(_ => { });
 
             app.UseAutoMapper();
 
@@ -61,20 +63,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
-        public static WebApplication UseCustomExceptionHandling(this WebApplication app)
-        {
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler(errorApp => errorApp.Run(new DevelopmentExceptionMiddleware().Get));
-            }
-            else
-            {
-                app.UseExceptionHandler(errorApp => errorApp.Run(new Rfc7807ExceptionMiddleware().Get));
-            }
-
-            return app;
-        }
-
         public static void MapHealthMonitoring(this WebApplication app)
             => app
                 .MapHealthChecks("/api/health", new HealthCheckOptions
@@ -83,12 +71,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 })
                 .RequireAuthorization(ApiKeyPolicyName);
 
-        public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app)
+        public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app, IConfiguration configuration)
             where TDbContext : DbContext
         {
-            using var scope = app.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+            var timeout = configuration.GetValue("MigrationsDbTimeoutInSeconds", 60);
 
+            using var scope = app.Services.CreateScope();
+            using var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+
+            dbContext.Database.SetCommandTimeout(TimeSpan.FromSeconds(timeout));
             dbContext.Database.Migrate();
 
             return app;

@@ -16,9 +16,10 @@ interface IDownloadIconButtonProps {
     onSuccess?: Function;
     onError?: Function;
     args: number;
+    disabled?: boolean;
 }
 const DownloadIconButton = (props: IDownloadIconButtonProps) => {
-    const { mutation, onSuccess, onError, args } = props;
+    const { mutation, onSuccess, onError, args, disabled } = props;
     const [ skip, setSkip ] = useState<boolean>(true);
     const { refetch, data, error, isSuccess } = mutation(args, { skip });
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -59,7 +60,7 @@ const DownloadIconButton = (props: IDownloadIconButtonProps) => {
         <>
             {renderErrorMessagesAlert(errorMessages)}
             <Tooltip title="Download" onClick={onClick}>
-                <IconButton>
+                <IconButton disabled={disabled}>
                     <DownloadIcon size={IconSize.Large} />
                 </IconButton>
             </Tooltip>

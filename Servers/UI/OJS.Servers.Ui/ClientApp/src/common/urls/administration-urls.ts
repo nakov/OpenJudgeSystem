@@ -6,7 +6,7 @@ export const CREATE_ENDPOINT = 'Create';
 export const UPDATE_ENDPOINT = 'Edit';
 export const DELETE_ENDPOINT = 'Delete';
 export const GET_ENDPOINT = 'Get';
-export const GETALL_ENDPOINT = 'GetAll';
+export const GET_ALL_ENDPOINT = 'GetAll';
 
 export const EXCEL_RESULTS_ENDPOINT = 'GetExcelFile';
 
@@ -21,6 +21,8 @@ export const PROBLEMS_PATH = 'problems';
 export const PROBLEM_GROUPS_PATH = 'problem-groups';
 export const PROBLEM_RESOURCES_PATH = 'problem-resources';
 export const SUBMISSION_TYPES_PATH = 'submission-types';
+export const SUBMISSION_TYPE_DOCUMENTS_PATH = 'submission-type-documents';
+export const SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH = 'submission-type-documents-view';
 export const PARTICIPANTS_PATH = 'participants';
 export const CHECKERS_PATH = 'checkers';
 export const ROLES_PATH = 'roles';

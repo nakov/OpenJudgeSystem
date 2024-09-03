@@ -10,7 +10,7 @@ interface IGetSearchQueryParams {
     itemsPerPage: number;
 }
 
-export const searchService = createApi({
+const searchService = createApi({
     reducerPath: 'searchService',
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_UI_SERVER_URL}/${defaultPathIdentifier}/`,

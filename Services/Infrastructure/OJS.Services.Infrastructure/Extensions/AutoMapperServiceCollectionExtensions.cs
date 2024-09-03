@@ -26,6 +26,7 @@ public static class AutoMapperServiceCollectionExtensions
 
         var mappingAssemblies = programType.Assembly
             .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(modelsRegexPattern)
+            .Concat([programType.Assembly])
             .ToArray();
 
         var configuration = new MapperConfiguration(config =>

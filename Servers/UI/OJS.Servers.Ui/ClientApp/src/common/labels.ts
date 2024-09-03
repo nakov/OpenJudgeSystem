@@ -40,14 +40,14 @@ export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
 export const CONTEST_ID = 'Contest Id';
 export const CONTEST_NAME = 'Contest Name';
 export const NUMBER_OF_PROBLEM_GROUPS = 'Number of problem groups';
-export const COMPETE_PASSWORD = 'Contest Password';
+export const COMPETE_PASSWORD = 'Compete Password';
 export const PRACTICE_PASSWORD = 'Practice Password';
 export const NEW_IP_PASSWORD = 'New Ip password';
 export const ALLOWED_IPS = 'Allowed Ips';
 export const DURATION = 'Duration';
 export const SELECT_CATEGORY = 'Select Category';
-export const COMPETE_START_TIME = 'Start Time';
-export const COMPETE_END_TIME = 'End Time';
+export const COMPETE_START_TIME = 'Compete Start Time';
+export const COMPETE_END_TIME = 'Compete End Time';
 export const PRACTICE_START_TIME = 'Practice Start Time';
 export const PRACTICE_END_TIME = 'Practice End Time';
 export const IS_VISIBLE = 'Is Visible';
@@ -77,6 +77,8 @@ export const SOLUTION_SKELETON = 'Solution Skeleton';
 export const SELECT_PROBLEM = 'Select Problem';
 
 // Submission types
+export const SUBMISSION_TYPE_NAME = 'Submission Type Name';
+export const SUBMISSION_TYPE_ID = 'Submission Type Id';
 export const SUBMISSION_TYPES = 'Submission Types';
 export const EXECUTION_STRATEGY = 'Execution Strategy';
 export const ALLOWED_FILE_EXTENSIONS = 'Allowed File Extensions';
@@ -117,3 +119,9 @@ export const CITY = 'City';
 export const AGE = 'Age';
 export const EMAIL = 'Email';
 export const USERNAME = 'UserName';
+
+// Submission Type Documents
+export const SUBMISSION_TYPE_DOCUMENT = 'Submission type document';
+export const SUBMISSION_TYPE_DOCUMENT_ID = 'Submission Type Document Id';
+export const SUBMISSION_TYPE_DOCUMENT_TITLE = 'Submission Type Document Title';
+export const TITLE = 'Title';

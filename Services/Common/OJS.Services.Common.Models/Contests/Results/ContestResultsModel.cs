@@ -23,7 +23,7 @@ public class ContestResultsModel : IMapExplicitly
 
     public int Page { get; set; } = 1;
 
-    public int ItemsInPage { get; set; } = int.MaxValue;
+    public int ItemsPerPage { get; set; } = int.MaxValue;
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<ContestResultsViewModel, ContestResultsModel>()
@@ -43,6 +43,6 @@ public class ContestResultsModel : IMapExplicitly
             .ForMember(d => d.TotalResultsCount, opt => opt.Ignore())
             .ForMember(d => d.IsExportResults, opt => opt.Ignore())
             .ForMember(d => d.Page, opt => opt.Ignore())
-            .ForMember(d => d.ItemsInPage, opt => opt.Ignore())
+            .ForMember(d => d.ItemsPerPage, opt => opt.Ignore())
             .ReverseMap();
 }

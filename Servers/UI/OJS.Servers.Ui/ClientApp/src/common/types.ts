@@ -2,7 +2,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/s
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { CheckboxSearchValues, FilterColumnTypeEnum } from './enums';
+import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
 interface ISubmissionTypeType {
     id: number;
@@ -12,6 +12,11 @@ interface ISubmissionTypeType {
     allowedFileExtensions: string[];
 }
 interface ISubmissionTypeInProblem {
+    id: number;
+    name: string;
+}
+
+interface ISubmissionTypeInDocument {
     id: number;
     name: string;
 }
@@ -148,7 +153,7 @@ interface IProblemResourceAdministrationModel {
     id: number;
     name: string;
     link: string;
-    type: string;
+    type: ProblemResourceType;
     orderBy: number;
     file: File | null;
     hasFile: boolean;
@@ -459,13 +464,27 @@ interface IProblemAdministration {
     problemGroupId : number;
 }
 
-interface ISubmissionTypesInListModel{
+interface ISubmissionTypesInListModel {
     id: number;
     name: string;
     executionStrategyType: string;
     compilerType: string;
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string;
+}
+
+interface ISubmissionTypeInSubmissionDocumentInListModel {
+    submissionTypeId: number;
+    submissionTypeName: string;
+    submissionTypeDocumentId: number;
+    submissionTypeDocumentTitle: string;
+}
+
+interface ISubmissionTypeInSubmissionDocumentInViewModel {
+    submissionTypeDocumentId: number;
+    submissionTypeDocumentTitle: string;
+    submissionTypeDocumentContent: string;
+    submissionTypes: Array<string>;
 }
 
 interface IProblemGroupDropdownModel {
@@ -654,6 +673,19 @@ interface ISubmissionTypeAdministrationModel {
     maxAllowedMemoryLimitInBytes?: number;
 }
 
+interface ISubmissionTypeInSubmissionDocumentAdministrationModel {
+    submissionTypeId: number;
+    submissionTypeDocumentId: number;
+}
+
+interface ISubmissionTypeDocumentAdministrationModel {
+    id: number;
+    title: string;
+    content: string;
+    orderBy: number;
+    submissionTypesInSubmissionDocuments: Array<ISubmissionTypeInSubmissionDocumentAdministrationModel>;
+}
+
 interface ICheckerInListModel {
     id: number;
     name: string;
@@ -769,6 +801,11 @@ interface IUSerSearchCardProps {
     name: string;
 }
 
+interface IMappingEntityId {
+    firstEntityId: number;
+    secondEntityId: number;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -809,6 +846,7 @@ export type {
     IProblemAdministration,
     IProblemSubmissionType,
     ISubmissionTypeInProblem,
+    ISubmissionTypeInDocument,
     IContestAutocomplete,
     IProblemGroupsData,
     IIndexContestCategoriesType,
@@ -825,8 +863,12 @@ export type {
     IUserInExamGroupModel,
     IUserAutocomplete,
     ISubmissionTypesInListModel,
+    ISubmissionTypeInSubmissionDocumentInListModel,
+    ISubmissionTypeInSubmissionDocumentInViewModel,
     IReplaceSubmissionTypeModel,
     ISubmissionTypeAdministrationModel,
+    ISubmissionTypeInSubmissionDocumentAdministrationModel,
+    ISubmissionTypeDocumentAdministrationModel,
     ITestRunInListModel,
     IProblemGroupDropdownModel,
     ICheckerInListModel,
@@ -848,4 +890,5 @@ export type {
     IUSerSearchCardProps,
     IProblemSearchType,
     IContestDetailsSliceType,
+    IMappingEntityId,
 };

@@ -7,10 +7,10 @@ import storage from 'redux-persist/lib/storage';
 // features
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
-import { submissionsSlice } from './features/submissionsSlice';
-import { searchSlice } from './features/searchSlice';
+import submissionsSlice from './features/submissionsSlice';
+import searchSlice from './features/searchSlice';
 import { themeSlice } from './features/themeSlice';
-import { usersSlice } from './features/usersSlice';
+import usersSlice from './features/usersSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // admin services
@@ -31,10 +31,12 @@ import usersAdminService from './services/admin/usersAdminService';
 // features
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
-import { searchService } from './services/searchService';
+import searchService from './services/searchService';
 import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionsService from './services/submissionsService';
 import usersService from './services/usersService';
+import submissionTypeDocumentsAdminService from './services/admin/submissionTypeDocumentsAdminService';
+import submissionTypesInSubmissionDocumentsAdminService from './services/admin/submissionTypesInSubmissionDocumentsAdminService';
 
 const rootReducer = combineReducers({
     // reducers
@@ -59,6 +61,8 @@ const rootReducer = combineReducers({
     [problemsAdminService.reducerPath]: problemsAdminService.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
+    [submissionTypeDocumentsAdminService.reducerPath]: submissionTypeDocumentsAdminService.reducer,
+    [submissionTypesInSubmissionDocumentsAdminService.reducerPath]: submissionTypesInSubmissionDocumentsAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: problemGroupsAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
     [testsAdminService.reducerPath]: testsAdminService.reducer,
@@ -102,6 +106,8 @@ const store = configureStore({
         submissionsAdminService.middleware,
         submissionsForProcessingAdminService.middleware,
         submissionTypesAdminService.middleware,
+        submissionTypeDocumentsAdminService.middleware,
+        submissionTypesInSubmissionDocumentsAdminService.middleware,
         checkerAdminService.middleware,
         testsAdminService.middleware,
         problemResourcesAdminService.middleware,

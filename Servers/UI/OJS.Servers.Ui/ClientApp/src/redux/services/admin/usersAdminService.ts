@@ -6,7 +6,7 @@ import { IGetByExamGroupId, IGetByRoleId, IGetByUserId } from '../../../common/u
 import { EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-export const usersAdminService = createApi({
+const usersAdminService = createApi({
     reducerPath: 'adminUsers',
     baseQuery: getCustomBaseQuery('users'),
     endpoints: (builder) => ({

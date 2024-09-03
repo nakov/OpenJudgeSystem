@@ -8,9 +8,10 @@ import useSuccessMessageEffect from '../../../../hooks/common/use-success-messag
 import { getColors } from '../../../../hooks/use-administration-theme-provider';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
-import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
+import problemFilterableColumns, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useAppSelector } from '../../../../redux/store';
+import isNilOrEmpty from '../../../../utils/check-utils';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
@@ -58,6 +59,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         refetch: retakeData,
         data: problemsData,
         error: getContestError,
+        isFetching: areProblemsFetching,
     } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
 
     const [ deleteByContest,
@@ -136,6 +138,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                         <ProblemForm
                           problemId={problemId}
                           contestType={null}
+                          onSuccess={onProblemCreate}
+                          setParentSuccessMessage={setSuccessMessage}
                         />
                     )}
             </AdministrationModal>
@@ -179,30 +183,42 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         />
     );
 
-    const renderGridSettings = () => (
-        <>
-            <CreateButton
-              showModal={openShowCreateProblemModal}
-              showModalFunc={setOpenShowCreateProblemModal}
-              styles={{ width: '40px', height: '40px' }}
-            />
-            <Tooltip title="Copy All">
-                <IconButton onClick={() => {
-                    setShowCopyAllModal(!showCopyAllModal);
-                }}
-                >
-                    <MdCopyAll style={{ width: '40px', height: '40px' }} />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete All">
-                <IconButton onClick={() => setShowDeleteAllConfirm(!showDeleteAllConfirm)}>
-                    <MdDeleteForever style={{ width: '40px', height: '40px', color: 'red' }} />
-                </IconButton>
-            </Tooltip>
+    const renderGridSettings = () => {
+        const isCopyFunctionalityDisabled = areProblemsFetching ||
+            (!areProblemsFetching && (!problemsData || isNilOrEmpty(problemsData.items)));
 
-            <SubmitSolution contestId={contestId} canBeCompeted={canContestBeCompeted} contestName={contestName} />
-        </>
-    );
+        return (
+            <>
+                <CreateButton
+                  showModal={openShowCreateProblemModal}
+                  showModalFunc={setOpenShowCreateProblemModal}
+                  styles={{ width: '40px', height: '40px' }}
+                />
+                <Tooltip title={isCopyFunctionalityDisabled
+                    ? 'Copy All: No problems to copy'
+                    : 'Copy All'}
+                >
+                    <span>
+                        <IconButton
+                          disabled={isCopyFunctionalityDisabled}
+                          onClick={() => {
+                              setShowCopyAllModal(!showCopyAllModal);
+                          }}
+                        >
+                            <MdCopyAll style={{ width: '40px', height: '40px' }} />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+                <Tooltip title="Delete All">
+                    <IconButton onClick={() => setShowDeleteAllConfirm(!showDeleteAllConfirm)}>
+                        <MdDeleteForever style={{ width: '40px', height: '40px', color: 'red' }} />
+                    </IconButton>
+                </Tooltip>
+
+                <SubmitSolution contestId={contestId} canBeCompeted={canContestBeCompeted} contestName={contestName} />
+            </>
+        );
+    };
 
     const renderCopyModal = (index: number, operation: AllowedOperations) => (
         <CopyModal
@@ -214,7 +230,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               : setShowCopyAllModal}
           sourceId={contestId}
           sourceName={problemsData?.items
-              ? problemsData?.items[0].contest
+              ? problemsData?.items[0]?.contest ?? ''
               : ''}
           problemToCopy={problemToCopy}
           setParentSuccessMessage={setSuccessMessage}
@@ -231,7 +247,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                     <AdministrationGridView
                       data={problemsData}
                       error={getContestError}
-                      filterableGridColumnDef={problemFilterableColums}
+                      filterableGridColumnDef={problemFilterableColumns}
                       notFilterableGridColumnDef={
                         returnProblemsNonFilterableColumns(
                             onEditClick,

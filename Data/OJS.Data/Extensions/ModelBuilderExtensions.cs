@@ -59,6 +59,9 @@ public static class ModelBuilderExtensions
         builder.Entity<SubmissionTypeInProblem>()
             .HasKey(x => new { x.SubmissionTypeId, x.ProblemId });
 
+        builder.Entity<SubmissionTypeInSubmissionDocument>()
+            .HasKey(x => new { x.SubmissionTypeId, x.SubmissionTypeDocumentId });
+
         builder.Entity<IpInContest>()
             .HasKey(x => new { x.ContestId, x.IpId });
 
@@ -81,7 +84,7 @@ public static class ModelBuilderExtensions
     public static ModelBuilder AddGlobalQueryFilters(this ModelBuilder builder)
     {
         builder.Entity<Checker>()
-                .HasQueryFilter(x => !x.IsDeleted);
+            .HasQueryFilter(x => !x.IsDeleted);
 
         builder.Entity<Contest>()
             .HasQueryFilter(x => !x.IsDeleted);
@@ -145,6 +148,12 @@ public static class ModelBuilderExtensions
 
         builder.Entity<SubmissionTypeInProblem>()
             .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+        builder.Entity<SubmissionTypeDocument>()
+            .HasQueryFilter(x => !x.IsDeleted);
+
+        builder.Entity<SubmissionTypeInSubmissionDocument>()
+            .HasQueryFilter(x => !x.SubmissionTypeDocument.IsDeleted);
 
         return builder;
     }
