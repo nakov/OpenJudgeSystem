@@ -79,7 +79,7 @@ const ContestResultsPage = () => {
                     name: contestResults!.name,
                     categoryId: contestResults!.categoryId,
                     isAdminOrLecturerInContest: contestResults!.userIsInRoleForContest,
-                } as IContestDetailsResponseType ?? null,
+                } as IContestDetailsResponseType,
             }));
         }
     }, [ contestResults, contestDetails, dispatch ]);
