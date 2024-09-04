@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Infrastructure.ResilienceStrategies.Listeners;
 
 using Microsoft.Extensions.Logging;
+using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.ResilienceStrategies.Enums;
 using Polly;
 using Polly.Telemetry;
@@ -8,6 +9,7 @@ using System;
 using System.Collections;
 using System.Threading;
 using static OJS.Services.Infrastructure.Constants.ResilienceStrategyConstants.Common;
+
 public class RedisCircuitBreakerListener : TelemetryListener
 {
     private readonly ILogger<ResiliencePipeline> logger;
@@ -36,7 +38,8 @@ public class RedisCircuitBreakerListener : TelemetryListener
             ResilienceStrategyEventType.PipelineExecuting => () => this.LogPipelineExecution(arguments),
             ResilienceStrategyEventType.PipelineExecuted => () => this.LogPipelineExecuted(GetOutcomeResult(arguments), arguments),
             ResilienceStrategyEventType.OnRetry => () => this.LogRetry(GetOutcomeResult(arguments), arguments),
-            _ => () => { },
+            _ => () => { }
+            ,
         };
 
         logAction();
@@ -64,37 +67,20 @@ public class RedisCircuitBreakerListener : TelemetryListener
         => args.Context.Properties.GetValue(new ResiliencePropertyKey<string>(OperationKey), "This value should not be null. Use an appropriate operation key!");
 
     private void LogCircuitStateChange<TResult, TArgs>(string state, string outcomeResult, ref int count, in TelemetryEventArguments<TResult, TArgs> args)
-        => this.logger.LogError(
-            "Circuit breaker {CircuitBreakerState}. Total number of times {CircuitBreakerState}: {TimesChanged}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.",
-            state,
+        => this.logger.LogCircuitBreakerStateChanged(
             state,
             Interlocked.Increment(ref count),
-            args.Event,
+            args.Event.ToString(),
             outcomeResult,
             args.Source.PipelineName,
             args.Source.StrategyName);
 
     private void LogPipelineExecution<TResult, TArgs>(in TelemetryEventArguments<TResult, TArgs> args)
-        => this.logger.LogInformation(
-            "Circuit breaker's pipeline is being executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Pipeline: {ResiliencePipeline}.",
-            GetOperationKey(args),
-            args.Event,
-            args.Source.PipelineName);
+        => this.logger.LogCircuitBreakerPipelineExecuting(GetOperationKey(args), args.Event.ToString(), args.Source.PipelineName);
 
     private void LogPipelineExecuted<TResult, TArgs>(string outcomeResult, in TelemetryEventArguments<TResult, TArgs> args)
-        => this.logger.LogInformation(
-            "Circuit breaker's pipeline has been executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}.",
-            GetOperationKey(args),
-            args.Event,
-            outcomeResult,
-            args.Source.PipelineName);
+        => this.logger.LogCircuitBreakerPipelineExecuted(GetOperationKey(args), args.Event.ToString(), outcomeResult, args.Source.PipelineName);
 
     private void LogRetry<TResult, TArgs>(string outcomeResult, in TelemetryEventArguments<TResult, TArgs> args)
-        => this.logger.LogInformation(
-            "Total number of retries: {ResilienceRetries}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.",
-            Interlocked.Increment(ref this.retryCount),
-            args.Event,
-            outcomeResult,
-            args.Source.PipelineName,
-            args.Source.StrategyName);
+        => this.logger.LogCircuitBreakerTotalRetries(this.retryCount++, args.Event.ToString(), outcomeResult, args.Source.PipelineName, args.Source.StrategyName);
 }

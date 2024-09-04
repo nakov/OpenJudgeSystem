@@ -12,6 +12,29 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(1, LogLevel.Error, "An error with code: {ErrorCode} and ID: {InstanceId} occurred.", SkipEnabledCheck = true)]
     public static partial void LogErrorWithCodeAndId(this ILogger logger, string? errorCode, string instanceId, Exception ex);
 
+    // Hosted services
+    [LoggerMessage(50, LogLevel.Error, "Exception in {HostedServiceName}", SkipEnabledCheck = true)]
+    public static partial void LogHostedServiceException(this ILogger logger, string serviceName, Exception ex);
+
+    [LoggerMessage(51, LogLevel.Information, "Stopping {HostedServiceName}")]
+    public static partial void LogStoppingHostedService(this ILogger logger, string serviceName);
+
+    [LoggerMessage(60, LogLevel.Information, "Background job for {JobDescription} is added or updated")]
+    public static partial void LogBackgroundJobAddedOrUpdated(this ILogger logger, string jobDescription);
+
+    // Resilience pipelines
+    [LoggerMessage(100, LogLevel.Error, "Circuit breaker {CircuitBreakerState}. Total number of times {CircuitBreakerState}: {TimesChanged}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.")]
+    public static partial void LogCircuitBreakerStateChanged(this ILogger logger, string circuitBreakerState, int timesChanged, string resilienceEvent, string resilienceOutcome, string? resiliencePipeline, string? resilienceStrategy);
+
+    [LoggerMessage(101, LogLevel.Information, "Circuit breaker's pipeline is being executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Pipeline: {ResiliencePipeline}.")]
+    public static partial void LogCircuitBreakerPipelineExecuting(this ILogger logger, string operationKey, string resilienceEvent, string? resiliencePipeline);
+
+    [LoggerMessage(102, LogLevel.Information, "Circuit breaker's pipeline has been executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}.")]
+    public static partial void LogCircuitBreakerPipelineExecuted(this ILogger logger, string operationKey, string resilienceEvent, string resilienceOutcome, string? resiliencePipeline);
+
+    [LoggerMessage(103, LogLevel.Information, "Total number of retries: {ResilienceRetries}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.")]
+    public static partial void LogCircuitBreakerTotalRetries(this ILogger logger, int resilienceRetries, string resilienceEvent, string resilienceOutcome, string? resiliencePipeline, string? resilienceStrategy);
+
     // Submissions
     [LoggerMessage(1010, LogLevel.Error, "Exception in submitting submission #{SubmissionId}", SkipEnabledCheck = true)]
     public static partial void LogExceptionSubmittingSolution(this ILogger logger, int submissionId, Exception ex);
