@@ -34,8 +34,6 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
 
     public async Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
     {
-        this.logger.LogReceivedSubmissionForProcessing(context.Message.Id);
-
         var result = new ProcessedSubmissionPubSubModel(context.Message.Id)
         {
             WorkerName = this.hostInfoService.GetHostIp(),
@@ -63,7 +61,6 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
             result.SetStartedAndCompletedExecutionOn(startedExecutionOn, completedExecutionOn: DateTime.UtcNow);
         }
 
-        this.logger.LogPublishingProcessedSubmission(submission.Id, result.WorkerName);
         await this.publisher.Publish(result);
         this.logger.LogPublishedProcessedSubmission(submission.Id, result.WorkerName);
     }

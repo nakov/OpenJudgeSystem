@@ -84,9 +84,6 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(1110, LogLevel.Information, "Processed execution result for submission #{SubmissionId} from worker {WorkerName}")]
     public static partial void LogProcessedExecutionResult(this ILogger logger, int submissionId, string? workerName);
 
-    [LoggerMessage(1111, LogLevel.Information, "Received submission #{SubmissionId} for processing")]
-    public static partial void LogReceivedSubmissionForProcessing(this ILogger logger, int submissionId);
-
     [LoggerMessage(1112, LogLevel.Information, "Starting processing submission #{SubmissionId} on worker {WorkerName}")]
     public static partial void LogStartingProcessingSubmission(this ILogger logger, int submissionId, string? workerName);
 
@@ -95,9 +92,6 @@ public static partial class LoggerMessageDefinitions
 
     [LoggerMessage(1114, LogLevel.Information, "Produced execution result for submission #{SubmissionId}: {@ExecutionResult}")]
     public static partial void LogProducedExecutionResult(this ILogger logger, int submissionId, object executionResult);
-
-    [LoggerMessage(1115, LogLevel.Information, "Publishing processed submission #{SubmissionId} from worker: {WorkerName}")]
-    public static partial void LogPublishingProcessedSubmission(this ILogger logger, int submissionId, string? workerName);
 
     [LoggerMessage(1116, LogLevel.Information, "Published processed submission #{SubmissionId} from worker: {WorkerName}")]
     public static partial void LogPublishedProcessedSubmission(this ILogger logger, int submissionId, string? workerName);
