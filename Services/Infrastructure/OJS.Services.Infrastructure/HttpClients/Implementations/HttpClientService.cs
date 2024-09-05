@@ -142,6 +142,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             }
             catch (Exception ex)
             {
+                externalDataResult.ErrorMessage = ex.InnerException?.Message ?? ex.Message;
                 this.Logger.LogRequestFailed(requestUrl, ex);
             }
 
