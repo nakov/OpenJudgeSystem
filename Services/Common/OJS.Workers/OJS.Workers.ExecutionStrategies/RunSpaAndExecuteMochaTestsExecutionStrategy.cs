@@ -424,7 +424,7 @@ finally:
                                     ? TestRunResultType.TimeLimit
                                     : TestRunResultType.WrongAnswer,
                 CheckerDetails = testResult == null
-                                ? default(CheckerDetails)
+                                ? new CheckerDetails()
                                 : new CheckerDetails { UserOutputFragment = isTimeout ? $"{testTitles[index]}\n{testResult}" : testResult },
             };
         }
