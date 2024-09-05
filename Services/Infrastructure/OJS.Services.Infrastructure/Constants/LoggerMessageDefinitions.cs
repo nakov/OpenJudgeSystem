@@ -6,34 +6,60 @@ using System;
 
 public static partial class LoggerMessageDefinitions
 {
-    [LoggerMessage(LogLevel.Error, "Failed to get host entry for host name: {HostName}", SkipEnabledCheck = true)]
-    public static partial void LogFailedToGetHostEntryForHostName(this ILogger logger, string hostName, Exception ex);
-
     [LoggerMessage(1, LogLevel.Error, "An error with code: {ErrorCode} and ID: {InstanceId} occurred.", SkipEnabledCheck = true)]
     public static partial void LogErrorWithCodeAndId(this ILogger logger, string? errorCode, string instanceId, Exception ex);
 
+    [LoggerMessage(2, LogLevel.Error, "Failed to get host entry for host name: {HostName}", SkipEnabledCheck = true)]
+    public static partial void LogFailedToGetHostEntryForHostName(this ILogger logger, string hostName, Exception ex);
+
     // Hosted services
-    [LoggerMessage(50, LogLevel.Error, "Exception in {HostedServiceName}", SkipEnabledCheck = true)]
-    public static partial void LogHostedServiceException(this ILogger logger, string serviceName, Exception ex);
+    [LoggerMessage(20, LogLevel.Error, "Exception in {HostedServiceName}", SkipEnabledCheck = true)]
+    public static partial void LogHostedServiceException(this ILogger logger, string hostedServiceName, Exception ex);
+
+    [LoggerMessage(22, LogLevel.Error, "Message bus health check failed. Current status: {BusHealthStatus}. Please verify that the message bus server is running correctly.")]
+    public static partial void LogMessageBusHealthCheckFailed(this ILogger logger, string? busHealthStatus);
 
     [LoggerMessage(51, LogLevel.Information, "Stopping {HostedServiceName}")]
-    public static partial void LogStoppingHostedService(this ILogger logger, string serviceName);
+    public static partial void LogStoppingHostedService(this ILogger logger, string hostedServiceName);
 
-    [LoggerMessage(60, LogLevel.Information, "Background job for {JobDescription} is added or updated")]
+    [LoggerMessage(52, LogLevel.Information, "Background job for {JobDescription} is added or updated")]
     public static partial void LogBackgroundJobAddedOrUpdated(this ILogger logger, string jobDescription);
 
     // Resilience pipelines
     [LoggerMessage(100, LogLevel.Error, "Circuit breaker {CircuitBreakerState}. Total number of times {CircuitBreakerState}: {TimesChanged}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.")]
     public static partial void LogCircuitBreakerStateChanged(this ILogger logger, string circuitBreakerState, int timesChanged, string resilienceEvent, string resilienceOutcome, string? resiliencePipeline, string? resilienceStrategy);
 
-    [LoggerMessage(101, LogLevel.Information, "Circuit breaker's pipeline is being executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Pipeline: {ResiliencePipeline}.")]
+    [LoggerMessage(150, LogLevel.Information, "Circuit breaker's pipeline is being executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Pipeline: {ResiliencePipeline}.")]
     public static partial void LogCircuitBreakerPipelineExecuting(this ILogger logger, string operationKey, string resilienceEvent, string? resiliencePipeline);
 
-    [LoggerMessage(102, LogLevel.Information, "Circuit breaker's pipeline has been executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}.")]
+    [LoggerMessage(151, LogLevel.Information, "Circuit breaker's pipeline has been executed. Operation: {OperationKey}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}.")]
     public static partial void LogCircuitBreakerPipelineExecuted(this ILogger logger, string operationKey, string resilienceEvent, string resilienceOutcome, string? resiliencePipeline);
 
-    [LoggerMessage(103, LogLevel.Information, "Total number of retries: {ResilienceRetries}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.")]
+    [LoggerMessage(152, LogLevel.Information, "Total number of retries: {ResilienceRetries}. Event: {ResilienceEvent}. Outcome: [{ResilienceOutcome}]. Pipeline: {ResiliencePipeline}. Strategy: {ResilienceStrategy}.")]
     public static partial void LogCircuitBreakerTotalRetries(this ILogger logger, int resilienceRetries, string resilienceEvent, string resilienceOutcome, string? resiliencePipeline, string? resilienceStrategy);
+
+    [LoggerMessage(153, LogLevel.Warning, "Retry attempt #{RetryAttempt}. Operation: Retry_{OperationKey} Outcome: [{ResilienceOutcome}]. Duration: {RetryDuration}ms. Delay: {RetryDelay}ms.")]
+    public static partial void LogCircuitBreakerRetryAttempt(this ILogger logger, int retryAttempt, string operationKey, string resilienceOutcome, int retryDuration, int retryDelay);
+
+
+    // External http requests
+    [LoggerMessage(201, LogLevel.Error, "Platform data for {UserName} not received. Error message: {PlatformCallErrorMessage}", SkipEnabledCheck = true)]
+    public static partial void LogPlatformDataNotReceived(this ILogger logger, string userName, string? platformCallErrorMessage);
+
+    [LoggerMessage(202, LogLevel.Error, "Error while trying to get platform data for {UserName}", SkipEnabledCheck = true)]
+    public static partial void LogErrorGettingPlatformData(this ILogger logger, string userName, Exception ex);
+
+    [LoggerMessage(203, LogLevel.Error, "Error while trying to get response from {RequestUrl}. Error message: {ErrorMessage}", SkipEnabledCheck = true)]
+    public static partial void LogResponseNotSuccessfullyReceived(this ILogger logger, string requestUrl, string? errorMessage);
+
+    [LoggerMessage(204, LogLevel.Error, "Request to {RequestUrl} failed.", SkipEnabledCheck = true)]
+    public static partial void LogRequestFailed(this ILogger logger, string requestUrl, Exception ex);
+
+    [LoggerMessage(250, LogLevel.Information, "Starting {HttpMethod} request to {RequestUrl}")]
+    public static partial void LogStartingHttpRequest(this ILogger logger, string httpMethod, string requestUrl);
+
+    [LoggerMessage(260, LogLevel.Debug, "Platform data for {UserName} successfully received.")]
+    public static partial void LogPlatformDataReceived(this ILogger logger, string userName);
 
     // Submissions
     [LoggerMessage(1010, LogLevel.Error, "Exception in submitting submission #{SubmissionId}", SkipEnabledCheck = true)]
