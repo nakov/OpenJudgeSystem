@@ -4,6 +4,12 @@ using Microsoft.Extensions.Logging;
 using OJS.Workers.Common.Models;
 using System;
 
+/// <summary>
+/// Define the logger messages used in the application for high performance logging (https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging).
+/// The SkipEnabledCheck = true attribute is used to skip the check if the logger is enabled for the specified log level.
+/// Usually Error level is always logged, so the check is not necessary for these messages.
+/// EventIds are used to identify the message in the log. It has no specific meaning, but it should be unique for each message.
+/// </summary>
 public static partial class LoggerMessageDefinitions
 {
     [LoggerMessage(1, LogLevel.Error, "An error with code: {ErrorCode} and ID: {InstanceId} occurred.", SkipEnabledCheck = true)]
@@ -40,7 +46,6 @@ public static partial class LoggerMessageDefinitions
 
     [LoggerMessage(153, LogLevel.Warning, "Retry attempt #{RetryAttempt}. Operation: Retry_{OperationKey} Outcome: [{ResilienceOutcome}]. Duration: {RetryDuration}ms. Delay: {RetryDelay}ms.")]
     public static partial void LogCircuitBreakerRetryAttempt(this ILogger logger, int retryAttempt, string operationKey, string resilienceOutcome, int retryDuration, int retryDelay);
-
 
     // External http requests
     [LoggerMessage(201, LogLevel.Error, "Platform data for {UserName} not received. Error message: {PlatformCallErrorMessage}", SkipEnabledCheck = true)]
