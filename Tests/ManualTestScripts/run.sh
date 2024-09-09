@@ -53,7 +53,7 @@ execute_curl() {
 
     # Loop through the specified number of workers and execute the curl command
     for ((i = 1; i <= workers_count; i++)); do
-        # Construct the URL for the curl request with appropriate port number
+        # Construct the URL for the curl request with the appropriate port number
         port=$(printf "80%02d" $i)  # Format the port as 8001, 8002, ..., based on the workers count
         url="http://$worker_ip:$port/executeSubmission"
         echo "Executing for $json_file on $url"
@@ -75,9 +75,9 @@ execute_curl() {
             continue
         fi
 
-        # Append the test results to the summary file with proper formatting
+        # Append the test results to the summary file with proper formatting, including the worker endpoint
         {
-            echo "// Test #$test_index: $base_filename"
+            echo "// Test #$test_index: $base_filename (Endpoint: $worker_ip:$port)"
             echo "// Expected: $expected_results"
             echo "$test_result"
             echo -e "\n"
