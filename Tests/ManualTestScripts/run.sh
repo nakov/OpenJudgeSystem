@@ -60,7 +60,6 @@ execute_curl() {
 
         # Construct the output file name for the results
         base_filename=$(basename "$json_file" .json)
-        ip_formatted=$(echo "$worker_ip" | tr '.' '-')
         result_file="$output_dir/results-summary.json"
 
         # Execute curl with the cleaned JSON content and format the output using jq
