@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using OJS.Common;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Infrastructure.Constants;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ public class SubmissionsForProcessingCommonDataService(
 
     public async Task<SubmissionForProcessing> Add(int submissionId)
     {
-        logger.LogInformation("Adding submission for processing: {SubmissionId}", submissionId);
+        logger.LogAddingSubmissionForProcessing(submissionId);
 
         var submissionForProcessing = new SubmissionForProcessing
         {
@@ -55,7 +56,7 @@ public class SubmissionsForProcessingCommonDataService(
         }
         else
         {
-            logger.LogInformation("Updating submission for processing: {SubmissionId}", submissionId);
+            logger.LogUpdatingSubmissionForProcessing(submissionId);
         }
 
         entity.Processing = false;
@@ -86,7 +87,7 @@ public class SubmissionsForProcessingCommonDataService(
 
     public async Task RemoveBySubmission(int submissionId)
     {
-        logger.LogInformation("Removing submission for processing: {SubmissionId}", submissionId);
+        logger.LogRemovingSubmissionForProcessing(submissionId);
 
         var submissionForProcessing = await this.GetBySubmission(submissionId);
 
@@ -99,7 +100,7 @@ public class SubmissionsForProcessingCommonDataService(
 
     public void MarkProcessing(SubmissionForProcessing submissionForProcessing)
     {
-        logger.LogInformation("Marking submission for processing: {SubmissionId}", submissionForProcessing.SubmissionId);
+        logger.LogMarkingSubmissionForProcessing(submissionForProcessing.SubmissionId);
 
         submissionForProcessing.Processing = true;
         submissionForProcessing.Processed = false;
@@ -118,7 +119,7 @@ public class SubmissionsForProcessingCommonDataService(
 
     public void MarkProcessed(SubmissionForProcessing submissionForProcessing)
     {
-        logger.LogInformation("Marking submission as processed: {SubmissionId}", submissionForProcessing.SubmissionId);
+        logger.LogMarkingSubmissionAsProcessed(submissionForProcessing.SubmissionId);
 
         submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;

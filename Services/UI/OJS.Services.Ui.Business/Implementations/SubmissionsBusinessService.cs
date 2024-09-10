@@ -23,6 +23,7 @@ using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Workers.Common.Models;
 using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
@@ -565,10 +566,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.SaveChanges();
         });
 
-        this.logger.LogInformation(
-            "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}",
-            submission.Id,
-            submissionForProcessing);
+        this.logger.LogSubmissionProcessedSuccessfully(submission.Id, submissionForProcessing);
     }
 
     public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page)

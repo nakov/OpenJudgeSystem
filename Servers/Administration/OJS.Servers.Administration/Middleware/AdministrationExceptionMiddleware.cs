@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OJS.Common.Exceptions;
 using OJS.Common.Extensions;
+using OJS.Services.Infrastructure.Constants;
 using OJS.Workers.Common.Extensions;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ public class AdministrationExceptionMiddleware : IMiddleware
             ex.AddErrorCode();
             var errorCode = ex.GetErrorCode();
             var instanceId = Guid.NewGuid();
-            this.logger.LogError(ex, "An error with code: {ErrorCode} and ID: {InstanceId} occurred", errorCode, instanceId);
+            this.logger.LogErrorWithCodeAndId(errorCode, instanceId.ToString(), ex);
 
             var message = context.User.IsAdmin()
                 ? ex.GetAllMessages()

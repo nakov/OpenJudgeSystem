@@ -13,6 +13,9 @@ charset = utf-8
 
 # language conventions
 [*.cs]
+dotnet_analyzer_diagnostic.category-Security.severity                    = error
+dotnet_analyzer_diagnostic.category-Performance.severity                 = error
+
 dotnet_sort_system_directives_first                                      = false
 
 dotnet_style_qualification_for_field                                     = true : error

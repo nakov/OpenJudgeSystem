@@ -1,10 +1,10 @@
 namespace OJS.Services.Common;
 
-using FluentExtensions.Extensions;
 using Hangfire;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OJS.Services.Infrastructure.BackgroundJobs;
+using OJS.Services.Infrastructure.Constants;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,10 +38,9 @@ public class BackgroundJobsHostedService : IHostedService
         {
             this.AddOrUpdateRecurringJobs();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this.logger.LogError("Exception in BackgroundJobsHostedService");
-            this.logger.LogError(e.GetAllMessages());
+            this.logger.LogHostedServiceException(nameof(BackgroundJobsHostedService), ex);
         }
 
         return Task.CompletedTask;
@@ -49,7 +48,7 @@ public class BackgroundJobsHostedService : IHostedService
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        this.logger.LogInformation("Stopping BackgroundJobsHostedService");
+        this.logger.LogStoppingHostedService(nameof(BackgroundJobsHostedService));
 
         return Task.CompletedTask;
     }
@@ -63,7 +62,7 @@ public class BackgroundJobsHostedService : IHostedService
                 EnqueuePendingSubmissionsCronExpression,
                 AdministrationQueueName);
 
-        this.logger.LogInformation("Job for enqueueing pending submissions is added or updated");
+        this.logger.LogBackgroundJobAddedOrUpdated("enqueueing pending submissions");
 
         this.hangfireBackgroundJobs
             .AddOrUpdateRecurringJob<IRecurringBackgroundJobsBusinessService>(
@@ -72,7 +71,7 @@ public class BackgroundJobsHostedService : IHostedService
                 this.deleteProcessedSubmissionsCronExpression,
                 AdministrationQueueName);
 
-        this.logger.LogInformation("Job for deleting processed submissions is added or updated");
+        this.logger.LogBackgroundJobAddedOrUpdated("deleting processed submissions");
 
         this.hangfireBackgroundJobs
             .AddOrUpdateRecurringJob<IRecurringBackgroundJobsBusinessService>(
@@ -81,7 +80,7 @@ public class BackgroundJobsHostedService : IHostedService
                 this.updatingParticipantTotalScoreSnapshotCronExpression,
                 AdministrationQueueName);
 
-        this.logger.LogInformation("Job for updating total score snapshot of participants is added or updated");
+        this.logger.LogBackgroundJobAddedOrUpdated("updating total score snapshot of participants");
 
         this.hangfireBackgroundJobs
             .AddOrUpdateRecurringJob<IRecurringBackgroundJobsBusinessService>(
@@ -90,6 +89,6 @@ public class BackgroundJobsHostedService : IHostedService
                 this.removingMultipleParticipantScoresForProblemCronExpression,
                 AdministrationQueueName);
 
-        this.logger.LogInformation("Job for removing participant multiple scores is added or updated");
+        this.logger.LogBackgroundJobAddedOrUpdated("removing participant multiple scores");
     }
 }

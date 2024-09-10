@@ -15,6 +15,7 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Servers.Ui.Models;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure;
+    using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Business;
     using static OJS.Common.GlobalConstants.Urls;
@@ -58,18 +59,23 @@ namespace OJS.Servers.Ui.Controllers
 
             try
             {
-                this.logger.LogDebug($"START PLATFORM LOGIN CALL FOR USER: {model.UserName}");
+                this.logger.LogStartingHttpRequest("GET", GetUserInfoByUsernamePath);
                 platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
                     new { model.UserName },
-                    string.Format(GetUserInfoByUsernamePath));
-                this.logger.LogDebug("ЕND PLATFORM LOGIN CALL. RESULT:");
-                this.logger.LogDebug($"{nameof(platformCallResult.IsSuccess)}: {platformCallResult.IsSuccess}");
-                this.logger.LogDebug($"{nameof(platformCallResult.ErrorMessage)}: {platformCallResult.ErrorMessage}");
-                this.logger.LogDebug($"{nameof(platformCallResult.Data)}: {platformCallResult.Data}");
+                    GetUserInfoByUsernamePath);
+
+                if (platformCallResult.IsSuccess)
+                {
+                    this.logger.LogPlatformDataReceived(model.UserName);
+                }
+                else
+                {
+                    this.logger.LogPlatformDataNotReceived(model.UserName, platformCallResult.ErrorMessage);
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this.logger.LogError(e, "EXCEPTION IN PLATFORM CALL");
+                this.logger.LogErrorGettingPlatformData(model.UserName, ex);
             }
 
             if (platformCallResult.IsSuccess)
