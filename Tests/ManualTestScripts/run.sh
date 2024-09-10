@@ -94,8 +94,8 @@ if [ -n "$3" ] && [ -d "$strategies_dir/$3" ]; then
     echo "Executing for all JSON files in folder: $folder"
     test_index=1
 
-    # Iterate over each JSON file in the specified folder
-    for json_file in "$folder"/*.json; do
+    # Find and iterate over each JSON file in the specified folder and its subdirectories
+    find "$folder" -type f -name '*.json' | while read -r json_file; do
         execute_curl "$json_file" "$output_folder" "$test_index"
         test_index=$((test_index + 1))
     done
@@ -113,16 +113,14 @@ else
     echo "No folder or file arguments provided, executing for all JSON files in all subdirectories of StrategiesDataScripts"
     test_index=1
 
-    # Iterate over all folders in StrategiesDataScripts and execute for each JSON file found
-    for folder in "$strategies_dir"/*; do
-        if [ -d "$folder" ]; then
-            output_folder="$results_dir/$(basename "$folder")"
-            mkdir -p "$output_folder"
-            for json_file in "$folder"/*.json; do
-                execute_curl "$json_file" "$output_folder" "$test_index"
-                test_index=$((test_index + 1))
-            done
-        fi
+    # Find and iterate over all JSON files in all subdirectories of StrategiesDataScripts
+    find "$strategies_dir" -type f -name '*.json' | while read -r json_file; do
+        # Create the corresponding output directory structure
+        relative_path=$(dirname "${json_file#$strategies_dir/}")
+        output_folder="$results_dir/$relative_path"
+        mkdir -p "$output_folder"
+        execute_curl "$json_file" "$output_folder" "$test_index"
+        test_index=$((test_index + 1))
     done
 fi
 
