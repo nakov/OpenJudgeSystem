@@ -85,37 +85,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    // This method fills in the user output fragment on correct answers,
-    // as the OJS worker does not return output on correct answers
-    // this method can be safely discarded after https://github.com/SoftUni-Internal/suls-issues/issues/5811
-    // has been closed.
-    private static void FillForCorrectAnswers(IList<TestResult> testResults, IList<TestContext> testContexts)
-    {
-        if (testContexts.Count != testResults.Count)
-        {
-            return;
-        }
-
-        testResults.ForEach((index, testResult) =>
-        {
-            var isResultCorrectAnswerAndTrialTest =
-                testResult.ResultType ==
-                OJS.Workers.Common.Models.TestRunResultType.CorrectAnswer;
-
-            if (isResultCorrectAnswerAndTrialTest)
-            {
-                var output = testContexts[index].Output;
-
-                testResult.CheckerDetails =
-                    new CheckerDetails
-                    {
-                        UserOutputFragment = output,
-                        ExpectedOutputFragment = output,
-                    };
-            }
-        });
-    }
-
     // This is done to assure no information can be extracted from the networks tab when returning hidden tests in the response
     private static void RemoveDetailsForHiddenTests(TaskResultServiceModel taskResult)
         => Enumerable.Where<TestResult>(taskResult.TestResults.MapCollection<TestResult>(), t => !t.IsTrialTest)
@@ -179,13 +148,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int taskMaxPoints)
     {
         executionResult.Id = this.BuildUniqueId(submission.TestsExecutionDetails!.TaskId!);
-
-        if (submission.ExecutionOptions.KeepCheckerFragmentsForCorrectAnswers)
-        {
-            FillForCorrectAnswers(
-                Enumerable.ToList<TestResult>(executionResult.TaskResult!.TestResults.MapCollection<TestResult>()),
-                Enumerable.ToList<TestContext>(submission.TestsExecutionDetails.Tests));
-        }
 
         executionResult.TaskResult!.CalculatePoints(taskMaxPoints);
 

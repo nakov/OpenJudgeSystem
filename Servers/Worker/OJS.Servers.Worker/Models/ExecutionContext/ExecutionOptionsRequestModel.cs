@@ -10,7 +10,5 @@
         public bool EscapeTests { get; set; }
 
         public bool EscapeLineEndings { get; set; }
-
-        public bool KeepCheckerFragmentsForCorrectAnswers { get; set; } = true;
     }
 }
