@@ -242,11 +242,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     .AddConsumer(consumer)
                     .Endpoint(endpointConfig =>
                     {
-                        endpointConfig.Name = consumer.Name;
-                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator configurator)
-                        {
-                            configurator.Durable = true;
-                        }
+                        endpointConfig.Name = consumer.FullName ?? consumer.Name;
                     }));
 
                 config.UsingRabbitMq((context, rmq) =>
@@ -257,18 +253,23 @@ namespace OJS.Servers.Infrastructure.Extensions
                         h.Password(messageQueueConfig.Password);
                     });
 
-                    consumers.ForEach(consumer => rmq.ReceiveEndpoint(consumer.FullName!, endpoint =>
+                    rmq.UseMessageRetry(retry =>
+                        retry.Interval(messageQueueConfig.RetryCount, TimeSpan.FromMilliseconds(messageQueueConfig.RetryInterval)));
+
+                    if (messageQueueConfig.PrefetchCount.HasValue)
                     {
-                        if (messageQueueConfig.PrefetchCount.HasValue)
-                        {
-                            endpoint.PrefetchCount = messageQueueConfig.PrefetchCount.Value;
-                        }
+                        rmq.PrefetchCount = messageQueueConfig.PrefetchCount.Value;
+                    }
 
-                        endpoint.UseMessageRetry(retry =>
-                            retry.Interval(messageQueueConfig.RetryCount, messageQueueConfig.RetryInterval));
+                    rmq.ConfigureEndpoints(context);
+                });
 
-                        endpoint.ConfigureConsumer(context, consumer);
-                    }));
+                config.AddConfigureEndpointsCallback((_, cfg) =>
+                {
+                    if (cfg is IRabbitMqReceiveEndpointConfigurator configurator)
+                    {
+                        configurator.Durable = true;
+                    }
                 });
             });
 
