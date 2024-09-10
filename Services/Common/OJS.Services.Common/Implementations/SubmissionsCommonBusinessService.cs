@@ -78,8 +78,8 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         else if (submissionForProcessing.Processed)
         {
-            // Race condition can occur and the submission can be marked as processed when we reach this point,
-            // but it is not a problem, as the submission is already processed and there is no need to do anything.
+            // Race condition can occur and the submission can already be marked as processed when we reach this point,
+            // but it is not a problem, as the submission is processed and there is no need to touch it anymore.
             this.logger.LogSubmissionAlreadyProcessed(submission.Id);
         }
         else
