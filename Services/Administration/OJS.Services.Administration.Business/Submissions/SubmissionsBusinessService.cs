@@ -4,14 +4,12 @@ namespace OJS.Services.Administration.Business.Submissions
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
-    using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
@@ -169,6 +167,7 @@ namespace OJS.Services.Administration.Business.Submissions
             {
                 submission.Processed = false;
                 submission.ModifiedOn = this.dates.GetUtcNow();
+                this.submissionsData.Update(submission);
 
                 var submissionIsBestSubmission = await this.IsBestSubmission(
                     submissionProblemId,
