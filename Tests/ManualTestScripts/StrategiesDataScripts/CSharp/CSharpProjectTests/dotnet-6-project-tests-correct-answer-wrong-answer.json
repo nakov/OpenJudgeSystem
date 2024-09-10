@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "dot-net-core-6-project-tests",
+    "CompilerType": "DotNetCompiler",
+    "FileContent": "UEsDBBQAAAAIAI6BGlnHglWnfAAAAJIAAAAJAAAAQW5pbWFsLmNze797f2lxZl66QnBlcUlqrjUvFy9XXmJuanFBYnKqgltiEUQoM68ktSgvMUchOSexuFjBMS8zNzGHl6ual0sBCApKk3IykxXK8jNTFFwTSzQ0IcJQWRBwzs8rzs9J1QsvyixJ9cnMS9VQSk0sAdqrp6enpGkNUVjLywVEAFBLAwQUAAAACAAhghpZT2CWlYkAAAC4AAAABgAAAENhdC5jc02OMQoCQQxF+4G5Q9hqt5kDuJUsWGllYR3GIIGZjGyiIuLJLDySV3CWFdbHh3z4r8jn9b4oywn2dzXKvXfeCWbSM0aCDY7Zu4d3UGExGgUTxISqMKDBCtbCGdMs/LwJNTSOcC18hB2VW9st2582MRTRkigcRjbaslDbZCr1pRBC0/WL/JxrPTVfUEsDBBQAAAAIALuBGlmRaee+hQAAALYAAAAGAAAARG9nLmNze797f2lxZl66QnBlcUlqrjUvFy9XXmJuanFBYnKqgltiEURIAQgy80pSi/IScxSScxKLixVc8tMVrBQc8zJzE3MgCqohFAgUlCblZCYrlOVnpig4JRZla2gi5JCUgYBzfl5xfk6qXnhRZkmqT2ZeqoZSElAH0E16enpKmtYI1bUwl9QCAFBLAwQUAAAACACOgRpZ4F3GdHUAAACrAAAACwAAAEZhcm0uY3Nwcm9qswkoys9KTS5RCE7JtlXyzUwuyi/OTyvR83MN0QMKKdnxcvFyKSjYAJUVpBaVVLoX5ZcW2IGEgIL+pSUFpSUhlQWpdq4VqTb6SHyoipDEovTUEreixNzU8vyibLu81BIzPQMbfXRxsB366JbwcoHFQO4DqgAAUEsDBBQAAAAIAGGCGllxfIS5iQAAALgAAAAIAAAAUHVwcHkuY3N7v3t/aXFmXrpCcGVxSWquNS8XL1deYm5qcUFicqqCW2JRLi9XNS+XAhBk5pWkFuUl5igk5yQWFysElBYUVCpYKbjkp0PkocpAoKA0KSczWaEsPzNFITw1tUBDEyGHpAwEnPPzivNzUvXCizJLUn0y81I1lMqBOoBO0tPTU9K0RqiuhTCBFBABAFBLAwQUAAAACABqghpZFxrgxpkAAAAXAQAACgAAAFN0YXJ0VXAuY3N7v3t/aXFmXrpCcGVxSWquNS8XL1deYm5qcUFicqqCW2IRRKigNCknM1khOSexuFghuCSxqCS0gJermpdLAQiKSxJLgJJl+ZkpCr6JmXkamhBxqDQIuOSnK6QAsa1CXmq5hqY1QiagtKCgUqEATGLKOieWKCQDMVgGxEORBevSc8Uq6pRYlI1FODw1tQBFGGg6igm1vFxABABQSwECFAAUAAAACACOgRpZx4JVp3wAAACSAAAACQAAAAAAAAABACAAAAAAAAAAQW5pbWFsLmNzUEsBAhQAFAAAAAgAIYIaWU9glpWJAAAAuAAAAAYAAAAAAAAAAQAgAAAAowAAAENhdC5jc1BLAQIUABQAAAAIALuBGlmRaee+hQAAALYAAAAGAAAAAAAAAAEAIAAAAFABAABEb2cuY3NQSwECFAAUAAAACACOgRpZ4F3GdHUAAACrAAAACwAAAAAAAAABACAAAAD5AQAARmFybS5jc3Byb2pQSwECFAAUAAAACABhghpZcXyEuYkAAAC4AAAACAAAAAAAAAABACAAAACXAgAAUHVwcHkuY3NQSwECFAAUAAAACABqghpZFxrgxpkAAAAXAQAACgAAAAAAAAABACAAAABGAwAAU3RhcnRVcC5jc1BLBQYAAAAABgAGAEYBAAAHBAAAAAA\u003d",
+    "Code": "",
+    "TimeLimit": 1000,
+    "MemoryLimit": 62777216,
+    "ExecutionDetails": {
+        "MaxPoints": 100,
+        "CheckerType": "trim",
+        "CheckerParameter": null,
+        "Tests": [
+            {
+                "Id": 116715,
+                "Input": "using System;\r\nusing System.Reflection;\r\nusing NUnit.Framework;\r\nusing Farm;\r\nusing System.Linq;\r\n\r\n[TestFixture]\r\nclass AnimalEatTests\r\n{\r\n    private static readonly Assembly ProjectAssembly \u003d typeof(StartUp).Assembly;\r\n\r\n    [Test]\r\n    public void AnimalEat()\r\n    {\r\n        Type animal \u003d GetType(\"Animal\"); // Get type pointer\r\n\r\n        var method \u003d animal.GetMethod(\"Eat\");\r\n\r\n        Assert.IsTrue(method.ReturnType \u003d\u003d typeof(void));\r\n    }\r\n\r\n    private static Type GetType(string name)\r\n    {\r\n        var type \u003d ProjectAssembly\r\n            .GetTypes()\r\n            .FirstOrDefault(t \u003d\u003e t.Name \u003d\u003d name);\r\n\r\n        return type;\r\n    }\r\n}",
+                "Output": "Test Passed!",
+                "IsTrialTest": true,
+                "OrderBy": 1
+            },
+            {
+                "Id": 116715,
+                "Input": "using System;\r\nusing System.Reflection;\r\nusing NUnit.Framework;\r\nusing Farm;\r\nusing System.Linq;\r\n\r\n[TestFixture]\r\nclass AnimalEatTestsSecond\r\n{\r\n    private static readonly Assembly ProjectAssembly \u003d typeof(StartUp).Assembly;\r\n\r\n    [Test]\r\n    public void WrongTest()\r\n    {\r\n        Type animal \u003d GetType(\"Animal\"); // Get type pointer\r\n\r\n        var method \u003d animal.GetMethod(\"Eat\");\r\n\r\n        Assert.IsFalse(method.ReturnType \u003d\u003d typeof(void));\r\n    }\r\n\r\n    private static Type GetType(string name)\r\n    {\r\n        var type \u003d ProjectAssembly\r\n            .GetTypes()\r\n            .FirstOrDefault(t \u003d\u003e t.Name \u003d\u003d name);\r\n\r\n        return type;\r\n    }\r\n}",
+                "Output": "Test Passed!",
+                "IsTrialTest": true,
+                "OrderBy": 1
+            }
+        ],
+        "TaskSkeleton": null,
+        "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+        "KeepDetails": true,
+        "EscapeTests": false,
+        "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+}
