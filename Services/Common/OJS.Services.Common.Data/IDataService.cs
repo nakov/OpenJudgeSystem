@@ -25,6 +25,8 @@ namespace OJS.Services.Common.Data
 
         Task DeleteById(object id);
 
+        void Attach(TEntity entity);
+
         void Detach(TEntity entity);
 
         EntityEntry<TEntity> GetEntry(TEntity entity);
@@ -45,6 +47,8 @@ namespace OJS.Services.Common.Data
             int? skip = null,
             int? take = null)
             where TResult : class;
+
+        ValueTask<TEntity?> Find(params object[] keyValues);
 
         Task<TEntity?> OneById(object id);
 

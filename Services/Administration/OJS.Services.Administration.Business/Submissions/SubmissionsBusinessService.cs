@@ -162,6 +162,7 @@ namespace OJS.Services.Administration.Business.Submissions
             var submissionProblemId = submission.ProblemId;
             var submissionParticipantId = submission.ParticipantId;
             var submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(submission);
+            SubmissionForProcessing? submissionForProcessing = null;
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
@@ -183,13 +184,13 @@ namespace OJS.Services.Administration.Business.Submissions
 
                 await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
-                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id);
+                submissionForProcessing = await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;
             });
 
-            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
+            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing!);
 
             return result;
         }

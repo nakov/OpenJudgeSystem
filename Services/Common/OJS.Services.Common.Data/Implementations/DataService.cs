@@ -50,6 +50,9 @@ namespace OJS.Services.Common.Data.Implementations
             this.Delete(entity!);
         }
 
+        public void Attach(TEntity entity)
+            => this.dbSet.Attach(entity);
+
         public void Detach(TEntity entity)
             => this.dbSet.Entry(entity).State = EntityState.Detached;
 
@@ -79,6 +82,9 @@ namespace OJS.Services.Common.Data.Implementations
             => await this.GetQuery(filter, orderBy, descending, skip, take)
                 .MapCollection<TResult>()
                 .ToListAsync();
+
+        public ValueTask<TEntity?> Find(params object[] keyValues)
+            => this.dbSet.FindAsync(keyValues);
 
         public virtual async Task<TEntity?> OneById(object id)
             => await this.GetByIdQuery(id)

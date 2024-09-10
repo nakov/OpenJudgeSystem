@@ -57,7 +57,7 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
     public SubmissionServiceModel BuildSubmissionForProcessing(Submission submission)
         => this.BuildSubmissionForProcessing(submission, submission.Problem, submission.SubmissionType!);
 
-    public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission)
+    public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission, SubmissionForProcessing submissionForProcessing)
     {
         try
         {
@@ -70,13 +70,15 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
             throw;
         }
 
-        var submissionForProcessing = await this.submissionForProcessingData.GetBySubmission(submission.Id);
+        // We detach the entity to ensure we get fresh data from the database.
+        this.submissionForProcessingData.Detach(submissionForProcessing);
+        var freshSubmissionForProcessing = await this.submissionForProcessingData.Find(submissionForProcessing.Id);
 
-        if (submissionForProcessing == null)
+        if (freshSubmissionForProcessing == null)
         {
             this.logger.LogSubmissionForProcessingNotFoundForSubmission(submission.Id);
         }
-        else if (submissionForProcessing.Processed)
+        else if (freshSubmissionForProcessing.Processed)
         {
             // Race condition can occur and the submission can already be marked as processed when we reach this point,
             // but it is not a problem, as the submission is processed and there is no need to touch it anymore.
@@ -84,7 +86,8 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         else
         {
-            this.submissionForProcessingData.MarkProcessing(submissionForProcessing);
+            // We attach the entity again, after getting it as no tracking, in order to update it.
+            this.submissionForProcessingData.MarkProcessing(freshSubmissionForProcessing);
             await this.submissionForProcessingData.SaveChanges();
         }
     }
