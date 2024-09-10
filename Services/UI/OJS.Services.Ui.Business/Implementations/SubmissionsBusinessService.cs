@@ -651,10 +651,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 new TestRun
                 {
                     ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
-                    CheckerComment = testResult.CheckerDetails.Comment,
+                    CheckerComment = testResult.CheckerDetails?.Comment,
                     ExecutionComment = testResult.ExecutionComment,
-                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    ExpectedOutputFragment = testResult.CheckerDetails?.ExpectedOutputFragment,
+                    UserOutputFragment = testResult.CheckerDetails?.UserOutputFragment,
                     IsTrialTest = testResult.IsTrialTest,
                     TimeUsed = testResult.TimeUsed,
                     MemoryUsed = testResult.MemoryUsed,

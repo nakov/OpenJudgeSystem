@@ -15,7 +15,7 @@
 
         public string Output { get; set; } = string.Empty;
 
-        public CheckerDetails CheckerDetails { get; set; } = new();
+        public CheckerDetails? CheckerDetails { get; set; }
 
         public int TimeUsed { get; set; }
 
@@ -33,7 +33,7 @@
                 .ForMember(
                     d => d.Output,
                     opt =>
-                        opt.MapFrom(s => s.CheckerDetails.UserOutputFragment))
+                        opt.MapFrom(s => s.CheckerDetails != null ? s.CheckerDetails.UserOutputFragment : null))
                 .ReverseMap();
     }
 }
