@@ -8,6 +8,8 @@ public interface ISubmissionsCommonDataService : IDataService<Submission>
 {
     IQueryable<Submission> GetAllPending();
 
+    IQueryable<Submission> GetAllEnqueued();
+
     IQueryable<Submission> GetAllProcessing();
 
     Task<int> GetAllUnprocessedCount();

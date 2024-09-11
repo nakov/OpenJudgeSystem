@@ -7,11 +7,9 @@ using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
-using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
-using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -23,21 +21,9 @@ using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 public class SubmissionsController : BaseApiController
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
-    private readonly ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness;
-    private readonly ISubmissionCacheService submissionCache;
-    private readonly IUserProviderService userProviderService;
 
-    public SubmissionsController(
-        ISubmissionsBusinessService submissionsBusiness,
-        ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness,
-        ISubmissionCacheService submissionCache,
-        IUserProviderService userProviderService)
-    {
-        this.submissionsBusiness = submissionsBusiness;
-        this.submissionsForProcessingBusiness = submissionsForProcessingBusiness;
-        this.submissionCache = submissionCache;
-        this.userProviderService = userProviderService;
-    }
+    public SubmissionsController(ISubmissionsBusinessService submissionsBusiness)
+        => this.submissionsBusiness = submissionsBusiness;
 
     /// <summary>
     /// Gets all user submissions. Prepared for the user's profile page.
@@ -173,7 +159,7 @@ public class SubmissionsController : BaseApiController
     [HttpGet]
     [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> TotalCount()
-        => await this.submissionCache
+        => await this.submissionsBusiness
             .GetTotalCount()
             .ToOkResult();
 

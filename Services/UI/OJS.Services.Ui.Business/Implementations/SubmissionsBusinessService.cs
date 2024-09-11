@@ -24,6 +24,7 @@ using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Workers.Common.Models;
 using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Models;
 using System;
@@ -58,6 +59,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsHelper submissionsHelper;
     private readonly IDatesService dates;
     private readonly ITransactionsProvider transactionsProvider;
+    private readonly ICacheService cache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -79,7 +81,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IPublisherService publisher,
         ISubmissionsHelper submissionsHelper,
         IDatesService dates,
-        ITransactionsProvider transactionsProvider)
+        ITransactionsProvider transactionsProvider,
+        ICacheService cache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -101,6 +104,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsHelper = submissionsHelper;
         this.dates = dates;
         this.transactionsProvider = transactionsProvider;
+        this.cache = cache;
     }
 
     public async Task Retest(int id)
@@ -587,7 +591,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public Task<int> GetTotalCount()
-        => this.submissionsData.Count();
+        => this.cache.Get(
+            CacheConstants.TotalSubmissionsCount,
+            async () => await this.submissionsData.IgnoreQueryFilters().Count(),
+            CacheConstants.FiveMinutesInSeconds);
 
     public async Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
         SubmissionStatus status,
@@ -601,29 +608,42 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         IQueryable<Submission> query;
 
-        if (status == SubmissionStatus.Processing)
+        switch (status)
         {
-            query = this.submissionsCommonData.GetAllProcessing();
-        }
-        else if (status == SubmissionStatus.Pending)
-        {
-            query = this.submissionsCommonData.GetAllPending();
-        }
-        else
-        {
-            var user = this.userProviderService.GetCurrentUser();
-            if (user.IsAdminOrLecturer)
-            {
-                return await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, page);
-            }
+            case SubmissionStatus.Enqueued:
+                query = this.submissionsCommonData.GetAllEnqueued();
+                break;
+            case SubmissionStatus.Processing:
+                query = this.submissionsCommonData.GetAllProcessing();
+                break;
+            case SubmissionStatus.Pending:
+                query = this.submissionsCommonData.GetAllPending();
+                break;
+            case SubmissionStatus.All:
+            default:
+                return this.userProviderService.GetCurrentUser().IsAdminOrLecturer
+                    ? await this.submissionsData
+                        .GetLatestSubmissions<TServiceModel>()
+                        .ToPagedResultAsync(itemsPerPage, page)
+                    : await this.cache.Get(
+                        CacheConstants.LatestPublicSubmissions,
+                        async () =>
+                        {
+                            var submissions = await this.submissionsData
+                                .GetLatestSubmissions<TServiceModel>(DefaultSubmissionsPerPage)
+                                .ToListAsync();
 
-            var submissions = await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, 1);
+                            var totalItemsCount = await this.GetTotalCount();
 
-            return new PagedResult<TServiceModel>
-            {
-                Items = submissions.Items,
-                TotalItemsCount = submissions.TotalItemsCount,
-            };
+                            // Public submissions do not have pagination, but PagedResult is used for consistency.
+                            return new PagedResult<TServiceModel>
+                            {
+                                Items = submissions,
+                                TotalItemsCount = totalItemsCount,
+                                PageNumber = 1,
+                            };
+                        },
+                        CacheConstants.TwoMinutesInSeconds);
         }
 
         return await query

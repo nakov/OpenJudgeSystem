@@ -22,13 +22,16 @@ public class SubmissionsForProcessingCommonDataService(
             .FirstOrDefaultAsync();
 
     public IQueryable<SubmissionForProcessing> GetAllPending()
-        => this.GetQuery(sfp => !sfp.Processed && !sfp.Processing);
+        => this.GetQuery(sfp => !sfp.Processed && !sfp.Processing && !sfp.Enqueued);
+
+    public IQueryable<SubmissionForProcessing> GetAllEnqueued()
+        => this.GetQuery(sfp => sfp.Enqueued);
 
     public IQueryable<SubmissionForProcessing> GetAllUnprocessed()
         => this.GetQuery(sfp => !sfp.Processed);
 
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
-        => this.GetQuery(sfp => !sfp.Processed && sfp.Processing);
+        => this.GetQuery(sfp => sfp.Processing);
 
     public async Task<SubmissionForProcessing> Add(int submissionId)
     {

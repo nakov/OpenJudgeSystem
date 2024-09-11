@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Exceptions;
@@ -41,7 +42,8 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
     {
         var latestSubmissions = await this.submissionsData
             .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
-                LatestSubmissionsCountForSubmissionTypesUsage);
+                LatestSubmissionsCountForSubmissionTypesUsage)
+            .ToListAsync();
 
         var allSubmissionTypes = await this.submissionTypesData
             .AllTo<SubmissionTypeFilterServiceModel>()

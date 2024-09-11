@@ -20,6 +20,10 @@ public class SubmissionsCommonDataService : DataService<Submission>, ISubmission
         => this.GetFromSubmissionsForProcessing(
             this.submissionsForProcessingCommonDataService.GetAllPending());
 
+    public IQueryable<Submission> GetAllEnqueued()
+        => this.GetFromSubmissionsForProcessing(
+            this.submissionsForProcessingCommonDataService.GetAllEnqueued());
+
     public IQueryable<Submission> GetAllProcessing()
         => this.GetFromSubmissionsForProcessing(
             this.submissionsForProcessingCommonDataService.GetAllProcessing());

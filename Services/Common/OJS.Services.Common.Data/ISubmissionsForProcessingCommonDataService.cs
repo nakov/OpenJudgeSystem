@@ -11,6 +11,8 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
 
     IQueryable<SubmissionForProcessing> GetAllPending();
 
+    IQueryable<SubmissionForProcessing> GetAllEnqueued();
+
     IQueryable<SubmissionForProcessing> GetAllUnprocessed();
 
     IQueryable<SubmissionForProcessing> GetAllProcessing();
