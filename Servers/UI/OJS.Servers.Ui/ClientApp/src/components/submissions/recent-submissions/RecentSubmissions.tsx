@@ -20,8 +20,9 @@ import styles from './RecentSubmissions.module.scss';
 
 const selectedSubmissionsStateMapping = {
     1: 'All',
-    2: 'In Queue',
-    3: 'Pending',
+    2: 'Processing',
+    3: 'Enqueued',
+    4: 'Pending',
 } as IDictionary<string>;
 
 const RecentSubmissions = () => {
@@ -153,6 +154,13 @@ const RecentSubmissions = () => {
                           stateIndex={3}
                           isSelected={selectedActive === 3}
                           text={selectedSubmissionsStateMapping[3]}
+                          handleOnSelect={handleSelectSubmissionState}
+                        />
+                        /
+                        <SubmissionStateLink
+                          stateIndex={4}
+                          isSelected={selectedActive === 4}
+                          text={selectedSubmissionsStateMapping[4]}
                           handleOnSelect={handleSelectSubmissionState}
                         />
                         )
