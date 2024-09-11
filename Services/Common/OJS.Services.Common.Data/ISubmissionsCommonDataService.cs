@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public interface ISubmissionsCommonDataService : IDataService<Submission>
 {
-    IQueryable<Submission> GetAllPending();
+    IQueryable<Submission> GetAllPending(int? fromMinutesAgo = null);
 
     IQueryable<Submission> GetAllEnqueued();
 

@@ -85,7 +85,7 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(1050, LogLevel.Error, "Submission for processing #{SubmissionForProcessingId} for Submission #{SubmissionId} not found in the database.", SkipEnabledCheck = true)]
     public static partial void LogSubmissionForProcessingNotFoundForSubmission(this ILogger logger, int submissionForProcessingId, int submissionId);
 
-    [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} was already marked as Processed, before it is marked as Processing.")]
+    [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is already marked as Processed. Skipping step.")]
     public static partial void LogSubmissionAlreadyProcessed(this ILogger logger, int submissionId);
 
     [LoggerMessage(1100, LogLevel.Information, "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}")]

@@ -16,9 +16,9 @@ public class SubmissionsCommonDataService : DataService<Submission>, ISubmission
         : base(db)
         => this.submissionsForProcessingCommonDataService = submissionsForProcessingCommonDataService;
 
-    public IQueryable<Submission> GetAllPending()
+    public IQueryable<Submission> GetAllPending(int? fromMinutesAgo = null)
         => this.GetFromSubmissionsForProcessing(
-            this.submissionsForProcessingCommonDataService.GetAllPending());
+            this.submissionsForProcessingCommonDataService.GetAllPending(fromMinutesAgo));
 
     public IQueryable<Submission> GetAllEnqueued()
         => this.GetFromSubmissionsForProcessing(

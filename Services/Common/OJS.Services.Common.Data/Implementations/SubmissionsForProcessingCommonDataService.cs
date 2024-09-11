@@ -8,6 +8,7 @@ using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,8 +24,11 @@ public class SubmissionsForProcessingCommonDataService(
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync();
 
-    public IQueryable<SubmissionForProcessing> GetAllPending()
-        => this.GetQuery(sfp => !sfp.Processed && !sfp.Processing && !sfp.Enqueued);
+    public IQueryable<SubmissionForProcessing> GetAllPending(int? fromMinutesAgo)
+        => fromMinutesAgo is null
+            ? this.GetAllPendingQuery()
+            : this.GetAllPendingQuery()
+                .Where(sfp => sfp.ModifiedOn < dates.GetUtcNow().AddMinutes(-fromMinutesAgo.Value));
 
     public IQueryable<SubmissionForProcessing> GetAllEnqueued()
         => this.GetQuery(sfp => sfp.Enqueued);
@@ -116,12 +120,12 @@ public class SubmissionsForProcessingCommonDataService(
         this.Update(submissionForProcessing);
     }
 
-    public void MarkProcessing(SubmissionForProcessing submissionForProcessing)
+    public void MarkProcessing(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processingStartedAt = null)
     {
         logger.LogMarkingSubmissionForProcessing(submissionForProcessing.SubmissionId);
 
         submissionForProcessing.Processing = true;
-        submissionForProcessing.ProcessingStartedAt = dates.GetUtcNowOffset();
+        submissionForProcessing.ProcessingStartedAt = processingStartedAt ?? dates.GetUtcNowOffset();
         submissionForProcessing.Enqueued = false;
         submissionForProcessing.Processed = false;
 
@@ -153,4 +157,7 @@ public class SubmissionsForProcessingCommonDataService(
 
         this.Update(submissionForProcessing);
     }
+
+    private IQueryable<SubmissionForProcessing> GetAllPendingQuery()
+        => this.GetQuery(sfp => sfp.Processed && !sfp.Processing && !sfp.Enqueued);
 }

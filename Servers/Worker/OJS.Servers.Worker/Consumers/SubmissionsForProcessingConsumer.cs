@@ -34,17 +34,26 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
 
     public async Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
     {
-        var result = new ProcessedSubmissionPubSubModel(context.Message.Id)
+        var workerName = this.hostInfoService.GetHostIp();
+        this.logger.LogStartingProcessingSubmission(context.Message.Id, workerName);
+
+        var startedExecutionOn = DateTimeOffset.UtcNow;
+        var submissionStartedProcessingPubSubModel = new SubmissionStartedProcessingPubSubModel
         {
-            WorkerName = this.hostInfoService.GetHostIp(),
+            SubmissionId = context.Message.Id,
+            ProcessingStartedAt = startedExecutionOn,
         };
 
-        this.logger.LogStartingProcessingSubmission(context.Message.Id, result.WorkerName);
-        var submission = context.Message.Map<SubmissionServiceModel>();
-        var startedExecutionOn = DateTime.UtcNow;
+        var result = new ProcessedSubmissionPubSubModel(context.Message.Id)
+        {
+            WorkerName = workerName,
+        };
+
+        await this.publisher.Publish(submissionStartedProcessingPubSubModel);
 
         try
         {
+            var submission = context.Message.Map<SubmissionServiceModel>();
             this.logger.LogExecutingSubmission(submission.Id, submission.TrimDetails());
             var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
             this.logger.LogProducedExecutionResult(submission.Id, executionResult);
@@ -53,15 +62,15 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
         }
         catch (Exception ex)
         {
-            this.logger.LogErrorProcessingSubmission(submission.Id, result.WorkerName, ex);
+            this.logger.LogErrorProcessingSubmission(context.Message.Id, result.WorkerName, ex);
             result.SetException(ex, true);
         }
         finally
         {
-            result.SetStartedAndCompletedExecutionOn(startedExecutionOn, completedExecutionOn: DateTime.UtcNow);
+            result.SetStartedAndCompletedExecutionOn(startedExecutionOn.UtcDateTime, completedExecutionOn: DateTime.UtcNow);
         }
 
         await this.publisher.Publish(result);
-        this.logger.LogPublishedProcessedSubmission(submission.Id, result.WorkerName);
+        this.logger.LogPublishedProcessedSubmission(context.Message.Id, result.WorkerName);
     }
 }

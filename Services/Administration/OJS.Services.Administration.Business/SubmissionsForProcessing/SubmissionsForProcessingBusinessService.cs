@@ -47,7 +47,7 @@ public class SubmissionsForProcessingBusinessService :
     public async Task<int> EnqueuePendingSubmissions()
     {
         var pendingSubmissions = await this.submissionsCommonData
-            .GetAllPending()
+            .GetAllPending(fromMinutesAgo: 3)
             .Include(s => s.SubmissionType)
             .MapCollection<SubmissionServiceModel>()
             .ToListAsync();
