@@ -16,7 +16,7 @@ public interface ISubmissionsCommonBusinessService : IService
 
     SubmissionServiceModel BuildSubmissionForProcessing(Submission submission);
 
-    Task PublishSubmissionForProcessing(SubmissionServiceModel submission);
+    Task PublishSubmissionForProcessing(SubmissionServiceModel submission, SubmissionForProcessing submissionForProcessing);
 
-    Task PublishSubmissionsForProcessing(IEnumerable<SubmissionServiceModel> submissions);
+    Task PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions);
 }

@@ -10,6 +10,7 @@ using OJS.Data;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
+using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions;
@@ -53,7 +54,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
     private readonly IRetestSubmissionValidationService retestSubmissionValidationService;
-    private readonly ISubmissionPublisherService submissionPublisher;
+    private readonly IPublisherService publisher;
     private readonly ISubmissionsHelper submissionsHelper;
     private readonly IDatesService dates;
     private readonly ITransactionsProvider transactionsProvider;
@@ -75,7 +76,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
         IRetestSubmissionValidationService retestSubmissionValidationService,
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
-        ISubmissionPublisherService submissionPublisher,
+        IPublisherService publisher,
         ISubmissionsHelper submissionsHelper,
         IDatesService dates,
         ITransactionsProvider transactionsProvider)
@@ -95,7 +96,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
         this.retestSubmissionValidationService = retestSubmissionValidationService;
-        this.submissionPublisher = submissionPublisher;
+        this.publisher = publisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.submissionsHelper = submissionsHelper;
         this.dates = dates;
@@ -127,7 +128,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        await this.submissionPublisher.PublishRetest(submission.Id);
+        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = id });
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -489,7 +490,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        await this.submissionsForProcessingData.Add(newSubmission.Id);
+        var submissionForProcessing = await this.submissionsForProcessingData.Add(newSubmission.Id);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
@@ -497,7 +498,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         // "The current TransactionScope is already complete"
         scope.Dispose();
 
-        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
+        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -651,10 +652,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 new TestRun
                 {
                     ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
-                    CheckerComment = testResult.CheckerDetails.Comment,
+                    CheckerComment = testResult.CheckerDetails?.Comment,
                     ExecutionComment = testResult.ExecutionComment,
-                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    ExpectedOutputFragment = testResult.CheckerDetails?.ExpectedOutputFragment,
+                    UserOutputFragment = testResult.CheckerDetails?.UserOutputFragment,
                     IsTrialTest = testResult.IsTrialTest,
                     TimeUsed = testResult.TimeUsed,
                     MemoryUsed = testResult.MemoryUsed,
