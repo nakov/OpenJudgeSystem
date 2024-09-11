@@ -162,7 +162,7 @@ namespace OJS.Services.Administration.Business.Submissions
             var submissionProblemId = submission.ProblemId;
             var submissionParticipantId = submission.ParticipantId;
             var submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(submission);
-            SubmissionForProcessing? submissionForProcessing = null;
+            SubmissionForProcessing submissionForProcessing = new();
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
@@ -190,7 +190,7 @@ namespace OJS.Services.Administration.Business.Submissions
                 return ServiceResult.Success;
             });
 
-            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing!);
+            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing);
 
             return result;
         }

@@ -74,9 +74,9 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         this.submissionForProcessingData.Detach(submissionForProcessing);
         var freshSubmissionForProcessing = await this.submissionForProcessingData.Find(submissionForProcessing.Id);
 
-        if (freshSubmissionForProcessing == null)
+        if (freshSubmissionForProcessing == null || freshSubmissionForProcessing.SubmissionId != submission.Id)
         {
-            this.logger.LogSubmissionForProcessingNotFoundForSubmission(submission.Id);
+            this.logger.LogSubmissionForProcessingNotFoundForSubmission(submissionForProcessing.Id, submission.Id);
         }
         else if (freshSubmissionForProcessing.Processed)
         {

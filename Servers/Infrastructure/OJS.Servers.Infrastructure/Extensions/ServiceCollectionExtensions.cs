@@ -253,13 +253,13 @@ namespace OJS.Servers.Infrastructure.Extensions
                         h.Password(messageQueueConfig.Password);
                     });
 
-                    rmq.UseMessageRetry(retry =>
-                        retry.Interval(messageQueueConfig.RetryCount, TimeSpan.FromMilliseconds(messageQueueConfig.RetryInterval)));
-
                     if (messageQueueConfig.PrefetchCount.HasValue)
                     {
                         rmq.PrefetchCount = messageQueueConfig.PrefetchCount.Value;
                     }
+
+                    rmq.UseMessageRetry(retry =>
+                        retry.Interval(messageQueueConfig.RetryCount, TimeSpan.FromMilliseconds(messageQueueConfig.RetryInterval)));
 
                     rmq.ConfigureEndpoints(context);
                 });
