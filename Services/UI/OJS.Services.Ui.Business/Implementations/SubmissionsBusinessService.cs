@@ -521,7 +521,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (submissionForProcessing == null)
         {
-            this.logger.LogSubmissionForProcessingNotFoundForSubmission(submission.Id);
             throw new BusinessServiceException(
                 $"Submission for processing for Submission with ID {submissionExecutionResult.SubmissionId} not found in the database.");
         }

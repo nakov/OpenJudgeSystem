@@ -86,7 +86,6 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         else
         {
-            // We attach the entity again, after getting it as no tracking, in order to update it.
             this.submissionForProcessingData.MarkProcessing(freshSubmissionForProcessing);
             await this.submissionForProcessingData.SaveChanges();
         }
