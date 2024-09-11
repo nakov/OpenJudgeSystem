@@ -56,6 +56,7 @@
                     break;
             }
 
+            httpContext.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.InternalServerError;
             await httpContext.Response.WriteJson(problemDetails, cancellationToken);
             return true;
         }
