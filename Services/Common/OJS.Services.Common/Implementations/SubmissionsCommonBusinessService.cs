@@ -86,7 +86,7 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         else
         {
-            this.submissionForProcessingData.MarkProcessing(freshSubmissionForProcessing);
+            this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing);
             await this.submissionForProcessingData.SaveChanges();
         }
     }
@@ -106,6 +106,6 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
         var submissionsIds = submissions.Select(s => s.Id).ToList();
 
-        await this.submissionForProcessingData.MarkMultipleForProcessing(submissionsIds);
+        await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds);
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using OJS.Common;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ using System.Threading.Tasks;
 
 public class SubmissionsForProcessingCommonDataService(
     OjsDbContext submissionsForProcessing,
-    ILogger<SubmissionsForProcessingCommonDataService> logger)
+    ILogger<SubmissionsForProcessingCommonDataService> logger,
+    IDatesService dates)
     : DataService<SubmissionForProcessing>(submissionsForProcessing), ISubmissionsForProcessingCommonDataService
 {
     public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
@@ -40,8 +42,6 @@ public class SubmissionsForProcessingCommonDataService(
         var submissionForProcessing = new SubmissionForProcessing
         {
             SubmissionId = submissionId,
-            Processed = false,
-            Processing = false,
         };
 
         await this.Add(submissionForProcessing);
@@ -60,10 +60,13 @@ public class SubmissionsForProcessingCommonDataService(
         else
         {
             logger.LogUpdatingSubmissionForProcessing(submissionId);
-        }
 
-        entity.Processing = false;
-        entity.Processed = false;
+            entity.Enqueued = false;
+            entity.Processing = false;
+            entity.Processed = false;
+
+            this.Update(entity);
+        }
 
         return entity;
     }
@@ -101,31 +104,52 @@ public class SubmissionsForProcessingCommonDataService(
         }
     }
 
-    public void MarkProcessing(SubmissionForProcessing submissionForProcessing)
+    public void MarkEnqueued(SubmissionForProcessing submissionForProcessing)
     {
-        logger.LogMarkingSubmissionForProcessing(submissionForProcessing.SubmissionId);
+        logger.LogMarkingSubmissionAsEnqueued(submissionForProcessing.SubmissionId);
 
-        submissionForProcessing.Processing = true;
+        submissionForProcessing.Enqueued = true;
+        submissionForProcessing.EnqueuedAt = dates.GetUtcNowOffset();
+        submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = false;
 
         this.Update(submissionForProcessing);
     }
 
-    public Task MarkMultipleForProcessing(ICollection<int> submissionIds)
-     => this.GetQuery(sfp => submissionIds.Contains(sfp.SubmissionId))
+    public void MarkProcessing(SubmissionForProcessing submissionForProcessing)
+    {
+        logger.LogMarkingSubmissionForProcessing(submissionForProcessing.SubmissionId);
+
+        submissionForProcessing.Processing = true;
+        submissionForProcessing.ProcessingStartedAt = dates.GetUtcNowOffset();
+        submissionForProcessing.Enqueued = false;
+        submissionForProcessing.Processed = false;
+
+        this.Update(submissionForProcessing);
+    }
+
+    public Task MarkMultipleEnqueued(ICollection<int> submissionIds)
+    {
+        var utcNow = dates.GetUtcNowOffset();
+        return this.GetQuery(sfp => submissionIds.Contains(sfp.SubmissionId))
             .IgnoreQueryFilters()
             .UpdateFromQueryAsync(sfp => new SubmissionForProcessing
             {
-                Processing = true,
+                Enqueued = true,
+                EnqueuedAt = utcNow,
+                Processing = false,
                 Processed = false,
             });
+    }
 
     public void MarkProcessed(SubmissionForProcessing submissionForProcessing)
     {
         logger.LogMarkingSubmissionAsProcessed(submissionForProcessing.SubmissionId);
 
-        submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;
+        submissionForProcessing.ProcessedAt = dates.GetUtcNowOffset();
+        submissionForProcessing.Enqueued = false;
+        submissionForProcessing.Processing = false;
 
         this.Update(submissionForProcessing);
     }
