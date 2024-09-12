@@ -91,24 +91,6 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(1100, LogLevel.Information, "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}")]
     public static partial void LogSubmissionProcessedSuccessfully(this ILogger logger, int submissionId, object submissionForProcessing);
 
-    [LoggerMessage(1101, LogLevel.Information, "Adding submission for processing: {SubmissionId}")]
-    public static partial void LogAddingSubmissionForProcessing(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1110, LogLevel.Information, "Updating submission for processing: {SubmissionId}")]
-    public static partial void LogUpdatingSubmissionForProcessing(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1120, LogLevel.Information, "Marking submission as enqueued: {SubmissionId}")]
-    public static partial void LogMarkingSubmissionAsEnqueued(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1130, LogLevel.Information, "Marking submission for processing: {SubmissionId}")]
-    public static partial void LogMarkingSubmissionForProcessing(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1140, LogLevel.Information, "Marking submission as processed: {SubmissionId}")]
-    public static partial void LogMarkingSubmissionAsProcessed(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1150, LogLevel.Information, "Removing submission for processing: {SubmissionId}")]
-    public static partial void LogRemovingSubmissionForProcessing(this ILogger logger, int submissionId);
-
     [LoggerMessage(1160, LogLevel.Information, "Received retest submission #{SubmissionId}")]
     public static partial void LogReceivedRetestSubmission(this ILogger logger, int submissionId);
 

@@ -2,13 +2,11 @@ namespace OJS.Services.Common.Data.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Infrastructure;
-using OJS.Services.Infrastructure.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +14,6 @@ using System.Threading.Tasks;
 
 public class SubmissionsForProcessingCommonDataService(
     OjsDbContext submissionsForProcessing,
-    ILogger<SubmissionsForProcessingCommonDataService> logger,
     IDatesService dates)
     : DataService<SubmissionForProcessing>(submissionsForProcessing), ISubmissionsForProcessingCommonDataService
 {
@@ -42,8 +39,6 @@ public class SubmissionsForProcessingCommonDataService(
 
     public async Task<SubmissionForProcessing> Add(int submissionId)
     {
-        logger.LogAddingSubmissionForProcessing(submissionId);
-
         var submissionForProcessing = new SubmissionForProcessing
         {
             SubmissionId = submissionId,
@@ -65,8 +60,6 @@ public class SubmissionsForProcessingCommonDataService(
         }
         else
         {
-            logger.LogUpdatingSubmissionForProcessing(submissionId);
-
             entity.State = SubmissionProcessingState.Pending;
 
             this.Update(entity);
@@ -97,8 +90,6 @@ public class SubmissionsForProcessingCommonDataService(
 
     public async Task RemoveBySubmission(int submissionId)
     {
-        logger.LogRemovingSubmissionForProcessing(submissionId);
-
         var submissionForProcessing = await this.GetBySubmission(submissionId);
 
         if (submissionForProcessing != null)
@@ -110,8 +101,6 @@ public class SubmissionsForProcessingCommonDataService(
 
     public async Task MarkEnqueued(SubmissionForProcessing submissionForProcessing, DateTimeOffset? enqueuedAt = null)
     {
-        logger.LogMarkingSubmissionAsEnqueued(submissionForProcessing.SubmissionId);
-
         submissionForProcessing.State = SubmissionProcessingState.Enqueued;
         submissionForProcessing.EnqueuedAt = enqueuedAt ?? dates.GetUtcNowOffset();
 
@@ -133,8 +122,6 @@ public class SubmissionsForProcessingCommonDataService(
 
     public async Task MarkProcessing(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processingStartedAt = null)
     {
-        logger.LogMarkingSubmissionForProcessing(submissionForProcessing.SubmissionId);
-
         submissionForProcessing.State = SubmissionProcessingState.Processing;
         submissionForProcessing.ProcessingStartedAt = processingStartedAt ?? dates.GetUtcNowOffset();
 
@@ -144,8 +131,6 @@ public class SubmissionsForProcessingCommonDataService(
 
     public async Task MarkProcessed(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processedAt = null)
     {
-        logger.LogMarkingSubmissionAsProcessed(submissionForProcessing.SubmissionId);
-
         submissionForProcessing.State = SubmissionProcessingState.Processed;
         submissionForProcessing.ProcessedAt = processedAt ?? dates.GetUtcNowOffset();
 
