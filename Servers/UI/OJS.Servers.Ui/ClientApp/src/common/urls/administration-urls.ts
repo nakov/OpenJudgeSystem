@@ -14,6 +14,7 @@ export const EXCEL_RESULTS_ENDPOINT = 'GetExcelFile';
 export const NEW_ADMINISTRATION_PATH = 'administration';
 export const CONTESTS_PATH = 'contests';
 export const CONTEST_CATEGORIES_PATH = 'contest-categories';
+export const CONTEST_CATEGORIES_HIERARCHY_PATH = 'contest-categories-hierarchy';
 export const SUBMISSIONS_PATH = 'submissions';
 export const SUBMISSIONS_FOR_PROCESSING_PATH = 'submissions-for-processing';
 export const TESTS_PATH = 'tests';
