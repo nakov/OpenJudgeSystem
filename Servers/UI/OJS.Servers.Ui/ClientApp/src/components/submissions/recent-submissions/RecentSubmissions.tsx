@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import IconButton from '@mui/material/IconButton';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -12,8 +13,9 @@ import {
 } from '../../../redux/services/submissionsService';
 import { useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import RefreshIcon from '../../guidelines/icons/RefreshIcon';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../submissions-grid/SubmissionsGrid';
 
@@ -169,12 +171,11 @@ const RecentSubmissions = () => {
                   handleOnSelect={handleSelectSubmissionState}
                 />
                 )
-                <Button
+                <IconButton
                   onClick={() => setQueryParams((prev) => ({ ...prev, page: 1 }))}
-                  size={ButtonSize.small}
-                  type={ButtonType.secondary}
-                  text="Refresh"
-                />
+                >
+                    <RefreshIcon size={IconSize.Large} />
+                </IconButton>
             </Heading>
             )
         );
