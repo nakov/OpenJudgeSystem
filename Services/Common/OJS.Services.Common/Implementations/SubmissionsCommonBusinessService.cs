@@ -1,6 +1,7 @@
 namespace OJS.Services.Common.Implementations;
 
 using Microsoft.Extensions.Logging;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.PubSub.Worker.Models.Submissions;
@@ -78,7 +79,7 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         {
             this.logger.LogSubmissionForProcessingNotFoundForSubmission(submissionForProcessing.Id, submission.Id);
         }
-        else if (freshSubmissionForProcessing.Processed)
+        else if (freshSubmissionForProcessing.State == SubmissionProcessingState.Processed)
         {
             // Race condition can occur and the submission can already be marked as processed when we reach this point,
             // but it is not a problem, as the submission is processed and there is no need to touch it anymore.

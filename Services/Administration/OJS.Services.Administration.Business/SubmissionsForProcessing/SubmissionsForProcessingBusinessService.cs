@@ -2,6 +2,7 @@
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Models.SubmissionsForProcessing;
 using OJS.Services.Common;
@@ -64,7 +65,7 @@ public class SubmissionsForProcessingBusinessService :
 
     public async Task DeleteProcessedSubmissions()
     {
-        this.submissionsForProcessingData.Delete(sfp => sfp.Processed && !sfp.Processing);
+        this.submissionsForProcessingData.Delete(sfp => sfp.State == SubmissionProcessingState.Processed);
         await this.submissionsForProcessingData.SaveChanges();
     }
 }

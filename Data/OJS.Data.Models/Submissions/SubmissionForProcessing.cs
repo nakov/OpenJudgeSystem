@@ -1,5 +1,6 @@
 namespace OJS.Data.Models.Submissions
 {
+    using OJS.Common.Enumerations;
     using OJS.Data.Models.Common;
     using System;
 
@@ -7,11 +8,7 @@ namespace OJS.Data.Models.Submissions
     {
         public int SubmissionId { get; set; }
 
-        public bool Enqueued { get; set; }
-
-        public bool Processing { get; set; }
-
-        public bool Processed { get; set; }
+        public SubmissionProcessingState State { get; set; }
 
         public DateTimeOffset? EnqueuedAt { get; set; }
 

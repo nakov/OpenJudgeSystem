@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { adminFormatDate } from '../../../utils/administration/administration-dates';
+import { adminFormatDate, adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -16,32 +16,13 @@ const dataColumns: GridColDef[] = [
         valueFormatter: (params) => params.value.toString(),
     },
     {
-        field: 'processed',
-        headerName: 'Processed',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'boolean',
-        flex: 1,
-        filterable: false,
-        sortable: false,
-    },
-    {
-        field: 'processing',
-        headerName: 'Processing',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'boolean',
-        flex: 1,
-        filterable: false,
-        sortable: false,
-    },
-    {
         field: 'submissionId',
         headerName: 'Submission Id',
         align: 'center',
         headerAlign: 'center',
         type: 'number',
-        flex: 1,
+        width: 100,
+        flex: 0.8,
         filterable: false,
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
@@ -52,6 +33,52 @@ const dataColumns: GridColDef[] = [
                 {params.row?.submissionId}
             </Link>
         ),
+    },
+    {
+        field: 'state',
+        headerName: 'State',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'string',
+        flex: 0.8,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'enqueuedAt',
+        headerName: 'Enqueued At',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'date',
+        width: 200,
+        flex: 1,
+        filterable: true,
+        sortable: true,
+        valueFormatter: (params) => adminPreciseFormatDate(params.value),
+    },
+    {
+        field: 'startedProcessingAt',
+        headerName: 'Started Processing At',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'date',
+        width: 200,
+        flex: 1,
+        filterable: true,
+        sortable: true,
+        valueFormatter: (params) => adminPreciseFormatDate(params.value),
+    },
+    {
+        field: 'processedAt',
+        headerName: 'Processed At',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'date',
+        width: 200,
+        flex: 1,
+        filterable: true,
+        sortable: true,
+        valueFormatter: (params) => adminPreciseFormatDate(params.value),
     },
     {
         field: 'createdOn',

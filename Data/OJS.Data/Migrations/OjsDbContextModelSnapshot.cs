@@ -921,26 +921,20 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Enqueued")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("EnqueuedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Processed")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("ProcessedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<bool>("Processing")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("ProcessingStartedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
 
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");

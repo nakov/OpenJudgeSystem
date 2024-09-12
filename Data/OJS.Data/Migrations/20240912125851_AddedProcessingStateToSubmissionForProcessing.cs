@@ -6,17 +6,18 @@ namespace OJS.Data.Migrations
     using Microsoft.EntityFrameworkCore.Migrations;
 
     /// <inheritdoc />
-    public partial class AddEnqueuedStateToSubmissionForProcessing : Migration
+    public partial class AddedProcessingStateToSubmissionForProcessing : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "Enqueued",
-                table: "SubmissionsForProcessing",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+            migrationBuilder.DropColumn(
+                name: "Processed",
+                table: "SubmissionsForProcessing");
+
+            migrationBuilder.DropColumn(
+                name: "Processing",
+                table: "SubmissionsForProcessing");
 
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "EnqueuedAt",
@@ -35,16 +36,19 @@ namespace OJS.Data.Migrations
                 table: "SubmissionsForProcessing",
                 type: "datetimeoffset",
                 nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "State",
+                table: "SubmissionsForProcessing",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Enqueued",
-                table: "SubmissionsForProcessing");
-
-            migrationBuilder.DropColumn(
                 name: "EnqueuedAt",
                 table: "SubmissionsForProcessing");
 
@@ -55,6 +59,24 @@ namespace OJS.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "ProcessingStartedAt",
                 table: "SubmissionsForProcessing");
+
+            migrationBuilder.DropColumn(
+                name: "State",
+                table: "SubmissionsForProcessing");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Processed",
+                table: "SubmissionsForProcessing",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Processing",
+                table: "SubmissionsForProcessing",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
         }
     }
 }
