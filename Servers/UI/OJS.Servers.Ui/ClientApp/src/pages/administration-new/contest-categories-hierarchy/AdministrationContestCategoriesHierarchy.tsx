@@ -62,6 +62,12 @@ const AdministrationContestCategoriesHierarchy = () => {
         clearSuccessMessages({ setSuccessMessage });
     }, [ updateError, categoriesError ]);
 
+    useEffect(() => {
+        if (isSuccessfullyUpdated) {
+            refetchInitialContestCategories();
+        }
+    }, [ isSuccessfullyUpdated, refetchInitialContestCategories ]);
+
     // A standard DFS implementation
     const depthFirstSearch = useCallback((node: IContestCategoryHierarchy) => {
         // If the node has already been traversed, exit the current function call
@@ -281,9 +287,7 @@ const AdministrationContestCategoriesHierarchy = () => {
 
         // Edit the hierarchy
         editContestCategoriesHierarchy(finalCategories);
-        // Refetch the categories
-        refetchInitialContestCategories();
-        // Clear the collection of node to be updated
+        // Clear the collection of nodes to be updated
         updatedCategoriesAdjacencyList.current = {};
     };
 
