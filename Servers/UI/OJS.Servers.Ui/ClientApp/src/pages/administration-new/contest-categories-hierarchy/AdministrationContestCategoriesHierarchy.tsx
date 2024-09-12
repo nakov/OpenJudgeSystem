@@ -150,6 +150,17 @@ const AdministrationContestCategoriesHierarchy = () => {
             : [],
     }));
 
+    const addOrUpdateNode = (newMovedNode: IContestCategoryHierarchy, nodeValue: number | undefined) => {
+        // Manage the collection of updated nodes
+        // If the node does not exist in the collection, add it
+        if (!updatedCategoriesAdjacencyList.current[newMovedNode.id]) {
+            updatedCategoriesAdjacencyList.current[newMovedNode.id] = newMovedNode;
+        } else {
+            // If it already exists, update its 'parentId'
+            updatedCategoriesAdjacencyList.current[newMovedNode.id].parentId = nodeValue;
+        }
+    };
+
     const handleMove = ({
         dragIds,
         parentId,
@@ -193,14 +204,7 @@ const AdministrationContestCategoriesHierarchy = () => {
                         return;
                     }
 
-                    // Manage the collection of updated nodes
-                    // If the node does not exist in the collection, add it
-                    if (!updatedCategoriesAdjacencyList.current[newMovedNode.id]) {
-                        updatedCategoriesAdjacencyList.current[newMovedNode.id] = newMovedNode;
-                    } else {
-                        // If it already exists, update its 'parentId'
-                        updatedCategoriesAdjacencyList.current[newMovedNode.id].parentId = undefined;
-                    }
+                    addOrUpdateNode(newMovedNode, Number(parentId));
                 });
                 // Insert the moved nodes within the tree
                 newCategories.splice(index, 0, ...movedNodes);
@@ -227,14 +231,7 @@ const AdministrationContestCategoriesHierarchy = () => {
                             return;
                         }
 
-                        // Manage the collection of updated nodes
-                        // If the node does not exist in the collection, add it
-                        if (!updatedCategoriesAdjacencyList.current[newMovedNode.id]) {
-                            updatedCategoriesAdjacencyList.current[newMovedNode.id] = newMovedNode;
-                        } else {
-                            // If it already exists, update its 'parentId'
-                            updatedCategoriesAdjacencyList.current[newMovedNode.id].parentId = Number(parentId);
-                        }
+                        addOrUpdateNode(newMovedNode, Number(parentId));
                     });
                     // Insert the moved nodes within the tree
                     parent.children.splice(index, 0, ...movedNodes);
