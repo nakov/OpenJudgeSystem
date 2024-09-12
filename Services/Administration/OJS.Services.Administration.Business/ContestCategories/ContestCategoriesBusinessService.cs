@@ -30,7 +30,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
     public async Task<IEnumerable<ContestCategoriesHierarchyModel>> GetHierarchy()
     {
         var allCategories = await this.categoriesDataService
-            .GetAllVisible()
+            .GetAllVisibleAndNotDeleted()
             .OrderBy(cc => cc.OrderBy)
             .MapCollection<ContestCategoriesHierarchyModel>()
             .ToListAsync();
