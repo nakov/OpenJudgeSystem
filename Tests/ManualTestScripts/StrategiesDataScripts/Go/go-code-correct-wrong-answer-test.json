@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "go-code",
+    "CompilerType": "GolangCompiler",
+    "FileContent": null,
+    "Code": "package main\r\n\r\nimport (\r\n\t\"fmt\"\r\n\t\"math\"\r\n)\r\n\r\nfunc main() {\r\n\r\n\tvar tournamentCount int\r\n\tfmt.Scanln(\u0026tournamentCount)\r\n\r\n\tvar pointsCount int\r\n\tfmt.Scanln(\u0026pointsCount)\r\n\r\n\tvar initialPoints int \u003d pointsCount\r\n\r\n\tvar wonTournaments int\r\n\r\n\tfor i :\u003d 0; i \u003c tournamentCount; i++ {\r\n\t\tvar stage string\r\n\t\tfmt.Scanln(\u0026stage)\r\n\r\n\t\tif stage \u003d\u003d \"W\" {\r\n\t\t\tpointsCount +\u003d 2000\r\n\t\t\twonTournaments++\r\n\t\t} else if stage \u003d\u003d \"F\" {\r\n\t\t\tpointsCount +\u003d 1200\r\n\t\t} else if stage \u003d\u003d \"SF\" {\r\n\t\t\tpointsCount +\u003d 720\r\n\t\t}\r\n\t}\r\n\r\n\tfmt.Printf(\"Final points: %d\\n\", pointsCount)\r\n\tfmt.Printf(\"Average points: %.f\\n\", math.Floor((float64(pointsCount) - float64(initialPoints)))/float64(tournamentCount))\r\n\tfmt.Printf(\"%.2f%%\", float32(wonTournaments)/float32(tournamentCount)*100)\r\n}\r\n",
+    "TimeLimit": 200,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 242938,
+          "Input": "4\r\n750\r\nSF\r\nW\r\nSF\r\nW\r\n\r\n",
+          "Output": "Final points: 6190\r\nAverage points: 1360\r\n50.00%\r\n\r\n",
+          "IsTrialTest": true,
+          "OrderBy": 2
+        },
+        {
+          "Id": 242939,
+          "Input": "7\r\n1200\r\nSF\r\nF\r\nW\r\nF\r\nW\r\nSF\r\nW",
+          "Output": "Final points: 11040\r\nAverage points: 1405\r\n42.86%\r\n",
+          "IsTrialTest": true,
+          "OrderBy": 3
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }
