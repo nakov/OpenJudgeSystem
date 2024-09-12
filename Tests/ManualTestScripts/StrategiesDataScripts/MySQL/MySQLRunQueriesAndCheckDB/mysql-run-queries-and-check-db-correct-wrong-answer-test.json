@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "mysql-run-queries-and-check-database",
+  "CompilerType": "None",
+  "FileContent": null,
+  "Code": "create table products(\r\n`id` bigint primary key auto_increment,\r\n`name` varchar(30) not null unique,\r\n`type` varchar(30) not null,\r\n`price` decimal(10, 2) not null\r\n);\r\n\r\ncreate table clients(\r\n`id` bigint primary key auto_increment,\r\n`first_name` varchar(50) not null,\r\n`last_name` varchar(50) not null,\r\n`birthdate` date not null,\r\n`card` varchar(50),\r\n`review` text\r\n);\r\n\r\ncreate table `tables`(\r\n`id` bigint primary key auto_increment,\r\n`floor` bigint not null,\r\n`reserved` \tboolean,\r\n`capacity` bigint not null\r\n);\r\n\r\ncreate table waiters(\r\n`id` bigint primary key auto_increment,\r\n`first_name` varchar(50) not null,\r\n`last_name` varchar(50) not null,\r\n`email` varchar(50) not null,\r\n`phone` varchar(50),\r\n`salary` decimal(10, 2)\r\n);\r\n\r\ncreate table orders(\r\n`id` bigint primary key auto_increment,\r\n`table_id` bigint not null,\r\n`waiter_id` bigint not null,\r\n`order_time` time not null,\r\n`payed_status` boolean,\r\nforeign key (`table_id`) \r\nreferences `tables`(`id`),\r\nforeign key (`waiter_id`)\r\nreferences `waiters`(`id`)\r\n);\r\n\r\n\r\ncreate table orders_clients(\r\n`order_id` bigint,\r\n`client_id` bigint,\r\nforeign key (`order_id`)\r\nreferences `orders`(`id`),\r\nforeign key (`client_id`)\r\nreferences `clients`(`id`)\r\n);\r\n\r\ncreate table orders_products(\r\n`order_id` bigint,\r\n`product_id` bigint,\r\nforeign key (`order_id`)\r\nreferences `orders`(`id`),\r\nforeign key (`product_id`)\r\nreferences `products`(`id`)\r\n);",
+  "TimeLimit": 15000,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 40,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 263915,
+        "Input": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS\r\nWHERE TABLE_SCHEMA \u003d DATABASE()\r\nORDER BY TABLE_NAME, COLUMN_NAME;",
+        "Output": "birthdate\r\ncard\r\nfirst_name\r\nid\r\nlast_name\r\nreview\r\nid\r\norder_time\r\npayed_status\r\ntable_id\r\nwaiter_id\r\nclient_id\r\norder_id\r\norder_id\r\nproduct_id\r\nid\r\nname\r\nprice\r\ntype\r\ncapacity\r\nfloor\r\nid\r\nreserved\r\nemail\r\nfirst_name\r\nid\r\nlast_name\r\nphone\r\nsalary\r\n",
+        "IsTrialTest": false,
+        "OrderBy": 1
+      },
+      {
+        "Id": 263916,
+        "Input": "SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS\r\nWHERE TABLE_SCHEMA \u003d DATABASE()\r\nORDER BY TABLE_NAME,COLUMN_TYPE;",
+        "Output": "date\r\nint\r\ntext\r\nvarchar(50)\r\nvarchar(50)\r\nvarchar(50)\r\nint\r\nint\r\nint\r\ntime\r\ntinyint(1)\r\nint\r\nint\r\nint\r\nint\r\ndecimal(10,2)\r\nint\r\nvarchar(30)\r\nvarchar(30)\r\nint\r\nint\r\nint\r\ntinyint(1)\r\ndecimal(10,2)\r\nint\r\nvarchar(50)\r\nvarchar(50)\r\nvarchar(50)\r\nvarchar(50)\r\n",
+        "IsTrialTest": false,
+        "OrderBy": 2
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}
