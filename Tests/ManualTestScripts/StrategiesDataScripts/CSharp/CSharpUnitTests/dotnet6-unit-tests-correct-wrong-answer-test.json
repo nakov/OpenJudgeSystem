@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "dot-net-core-6-unit-tests",
+    "CompilerType": "DotNetCompiler",
+    "FileContent": "UEsDBBQAAAAIAKqrclZ0K0+e7wAAAP8BAAAVAAAARGF0YWJhc2UuVGVzdHMuY3Nwcm9qjZHRSsMwFIbvB3uHkAdIN4qC0AYGOumFY2j1ypssPR1du6ScnDL2bF74SL6CaQbaDoe7Cx/5v5/8+fr4TNZod6CJvRR1yp8qjdbZksTqIRcecTmdTCeM9ddaQDo+ou1a2SMPc4VboCWqPRws1tIA3YpZEp3zk8MHMrdWulabBmSpGgdJNCChJzovCjQj2I+aQ2gLz1ACgtHAMqObroCUm85UxNkboKusSXks5rGIOYv+j65efTTOwdGiUC0BjjR3YnaVZbxhbwtD/qrmN0OXn2DwuAuvPf3RH2VCvN8rUhvl4OcgtGt94FJBmLjXyW9QSwMEFAAAAAgATph0Vv3dW8gIAgAAywYAABAAAABEYXRhYmFzZVRlc3RzLmNzrVTbbuIwEH1H4h/m0UhR0uyF7oq2EkuLhLTblbb0CeXBJKMSLbGztgNFqP/eMUmQE0Fb2o0gl5k5xzNnxu52BM9Q5zxGuOaGz7lGf4ra6G5n2+0AXYVOxQPc3ovU+GNF0Wup/g5c391GG8wOmHxL6Y9klklB7jJgZunH6aMpFEalKS/myzSGeMm13qdRZWH92xprryBIhZlFIIpsjkrDJWwh9OCTB589+OLBVw/6Hpx78M2D7x6EZ/Qnf0gBIUWEFBJSTNh/Grikszs093nkmqq0VjJNgLxFznque+t+2Lv7/eSmvCvZoXaJrWuoFN+MOHUhNRt3EWeJkrZdusA1WFvYjwbt2FpISOZVZG1hDqzXwg21RmX86ULJtb6YiBVfpsnvHBU3qRQ3jzHm9uWKsR5cXh2hPY96bd4g2DNzw0Jq0UT7N/8KvpxKlsxpSgphGqjTJEySX2gWMnlBvreL95J0JfyDslHBlDELD8i0d71Xij+YyRW+qsYbxuPso9NBtZTZsOOdpa3XKqi586xzJIU2qoiNVDbJ6SbHV/ZiEBCATiJqePlSN7wyN3teY8oJofvx8ahDT1SioW+VUUOTIGivYSz1DngrzSTLl5ihMJjsuVkTf9KQjNHEi/8xIweOkMY+GyuZXf8gNM3CblF2ZKaGCnfHAWsA/Z8oHszCg/0R0Zyj6kG/Z1BLAQIUABQAAAAIAKqrclZ0K0+e7wAAAP8BAAAVAAAAAAAAAAEAIAAAAAAAAABEYXRhYmFzZS5UZXN0cy5jc3Byb2pQSwECFAAUAAAACABOmHRW/d1byAgCAADLBgAAEAAAAAAAAAABACAAAAAiAQAARGF0YWJhc2VUZXN0cy5jc1BLBQYAAAAAAgACAIEAAABYAwAAAAA\u003d",
+    "Code": "",
+    "TimeLimit": 2000,
+    "MemoryLimit": 29777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 135090,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\t// this.count--;\r\n\t\t// this.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 5
+        },
+        {
+          "Id": 135091,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\t// if (this.count \u003d\u003d 0)\r\n\t\t// {\r\n\t\t\t// throw new InvalidOperationException(\"The collection is empty!\");\r\n\t\t// }\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 6
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }
