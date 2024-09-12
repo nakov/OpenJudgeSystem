@@ -29,7 +29,7 @@ public class SubmissionStartedProcessingConsumer(
         }
         else
         {
-            submissionsForProcessingCommonData.MarkProcessing(
+            await submissionsForProcessingCommonData.MarkProcessing(
                 submissionForProcessing,
                 context.Message.ProcessingStartedAt);
         }

@@ -567,8 +567,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submission.CompilerComment = ProcessingExceptionCompilerComment;
             }
 
-            this.submissionsForProcessingData.MarkProcessed(submissionForProcessing);
-            await this.submissionsData.SaveChanges();
+            await this.submissionsForProcessingData.MarkProcessed(submissionForProcessing);
         });
 
         this.logger.LogSubmissionProcessedSuccessfully(submission.Id, submissionForProcessing);

@@ -108,7 +108,7 @@ public class SubmissionsForProcessingCommonDataService(
         }
     }
 
-    public void MarkEnqueued(SubmissionForProcessing submissionForProcessing)
+    public async Task MarkEnqueued(SubmissionForProcessing submissionForProcessing)
     {
         logger.LogMarkingSubmissionAsEnqueued(submissionForProcessing.SubmissionId);
 
@@ -118,24 +118,13 @@ public class SubmissionsForProcessingCommonDataService(
         submissionForProcessing.Processed = false;
 
         this.Update(submissionForProcessing);
+        await this.SaveChanges();
     }
 
-    public void MarkProcessing(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processingStartedAt = null)
-    {
-        logger.LogMarkingSubmissionForProcessing(submissionForProcessing.SubmissionId);
-
-        submissionForProcessing.Processing = true;
-        submissionForProcessing.ProcessingStartedAt = processingStartedAt ?? dates.GetUtcNowOffset();
-        submissionForProcessing.Enqueued = false;
-        submissionForProcessing.Processed = false;
-
-        this.Update(submissionForProcessing);
-    }
-
-    public Task MarkMultipleEnqueued(ICollection<int> submissionIds)
+    public async Task<int> MarkMultipleEnqueued(ICollection<int> submissionIds)
     {
         var utcNow = dates.GetUtcNowOffset();
-        return this.GetQuery(sfp => submissionIds.Contains(sfp.SubmissionId))
+        return await this.GetQuery(sfp => submissionIds.Contains(sfp.SubmissionId))
             .IgnoreQueryFilters()
             .UpdateFromQueryAsync(sfp => new SubmissionForProcessing
             {
@@ -146,7 +135,20 @@ public class SubmissionsForProcessingCommonDataService(
             });
     }
 
-    public void MarkProcessed(SubmissionForProcessing submissionForProcessing)
+    public async Task MarkProcessing(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processingStartedAt = null)
+    {
+        logger.LogMarkingSubmissionForProcessing(submissionForProcessing.SubmissionId);
+
+        submissionForProcessing.Processing = true;
+        submissionForProcessing.ProcessingStartedAt = processingStartedAt ?? dates.GetUtcNowOffset();
+        submissionForProcessing.Enqueued = false;
+        submissionForProcessing.Processed = false;
+
+        this.Update(submissionForProcessing);
+        await this.SaveChanges();
+    }
+
+    public async Task MarkProcessed(SubmissionForProcessing submissionForProcessing)
     {
         logger.LogMarkingSubmissionAsProcessed(submissionForProcessing.SubmissionId);
 
@@ -156,6 +158,7 @@ public class SubmissionsForProcessingCommonDataService(
         submissionForProcessing.Processing = false;
 
         this.Update(submissionForProcessing);
+        await this.SaveChanges();
     }
 
     private IQueryable<SubmissionForProcessing> GetAllPendingQuery()

@@ -86,8 +86,7 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         else
         {
-            this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing);
-            await this.submissionForProcessingData.SaveChanges();
+            await this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing);
         }
     }
 
