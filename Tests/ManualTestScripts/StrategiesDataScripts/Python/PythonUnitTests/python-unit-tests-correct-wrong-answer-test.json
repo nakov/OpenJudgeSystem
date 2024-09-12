@@ -1,0 +1,74 @@
+// 2 CorrectAnswer, 5 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "python-unit-tests",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "from unittest import TestCase, main\r\n\r\n\r\nclass WorkerTest(TestCase):\r\n\r\n    def setUp(self):\r\n        self.worker \u003d Worker(\"Name\", 100, 10)\r\n\r\n    def test_check_initialization(self):\r\n        self.assertEqual(\"Name\", self.worker.name)\r\n        self.assertEqual(100, self.worker.salary)\r\n        self.assertEqual(10, self.worker.energy)\r\n        self.assertEqual(0, self.worker.money)\r\n\r\n\r\nif __name__ \u003d\u003d \u0027__main__\u0027:\r\n    main()",
+    "TimeLimit": 500,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 148164,
+          "Input": "class Worker:\r\n  def __init__(self, name, salary, energy):\r\n    self.name \u003d name\r\n    self.salary \u003d salary\r\n    self.energy \u003d energy\r\n    self.money \u003d 0\r\n\r\n  def work(self):\r\n    if self.energy \u003c\u003d 0:\r\n        raise Exception(\u0027Not enough energy.\u0027)\r\n\r\n    self.money +\u003d self.salary\r\n    self.energy -\u003d 1\r\n\r\n  def rest(self):\r\n    self.energy +\u003d 1\r\n\r\n  def get_info(self):\r\n    return (f\u0027{self.name} has saved {self.money} money.\u0027)",
+          "Output": "Test Passed!",
+          "IsTrialTest": true,
+          "OrderBy": 1
+        },
+        {
+          "Id": 148168,
+          "Input": "class Worker:\r\n  def __init__(self, name, salary, energy):\r\n    self.name \u003d 0\r\n    self.salary \u003d 0\r\n    self.energy \u003d 0\r\n    self.money \u003d 0\r\n\r\n  def work(self):\r\n    if self.energy \u003c\u003d 0:\r\n        raise Exception(\u0027Not enough energy.\u0027)\r\n\r\n    self.money +\u003d self.salary\r\n    self.energy -\u003d 1\r\n\r\n  def rest(self):\r\n    self.energy +\u003d 1\r\n\r\n  def get_info(self):\r\n    return (f\u0027{self.name} has saved {self.money} money.\u0027)",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        },
+        {
+          "Id": 148237,
+          "Input": "class Worker:\r\n  def __init__(self, name, salary, energy):\r\n    self.name \u003d name\r\n    self.salary \u003d salary\r\n    self.energy \u003d energy\r\n    self.money \u003d 0\r\n\r\n  def work(self):\r\n    if self.energy \u003c\u003d 0:\r\n        raise Exception(\u0027Not enough energy.\u0027)\r\n\r\n    self.money +\u003d self.salary\r\n    self.energy -\u003d 1\r\n\r\n  def rest(self):\r\n    self.energy +\u003d 0\r\n\r\n  def get_info(self):\r\n    return (f\u0027{self.name} has saved {self.money} money.\u0027)\r\n",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        },
+        {
+          "Id": 148238,
+          "Input": "class Worker:\r\n  def __init__(self, name, salary, energy):\r\n    self.name \u003d name\r\n    self.salary \u003d salary\r\n    self.energy \u003d energy\r\n    self.money \u003d 0\r\n\r\n  def work(self):\r\n    if self.energy \u003c\u003d 0:\r\n        raise Exception(\u0027\u0027)\r\n\r\n    self.money +\u003d self.salary\r\n    self.energy -\u003d 1\r\n\r\n  def rest(self):\r\n    self.energy +\u003d 1\r\n\r\n  def get_info(self):\r\n    return (f\u0027{self.name} has saved {self.money} money.\u0027)",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 3
+        },
+        {
+          "Id": 148239,
+          "Input": "class Worker:\r\n\r\n  def __init__(self, name, salary, energy):\r\n    self.name \u003d name\r\n    self.salary \u003d salary\r\n    self.energy \u003d energy\r\n    self.money \u003d 0\r\n\r\n  def work(self):\r\n    if self.energy \u003c\u003d 0:\r\n        raise Exception(\u0027Not enough energy.\u0027)\r\n\r\n    self.money + self.salary\r\n    self.energy -\u003d 1\r\n\r\n  def rest(self):\r\n    self.energy +\u003d 1\r\n\r\n  def get_info(self):\r\n    return (f\u0027{self.name} has saved {self.money} money.\u0027)",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 4
+        },
+        {
+          "Id": 148240,
+          "Input": "class Worker:\r\n\r\n  def __init__(self, name, salary, energy):\r\n    self.name \u003d name\r\n    self.salary \u003d salary\r\n    self.energy \u003d energy\r\n    self.money \u003d 0\r\n\r\n  def work(self):\r\n    if self.energy \u003c\u003d 0:\r\n        raise Exception(\u0027Not enough energy.\u0027)\r\n\r\n    self.money +\u003d self.salary\r\n\r\n  def rest(self):\r\n    self.energy +\u003d 1\r\n\r\n  def get_info(self):\r\n    return (f\u0027{self.name} has saved {self.money} money.\u0027)",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 5
+        },
+        {
+          "Id": 148241,
+          "Input": "class Worker:\r\n\r\n  def __init__(self, name, salary, energy):\r\n    self.name \u003d name\r\n    self.salary \u003d salary\r\n    self.energy \u003d energy\r\n    self.money \u003d 0\r\n\r\n  def work(self):\r\n    if self.energy \u003c\u003d 0:\r\n        raise Exception(\u0027Not enough energy.\u0027)\r\n\r\n    self.money +\u003d self.salary\r\n    self.energy -\u003d 1\r\n\r\n  def rest(self):\r\n    self.energy +\u003d 1\r\n\r\n  def get_info(self):\r\n    return (f\u0027{self.name} has saved {self.money} money\u0027)",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 6
+        }
+      ],
+      "TaskSkeleton": "U1ZIzkksLo7PS8xNVQjPL8pOLQIA",
+      "TaskSkeletonAsString": "# class_name Worker"
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }
