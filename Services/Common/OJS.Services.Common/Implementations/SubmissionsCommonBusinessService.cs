@@ -7,6 +7,7 @@ using OJS.Data.Models.Submissions;
 using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Extensions;
 using System;
@@ -20,17 +21,20 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
     private readonly ISubmissionsCommonDataService submissionsCommonDataService;
     private readonly ISubmissionsForProcessingCommonDataService submissionForProcessingData;
     private readonly ILogger<SubmissionsCommonBusinessService> logger;
+    private readonly IDatesService dates;
 
     public SubmissionsCommonBusinessService(
         IPublisherService publisher,
         ISubmissionsCommonDataService submissionsCommonDataService,
         ISubmissionsForProcessingCommonDataService submissionForProcessingData,
-        ILogger<SubmissionsCommonBusinessService> logger)
+        ILogger<SubmissionsCommonBusinessService> logger,
+        IDatesService dates)
     {
         this.publisher = publisher;
         this.submissionsCommonDataService = submissionsCommonDataService;
         this.submissionForProcessingData = submissionForProcessingData;
         this.logger = logger;
+        this.dates = dates;
     }
 
     public SubmissionServiceModel BuildSubmissionForProcessing(
@@ -60,9 +64,12 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
     public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission, SubmissionForProcessing submissionForProcessing)
     {
+        DateTimeOffset enqueuedAt;
+
         try
         {
             var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
+            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.Publish(pubSubModel);
         }
         catch (Exception ex)
@@ -87,15 +94,18 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         }
         else
         {
-            await this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing);
+            await this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing, enqueuedAt);
         }
     }
 
     public async Task PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
     {
+        DateTimeOffset enqueuedAt;
+
         try
         {
             var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>();
+            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.PublishBatch(pubSubModels);
         }
         catch (Exception ex)
@@ -106,6 +116,6 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
         var submissionsIds = submissions.Select(s => s.Id).ToList();
 
-        await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds);
+        await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds, enqueuedAt);
     }
 }

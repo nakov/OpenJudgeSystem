@@ -26,11 +26,11 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
 
     Task RemoveBySubmission(int submissionId);
 
-    Task MarkEnqueued(SubmissionForProcessing submissionForProcessing);
+    Task MarkEnqueued(SubmissionForProcessing submissionForProcessing, DateTimeOffset? enqueuedAt = null);
 
-    Task<int> MarkMultipleEnqueued(ICollection<int> submissionIds);
+    Task<int> MarkMultipleEnqueued(ICollection<int> submissionIds, DateTimeOffset? enqueuedAt = null);
 
     Task MarkProcessing(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processingStartedAt = null);
 
-    Task MarkProcessed(SubmissionForProcessing submissionForProcessing);
+    Task MarkProcessed(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processedAt = null);
 }

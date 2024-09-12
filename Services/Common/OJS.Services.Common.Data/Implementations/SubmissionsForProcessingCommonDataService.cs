@@ -108,26 +108,26 @@ public class SubmissionsForProcessingCommonDataService(
         }
     }
 
-    public async Task MarkEnqueued(SubmissionForProcessing submissionForProcessing)
+    public async Task MarkEnqueued(SubmissionForProcessing submissionForProcessing, DateTimeOffset? enqueuedAt = null)
     {
         logger.LogMarkingSubmissionAsEnqueued(submissionForProcessing.SubmissionId);
 
         submissionForProcessing.State = SubmissionProcessingState.Enqueued;
-        submissionForProcessing.EnqueuedAt = dates.GetUtcNowOffset();
+        submissionForProcessing.EnqueuedAt = enqueuedAt ?? dates.GetUtcNowOffset();
 
         this.Update(submissionForProcessing);
         await this.SaveChanges();
     }
 
-    public async Task<int> MarkMultipleEnqueued(ICollection<int> submissionIds)
+    public async Task<int> MarkMultipleEnqueued(ICollection<int> submissionIds, DateTimeOffset? enqueuedAt = null)
     {
-        var utcNow = dates.GetUtcNowOffset();
+        var enqueuedAtDate = enqueuedAt ?? dates.GetUtcNowOffset();
         return await this.GetQuery(sfp => submissionIds.Contains(sfp.SubmissionId))
             .IgnoreQueryFilters()
             .UpdateFromQueryAsync(sfp => new SubmissionForProcessing
             {
                 State = SubmissionProcessingState.Enqueued,
-                EnqueuedAt = utcNow,
+                EnqueuedAt = enqueuedAtDate,
             });
     }
 
@@ -142,12 +142,12 @@ public class SubmissionsForProcessingCommonDataService(
         await this.SaveChanges();
     }
 
-    public async Task MarkProcessed(SubmissionForProcessing submissionForProcessing)
+    public async Task MarkProcessed(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processedAt = null)
     {
         logger.LogMarkingSubmissionAsProcessed(submissionForProcessing.SubmissionId);
 
         submissionForProcessing.State = SubmissionProcessingState.Processed;
-        submissionForProcessing.ProcessedAt = dates.GetUtcNowOffset();
+        submissionForProcessing.ProcessedAt = processedAt ?? dates.GetUtcNowOffset();
 
         this.Update(submissionForProcessing);
         await this.SaveChanges();

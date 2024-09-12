@@ -11,6 +11,7 @@ using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Extensions;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
 
 public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessingPubSubModel>
@@ -19,25 +20,29 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
     private readonly IPublisherService publisher;
     private readonly IHostInfoService hostInfoService;
     private readonly ILogger<SubmissionsForProcessingConsumer> logger;
+    private readonly IDatesService dates;
 
     public SubmissionsForProcessingConsumer(
         ISubmissionsBusinessService submissionsBusiness,
         IPublisherService publisher,
         IHostInfoService hostInfoService,
-        ILogger<SubmissionsForProcessingConsumer> logger)
+        ILogger<SubmissionsForProcessingConsumer> logger,
+        IDatesService dates)
     {
         this.submissionsBusiness = submissionsBusiness;
         this.publisher = publisher;
         this.hostInfoService = hostInfoService;
         this.logger = logger;
+        this.dates = dates;
     }
 
     public async Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
     {
+        var startedExecutionOn = this.dates.GetUtcNowOffset();
         var workerName = this.hostInfoService.GetHostIp();
+
         this.logger.LogStartingProcessingSubmission(context.Message.Id, workerName);
 
-        var startedExecutionOn = DateTimeOffset.UtcNow;
         var submissionStartedProcessingPubSubModel = new SubmissionStartedProcessingPubSubModel
         {
             SubmissionId = context.Message.Id,

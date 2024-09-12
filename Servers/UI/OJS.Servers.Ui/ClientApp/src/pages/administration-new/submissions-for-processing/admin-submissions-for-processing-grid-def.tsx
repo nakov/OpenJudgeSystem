@@ -57,8 +57,8 @@ const dataColumns: GridColDef[] = [
         valueFormatter: (params) => adminPreciseFormatDate(params.value),
     },
     {
-        field: 'startedProcessingAt',
-        headerName: 'Started Processing At',
+        field: 'processingStartedAt',
+        headerName: 'Processing Started At',
         align: 'center',
         headerAlign: 'center',
         type: 'date',
