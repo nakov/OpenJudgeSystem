@@ -92,7 +92,7 @@ const submissionsService = createApi({
 const {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
-    useGetLatestSubmissionsInRoleQuery,
+    useLazyGetLatestSubmissionsInRoleQuery,
     useLazyGetSubmissionResultsByProblemQuery,
     useLazyGetUserSubmissionsQuery,
     useGetSubmissionDetailsQuery,
@@ -104,7 +104,7 @@ export {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetSubmissionDetailsQuery,
-    useGetLatestSubmissionsInRoleQuery,
+    useLazyGetLatestSubmissionsInRoleQuery,
     useLazyGetSubmissionResultsByProblemQuery,
     useLazyGetUserSubmissionsQuery,
     useLazyGetSubmissionUploadedFileQuery,
