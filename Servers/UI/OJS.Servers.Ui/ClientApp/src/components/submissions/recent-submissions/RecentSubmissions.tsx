@@ -3,14 +3,14 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../../common/common-types';
+import { IPagedResultType, IPublicSubmission } from '../../../common/types';
 import { IGetSubmissionsUrlParams } from '../../../common/url-types';
-import { setCurrentPage, setLatestSubmissions } from '../../../redux/features/submissionsSlice';
 import {
     useGetLatestSubmissionsQuery,
     useGetUnprocessedCountQuery,
     useLazyGetLatestSubmissionsInRoleQuery,
 } from '../../../redux/services/submissionsService';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -37,9 +37,14 @@ const RecentSubmissions = () => {
         page: 1,
     });
 
-    const appDispatch = useAppDispatch();
+    const [ latestSubmissions, setLatestSubmissions ] = useState<IPagedResultType<IPublicSubmission>>({
+        items: [],
+        totalItemsCount: 0,
+        itemsPerPage: 0,
+        pagesCount: 0,
+        pageNumber: 0,
+    });
 
-    const { latestSubmissions } = useAppSelector((state) => state.submissions);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
     const loggedInUserInRole = !isEmpty(user.id) && user.isAdmin;
@@ -63,6 +68,19 @@ const RecentSubmissions = () => {
         },
     ] = useLazyGetLatestSubmissionsInRoleQuery();
 
+    const areSubmissionsLoading =
+        loggedInUserInRole
+            ? inRoleLoading
+            : regularUserIsLoading;
+
+    const areSubmissionsFetching =
+        loggedInUserInRole
+            ? inRoleIsFetching
+            : regularUserIsFetching;
+
+    const inRoleSubmissionsReady = loggedInUserInRole && !isNil(inRoleData) && !inRoleLoading && !inRoleIsFetching;
+    const regularUserSubmissionsReady = !loggedInUserInRole && !isNil(regularUserData) && !regularUserIsLoading && !regularUserIsFetching;
+
     useEffect(() => {
         if (loggedInUserInRole) {
             getLatestSubmissionsInRole(queryParams);
@@ -78,29 +96,13 @@ const RecentSubmissions = () => {
         setShouldLoadRegularUserSubmissions(true);
     }, [ user ]);
 
-    const areSubmissionsLoading =
-        loggedInUserInRole
-            ? inRoleLoading
-            : regularUserIsLoading;
-
-    const areSubmissionsFetching =
-        loggedInUserInRole
-            ? inRoleIsFetching
-            : regularUserIsFetching;
-
-    const inRoleSubmissionsReady = loggedInUserInRole && !isNil(inRoleData) && !inRoleLoading && !inRoleIsFetching;
-    const regularUserSubmissionsReady = !loggedInUserInRole && !isNil(regularUserData) && !regularUserIsLoading && !regularUserIsFetching;
-
     useEffect(() => {
         if (inRoleSubmissionsReady) {
-            appDispatch(setLatestSubmissions(inRoleData));
-            return;
+            setLatestSubmissions(inRoleData);
+        } else if (regularUserSubmissionsReady) {
+            setLatestSubmissions(regularUserData);
         }
-
-        if (regularUserSubmissionsReady) {
-            appDispatch(setLatestSubmissions(regularUserData));
-        }
-    }, [ appDispatch, inRoleData, inRoleSubmissionsReady, regularUserData, regularUserSubmissionsReady ]);
+    }, [ inRoleData, inRoleSubmissionsReady, regularUserData, regularUserSubmissionsReady ]);
 
     const handlePageChange = useCallback(
         (newPage: number) => {
@@ -108,17 +110,13 @@ const RecentSubmissions = () => {
                 status: queryParams.status,
                 page: newPage,
             });
-
-            appDispatch(setCurrentPage(newPage));
         },
-        [ appDispatch, queryParams.status ],
+        [ queryParams.status ],
     );
 
     const handleSelectSubmissionState = useCallback(
         (typeKey: number) => {
             if (selectedActive) {
-                appDispatch(setCurrentPage(1));
-
                 setQueryParams({
                     status: typeKey,
                     page: 1,
@@ -127,7 +125,7 @@ const RecentSubmissions = () => {
                 setSelectedActive(typeKey);
             }
         },
-        [ appDispatch, selectedActive ],
+        [ selectedActive ],
     );
 
     const renderSubmissionsStateAdminToggle = useCallback(() => {
