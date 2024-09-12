@@ -1,8 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import {
+    AdjacencyList,
     IContestCategories,
     IContestCategoryAdministration,
+    IContestCategoryHierarchy,
+    IContestCategoryHierarchyEdit,
     IFileModel,
     IGetAllAdminParams,
     IIndexContestCategoriesType,
@@ -28,13 +31,22 @@ const contestCategoriesAdminService = createApi({
             }),
             keepUnusedDataFor: 5,
         }),
-
         getContestCategoryById: builder.query<IContestCategoryAdministration, IContestCategoriesUrlParams>({
             query: ({ id }) => ({ url: `Get/${id}` }),
             keepUnusedDataFor: 0,
         }),
-
         getCategories: builder.query<Array<IContestCategories>, null>({ query: () => ({ url: '/GetForContestDropdown' }) }),
+        getContestCategoriesHierarchy: builder.query<Array<IContestCategoryHierarchy>, void>({
+            query: () => ({ url: '/GetHierarchy' }),
+            /* eslint-disable object-curly-newline */
+        }),
+        editContestCategoriesHierarchy: builder.mutation<string, AdjacencyList<number, IContestCategoryHierarchyEdit>>({
+            query: (categoriesToUpdate) => ({
+                url: '/EditHierarchy',
+                method: 'PATCH',
+                body: categoriesToUpdate,
+            }),
+        }),
         createContestCategory: builder.mutation<string, IContestCategoriesUrlParams & IContestCategoryAdministration>({
             query: ({ ...contestCategoryAdministrationModel }) => ({
                 url: '/Create',
@@ -42,7 +54,6 @@ const contestCategoriesAdminService = createApi({
                 body: contestCategoryAdministrationModel,
             }),
         }),
-
         updateContestCategoryById: builder.mutation<string, IContestCategoryAdministration >({
             query: ({ ...contestCategoryAdministrationModel }) => ({
                 url: '/Edit',
@@ -50,14 +61,12 @@ const contestCategoriesAdminService = createApi({
                 body: contestCategoryAdministrationModel,
             }),
         }),
-
         deleteContestCategory: builder.mutation<string, number >({
             query: (id) => ({
                 url: `/Delete/${id}`,
                 method: 'DELETE',
             }),
         }),
-
         exportContestCategoriesToExcel: builder.query<IFileModel, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: `/${EXCEL_RESULTS_ENDPOINT}`,
@@ -75,6 +84,8 @@ const contestCategoriesAdminService = createApi({
 
 export const {
     useGetCategoriesQuery,
+    useGetContestCategoriesHierarchyQuery,
+    useEditContestCategoriesHierarchyMutation,
     useGetAllAdminContestCategoriesQuery,
     useCreateContestCategoryMutation,
     useGetContestCategoryByIdQuery,
