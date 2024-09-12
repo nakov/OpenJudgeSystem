@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.ContestCategories;
 
+using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using OJS.Services.Administration.Data;
@@ -24,6 +25,56 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         this.categoriesDataService = categoriesDataService;
         this.contestCategoriesCache = contestCategoriesCache;
         this.contestCategoriesOrderableService = contestCategoriesOrderableService;
+    }
+
+    public async Task<IEnumerable<ContestCategoriesHierarchyModel>> GetHierarchy()
+    {
+        var allCategories = await this.categoriesDataService
+            .GetAllVisible()
+            .OrderBy(cc => cc.OrderBy)
+            .MapCollection<ContestCategoriesHierarchyModel>()
+            .ToListAsync();
+
+        await allCategories.ForEachAsync(cch => cch.Children = allCategories.Where(c => c.ParentId == cch.Id));
+
+        var mainCategories = allCategories
+            .Where(c => !c.ParentId.HasValue)
+            .OrderBy(c => c.OrderBy)
+            .ToList();
+
+        return mainCategories;
+    }
+
+    public async Task EditHierarchy(Dictionary<int, ContestCategoriesHierarchyEditModel> categoriesToUpdate)
+    {
+        var childCategoriesIds = new HashSet<int>();
+        var parentCategoriesIds = new HashSet<int>();
+
+        foreach (var category in categoriesToUpdate.Values)
+        {
+            childCategoriesIds.Add(category.Id);
+
+            if (category.ParentId.HasValue)
+            {
+                parentCategoriesIds.Add((int)category.ParentId);
+            }
+        }
+
+        if (!await this.AllExist(childCategoriesIds) || !await this.AllExist(parentCategoriesIds))
+        {
+            throw new BusinessServiceException("Invalid categories have been provided.");
+        }
+
+        var categories = await this.categoriesDataService
+            .All(cc => childCategoriesIds.Contains(cc.Id))
+            .ToListAsync();
+        foreach (var category in categories)
+        {
+            category.ParentId = categoriesToUpdate[category.Id].ParentId;
+        }
+
+        await this.categoriesDataService.SaveChanges();
+        await this.contestCategoriesCache.ClearMainContestCategoriesCache();
     }
 
     public IQueryable<ContestCategory> GetAllVisible() => this.categoriesDataService.GetAllVisible();
@@ -118,5 +169,13 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         }
 
         this.categoriesDataService.Delete(contestCategory);
+    }
+
+    private async Task<bool> AllExist(HashSet<int> ids)
+    {
+        var matchingCategories = await this.categoriesDataService
+            .All(cc => ids.Contains(cc.Id));
+
+        return matchingCategories.Count() == ids.Count;
     }
 }
