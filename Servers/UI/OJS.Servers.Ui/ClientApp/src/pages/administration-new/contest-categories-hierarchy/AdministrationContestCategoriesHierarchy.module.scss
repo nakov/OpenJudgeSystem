@@ -1,0 +1,125 @@
+@use 'src/styles/colors.scss';
+
+.lightTheme {
+    .node {
+        margin-left: 0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        margin-bottom: 30px;
+        color: #333;
+
+        &:hover {
+            background-color: #e6e6e6;
+        }
+    }
+
+    .cardContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .icon {
+        transition: transform 0.2s ease;
+    }
+
+    .iconOpen {
+        transform: rotate(90deg);
+    }
+
+    .iconClosed {
+        transform: rotate(0deg);
+    }
+
+    .nodeName {
+        margin-left: 4px;
+        font-weight: 500;
+        font-size: 18px;
+    }
+}
+
+
+.darkTheme {
+    .node {
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        color: #f0f0f0;
+        &:hover {
+            background-color: #444;
+        }
+    }
+
+    .cardContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .icon {
+        display: inline-block;
+        transition: transform 0.2s ease;
+    }
+
+    .iconOpen {
+        transform: rotate(90deg);
+    }
+
+    .iconClosed {
+        transform: rotate(0deg);
+    }
+
+    .nodeName {
+        margin-left: 4px;
+        font-weight: 500;
+        font-size: 18px;
+    }
+}
+
+.treeContainer {
+    // Added to remove the container's horizontal scrollbar
+    max-width: 100px;
+}
+
+.tree {
+    :global {
+        max-height: 80vh;
+    }
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.loaderContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.notFoundContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.lightRed {
+    color: #F8BBD0;
+}
