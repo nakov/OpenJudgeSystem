@@ -50,7 +50,7 @@
             const int fromMinutesAgo = 60;
             var deletedCount = await this.submissionsForProcessing.DeleteProcessedSubmissions(fromMinutesAgo);
 
-            return $"Successfully deleted {deletedCount} processed (more than {fromMinutesAgo} minutes ago)" +
+            return $"Successfully deleted {deletedCount} processed (more than {fromMinutesAgo} minutes ago) " +
                    $"submissions from SubmissionsForProcessing table";
         }
 

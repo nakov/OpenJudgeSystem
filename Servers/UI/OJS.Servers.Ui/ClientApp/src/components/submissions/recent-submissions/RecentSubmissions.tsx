@@ -186,6 +186,8 @@ const RecentSubmissions = () => {
                 />
                 )
                 <IconButton
+                  title="Refresh"
+                  className={styles.refreshIcon}
                   onClick={() => setQueryParams((prev) => ({ ...prev, page: 1 }))}
                 >
                     <RefreshIcon size={IconSize.Large} />
