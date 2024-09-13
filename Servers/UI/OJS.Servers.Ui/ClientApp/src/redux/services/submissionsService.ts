@@ -90,7 +90,7 @@ const submissionsService = createApi({
 });
 
 const {
-    useGetUnprocessedCountQuery,
+    useLazyGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useLazyGetLatestSubmissionsInRoleQuery,
     useLazyGetSubmissionResultsByProblemQuery,
@@ -101,7 +101,7 @@ const {
 } = submissionsService;
 
 export {
-    useGetUnprocessedCountQuery,
+    useLazyGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetSubmissionDetailsQuery,
     useLazyGetLatestSubmissionsInRoleQuery,

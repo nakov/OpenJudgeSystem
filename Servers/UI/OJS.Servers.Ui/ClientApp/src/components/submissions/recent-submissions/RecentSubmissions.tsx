@@ -8,8 +8,8 @@ import { IPagedResultType, IPublicSubmission } from '../../../common/types';
 import { IGetSubmissionsUrlParams } from '../../../common/url-types';
 import {
     useGetLatestSubmissionsQuery,
-    useGetUnprocessedCountQuery,
     useLazyGetLatestSubmissionsInRoleQuery,
+    useLazyGetUnprocessedCountQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -33,7 +33,6 @@ const selectedSubmissionsStateMapping = {
 const RecentSubmissions = () => {
     const [ selectedActive, setSelectedActive ] = useState<number>(1);
     const [ shouldLoadRegularUserSubmissions, setShouldLoadRegularUserSubmissions ] = useState<boolean>(false);
-    const [ shouldLoadUnprocessedCount, setShouldLoadUnprocessedCount ] = useState<boolean>(false);
     const [ queryParams, setQueryParams ] = useState<IGetSubmissionsUrlParams>({
         status: selectedActive,
         page: 1,
@@ -60,7 +59,9 @@ const RecentSubmissions = () => {
         { skip: !shouldLoadRegularUserSubmissions },
     );
 
-    const { data: unprocessedCount } = useGetUnprocessedCountQuery(null, { skip: !shouldLoadUnprocessedCount });
+    const [
+        getUnprocessedSubmissionsCount, { data: unprocessedSubmissionsCount },
+    ] = useLazyGetUnprocessedCountQuery();
 
     const [
         getLatestSubmissionsInRole, {
@@ -86,16 +87,14 @@ const RecentSubmissions = () => {
     useEffect(() => {
         if (loggedInUserInRole) {
             getLatestSubmissionsInRole(queryParams);
+            getUnprocessedSubmissionsCount(null);
         }
-    }, [ loggedInUserInRole, getLatestSubmissionsInRole, queryParams ]);
+    }, [ loggedInUserInRole, getLatestSubmissionsInRole, getUnprocessedSubmissionsCount, queryParams ]);
 
     useEffect(() => {
-        if (user.isAdmin) {
-            setShouldLoadUnprocessedCount(true);
-            return;
+        if (!user.isAdmin) {
+            setShouldLoadRegularUserSubmissions(true);
         }
-
-        setShouldLoadRegularUserSubmissions(true);
     }, [ user ]);
 
     useEffect(() => {
@@ -140,7 +139,7 @@ const RecentSubmissions = () => {
             >
                 Submissions awaiting execution:
                 {' '}
-                {unprocessedCount}
+                {unprocessedSubmissionsCount}
                 {' '}
                 (
                 <SubmissionStateLink
@@ -179,7 +178,7 @@ const RecentSubmissions = () => {
             </Heading>
             )
         );
-    }, [ user, unprocessedCount, selectedActive, handleSelectSubmissionState ]);
+    }, [ user, unprocessedSubmissionsCount, selectedActive, handleSelectSubmissionState ]);
 
     return (
         <div className={styles.recentSubmissionsWrapper}>
