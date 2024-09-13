@@ -245,7 +245,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public Task<int> GetAllUnprocessedCount()
-        => this.submissionsCommonData.GetAllUnprocessedCount();
+        => this.submissionsForProcessingData.GetAllUnprocessed().CountAsync();
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
