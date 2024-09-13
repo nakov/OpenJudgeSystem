@@ -1,39 +1,39 @@
 // 1 CorrectAnswer, 1 WrongAnswer
 {
-    "ExecutionType": "tests-execution",
-    "ExecutionStrategy": "dot-net-core-6-unit-tests",
-    "CompilerType": "DotNetCompiler",
-    "FileContent": "UEsDBBQAAAAIAKqrclZ0K0+e7wAAAP8BAAAVAAAARGF0YWJhc2UuVGVzdHMuY3Nwcm9qjZHRSsMwFIbvB3uHkAdIN4qC0AYGOumFY2j1ypssPR1du6ScnDL2bF74SL6CaQbaDoe7Cx/5v5/8+fr4TNZod6CJvRR1yp8qjdbZksTqIRcecTmdTCeM9ddaQDo+ou1a2SMPc4VboCWqPRws1tIA3YpZEp3zk8MHMrdWulabBmSpGgdJNCChJzovCjQj2I+aQ2gLz1ACgtHAMqObroCUm85UxNkboKusSXks5rGIOYv+j65efTTOwdGiUC0BjjR3YnaVZbxhbwtD/qrmN0OXn2DwuAuvPf3RH2VCvN8rUhvl4OcgtGt94FJBmLjXyW9QSwMEFAAAAAgATph0Vv3dW8gIAgAAywYAABAAAABEYXRhYmFzZVRlc3RzLmNzrVTbbuIwEH1H4h/m0UhR0uyF7oq2EkuLhLTblbb0CeXBJKMSLbGztgNFqP/eMUmQE0Fb2o0gl5k5xzNnxu52BM9Q5zxGuOaGz7lGf4ra6G5n2+0AXYVOxQPc3ovU+GNF0Wup/g5c391GG8wOmHxL6Y9klklB7jJgZunH6aMpFEalKS/myzSGeMm13qdRZWH92xprryBIhZlFIIpsjkrDJWwh9OCTB589+OLBVw/6Hpx78M2D7x6EZ/Qnf0gBIUWEFBJSTNh/Grikszs093nkmqq0VjJNgLxFznque+t+2Lv7/eSmvCvZoXaJrWuoFN+MOHUhNRt3EWeJkrZdusA1WFvYjwbt2FpISOZVZG1hDqzXwg21RmX86ULJtb6YiBVfpsnvHBU3qRQ3jzHm9uWKsR5cXh2hPY96bd4g2DNzw0Jq0UT7N/8KvpxKlsxpSgphGqjTJEySX2gWMnlBvreL95J0JfyDslHBlDELD8i0d71Xij+YyRW+qsYbxuPso9NBtZTZsOOdpa3XKqi586xzJIU2qoiNVDbJ6SbHV/ZiEBCATiJqePlSN7wyN3teY8oJofvx8ahDT1SioW+VUUOTIGivYSz1DngrzSTLl5ihMJjsuVkTf9KQjNHEi/8xIweOkMY+GyuZXf8gNM3CblF2ZKaGCnfHAWsA/Z8oHszCg/0R0Zyj6kG/Z1BLAQIUABQAAAAIAKqrclZ0K0+e7wAAAP8BAAAVAAAAAAAAAAEAIAAAAAAAAABEYXRhYmFzZS5UZXN0cy5jc3Byb2pQSwECFAAUAAAACABOmHRW/d1byAgCAADLBgAAEAAAAAAAAAABACAAAAAiAQAARGF0YWJhc2VUZXN0cy5jc1BLBQYAAAAAAgACAIEAAABYAwAAAAA\u003d",
-    "Code": "",
-    "TimeLimit": 2000,
-    "MemoryLimit": 29777216,
-    "ExecutionDetails": {
-      "MaxPoints": 100,
-      "CheckerType": "trim",
-      "CheckerParameter": null,
-      "Tests": [
-        {
-          "Id": 135090,
-          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\t// this.count--;\r\n\t\t// this.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
-          "Output": "Test Passed!",
-          "IsTrialTest": false,
-          "OrderBy": 5
-        },
-        {
-          "Id": 135091,
-          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\t// if (this.count \u003d\u003d 0)\r\n\t\t// {\r\n\t\t\t// throw new InvalidOperationException(\"The collection is empty!\");\r\n\t\t// }\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
-          "Output": "Test Passed!",
-          "IsTrialTest": false,
-          "OrderBy": 6
-        }
-      ],
-      "TaskSkeleton": null,
-      "TaskSkeletonAsString": null
-    },
-    "ExecutionOptions": {
-      "KeepDetails": true,
-      "EscapeTests": false,
-      "EscapeLineEndings": true
-    },
-    "WithExceptionStackTrace": true
-  }
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "dot-net-core-6-unit-tests",
+  "CompilerType": "DotNetCompiler",
+  "FileContent": "UEsDBBQAAAAIALBViVfA7JP1LQEAAP4CAAAUAAAAUmFpbHdheS5UZXN0cy5jc3Byb2qNkUFuwjAQRfdI3CHKASZAKN2ESCzaikURotBVN66ZRC7GjsZOET19HZNCEoHKKtLL97PnT7Ik/YXcBm/b3TR8FZy00ZmFxdMaHArTfq/fC4LExQoke3whXRZphRxcM8rRPhPb40HTLlVoJzBIoi6v4/N9IQUXdmOEyk2Kin1KTKIOrsOLUsrq/zl2BqcXVT6zZHznWcakqVQXcs6s0dh6yNRS6VNN5seLuvN5Ore4bw3s7TmuMENCxTGYKy7LLXabq/y+vuAdyQitpuHwER5gEAbR/67FRgnbOBrDMIb4/qNxdf1sywqL1NCMYQyj+y0wU0wef9zp1lMmMLzLwfU3kkQLXEvpetbU0owuXbiFNHq+UfxpWVfuAfhYMSEP7Pj3BW4KF7+l97uuN/8LUEsDBBQAAAAIAGFYiVfTLjZYkwIAADgNAAAMAAAAVW5pdFRlc3QxLmNz5ZVba9swFMffA/kOwuwhgWLYpXvpWsi6ZAt0KWuz7WGUoNiniZgsuTpy0qzku+/It7i5Ndm6wVZDwFJ0/uf281GCQo1Y77MS1u8YHsFUm+9H9VqS7l/O0EK0tPTPhLpZ3jvVUkJghVbovwcFRgR0pF5TJIkxD4BdcCGnfOb3AS3Wa3f1GqPnm1t2xK1NDFxlW3EylCJggeSILD/t9nOL0upqsc5NJlqE7JRCsCYJrDaDr8KOv3Apwh6FMehSkoJLKX4AXlrugm00FyIVffeQiMsPs4NOgB0zzznObb2j+wb3V3m6+dlChiQUTJf+bFR8NNOqVYVaiGCs3zLQvkm4rB4+KGT9wnSNYRd72vYSWVqSlBETLvuGC4U7W72DmBvXplW7eTXmfXrTVZOyO/2x0VNsmVESgbLt2wDi3TokFiKuvBTzphpmLt6s+DhpNJrs+GRdayrizaWUi9dtCfdgmlf7XLXeam7CQSsMMS1hX+d/fUoggYfz3J3E32BvjV/rgu2qa516dYvnL156KzUuUayknGbcKAU2wk1cWAfV4ugC7Y207kxdavqBY6oE4SCdCP3C0+ACiGqFRENMEwzCj4DIR0+0IbkLA5hIS/qFyFINd+hpObCeeXfl6TkTyChzOwYWS26vtYkYVyGbCimZBD4B+p7ZIYuESiyg7x1koWwcU+0otrO9Rts22LYPueL117DLh90qeMZo8/9Dlxm9Onzt/SXq+mMwwDj9NOFmsgyQWU17To4NgfADVqGTcGMP8EbX4v7ILWP6GHdpUZszuLarIy3Sk0y8Y3RUuntSN806kz2AGmotNxPpqr4Djl266qnie82wPzGDUkg2DaAOl/jvU/FI/cqKsdqw9LvMlvQ6/wlQSwECFAAUAAAACACwVYlXwOyT9S0BAAD+AgAAFAAAAAAAAAABACAAAAAAAAAAUmFpbHdheS5UZXN0cy5jc3Byb2pQSwECFAAUAAAACABhWIlX0y42WJMCAAA4DQAADAAAAAAAAAABACAAAABfAQAAVW5pdFRlc3QxLmNzUEsFBgAAAAACAAIAfAAAABwEAAAAAA\u003d\u003d",
+  "Code": "",
+  "TimeLimit": 100,
+  "MemoryLimit": 36777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 326574,
+        "Input": "namespace Railway\r\n{\r\n    using System;\r\n    using System.Collections.Generic;\r\n\r\n    public class RailwayStation\r\n    {\r\n        private string name;\r\n        private Queue\u003cstring\u003e arrivalTrains;\r\n        private Queue\u003cstring\u003e departureTrains;\r\n\r\n        public RailwayStation(string name)\r\n        {\r\n            Name \u003d name;\r\n            arrivalTrains \u003d new Queue\u003cstring\u003e();\r\n            departureTrains \u003d new Queue\u003cstring\u003e();\r\n        }\r\n\r\n        public string Name\r\n        {\r\n            get \u003d\u003e name;\r\n            private set\r\n            {\r\n                if (string.IsNullOrWhiteSpace(value))\r\n                {\r\n                    throw new ArgumentException(\"Name cannot be null or empty!\");\r\n                }\r\n                name \u003d value;\r\n            }\r\n        }\r\n\r\n        public Queue\u003cstring\u003e ArrivalTrains \u003d\u003e arrivalTrains;\r\n\r\n        public Queue\u003cstring\u003e DepartureTrains \u003d\u003e departureTrains;\r\n\r\n        public void NewArrivalOnBoard(string trainInfo)\r\n        {\r\n            arrivalTrains.Enqueue(trainInfo);\r\n        }\r\n\r\n        public string TrainHasArrived(string trainInfo)\r\n        {\r\n            if(arrivalTrains.Peek() !\u003d trainInfo)\r\n            {\r\n                return $\"There are other trains to arrive before {trainInfo}.\";\r\n            }\r\n            departureTrains.Enqueue(arrivalTrains.Dequeue());\r\n\r\n            return $\"{trainInfo} is on the platform and will leave in 5 minutes.\";\r\n        }\r\n\r\n        public bool TrainHasLeft(string trainInfo)\r\n        {\r\n            if(departureTrains.Peek() \u003d\u003d trainInfo)\r\n            {\r\n                departureTrains.Dequeue();\r\n                return true ;\r\n            }\r\n            return false ;\r\n        }\r\n    }\r\n}\r\n",
+        "Output": "Test Passed!",
+        "IsTrialTest": false,
+        "OrderBy": 1
+      },
+      {
+        "Id": 326874,
+        "Input": "//Ctor creates collection arrivalTrains\r\nnamespace Railway\r\n{\r\n    using System;\r\n    using System.Collections.Generic;\r\n\r\n    public class RailwayStation\r\n    {\r\n        private string name;\r\n        private Queue\u003cstring\u003e arrivalTrains;\r\n        private Queue\u003cstring\u003e departureTrains;\r\n\r\n        public RailwayStation(string name)\r\n        {\r\n            Name \u003d name;\r\n            //arrivalTrains \u003d new Queue\u003cstring\u003e();\r\n            departureTrains \u003d new Queue\u003cstring\u003e();\r\n        }\r\n\r\n        public string Name\r\n        {\r\n            get \u003d\u003e name;\r\n            private set\r\n            {\r\n                if (string.IsNullOrWhiteSpace(value))\r\n                {\r\n                    throw new ArgumentException(\"Name cannot be null or empty!\");\r\n                }\r\n                name \u003d value;\r\n            }\r\n        }\r\n\r\n        public Queue\u003cstring\u003e ArrivalTrains \u003d\u003e arrivalTrains;\r\n\r\n        public Queue\u003cstring\u003e DepartureTrains \u003d\u003e departureTrains;\r\n\r\n        public void NewArrivalOnBoard(string trainInfo)\r\n        {\r\n            arrivalTrains.Enqueue(trainInfo);\r\n        }\r\n\r\n        public string TrainHasArrived(string trainInfo)\r\n        {\r\n            if(arrivalTrains.Peek() !\u003d trainInfo)\r\n            {\r\n                return $\"There are other trains to arrive before {trainInfo}.\";\r\n            }\r\n            departureTrains.Enqueue(arrivalTrains.Dequeue());\r\n\r\n            return $\"{trainInfo} is on the platform and will leave in 5 minutes.\";\r\n        }\r\n\r\n        public bool TrainHasLeft(string trainInfo)\r\n        {\r\n            if(departureTrains.Peek() \u003d\u003d trainInfo)\r\n            {\r\n                departureTrains.Dequeue();\r\n                return true ;\r\n            }\r\n            return false ;\r\n        }\r\n    }\r\n}\r\n",
+        "Output": "Test Passed!",
+        "IsTrialTest": false,
+        "OrderBy": 2
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}
