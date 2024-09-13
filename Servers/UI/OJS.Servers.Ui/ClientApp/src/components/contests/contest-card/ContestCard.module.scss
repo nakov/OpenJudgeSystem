@@ -42,9 +42,8 @@
     justify-content: space-between;
     margin-top: spacings.$sp-16;
 
-    > i {
-      height: 16px;
-      width: 16px;
+    .icon {
+      margin-right: spacings.$sp-4;
     }
 
     > div {

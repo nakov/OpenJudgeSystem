@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
@@ -135,7 +136,7 @@ const ContestDetailsPage = () => {
                       isSimple: true,
                   })}
                 >
-                    <i className="fas fa-user" />
+                    <FaUser />
                     <div className={`${styles.underlinedBtnText}`}>
                         { isCompete
                             ? 'Compete'
