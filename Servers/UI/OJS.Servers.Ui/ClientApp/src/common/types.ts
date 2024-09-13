@@ -117,6 +117,13 @@ interface IContestCategory {
     parentId: null | number;
 }
 
+interface IContestCategoryHierarchy {
+    id: number;
+    name: string;
+    children: Array<IContestCategoryHierarchy>;
+    parentId?: number;
+}
+
 interface IProblemResourceType {
     id: number;
     name: string;
@@ -735,6 +742,14 @@ interface IMappingEntityId {
     secondEntityId: number;
 }
 
+type AdjacencyList<K extends string | number, V> = {
+    [key in K]: V;
+};
+interface IContestCategoryHierarchyEdit {
+    id: number;
+    parentId?: number;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -756,6 +771,7 @@ export type {
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
     IContestCategory,
+    IContestCategoryHierarchy,
     IGetAllAdminParams,
     IContestAdministration,
     IFilterColumn,
@@ -810,4 +826,6 @@ export type {
     IProblemSearchType,
     IContestDetailsSliceType,
     IMappingEntityId,
+    AdjacencyList,
+    IContestCategoryHierarchyEdit,
 };
