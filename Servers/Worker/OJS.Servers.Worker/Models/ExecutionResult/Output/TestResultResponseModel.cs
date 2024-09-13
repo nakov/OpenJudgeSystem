@@ -18,7 +18,7 @@ public class TestResultResponseModel : IMapExplicitly
 
     public int MemoryUsed { get; set; }
 
-    public CheckerDetailsResponseModel CheckerDetails { get; set; } = new();
+    public CheckerDetailsResponseModel? CheckerDetails { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
@@ -28,5 +28,5 @@ public class TestResultResponseModel : IMapExplicitly
                 opt => opt.MapFrom(src => src.ResultType.ToString()))
             .ForMember(
                 m => m.Output,
-                opt => opt.MapFrom(src => src.CheckerDetails.UserOutputFragment));
+                opt => opt.MapFrom(src => src.CheckerDetails != null ? src.CheckerDetails.UserOutputFragment : null));
 }
