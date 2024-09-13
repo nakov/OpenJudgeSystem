@@ -168,7 +168,7 @@ public class SubmissionsController : BaseApiController
     /// </summary>
     [HttpGet]
     [Authorize(Roles = Administrator)]
-    [ProducesResponseType(typeof(int), Status200OK)]
+    [ProducesResponseType(typeof(Dictionary<SubmissionProcessingState, int>), Status200OK)]
     public async Task<IActionResult> UnprocessedTotalCount()
         => await this.submissionsBusiness
             .GetAllUnprocessedCount()

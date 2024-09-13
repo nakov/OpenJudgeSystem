@@ -39,7 +39,7 @@ const submissionsService = createApi({
     }),
     endpoints: (builder) => ({
         getUnprocessedCount: builder.query<
-            number,
+            Record<string, number>,
             null>({ query: () => ({ url: 'Submissions/UnprocessedTotalCount' }) }),
         // eslint-disable-next-line max-len
         getLatestSubmissions: builder.query<

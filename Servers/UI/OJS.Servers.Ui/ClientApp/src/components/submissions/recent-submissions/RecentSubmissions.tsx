@@ -129,6 +129,18 @@ const RecentSubmissions = () => {
         [ selectedActive ],
     );
 
+    const getSubmissionsAwaitingExecution = useCallback((state: string = '') => {
+        if (isEmpty(unprocessedSubmissionsCount)) {
+            return null;
+        }
+
+        if (isEmpty(state)) {
+            return Object.values(unprocessedSubmissionsCount).reduce((acc, curr) => acc + curr, 0);
+        }
+
+        return unprocessedSubmissionsCount[state];
+    }, [ unprocessedSubmissionsCount ]);
+
     const renderSubmissionsStateAdminToggle = useCallback(() => {
         const { isAdmin } = user;
 
@@ -139,7 +151,7 @@ const RecentSubmissions = () => {
             >
                 Submissions awaiting execution:
                 {' '}
-                {unprocessedSubmissionsCount}
+                {getSubmissionsAwaitingExecution()}
                 {' '}
                 (
                 <SubmissionStateLink
@@ -153,6 +165,7 @@ const RecentSubmissions = () => {
                   stateIndex={2}
                   isSelected={selectedActive === 2}
                   text={selectedSubmissionsStateMapping[2]}
+                  count={getSubmissionsAwaitingExecution(selectedSubmissionsStateMapping[2])}
                   handleOnSelect={handleSelectSubmissionState}
                 />
                 /
@@ -160,6 +173,7 @@ const RecentSubmissions = () => {
                   stateIndex={3}
                   isSelected={selectedActive === 3}
                   text={selectedSubmissionsStateMapping[3]}
+                  count={getSubmissionsAwaitingExecution(selectedSubmissionsStateMapping[3])}
                   handleOnSelect={handleSelectSubmissionState}
                 />
                 /
@@ -167,6 +181,7 @@ const RecentSubmissions = () => {
                   stateIndex={4}
                   isSelected={selectedActive === 4}
                   text={selectedSubmissionsStateMapping[4]}
+                  count={getSubmissionsAwaitingExecution(selectedSubmissionsStateMapping[4])}
                   handleOnSelect={handleSelectSubmissionState}
                 />
                 )
@@ -178,7 +193,7 @@ const RecentSubmissions = () => {
             </Heading>
             )
         );
-    }, [ user, unprocessedSubmissionsCount, selectedActive, handleSelectSubmissionState ]);
+    }, [ user, getSubmissionsAwaitingExecution, selectedActive, handleSelectSubmissionState ]);
 
     return (
         <div className={styles.recentSubmissionsWrapper}>

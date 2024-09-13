@@ -244,8 +244,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         };
     }
 
-    public Task<int> GetAllUnprocessedCount()
-        => this.submissionsForProcessingData.GetAllUnprocessed().CountAsync();
+    public Task<Dictionary<SubmissionProcessingState, int>> GetAllUnprocessedCount()
+        => this.submissionsForProcessingData
+            .GetAllUnprocessed()
+            .GroupBy(sfp => sfp.State)
+            .ToDictionaryAsync(sfp => sfp.Key, sfp => sfp.Count());
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
