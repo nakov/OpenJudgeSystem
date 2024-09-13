@@ -37,6 +37,10 @@ public class SubmissionsForProcessingCommonDataService(
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
         => this.GetQuery(sfp => sfp.State == SubmissionProcessingState.Processing);
 
+    public IQueryable<SubmissionForProcessing> GetAllProcessed(int fromMinutesAgo)
+        => this.GetQuery(sfp => sfp.State == SubmissionProcessingState.Processed
+            && sfp.ProcessedAt < dates.GetUtcNowOffset().AddMinutes(-fromMinutesAgo));
+
     public async Task<SubmissionForProcessing> Add(int submissionId)
     {
         var submissionForProcessing = new SubmissionForProcessing
