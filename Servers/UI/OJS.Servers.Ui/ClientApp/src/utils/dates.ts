@@ -1,4 +1,4 @@
-import { differenceInDays, intervalToDuration } from 'date-fns';
+import { intervalToDuration } from 'date-fns';
 import moment, { Duration, unitOfTime } from 'moment';
 
 interface IConvertToTwoDigitValuesParamType {
@@ -9,19 +9,13 @@ interface IConvertToTwoDigitValuesParamType {
 }
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/YYYY';
-const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
 const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
 
-const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate), 'second');
-
 const calculatedTimeFormatted =
     (duration: Duration) => `${Math.floor(duration.asDays())} d, ${duration.hours()} h, ${duration.minutes()} m`;
-
-const convertTimeIntervalToHoursMinutesAndSeconds =
-    (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
 const isCurrentTimeAfterOrEqualTo = (date: Date):
     boolean => moment().local().isSameOrAfter(moment(date).utc(true).local());
@@ -44,35 +38,6 @@ const formatDate = (
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
     : moment(date).utc(true).local().fromNow());
-
-const getCurrentTimeInUTC = () => {
-    const now = moment().utc();
-    return new Date(
-        now.year(),
-        now.month(),
-        now.date(),
-        now.hour(),
-        now.minute(),
-        now.second(),
-        now.millisecond(),
-    );
-};
-
-const convertToSecondsRemaining = (date: Date) => {
-    const currentDate = getCurrentTimeInUTC();
-    const { hours, minutes, seconds } = intervalToDuration({
-        start: currentDate,
-        end: date,
-    });
-
-    const daysRemaining = differenceInDays(date, currentDate);
-
-    const hoursRemaining = daysRemaining * 24 + (hours ?? 0);
-
-    const minutesRemaining = hoursRemaining * 60 + (minutes ?? 0);
-
-    return minutesRemaining * 60 + (seconds ?? 0);
-};
 
 // This function converts a given duration in seconds into a time object that includes
 // days, hours, minutes, and seconds.
@@ -176,7 +141,6 @@ const convertToTwoDigitValues = ({
 
 export {
     defaultDateTimeFormat,
-    defaultDateTimeFormatPreciseTime,
     defaultDateTimeFormatReverse,
     defaultPreciseDateTimeFormat,
     dateTimeFormatWithSpacing,
@@ -185,11 +149,7 @@ export {
     secondsToFullTime,
     isCurrentTimeAfterOrEqualTo,
     calculateTimeUntil,
-    convertToSecondsRemaining,
     convertToTwoDigitValues,
-    getCurrentTimeInUTC,
-    calculateTimeBetweenTwoDates,
-    convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,
     timeToWords,
     transformSecondsToTimeSpan,

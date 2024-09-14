@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
-import { RedirectExternal } from '../../components/common/RedirectExternal';
+import RedirectExternal from '../../components/common/RedirectExternal';
 import { getAdministrationRetestSubmission } from '../../utils/urls';
 import withTitle from '../shared/with-title';
 

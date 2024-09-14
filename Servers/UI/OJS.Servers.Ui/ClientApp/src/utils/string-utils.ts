@@ -1,5 +1,3 @@
-const splitByCapitalLetter = (input: string) => input.split(/(?=[A-Z])/).join(' ');
-
 const toLowerCase = (input: string) => input.toLowerCase();
 
 const getEnumMemberName = <T extends object>(enumObj: T, enumMember: T[keyof T] | string): string => {
@@ -12,7 +10,6 @@ const getEnumMemberName = <T extends object>(enumObj: T, enumMember: T[keyof T] 
 const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 export {
-    splitByCapitalLetter,
     toLowerCase,
     getEnumMemberName,
     capitalizeFirstLetter,
