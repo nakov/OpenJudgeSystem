@@ -1,5 +1,3 @@
-type ToggleParam = (param: IFilter | ISort) => void;
-
 enum FilterType {
     Status = 'Status',
     Strategy = 'Strategy',
@@ -53,11 +51,6 @@ interface IContestStrategyFilter {
     id: number;
 }
 
-enum ContestType {
-    Practice = 0,
-    Compete = 1,
-}
-
 enum ContestVariation {
     Exercise = 0,
     OnsitePracticalExam = 1,
@@ -81,12 +74,10 @@ export type {
     SortInfo,
     FilterSortType,
     IContestStrategyFilter,
-    ToggleParam,
     ContestBreadcrumb,
 };
 
 export {
-    ContestType,
     ContestStatus,
     FilterType,
     SortType,

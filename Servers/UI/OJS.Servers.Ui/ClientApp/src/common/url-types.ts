@@ -15,10 +15,6 @@ interface IExamGroupUrlParams {
     id: number;
 }
 
-interface IUserUrlParams {
-    id: number;
-}
-
 interface IGetByContestId extends IGetAllAdminParams {
     contestId: number;
 }
@@ -59,11 +55,6 @@ interface IContestCategoriesUrlParams {
 
 interface IRegisterForContestUrlParams {
     id: number;
-    isOfficial: boolean;
-}
-
-interface IStartParticipationParams {
-    id: string;
     isOfficial: boolean;
 }
 
@@ -155,16 +146,6 @@ interface ISubmissionTypeDocumentUrlById {
     id: number;
 }
 
-interface ITerm {
-    key: string;
-    value: string;
-}
-
-interface IGetSearchResultsUrlParams {
-    searchTerm: string;
-    selectedTerms: ITerm[];
-}
-
 interface ISubmitContestSolutionParams {
     content: string | File;
     official: boolean;
@@ -195,7 +176,6 @@ export type {
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
-    IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
     IGetUserSubmissionsUrlParams,
     IGetByExamGroupId,
@@ -207,11 +187,9 @@ export type {
     IGetByProblemId,
     ISubmissionTypeDocumentUrlById,
     IExamGroupUrlParams,
-    IUserUrlParams,
     IGetByTestId,
     IGetByRoleId,
     IGetByUserId,
-    IStartParticipationParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
     IGetSubmissionsByUserParams,

@@ -1,5 +1,4 @@
-import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/submissions/types';
-import { IErrorDataType } from '../hooks/use-http';
+import { ITestRun } from '../hooks/submissions/types';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
@@ -37,17 +36,6 @@ interface IUserProfileType {
 
 interface IUsersState {
     profile: IUserProfileType | null;
-}
-
-interface ISubmissionDetailsState {
-    currentSubmission: ISubmissionDetailsType | null;
-    currentSubmissionResults: IPagedResultType<ISubmissionResults>;
-    validationErrors: IErrorDataType[];
-    downloadErrorMessage: string | null;
-}
-interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
-    currentPage: number;
-    retestIsSuccess: false;
 }
 
 interface IRecentSubmissionsReduxState {
@@ -97,13 +85,6 @@ interface ITestRunInListModel {
     executionComment: string;
     checkerComment: string;
     resultType: string;
-}
-
-interface IGetAllContestsOptions {
-    strategy?: number;
-    sortType: string;
-    page: number;
-    category?: number | null;
 }
 
 interface IGetAllAdminParams {
@@ -202,12 +183,6 @@ interface IProblemSearchType {
     name: string;
     orderBy: number;
     contest: IContestType;
-}
-
-interface IContestDetailsProblemType {
-    name: string;
-    orderBy: number;
-    resources?: IProblemResourceType[];
 }
 
 interface IContestDetailsSubmissionType {
@@ -311,10 +286,6 @@ interface IIndexContestsType {
     requirePasswordForPractice: boolean;
 }
 
-interface IGetContestsForIndexResponseType {
-    activeContests: IIndexContestsType[];
-    pastContests: IIndexContestsType[];
-}
 interface IIndexProblemsType {
     id: number;
     name: string;
@@ -409,29 +380,6 @@ interface IPagedResultType<TItem> {
     pagesCount: number;
     pageNumber: number;
     items?: TItem[];
-}
-
-interface IAdminPagedResultType<TItem> {
-    items?: TItem[];
-    page: number;
-    itemsPerPage: number;
-    totalCount: number;
-    totalPages: number;
-}
-
-interface IAdminContestResponseType {
-    id: number;
-    category: string;
-    name: string;
-    allowParallelSubmissionsInTasks: boolean;
-    categoryId: number;
-    startTime: string;
-    endTime: string;
-    contestPassword: string;
-    description: string;
-    isDeleted: boolean;
-    isVisible: boolean;
-    limitBetweenSubmissions: number;
 }
 
 interface IPage {
@@ -641,14 +589,6 @@ interface IExamGroupAdministration {
     externalExamGroupId: number;
 }
 
-interface IUserAdministration {
-    id: string;
-    username: string;
-    isDeleted: boolean;
-    createdOn: Date | null;
-    deletedOn: Date | null;
-}
-
 interface IUserInExamGroupModel {
     id: string;
     username: string;
@@ -780,11 +720,6 @@ interface IUserAdministrationModel {
     roles: Array<IUserRoleType>;
 }
 
-interface ILecturerInContestInListModel {
-    contestId: string;
-    contestName: string;
-}
-
 interface IContestActivity {
     canBeCompeted: boolean;
 }
@@ -824,7 +759,6 @@ interface IContestCategoryHierarchyEdit {
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
-    IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
     IContestType,
@@ -841,17 +775,11 @@ export type {
     IUserResponseType,
     IUserPermissionsType,
     IContestDetailsResponseType,
-    IContestDetailsProblemType,
-    ISubmissionDetailsState,
-    ISubmissionDetailsReduxState,
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
     IContestCategory,
     IContestCategoryHierarchy,
-    IGetAllContestsOptions,
     IGetAllAdminParams,
-    IAdminPagedResultType,
-    IAdminContestResponseType,
     IContestAdministration,
     IFilterColumn,
     ISubmissionsAdminGridViewType,
@@ -875,7 +803,6 @@ export type {
     IEnumType,
     IIndexExamGroupsType,
     IExamGroupAdministration,
-    IUserAdministration,
     IUserInExamGroupModel,
     IUserAutocomplete,
     ISubmissionTypesInListModel,
@@ -896,7 +823,6 @@ export type {
     IRoleAdministrationModel,
     IUserInListModel,
     IUserAdministrationModel,
-    ILecturerInContestInListModel,
     IContestActivity,
     ISettingInListModel,
     ISettingAdministrationModel,
