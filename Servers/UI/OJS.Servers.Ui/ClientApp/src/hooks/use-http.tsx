@@ -196,6 +196,5 @@ export {
 };
 
 export type {
-    IHttpProps,
     IErrorDataType,
 };

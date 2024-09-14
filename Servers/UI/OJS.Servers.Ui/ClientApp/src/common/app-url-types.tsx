@@ -4,10 +4,6 @@ interface ISubmissionDetailsUrlParams {
     submissionId: number;
 }
 
-interface IProblemSubmissionDetailsUrlParams {
-    submissionId: number;
-}
-
 interface IContestsResultsPageUrlParams {
     contestName?: string;
     contestId?: number;
@@ -41,7 +37,6 @@ interface IContestsRegisterPageUrlParams {
 
 export type {
     ISubmissionDetailsUrlParams,
-    IProblemSubmissionDetailsUrlParams,
     IContestsResultsPageUrlParams,
     IAllContestsPageUrlParams,
     IContestsSolutionSubmitPageUrlParams,

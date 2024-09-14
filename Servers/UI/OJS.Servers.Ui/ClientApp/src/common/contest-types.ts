@@ -1,10 +1,3 @@
-enum FilterType {
-    Status = 'Status',
-    Strategy = 'Strategy',
-    Category = 'Category',
-    Sort = 'SortType'
-}
-
 enum SortType {
     Name = 'Name',
     StartDate = 'StartDate',
@@ -16,11 +9,6 @@ enum SortType {
 enum SortTypeDirection {
     Ascending = 'Ascending',
     Descending = 'Descending',
-}
-
-type SortInfo = {
-    name: string;
-    value: string;
 }
 
 type ContestBreadcrumb = {
@@ -41,13 +29,11 @@ enum ContestVariation {
 }
 
 export type {
-    SortInfo,
     IContestStrategyFilter,
     ContestBreadcrumb,
 };
 
 export {
-    FilterType,
     SortType,
     SortTypeDirection,
     ContestVariation,

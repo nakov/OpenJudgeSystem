@@ -1,7 +1,6 @@
 import isNil from 'lodash/isNil';
 
 import {
-    IProblemSubmissionDetailsUrlParams,
     ISubmissionDetailsUrlParams,
 } from '../common/app-url-types';
 import {
@@ -89,8 +88,6 @@ const getSubmissionResultsByProblemUrl = ({
     return `${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&${pageQuery}`;
 };
 
-const getProblemSubmissionDetailsUrl = ({ submissionId }: IProblemSubmissionDetailsUrlParams) => `/submissions/${submissionId}/details`;
-
 const getSubmissionDetailsRedirectionUrl = ({ submissionId }:ISubmissionDetailsUrlParams) => `/submissions/${submissionId}/details`;
 
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
@@ -117,7 +114,6 @@ export {
     getSubmissionResultsByProblemUrl,
     getSubmitUrl,
     getSubmitFileUrl,
-    getProblemSubmissionDetailsUrl,
     getSubmissionDetailsRedirectionUrl,
     getDownloadProblemResourceUrl,
     getContestDetailsUrl,
