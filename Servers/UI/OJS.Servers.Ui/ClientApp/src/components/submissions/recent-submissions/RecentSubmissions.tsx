@@ -131,7 +131,7 @@ const RecentSubmissions = () => {
 
     const getSubmissionsAwaitingExecution = useCallback((state: string = '') => {
         if (isEmpty(unprocessedSubmissionsCount)) {
-            return null;
+            return 0;
         }
 
         if (isEmpty(state)) {
