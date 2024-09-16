@@ -25,6 +25,7 @@ const forwardToAdmin = () => {
 export default defineConfig({
     appType: 'mpa', // Multi Page Application
     build: {
+        sourcemap: true,
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
