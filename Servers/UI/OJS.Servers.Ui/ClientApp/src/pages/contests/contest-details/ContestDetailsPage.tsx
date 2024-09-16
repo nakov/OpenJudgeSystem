@@ -122,7 +122,7 @@ const ContestDetailsPage = () => {
             : styles.blueColor;
 
         return (
-            <>
+            <div className={styles.resultsTextContainer}>
                 <FaUser className={participationModeTextColorClassName} />
                 <div className={concatClassNames(styles.underlinedBtnText, participationModeTextColorClassName)}>
                     {isCompete
@@ -135,7 +135,7 @@ const ContestDetailsPage = () => {
                         ? competeParticipantsCount
                         : practiceParticipantsCount}
                 </div>
-            </>
+            </div>
         );
     }, [ competeParticipantsCount, practiceParticipantsCount ]);
 
