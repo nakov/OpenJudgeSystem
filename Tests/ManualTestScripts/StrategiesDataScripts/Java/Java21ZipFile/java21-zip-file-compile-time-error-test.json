@@ -1,0 +1,74 @@
+// Compile time error
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "java-21-zip-file-code",
+    "CompilerType": "JavaZip",
+    "FileContent": "UEsDBBQAAAAIAIG4C1lmK/ZuWgIAAE4IAAAJAAAAYmFuay5qYXZh1VXBjtMwEL1X6j8MkSq52sqCPcLuSkARVMCFHnd7cONpa5o4IXbaLWj/nXFi0+y2LtpKHLAqJc543rx585KWIl2LJcJPId/0e/2eysuisvBdbASvrcr4J2FWX0VJwYNQ5PE0FVpj1cCV9TxTKaSZMAbmQq/hV78HtHzAWGHpsimUhFwozaa2Unp5OwNRLc0wnHbLw4Lx12vQuA1P2XRnLOZc6SHVDSlE8GqiLS6xGsE7qv42TYta2xsQ7Y3xKL7Jqxvm0js1GzagdFnbDu52pTIE9oI1AcLwnLjGe/tFaWTDIccftcgMSz5omQwfdbJHpj5tsUbteDRY3JSZsiy5uzMXSbeVDpu0yHOhJaW0ubcvZ49Iu2W2yqYrYP7sQXm3UmEQkvcVCovJ68O4Wx3RgmZesk6kEe1YdlCZU2fMb/gS7USy4ShEY8l+ogWJUlLfNtMsCVQm4wQuAkBApCcJpE07pHgEdU7x9ZFYK8YYy8IoG1ODWAAZ9Rq8qXgpKoO0YX4Sr2axurIgwyOI3Es4bvYtQHsfMC6jGGoBQUXD00JbemHMZ9wxJQ8N1l1/kkgpd5jLtk/W0onVc+vpFBYsiIQSBvxyQSakcQzkQCc00gZvRCLFMB8AM1L6BNlTc5cFGtCFBbxXxkaH/HDO7KfkIhprhQQcmb8fIpFqjn0jp50cZdwOnbeHm31hh0gflf3mPBt//HsrZ9rYvQE7pOMnsv+BgZ8IT8UPLO0+Aj7MGobPdLXzcuPhUOR/crDEhagzG5n1MT4TvREZmcD/QTzre9kh52/pQr9+7zdQSwMEFAAAAAgAgbgLWSC9jTlUAQAAlAMAABAAAABCYW5rQWNjb3VudC5qYXZhdZLBbsIwEETvSPzDilMAKdBeEZVKuXAtX2DiBSyCHdkbJFrx77VjJ9gp8S0e+83OxBUrLuyE8MP4ajwaj6r6UIoCipIZAxsmL59FoWpJ8DsegV2VFjdGCIYY2XPCKoJ/uROoYQ1vK1gsYO/Fo8CSAykgbV1gt4VCo1WUfMniynqjQ6JGQ99OWsMyX77/hx6VBnNmGnl3HrS94CLEaD+fTRZvBqMDK5kssIndyD56FDqbtrHdorMwueB2pi7xfB7QnR6gbvAgPXr8kPamLMog7aK4Wa+CxL7XS/s54BJIp6dB5rq4I9MmwWqkWst0+FlqNvPXBpyaIBwrZQS1AdjV9ZOOf4TMb8MHLBPJrcR/vg6EqN0HYGmwf21/N4TXXNWU278rqZTZZOtnCQi41vZtHBCaTXHDfDKNsa9Dua5cdzx9AnFZ3bMarn7j8wwznk8wgBrWH1BLAQI/ABQAAAAIAIG4C1lmK/ZuWgIAAE4IAAAJACQAAAAAAAAAIAAAAAAAAABiYW5rLmphdmEKACAAAAAAAAEAGADq0DucKezaAQAAAAAAAAAAAAAAAAAAAABQSwECPwAUAAAACACBuAtZIL2NOVQBAACUAwAAEAAkAAAAAAAAACAAAACBAgAAQmFua0FjY291bnQuamF2YQoAIAAAAAAAAQAYAL3hPJwp7NoBAAAAAAAAAAAAAAAAAAAAAFBLBQYAAAAAAgACAL0AAAADBAAAAAA\u003d",
+    "Code": "",
+    "TimeLimit": 200,
+    "MemoryLimit": 33554432,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 117779,
+          "Input": "Create\r\nDeposit 1 20\r\nGetInterest 1 10\r\nEnd",
+          "Output": "Account ID1 created\r\nDeposited 20 to ID1\r\n4.00",
+          "IsTrialTest": true,
+          "OrderBy": 1
+        },
+        {
+          "Id": 117780,
+          "Input": "Create\r\nCreate\r\nDeposit 1 20\r\nDeposit 3 20\r\nDeposit 2 10\r\nSetInterest 1.5\r\nGetInterest 1 1\r\nGetInterest 2 1\r\nGetInterest 3 1\r\nEnd",
+          "Output": "Account ID1 created\r\nAccount ID2 created\r\nDeposited 20 to ID1\r\nAccount does not exist\r\nDeposited 10 to ID2\r\n30.00\r\n15.00\r\nAccount does not exist",
+          "IsTrialTest": true,
+          "OrderBy": 2
+        },
+        {
+          "Id": 117781,
+          "Input": "Deposit 1 20\r\nDeposit 3 20\r\nDeposit 2 10\r\nSetInterest 1\r\nGetInterest 1 1\r\nGetInterest 2 1\r\nGetInterest 3 1\r\nEnd",
+          "Output": "Account does not exist\r\nAccount does not exist\r\nAccount does not exist\r\nAccount does not exist\r\nAccount does not exist\r\nAccount does not exist",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        },
+        {
+          "Id": 117782,
+          "Input": "Create\r\nCreate\r\nCreate\r\nCreate\r\nCreate\r\nDeposit 1 20\r\nDeposit 3 20\r\nDeposit 2 10\r\nDeposit 1 20\r\nSetInterest 0.05\r\nGetInterest 3 1\r\nGetInterest 1 1\r\nGetInterest 2 1\r\nEnd",
+          "Output": "Account ID1 created\r\nAccount ID2 created\r\nAccount ID3 created\r\nAccount ID4 created\r\nAccount ID5 created\r\nDeposited 20 to ID1\r\nDeposited 20 to ID3\r\nDeposited 10 to ID2\r\nDeposited 20 to ID1\r\n1.00\r\n2.00\r\n0.50",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        },
+        {
+          "Id": 117783,
+          "Input": "End",
+          "Output": "",
+          "IsTrialTest": false,
+          "OrderBy": 3
+        },
+        {
+          "Id": 117784,
+          "Input": "Create\r\nCreate\r\nCreate\r\nCreate\r\nCreate\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 12 20\r\nDeposit 7 20\r\nDeposit 6 20\r\nDeposit 6 20\r\nSetInterest 0.06\r\nGetInterest 1 10\r\nGetInterest 4 20\r\nSetInterest 0.12\r\nGetInterest 2 10\r\nGetInterest 1 15\r\nEnd",
+          "Output": "Account ID1 created\r\nAccount ID2 created\r\nAccount ID3 created\r\nAccount ID4 created\r\nAccount ID5 created\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nAccount does not exist\r\nAccount does not exist\r\nAccount does not exist\r\nAccount does not exist\r\n60.00\r\n120.00\r\n120.00\r\n180.00",
+          "IsTrialTest": false,
+          "OrderBy": 4
+        },
+        {
+          "Id": 117785,
+          "Input": "Create\r\nCreate\r\nCreate\r\nCreate\r\nCreate\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 6 20\r\nSetInterest 0.02\r\nGetInterest 2 15\r\nGetInterest 3 20\r\nGetInterest 7 30\r\nEnd",
+          "Output": "Account ID1 created\r\nAccount ID2 created\r\nAccount ID3 created\r\nAccount ID4 created\r\nAccount ID5 created\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nAccount does not exist\r\n30.00\r\n40.00\r\nAccount does not exist",
+          "IsTrialTest": false,
+          "OrderBy": 5
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

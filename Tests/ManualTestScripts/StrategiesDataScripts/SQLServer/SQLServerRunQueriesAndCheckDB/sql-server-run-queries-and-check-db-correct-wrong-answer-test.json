@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "sql-server-run-queries-and-check-database",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "create table Cities (\r\n\tId int primary key identity,\r\n\t[Name] varchar(20) not null,\r\n\tCountryCode varchar(2) not null\r\n)\r\n\r\ncreate table Hotels(\r\n\tId int primary key identity,\r\n\t[Name] varchar(30) not null,\r\n\tCityId int foreign key references Cities(Id) not null ,\r\n\tEmployeeCount int not null,\r\n\tBaseRate decimal(18,2)\r\n)\r\n\r\ncreate table Rooms(\r\n\tId int primary key identity,\r\n\tPrice decimal(18,2) not null,\r\n\t[Type] varchar(20),\r\n\tBeds int not null,\r\n\tHotelId int foreign key references Hotels(Id) not null\r\n\t)\r\n\r\ncreate table Trips(\r\n\tId int primary key identity,\r\n\tRoomId int foreign key references Rooms(Id) not null,\r\n\tBookDate datetime not null,\r\n\tArrivalDate datetime not null,\r\n\tReturnDate datetime not null,\r\n\tCancelDate datetime\r\n\t)\r\n\r\ncreate table Accounts(\r\n\tId int primary key identity,\r\n\tFirstName varchar(50),\r\n\tMiddleName varchar(20),\r\n\tLastName varchar(20),\r\n\tCityId int foreign key references Cities(Id) not null,\r\n\r\n\tBirthDate datetime not null,\r\n\tEmail varchar(100)\r\n)\r\ncreate table AccountsTrips(\r\n\tAccountId int foreign key references Accounts(Id),\r\n\tTripId int foreign key references Trips(Id),\r\n\tLuggage int,\r\n\tconstraint a_t_luggage check (Luggage \u003e\u003d 0)\r\n)",
+    "TimeLimit": 100,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 30,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 179979,
+          "Input": "SELECT KU.TABLE_NAME,KU.COLUMN_NAME \r\n FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC\r\nINNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU\r\n   ON TC.CONSTRAINT_TYPE \u003d \u0027PRIMARY KEY\u0027 \r\n  AND TC.CONSTRAINT_NAME \u003d KU.CONSTRAINT_NAME\r\nWHERE TC.TABLE_CATALOG \u003d DB_NAME()\t\r\nORDER BY KU.TABLE_NAME, KU.COLUMN_NAME;",
+          "Output": "Accounts\r\nId\r\nAccountsTrips\r\nAccountId\r\nAccountsTrips\r\nTripId\r\nCities\r\nId\r\nHotels\r\nId\r\nRooms\r\nId\r\nTrips\r\nId",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        },
+        {
+          "Id": 179980,
+          "Input": "SELECT KU.TABLE_NAME,KU.COLUMN_NAME \r\n FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC\r\nINNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU\r\n   ON TC.CONSTRAINT_TYPE \u003d \u0027FOREIGN KEY\u0027 \r\n  AND TC.CONSTRAINT_NAME \u003d KU.CONSTRAINT_NAME\r\nWHERE TC.TABLE_CATALOG \u003d DB_NAME()\t\r\nORDER BY KU.TABLE_NAME, KU.COLUMN_NAME;",
+          "Output": "Accounts\r\nCityId\r\nAccountsTrips\r\nAccountId\r\nAccountsTrips\r\nTripId\r\nHotels\r\nCityId\r\nRooms\r\nHotelId\r\nTrips\r\nRoomId",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

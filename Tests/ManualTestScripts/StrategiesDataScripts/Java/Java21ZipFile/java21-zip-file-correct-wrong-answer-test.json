@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "java-21-zip-file-code",
+    "CompilerType": "JavaZip",
+    "FileContent": "UEsDBAoAAAAAAPYJK1kAAAAAAAAAAAAAAAAMAAAAYmFua2FjY291bnQvUEsDBBQAAAAIAPYJK1nG34ZPGgEAAAIDAAAcAAAAYmFua2FjY291bnQvQmFua0FjY291bnQuamF2YXVQy2qDQBTdB/IPd2kiSNqtuLCthUDpwtp1uM7c2iF2FGcMlNJ/74xO6jODGzn3PGtkZywIOH0IKWTBSlSKVJCjPCNjVSt1uN1sN3Wbl4JBB8ODAeMehB+Lgnl1Iy6oCYwOlqA0anPPK8MjeEqe4/eX7HR8zZI0ectOaZwlEMEhONyHU/qUKKSmhpROLRSt66wLGCbkQ87HLmwEd+FaWnss+AxyEXIsUTIK/3v2S4w28HZ2BXBPfwoVCA7Rwt73w+FMkT6Oynmr1XaO8Dszdx0vleALodlyk2yzOa+/N1ycUjEYeHaob8JGTWQb0m0jp+r7/g72owHXTLoOnOpKCX3Njl92ruWqTgn8yJ3c0LQpbWrurcbkA818f1BLAwQUAAAACADCvR1ZzA5cVGwCAAC7CQAAFQAAAGJhbmthY2NvdW50L01haW4uamF2Ye1WUW/aMBB+R+I/3CIhOVpndX0sBakb1YTU7WE8tjyY+EI9EjuLnVJU9b/PTpwSIMnWh0l72Akp2L777vN3d4SMRRu2RuAYCynkOkqY1qjpiskNiyJVSDMeDoYDkWYqN/CDPTJaGJHQ6zxnu1uhzbjlsGt/ETEpMS8Rs2KViAjKhPCVCQnPwwFY8wfaMGMfj0pwSO0xWZjcErxbAsvXOnTelb8zDwzaPycgcVvvksVOG0ypkOG4GeRYXn2yF72uLjqF1X6hPcbrPa+mJBzvg1dKJcgkCD1TqL8pc/NknWxQzBKNB3kq4iBkVjgHz5FKfDK3QiI5ZLV9EAkCeVe6U/xZWDwS3EgehGEtUW2vknBmmIWuYnSWCEOC+3v9PmhSbnCJVJoyyWFSRt6dL4/c9FaY6AGI9ztJ7CxiGiH4nCMzGMCHaZuPs4bCTYG9vo1Tcky2Nl8/Ze+WWfomJkENMp+NOEQlBz6SwVkzA12jmXMSdsE2q00Z56Sx0Rbz0qXBDDOlhekTwbIG4fSeS4NrW/2M5RrtgpQF+LjsIsmVHQcElnrNZuW6Cq++VwgXnQixyoF0FeHyQIWwi74zEQNpURcmtu94byQcik15pRepLtXFu6f6XnDkMKLnMRhV9kFZ/wrzzFH6DW7n5PYFrWyrbXp8XgAtCDy/MbXJi77ML8PBH2539ugCjWu9HHVvn/p2E961p+G6W7bRa1Tv0363M0pq4DfN15c9yF+ZMRe4Q+vcGfuvT1fLjIzoRdz6i+iVJOWNw/9TUi6Hg+NiHGZvrcCx6oncv5i4DQapDKALP3kPn6bs+3fQiPIP+/kFUEsBAh8ACgAAAAAA9gkrWQAAAAAAAAAAAAAAAAwAJAAAAAAAAAAQAAAAAAAAAGJhbmthY2NvdW50LwoAIAAAAAAAAQAYACByXPvOA9sBIHJc+84D2wEwVYimR/raAVBLAQIfABQAAAAIAPYJK1nG34ZPGgEAAAIDAAAcACQAAAAAAAAAIAAAACoAAABiYW5rYWNjb3VudC9CYW5rQWNjb3VudC5qYXZhCgAgAAAAAAABABgAIHJc+84D2wEgclz7zgPbAV3hZ7hH+toBUEsBAh8AFAAAAAgAwr0dWcwOXFRsAgAAuwkAABUAJAAAAAAAAAAgAAAAfgEAAGJhbmthY2NvdW50L01haW4uamF2YQoAIAAAAAAAAQAYAHwLEXhU+toBfAsReFT62gHLbpSpR/raAVBLBQYAAAAAAwADADMBAAAdBAAAAAA\u003d",
+    "Code": "",
+    "TimeLimit": 200,
+    "MemoryLimit": 33554432,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 117783,
+          "Input": "End",
+          "Output": "",
+          "IsTrialTest": false,
+          "OrderBy": 3
+        },
+        {
+          "Id": 117784,
+          "Input": "Create\r\nCreate\r\nCreate\r\nCreate\r\nCreate\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 1 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 2 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 3 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 4 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 5 20\r\nDeposit 12 20\r\nDeposit 7 20\r\nDeposit 6 20\r\nDeposit 6 20\r\nSetInterest 0.06\r\nGetInterest 1 10\r\nGetInterest 4 20\r\nSetInterest 0.12\r\nGetInterest 2 10\r\nGetInterest 1 15\r\nEnd",
+          "Output": "Account ID1 created\r\nAccount ID2 created\r\nAccount ID3 created\r\nAccount ID4 created\r\nAccount ID5 created\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID1\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID2\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID3\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID4\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nDeposited 20 to ID5\r\nAccount does not exist\r\nAccount does not exist\r\nAccount does not exist\r\nAccount does not exist\r\n60.00\r\n120.00\r\n120.00\r\n180.00",
+          "IsTrialTest": false,
+          "OrderBy": 4
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

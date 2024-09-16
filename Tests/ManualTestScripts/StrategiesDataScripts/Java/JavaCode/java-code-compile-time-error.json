@@ -1,0 +1,46 @@
+// Compile time error
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "java-code",
+    "CompilerType": "Java",
+    "FileContent": null,
+    "Code": "import java.util.Scanner;\r\n\r\npublic class Greater_Number_lab02 {\r\n    public static void main(String[] args) {\r\n        Scanner scanner \u003d new Scanner(System.in);\r\n\r\n        int num1 \u003d Integer.parseInt(scanner.nextLine());\r\n        int num2 \u003d Integer.parseInt(scanner.nextLine());\r\n\r\n        System.out.println(Math.max(num3, num2));\r\n    }\r\n}\r\n",
+    "TimeLimit": 200,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+        "MaxPoints": 100,
+        "CheckerType": "trim",
+        "CheckerParameter": null,
+        "Tests": [
+            {
+                "Id": 174014,
+                "Input": "3\r\n5",
+                "Output": "5",
+                "IsTrialTest": false,
+                "OrderBy": 2
+            },
+            {
+                "Id": 174015,
+                "Input": "3\r\n5",
+                "Output": "3",
+                "IsTrialTest": false,
+                "OrderBy": 1
+            },
+            {
+                "Id": 174016,
+                "Input": "5\r\na",
+                "Output": "5",
+                "IsTrialTest": false,
+                "OrderBy": 0
+            }
+        ],
+        "TaskSkeleton": "SyvNSy7JzM9TSExJLChJLVLQyMwrKC3RUUjOT0nVVKjm5VJQUChKLSktygMLaejp6YFVaFrzctUCAA\u003d\u003d",
+        "TaskSkeletonAsString": "function adapter (input, code) {\r\n   return code(...input);\r\n}"
+    },
+    "ExecutionOptions": {
+        "KeepDetails": true,
+        "EscapeTests": false,
+        "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+}

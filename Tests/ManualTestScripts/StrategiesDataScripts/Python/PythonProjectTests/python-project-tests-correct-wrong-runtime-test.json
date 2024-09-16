@@ -1,0 +1,46 @@
+// 1 CorrectAnswer, 1 WrongAnswer, 1 RuntimeError
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "python-project-tests",
+  "CompilerType": "None",
+  "FileContent": "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\u003d\u003d",
+  "Code": "",
+  "TimeLimit": 500,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 146009,
+        "Input": "# test lion init\r\nfrom project.lion import Lion\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n   def test(self):\r\n      l \u003d Lion(\"a\", \"m\", 4)\r\n      self.assertEqual(l.name, \"a\")\r\n      self.assertEqual(l.gender, \"m\")\r\n      self.assertEqual(l.age, 4)\r\n      self.assertEqual(l.__class__.__base__.__name__, \"Animal\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n   unittest.main()",
+        "Output": "Test Passed!",
+        "IsTrialTest": false,
+        "OrderBy": 1
+      },
+      {
+        "Id": 146024,
+        "Input": "# test zoo __init__\r\nfrom project.zoo import Zoo\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n   def test(self):\r\n      z \u003d Zoo(\"My Zoo\", 1500, 6, 10)\r\n      self.assertEqual(z._Zoo__animal_capacity, 6)\r\n      self.assertEqual(z._Zoo__workers_capacity, 10)\r\n      self.assertEqual(z._Zoo__budget, 1500)\r\n      self.assertEqual(z.name, \"My Zoo\")\r\n      self.assertEqual(z.animals, [])\r\n      self.assertEqual(z.workers, [])\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n   unittest.main()",
+        "Output": "Test Passed!",
+        "IsTrialTest": false,
+        "OrderBy": 16
+      },
+      {
+        "Id": 146028,
+        "Input": "# test zoo hire_worker success\r\nfrom project.zoo import Zoo\r\nfrom project.vet import Vet\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n   def test(self):\r\n      z \u003d Zoo(\"Some Zoo\", 1500, 1, 1)\r\n      res \u003d z.hire_worker(Vet(\"I am Vet\", 20, 500))\r\n      self.assertEqual(res, \"I am Vet the Vet hired successfully\")\r\n      self.assertEqual(len(z.workers), 1)\r\n      self.assertEqual(z._Zoo__workers_capacity, 1)\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n   unittest.main()",
+        "Output": "Test Passed!",
+        "IsTrialTest": false,
+        "OrderBy": 20
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}
