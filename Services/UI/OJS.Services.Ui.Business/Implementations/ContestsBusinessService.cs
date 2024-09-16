@@ -22,7 +22,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
-    using OJS.Services.Ui.Models.Submissions;
     using static OJS.Services.Common.Constants.PaginationConstants.Contests;
 
     public class ContestsBusinessService : IContestsBusinessService
@@ -322,9 +321,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .DistinctBy(st => st.Id);
 
             participationModel.ParticipantId = participant.Id;
-            participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
-                    participant.Id,
-                    contest.LimitBetweenSubmissions);
+            participationModel.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;
 
             var participantsList = new List<int> { participant.Id, };
 
