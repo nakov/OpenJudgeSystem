@@ -25,7 +25,7 @@ const ErrorPage = () => {
     } else if (typeof error === 'string') {
         errorMessage = error;
     } else {
-        errorMessage = 'Unknown error';
+        errorMessage = 'Unknown error. Please contact an administrator.';
     }
 
     return (
