@@ -38,12 +38,6 @@ interface IUsersState {
     profile: IUserProfileType | null;
 }
 
-interface IRecentSubmissionsReduxState {
-    latestSubmissions: IPagedResultType<IPublicSubmission>;
-    profileSubmissions: IPagedResultType<IPublicSubmission>;
-    currentPage: number;
-}
-
 interface ISearchSliceState {
     isVisible: boolean;
     searchValue: string;
@@ -764,7 +758,6 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
-    IRecentSubmissionsReduxState,
     IPublicSubmission,
     ISubmissionTypeType,
     IPagedResultType,

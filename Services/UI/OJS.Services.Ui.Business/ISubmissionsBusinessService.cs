@@ -6,6 +6,7 @@
     using OJS.Services.Ui.Models.Submissions;
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.Models;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
@@ -48,6 +49,6 @@
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
 
-        Task<int> GetAllUnprocessedCount();
+        Task<Dictionary<SubmissionProcessingState, int>> GetAllUnprocessedCount();
     }
 }

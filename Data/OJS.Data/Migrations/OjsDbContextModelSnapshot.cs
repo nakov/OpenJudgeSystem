@@ -810,6 +810,21 @@ namespace OJS.Data.Migrations
                     b.ToTable("SubmissionTypeProblems");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInSubmissionDocument", b =>
+                {
+                    b.Property<int>("SubmissionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubmissionTypeDocumentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SubmissionTypeId", "SubmissionTypeDocumentId");
+
+                    b.HasIndex("SubmissionTypeDocumentId");
+
+                    b.ToTable("SubmissionTypesInSubmissionDocuments");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Submissions.Submission", b =>
                 {
                     b.Property<int>("Id")
@@ -906,14 +921,20 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTimeOffset?>("EnqueuedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Processed")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset?>("ProcessedAt")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<bool>("Processing")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset?>("ProcessingStartedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
 
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");
@@ -975,6 +996,43 @@ namespace OJS.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SubmissionTypes");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Submissions.SubmissionTypeDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("OrderBy")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubmissionTypeDocuments");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Tests.Test", b =>
@@ -1462,6 +1520,25 @@ namespace OJS.Data.Migrations
                     b.Navigation("SubmissionType");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInSubmissionDocument", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Submissions.SubmissionTypeDocument", "SubmissionTypeDocument")
+                        .WithMany("SubmissionTypesInSubmissionDocuments")
+                        .HasForeignKey("SubmissionTypeDocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
+                        .WithMany("SubmissionTypesInSubmissionDocuments")
+                        .HasForeignKey("SubmissionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SubmissionType");
+
+                    b.Navigation("SubmissionTypeDocument");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Submissions.Submission", b =>
                 {
                     b.HasOne("OJS.Data.Models.Participants.Participant", "Participant")
@@ -1681,6 +1758,13 @@ namespace OJS.Data.Migrations
             modelBuilder.Entity("OJS.Data.Models.Submissions.SubmissionType", b =>
                 {
                     b.Navigation("SubmissionTypesInProblems");
+
+                    b.Navigation("SubmissionTypesInSubmissionDocuments");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Submissions.SubmissionTypeDocument", b =>
+                {
+                    b.Navigation("SubmissionTypesInSubmissionDocuments");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Tests.Test", b =>

@@ -39,16 +39,19 @@
                 throw new MessageBusNotHealthyException("The message bus is not in a healthy state. Cannot enqueue pending submissions.");
             }
 
-            var enqueuedSubmissionsCount = await this.submissionsForProcessing.EnqueuePendingSubmissions();
+            const int fromMinutesAgo = 3;
+            var enqueuedCount = await this.submissionsForProcessing.EnqueuePendingSubmissions(fromMinutesAgo);
 
-            return $"Successfully enqueued {enqueuedSubmissionsCount} pending submissions.";
+            return $"Successfully enqueued {enqueuedCount} pending (more than {fromMinutesAgo} minutes ago) submissions.";
         }
 
         public async Task<object> DeleteProcessedSubmissions()
         {
-            await this.submissionsForProcessing.DeleteProcessedSubmissions();
+            const int fromMinutesAgo = 60;
+            var deletedCount = await this.submissionsForProcessing.DeleteProcessedSubmissions(fromMinutesAgo);
 
-            return "Successfully deleted all processed submissions from SubmissionsForProcessing table";
+            return $"Successfully deleted {deletedCount} processed (more than {fromMinutesAgo} minutes ago) " +
+                   $"submissions from SubmissionsForProcessing table";
         }
 
         public async Task<object> UpdateTotalScoreSnapshotOfParticipants()

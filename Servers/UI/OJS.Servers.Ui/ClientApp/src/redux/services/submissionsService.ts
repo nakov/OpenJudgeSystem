@@ -39,7 +39,7 @@ const submissionsService = createApi({
     }),
     endpoints: (builder) => ({
         getUnprocessedCount: builder.query<
-            number,
+            Record<string, number>,
             null>({ query: () => ({ url: 'Submissions/UnprocessedTotalCount' }) }),
         // eslint-disable-next-line max-len
         getLatestSubmissions: builder.query<
@@ -90,9 +90,9 @@ const submissionsService = createApi({
 });
 
 const {
-    useGetUnprocessedCountQuery,
+    useLazyGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
-    useGetLatestSubmissionsInRoleQuery,
+    useLazyGetLatestSubmissionsInRoleQuery,
     useLazyGetSubmissionResultsByProblemQuery,
     useLazyGetUserSubmissionsQuery,
     useGetSubmissionDetailsQuery,
@@ -101,10 +101,10 @@ const {
 } = submissionsService;
 
 export {
-    useGetUnprocessedCountQuery,
+    useLazyGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetSubmissionDetailsQuery,
-    useGetLatestSubmissionsInRoleQuery,
+    useLazyGetLatestSubmissionsInRoleQuery,
     useLazyGetSubmissionResultsByProblemQuery,
     useLazyGetUserSubmissionsQuery,
     useLazyGetSubmissionUploadedFileQuery,

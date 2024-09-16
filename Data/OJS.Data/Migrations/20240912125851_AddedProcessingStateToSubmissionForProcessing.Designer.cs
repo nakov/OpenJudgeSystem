@@ -12,8 +12,8 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20240827161142_SetNullForEmptyFilesInProblemResources")]
-    partial class SetNullForEmptyFilesInProblemResources
+    [Migration("20240912125851_AddedProcessingStateToSubmissionForProcessing")]
+    partial class AddedProcessingStateToSubmissionForProcessing
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -924,14 +924,20 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTimeOffset?>("EnqueuedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Processed")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset?>("ProcessedAt")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<bool>("Processing")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset?>("ProcessingStartedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
 
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");

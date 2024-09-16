@@ -7,7 +7,6 @@ import storage from 'redux-persist/lib/storage';
 // features
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
-import submissionsSlice from './features/submissionsSlice';
 import searchSlice from './features/searchSlice';
 import { themeSlice } from './features/themeSlice';
 import usersSlice from './features/usersSlice';
@@ -43,7 +42,6 @@ const rootReducer = combineReducers({
     [themeSlice.name]: themeSlice.reducer,
     [authorizationSlice.name]: authorizationSlice.reducer,
     [usersSlice.name]: usersSlice.reducer,
-    [submissionsSlice.name]: submissionsSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
     [searchSlice.name]: searchSlice.reducer,
 
