@@ -30,6 +30,25 @@ export default defineConfig({
                 main: resolve(__dirname, 'index.html'),
                 admin: resolve(__dirname, 'admin.html')
             },
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('react')) {
+                            return 'react-vendor'; // React and its ecosystem
+                        }
+
+                        if (id.includes('material')) {
+                            return 'material-vendor'; // Material
+                        }
+
+                        if (id.includes('@mui')) {
+                            return 'mui-vendor'; // Material UI
+                        }
+
+                        return 'vendor'; // Other libraries
+                    }
+                }
+            },
             onwarn(warning, warn) {
               if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
                 return
