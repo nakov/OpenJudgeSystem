@@ -1,18 +1,17 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios, { ResponseType } from 'axios';
-import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
 
-import { IDictionary, UrlType } from '../common/common-types';
+import { IDictionary } from '../common/common-types';
 import { ExceptionData } from '../common/types';
-import { IErrorDataType } from '../hooks/use-http';
 
-const getUrl = <P>(url: UrlType<P>, params?: IDictionary<P> | null) => (
-    isFunction(url)
-        ? url(params)
-        : url
-);
+interface IErrorDataType {
+    title: string;
+    status: number;
+    detail: string;
+    extensions: IDictionary<object>;
+}
 
 const getErrorMessage = (
     err: FetchBaseQueryError | SerializedError | ExceptionData[] | undefined,
@@ -99,8 +98,11 @@ const makeHttpCall = async ({
     }
 };
 
+export type {
+    IErrorDataType,
+};
+
 export {
-    getUrl,
     makeHttpCall,
     getErrorMessage,
 };

@@ -3,9 +3,8 @@ import { MdAttachFile } from 'react-icons/md';
 import isNil from 'lodash/isNil';
 
 import { FileValidationError } from '../../common/constants';
-import { useSubmissions } from '../../hooks/submissions/use-submissions';
-import { IErrorDataType } from '../../hooks/use-http';
 import useTheme from '../../hooks/use-theme';
+import { IErrorDataType } from '../../utils/http-utils';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
 import styles from './FileUploader.module.scss';
@@ -21,7 +20,6 @@ interface IFileUploaderProps {
 const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension, onFileUpload }: IFileUploaderProps) => {
     const { isDarkMode } = useTheme();
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
-    const { actions: { updateSubmissionCode, closeErrorMessage } } = useSubmissions();
 
     const [ internalFile, setInternalFile ] = useState<File | null>(null);
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>(null);
@@ -68,14 +66,13 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
                 extensions: { Data: JSON.stringify({ ProblemId: problemId }) },
             } as unknown as IErrorDataType);
         } else if (problemId) {
-            closeErrorMessage(problemId.toString());
+            setInternalProblemId(problemId);
         }
         setInternalFile(processedUploadFile);
-        updateSubmissionCode(processedUploadFile);
         if (problemId) {
             setInternalProblemId(problemId);
         }
-    }, [ allowedFileExtensions, closeErrorMessage, onFileUpload, onInvalidFileExtension, problemId, updateSubmissionCode ]);
+    }, [ allowedFileExtensions, onFileUpload, onInvalidFileExtension, problemId ]);
 
     const handleDrop = (e: any) => {
         e.preventDefault();
