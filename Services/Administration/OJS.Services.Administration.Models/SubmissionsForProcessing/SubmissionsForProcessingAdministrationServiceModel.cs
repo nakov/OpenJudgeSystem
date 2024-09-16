@@ -1,6 +1,7 @@
 namespace OJS.Services.Administration.Models.SubmissionsForProcessing;
 
 using AutoMapper;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Models.Mapping;
@@ -10,9 +11,13 @@ public class SubmissionsForProcessingAdministrationServiceModel : BaseAdministra
 {
     public int SubmissionId { get; set; }
 
-    public bool Processing { get; set; }
+    public string State { get; set; } = SubmissionProcessingState.Invalid.ToString();
 
-    public bool Processed { get; set; }
+    public DateTimeOffset? EnqueuedAt { get; set; }
+
+    public DateTimeOffset? ProcessingStartedAt { get; set; }
+
+    public DateTimeOffset? ProcessedAt { get; set; }
 
     public DateTime CreatedOn { get; set; }
 
@@ -20,6 +25,8 @@ public class SubmissionsForProcessingAdministrationServiceModel : BaseAdministra
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<SubmissionForProcessing, SubmissionsForProcessingAdministrationServiceModel>()
+            .ForMember(sfpam => sfpam.State, opt
+                => opt.MapFrom(sfp => sfp.State.ToString()))
             .ForMember(sfpam => sfpam.OperationType, opt
                 => opt.Ignore());
 }

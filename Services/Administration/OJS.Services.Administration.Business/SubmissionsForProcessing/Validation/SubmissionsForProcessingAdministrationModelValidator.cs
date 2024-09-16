@@ -1,7 +1,5 @@
 ﻿namespace OJS.Services.Administration.Business.SubmissionsForProcessing.Validation;
 
-using FluentValidation;
-using OJS.Common.Enumerations;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Models.SubmissionsForProcessing;
 using OJS.Services.Common.Data;

@@ -3,6 +3,10 @@
 
 .recentSubmissionsWrapper {
   margin-top: spacings.$sp-32;
+
+  .refreshIcon {
+    float: right;
+  }
 }
 
 .recentSubmissionsGrid {

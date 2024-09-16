@@ -112,46 +112,6 @@ interface ISubmissionResults {
     testRunsCount: number;
 }
 
-interface ITestCaseRun {
-    id: number;
-    checkerComment?: string;
-    executionComment?: string;
-    expectedOutputFragment?: string;
-    input?: string;
-    isTrialTest: boolean;
-    memoryUsed: number;
-    orderBy: number;
-    resultType: string;
-    showInput: boolean;
-    submissionId?: number;
-    timeUsed: number;
-    userOutputFragment?: string;
-    testId: number;
-}
-
-interface ITestRunDetailsCollapsed {
-    [id: string]: {
-        isExpanded: boolean;
-        detailsExpanded: boolean;
-    };
-}
-
-interface ISubmissionResultsDetails {
-    testRuns?: ITestCaseRun[];
-}
-
-interface IUserRole {
-    id: string;
-    name: string;
-}
-
-interface IUserAuthData {
-    email: string;
-    id: string;
-    roles: IUserRole[];
-    userName: string;
-}
-
 interface ITestRun {
     id: number;
     timeUsed: number;
@@ -176,11 +136,6 @@ export type {
     ITestRunDetailsType,
     ISubmissionDetailsType,
     ISubmissionResults,
-    ITestRunDetailsCollapsed,
-    ISubmissionResultsDetails,
     ISubmissionDetailsResponseType,
-    IUserAuthData,
-    ITestCaseRun,
-    IUserRole,
     ITestRun,
 };
