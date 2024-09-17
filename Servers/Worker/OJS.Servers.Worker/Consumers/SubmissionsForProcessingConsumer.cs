@@ -49,12 +49,12 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
             ProcessingStartedAt = startedExecutionOn,
         };
 
+        await this.publisher.Publish(submissionStartedProcessingPubSubModel);
+
         var result = new ProcessedSubmissionPubSubModel(context.Message.Id)
         {
             WorkerName = workerName,
         };
-
-        await this.publisher.Publish(submissionStartedProcessingPubSubModel);
 
         try
         {

@@ -88,6 +88,9 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is already marked as Processed. Skipping step.")]
     public static partial void LogSubmissionAlreadyProcessed(this ILogger logger, int submissionId);
 
+    [LoggerMessage(1061, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is already marked as Processing. Skipping step.")]
+    public static partial void LogSubmissionAlreadyProcessing(this ILogger logger, int submissionId);
+
     [LoggerMessage(1100, LogLevel.Information, "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}")]
     public static partial void LogSubmissionProcessedSuccessfully(this ILogger logger, int submissionId, object submissionForProcessing);
 
