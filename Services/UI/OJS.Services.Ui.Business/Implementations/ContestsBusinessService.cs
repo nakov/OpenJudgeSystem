@@ -77,11 +77,11 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
             var contestDetailsServiceModel = await this.contestsCacheService.GetContestDetailsServiceModel(id);
-            var isLecturerOrAdmin = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contestDetailsServiceModel?.Id);
+            var isLecturerInContestOrAdmin = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contestDetailsServiceModel?.Id);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contestDetailsServiceModel,
-                isLecturerOrAdmin));
+                isLecturerInContestOrAdmin));
 
             if (!validationResult.IsValid)
             {
@@ -91,24 +91,31 @@ namespace OJS.Services.Ui.Business.Implementations
             var contestActivityEntity = await this.activityService
                 .GetContestActivity(contestDetailsServiceModel!.Map<ContestForActivityServiceModel>());
 
-            var participant = await this.participantsData
+            contestDetailsServiceModel!.CanBeCompeted = contestActivityEntity.CanBeCompeted;
+            contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
+            contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
+
+            var competeParticipant = await this.participantsData
                 .GetWithProblemsForParticipantsByContestByUserAndIsOfficial(
                     id,
                     user.Id,
-                    contestActivityEntity.CanBeCompeted);
+                    true);
 
-            contestDetailsServiceModel!.CanBeCompeted = contestActivityEntity.CanBeCompeted;
-            contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
-            contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerOrAdmin;
+            var participantToGetProblemsFrom = contestDetailsServiceModel.CanBeCompeted
+                ? competeParticipant
+                : await this.participantsData.GetWithProblemsForParticipantsByContestByUserAndIsOfficial(
+                    id,
+                    user.Id,
+                    false);
 
-            if (!isLecturerOrAdmin && participant != null && contestActivityEntity.CanBeCompeted)
+            if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted)
             {
-                var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
+                var problemsForParticipant = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInCompete = (!contestDetailsServiceModel!.HasContestPassword && !contestDetailsServiceModel!.IsOnlineExam && contestActivityEntity.CanBeCompeted && participant != null) || isLecturerOrAdmin;
-            var canShowProblemsInPractice = (!contestDetailsServiceModel.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerOrAdmin;
+            var canShowProblemsInCompete = (!contestDetailsServiceModel!.HasContestPassword && !contestDetailsServiceModel!.IsOnlineExam && contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null) || isLecturerInContestOrAdmin;
+            var canShowProblemsInPractice = (!contestDetailsServiceModel.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerInContestOrAdmin;
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
             if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
@@ -116,9 +123,14 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            if (isLecturerOrAdmin || participant != null)
+            if (isLecturerInContestOrAdmin || competeParticipant != null)
             {
-                contestDetailsServiceModel.CanViewResults = true;
+                contestDetailsServiceModel.CanViewCompeteResults = true;
+            }
+
+            if (isLecturerInContestOrAdmin || contestDetailsServiceModel.CanBeCompeted || contestDetailsServiceModel.CanBePracticed)
+            {
+                contestDetailsServiceModel.CanViewPracticeResults = true;
             }
 
             var participantsCount = await this.contestParticipantsCacheService.GetParticipantsCountForContest(id);

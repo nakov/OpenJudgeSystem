@@ -162,11 +162,15 @@ const ContestDetailsPage = () => {
             ? !canBeCompeted
             : !canBePracticed;
 
+        const canViewResults = isCompete
+            ? contestDetails?.canViewCompeteResults
+            : contestDetails?.canViewPracticeResults;
+
         return (
             <div className={styles.actionBtnWrapper}>
                 <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id!} name={name ?? ''} />
                 {
-                    contestDetails?.canViewResults
+                    canViewResults
                         ? renderResultsAsLink(isCompete)
                         : renderResultsText(isCompete)
                 }
