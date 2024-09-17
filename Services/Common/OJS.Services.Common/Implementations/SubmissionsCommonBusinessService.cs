@@ -85,16 +85,30 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         if (freshSubmissionForProcessing == null || freshSubmissionForProcessing.SubmissionId != submission.Id)
         {
             this.logger.LogSubmissionForProcessingNotFoundForSubmission(submissionForProcessing.Id, submission.Id);
+            return;
         }
-        else if (freshSubmissionForProcessing.State == SubmissionProcessingState.Processed)
+
+        switch (freshSubmissionForProcessing.State)
         {
-            // Race condition can occur and the submission can already be marked as processed when we reach this point,
-            // but it is not a problem, as the submission is processed and there is no need to touch it anymore.
-            this.logger.LogSubmissionAlreadyProcessed(submission.Id);
-        }
-        else
-        {
-            await this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing, enqueuedAt);
+            case SubmissionProcessingState.Processed:
+                // Race condition can occur and the submission can already be marked as processed when we reach this point,
+                // but it is not a problem, as the submission is already picked up and there is no need to touch it anymore.
+                // We just log the event and update the enqueued time. The worker will do the rest.
+                this.logger.LogSubmissionAlreadyProcessed(submission.Id);
+                await this.UpdateEnqueuedTime(freshSubmissionForProcessing, enqueuedAt);
+                break;
+            case SubmissionProcessingState.Processing:
+                // Same as above, but for processing state.
+                this.logger.LogSubmissionAlreadyProcessing(submission.Id);
+                await this.UpdateEnqueuedTime(freshSubmissionForProcessing, enqueuedAt);
+                break;
+            case SubmissionProcessingState.Enqueued:
+            case SubmissionProcessingState.Pending:
+            case SubmissionProcessingState.Invalid:
+            default:
+                // Submission is not yet picked up for processing, so we mark it as enqueued.
+                await this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing, enqueuedAt);
+                break;
         }
     }
 
@@ -117,5 +131,12 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         var submissionsIds = submissions.Select(s => s.Id).ToList();
 
         await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds, enqueuedAt);
+    }
+
+    private async Task UpdateEnqueuedTime(SubmissionForProcessing freshSubmissionForProcessing, DateTimeOffset enqueuedAt)
+    {
+        freshSubmissionForProcessing.EnqueuedAt = enqueuedAt;
+        this.submissionForProcessingData.Update(freshSubmissionForProcessing);
+        await this.submissionForProcessingData.SaveChanges();
     }
 }
