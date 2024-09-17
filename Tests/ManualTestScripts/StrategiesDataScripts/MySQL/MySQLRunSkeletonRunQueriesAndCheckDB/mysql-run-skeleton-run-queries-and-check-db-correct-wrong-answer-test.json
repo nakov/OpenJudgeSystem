@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "mysql-run-skeleton-run-queries-and-check-database",
+  "CompilerType": "None",
+  "FileContent": null,
+  "Code": "INSERT INTO `towns` (id, name) VALUES (1, \u0027Sofia\u0027), (2, \u0027Plovdiv\u0027), (3, \u0027Varna\u0027)",
+  "TimeLimit": 1000,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 101505,
+        "Input": "SELECT count(id) FROM towns;\r\n",
+        "Output": "3",
+        "IsTrialTest": false,
+        "OrderBy": 1
+      },
+      {
+        "Id": 101506,
+        "Input": "SELECT count(id) FROM minions;\r\n",
+        "Output": "3",
+        "IsTrialTest": false,
+        "OrderBy": 2
+      }
+    ],
+    "TaskSkeleton": "nY9BC4JAEIXvC/sf5qjQoUunTts61tK6xrhGnUTQQkINCvr7pS5SgR06zsyb974nCYVFsGKlEVQIJraAB5XYBOqqqdrmxpnHWVWAMra/mlTrGWdNXpewFyQ3grzF3H+/5edykA+jjE1iSXSb6yVztrAjFQk6whaP4FWFz5m/5Oylnia6t4+/eD4BepeJeKEtksse+4sgABnrNDI9QfYV3lP/eByzT2N5xxDGhGptBgZn7QNhiIRGoivc0T0B",
+    "TaskSkeletonAsString": "CREATE TABLE IF NOT EXISTS minions\r\n(\r\nid INT NOT NULL,\r\nname VARCHAR(50) NOT NULL,\r\nage INT NULL,\r\nCONSTRAINT pk_minions PRIMARY KEY (id)\r\n);\r\n\r\nCREATE TABLE IF NOT EXISTS towns\r\n(\r\nid INT NOT NULL,\r\nname VARCHAR(50) NOT NULL,\r\nCONSTRAINT pk_towns PRIMARY KEY (id)\r\n);\r\nALTER TABLE minions\r\nADD COLUMN town_id INT NOT NULL;\r\n\r\nALTER TABLE minions\r\nADD CONSTRAINT fk_minions_towns FOREIGN KEY (town_id) REFERENCES towns(id)"
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}

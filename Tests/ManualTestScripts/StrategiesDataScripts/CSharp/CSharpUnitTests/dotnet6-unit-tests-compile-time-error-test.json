@@ -1,0 +1,74 @@
+// Compile time error
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "dot-net-core-6-unit-tests",
+    "CompilerType": "DotNetCompiler",
+    "FileContent": "UEsDBBQAAAAIAClfZFZci6cq6wAAAP4BAAAVAAAARGF0YWJhc2UuVGVzdHMuY3Nwcm9qnZHRSsMwFIbvB3uHkAdIN4aC0AYEp/TCMbR65c1Zejpqu6ScnCI+mxc+kq9gmoF2Y0PwLnzk/37y5+vjM12Te0XD4rFsMnlfG3LeVaxWy0IFJPV0Mp0IMVzrkPj9jlzf6QEFWABtkW8JdvjmqNEW+VLN0uSY7x0hkPs1mAY2LeoKWo9pMiKxJzkuijRn3B00x9AWH7BCQmtQ5Na0fYmZtL2tWYpnJF87m8mFulIzKZK/k6unkFwU6Pm6hI6R/mU5nHCwxR1/VfOLsSssMHrbmcfuv+hEmVIvN8CwAY8/B2V8FwLnCuLCg05/A1BLAwQUAAAACABlXGZWzOHvCcQBAAB1BAAAEAAAAERhdGFiYXNlVGVzdHMuY3OdVNtO20AQfY+Uf5jyUkdambqXUBRAilKQIlXtAyAeUB7W9iheYXbd3dlciPLvnXUu2EBbysiW1jtnzsyes7KW9+gqmSF8kyRT6TC+Qkeu21l1O8DhndJT+HGtFcUXltFzY+8G3c4mexvAF2pB3uJks1X5tFQZZKV0bk+65Qz5LW9dfYl0XU0eN7a1M6Ny4Jyvot5jcrVrGmLd/KinGHGbSOMclKbbyQrWvclfEbCCRMBHAZ8EfBbw5b8LBPQFHAn4KuBYQPKBX84nDEgYkTAkYUzSb/E2Tzgy2pH1GRl7WRhf5mMWWclSPWDQ7UZRMTLWYkYj4zVFmylyTrVVgUYcHsLQWqmn2BRol8movbezByBP4RTCUXdbUd1n8BKLc2ifEPFogIuKR8W8HpbZAkH8HfWUisFztMzIy3KPTeN6+azfplk8tHj+i/FRq4losvQaTf51O95qJb9Hr7fzqrBmfr7IsCJl9E2BeqwrT0HhsRumZoZJ//XObpWoSd3JWM/4ouQ/K7QysO/bnEVRD07P2rVPqELsrf+z8034WsBBuFjL9w4yyT8MRUu4944gRXaefSiXLFCQF6do3buDF/3gBT+/AVBLAQIUABQAAAAIAClfZFZci6cq6wAAAP4BAAAVAAAAAAAAAAEAIAAAAAAAAABEYXRhYmFzZS5UZXN0cy5jc3Byb2pQSwECFAAUAAAACABlXGZWzOHvCcQBAAB1BAAAEAAAAAAAAAABACAAAAAeAQAARGF0YWJhc2VUZXN0cy5jc1BLBQYAAAAAAgACAIEAAAAQAwAAAAA\u003d",
+    "Code": "",
+    "TimeLimit": 2000,
+    "MemoryLimit": 29777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 135086,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\n\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        },
+        {
+          "Id": 135087,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return 0; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        },
+        {
+          "Id": 135088,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\t//this.data[this.count] \u003d element;\r\n\t\t//this.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 3
+        },
+        {
+          "Id": 135089,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\t// if (this.count \u003d\u003d 16)\r\n\t\t// {\r\n\t\t\t// throw new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t// }\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 4
+        },
+        {
+          "Id": 135090,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\t// this.count--;\r\n\t\t// this.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 5
+        },
+        {
+          "Id": 135091,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\t// if (this.count \u003d\u003d 0)\r\n\t\t// {\r\n\t\t\t// throw new InvalidOperationException(\"The collection is empty!\");\r\n\t\t// }\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn coppyArray;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 6
+        },
+        {
+          "Id": 135092,
+          "Input": "using System;\r\nnamespace Database\r\n{\r\npublic class Database\r\n{\r\n\tprivate int[] data;\r\n\r\n\tprivate int count;\r\n\r\n\tpublic Database(params int[] data)\r\n\t{\r\n\t\tthis.data \u003d new int[16];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c data.Length; i++)\r\n\t\t{\r\n\t\t\tthis.Add(data[i]);\r\n\t\t}\r\n\r\n\t\tthis.count \u003d data.Length;\r\n\t}\r\n\r\n\tpublic int Count\r\n\t{\r\n\t\tget { return count; }\r\n\t}\r\n\r\n\tpublic void Add(int element)\r\n\t{\r\n\t\tif (this.count \u003d\u003d 16)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"Array\u0027s capacity must be exactly 16 integers!\");\r\n\t\t}\r\n\r\n\t\tthis.data[this.count] \u003d element;\r\n\t\tthis.count++;\r\n\t}\r\n\r\n\tpublic void Remove()\r\n\t{\r\n\t\tif (this.count \u003d\u003d 0)\r\n\t\t{\r\n\t\t\tthrow new InvalidOperationException(\"The collection is empty!\");\r\n\t\t}\r\n\r\n\t\tthis.count--;\r\n\t\tthis.data[this.count] \u003d 0;\r\n\t}\r\n\r\n\tpublic int[] Fetch()\r\n\t{\r\n\t\tint[] coppyArray \u003d new int[this.count];\r\n\r\n\t\tfor (int i \u003d 0; i \u003c this.count; i++)\r\n\t\t{\r\n\t\t\tcoppyArray[i] \u003d this.data[i];\r\n\t\t}\r\n\r\n\t\treturn null;\r\n\t}\r\n}\r\n}",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 7
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

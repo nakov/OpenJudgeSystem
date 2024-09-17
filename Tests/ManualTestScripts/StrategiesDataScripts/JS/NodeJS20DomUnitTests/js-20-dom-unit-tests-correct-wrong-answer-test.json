@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "javascript-js-dom-unit-testsV20",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "function solve() {\r\n   document.querySelector(\u0027#btnSend\u0027).addEventListener(\u0027click\u0027, onClick);\r\n\r\n   function onClick() {\r\n      let dataInput \u003d document.querySelector(\"#inputs textarea\").value.trim();\r\n\r\n      try {\r\n         dataInput \u003d JSON.parse(dataInput);\r\n      } catch (error) {\r\n         console.error(\"Invalid input format:\", error);\r\n         alert(\u0027Please provide valid JSON input!\u0027);\r\n         return;\r\n      }\r\n\r\n      const bestRestaurantOutput \u003d document.querySelector(\"#outputs #bestRestaurant p\");\r\n      const bestRestaurantWorkersOutput \u003d document.querySelector(\"#outputs #workers p\");\r\n\r\n      const restaurantsList \u003d {};\r\n\r\n      for (const restaurant of dataInput) {\r\n         const [restaurantName, restaurantWorkers] \u003d restaurant.split(\u0027 - \u0027);\r\n         if (!restaurantName || !restaurantWorkers) continue;\r\n\r\n         const workersInfo \u003d restaurantWorkers.split(\u0027, \u0027);\r\n\r\n         if (!restaurantsList[restaurantName]) {\r\n            restaurantsList[restaurantName] \u003d {};\r\n         }\r\n\r\n         for (const worker of workersInfo) {\r\n            const [workerName, workerSalary] \u003d worker.split(\u0027 \u0027);\r\n            const salary \u003d Number(workerSalary);\r\n\r\n            if (workerName \u0026\u0026 !isNaN(salary)) {\r\n               restaurantsList[restaurantName][workerName] \u003d salary;\r\n            }\r\n         }\r\n      }\r\n\r\n      let bestRestaurantName \u003d \u0027\u0027;\r\n      let bestRestaurantAverageSalary \u003d 0;\r\n\r\n      for (const [name, workers] of Object.entries(restaurantsList)) {\r\n         const totalSalary \u003d Object.values(workers).reduce((sum, salary) \u003d\u003e sum + salary, 0);\r\n         const numberOfWorkers \u003d Object.keys(workers).length;\r\n         const averageSalary \u003d totalSalary / numberOfWorkers;\r\n\r\n         if (averageSalary \u003e bestRestaurantAverageSalary) {\r\n            bestRestaurantAverageSalary \u003d averageSalary;\r\n            bestRestaurantName \u003d name;\r\n         }\r\n      }\r\n\r\n      let bestRestaurantHighestSalary \u003d 0;\r\n\r\n      if (bestRestaurantName) {\r\n         const salaries \u003d Object.values(restaurantsList[bestRestaurantName]);\r\n         bestRestaurantHighestSalary \u003d Math.max(...salaries);\r\n\r\n         bestRestaurantOutput.textContent \u003d `Name: ${bestRestaurantName} Average Salary: ${bestRestaurantAverageSalary.toFixed(2)} Best Salary: ${bestRestaurantHighestSalary.toFixed(2)}`;\r\n\r\n         const bestRestaurantWorkers \u003d Object.entries(restaurantsList[bestRestaurantName])\r\n            .map(([name, salary]) \u003d\u003e `Name: ${name} With Salary: ${salary}`)\r\n            .join(\u0027 \u0027);\r\n\r\n         bestRestaurantWorkersOutput.textContent \u003d bestRestaurantWorkers;\r\n      } else {\r\n         bestRestaurantOutput.textContent \u003d \u0027No data available.\u0027;\r\n         bestRestaurantWorkersOutput.textContent \u003d \u0027\u0027;\r\n      }\r\n   }\r\n}\r\n",
+    "TimeLimit": 10000,
+    "MemoryLimit": 167772160,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 315248,
+          "Input": "// Best workers - Not Sorted\r\ndocument.body.innerHTML \u003d `\r\n    \u003csection class\u003d\"restaurant-race-class\"\u003e\r\n        \u003cdiv id\u003d\"inputs\"\u003e\r\n            \u003ch2\u003eAdd workers\u003c/h2\u003e\r\n            \u003ctextarea\u003e\u003c/textarea\u003e\r\n            \u003cbr\u003e\r\n            \u003cbutton type\u003d\"submit\" id\u003d\"btnSend\"\u003eSend\u003c/button\u003e\r\n        \u003c/div\u003e\r\n        \u003cdiv id\u003d\"outputs\"\u003e\r\n            \u003cdiv id\u003d\"bestRestaurant\"\u003e\r\n                \u003ch2\u003eBest Restaurant\u003c/h2\u003e\r\n                \u003cp\u003e\u003c/p\u003e\r\n            \u003c/div\u003e\r\n            \u003cdiv id\u003d\"workers\"\u003e\r\n                \u003ch2\u003eBest Restaurant\u0027s workers\u003c/h2\u003e\r\n                \u003cp\u003e\u003c/p\u003e\r\n            \u003c/div\u003e\r\n        \u003c/div\u003e\r\n    \u003c/section\u003e\r\n`;\r\n\r\nresult();\r\n\r\nlet textarea \u003d document.querySelector(\"#inputs textarea\");\r\nlet button \u003d document.querySelector(\"button#btnSend\");\r\n\r\nlet bestRestaurantP \u003d document.querySelector(\"#outputs #bestRestaurant p\");\r\nlet bestWorkersP \u003d document.querySelector(\"#outputs #workers p\");\r\n\r\ntextarea.value \u003d \u0027[\"Domat - Lora 1800, Bobby 2300, Shawn 1300, Dayan 1900, Peter 1000\",\"Mosta - Albert 100, Talor 500\"]\u0027;\r\nbutton.click();\r\n\r\nlet actualBestWorkers \u003d bestWorkersP.textContent.trim();\r\nlet expectedBestWorkers \u003d \"Name: Bobby With Salary: 2300 Name: Dayan With Salary: 1900 Name: Lora With Salary: 1800 Name: Shawn With Salary: 1300 Name: Peter With Salary: 1000\";\r\n\r\nassert.include(actualBestWorkers, expectedBestWorkers, \"The restaurant\u0027s workers are not sorted correctly.\");",
+          "Output": "yes",
+          "IsTrialTest": false,
+          "OrderBy": 5
+        },
+        {
+          "Id": 315239,
+          "Input": "document.body.innerHTML \u003d `\r\n    \u003csection class\u003d\"restaurant-race-class\"\u003e\r\n        \u003cdiv id\u003d\"inputs\"\u003e\r\n            \u003ch2\u003eAdd workers\u003c/h2\u003e\r\n            \u003ctextarea\u003e\u003c/textarea\u003e\r\n            \u003cbr\u003e\r\n            \u003cbutton type\u003d\"submit\" id\u003d\"btnSend\"\u003eSend\u003c/button\u003e\r\n        \u003c/div\u003e\r\n        \u003cdiv id\u003d\"outputs\"\u003e\r\n            \u003cdiv id\u003d\"bestRestaurant\"\u003e\r\n                \u003ch2\u003eBest Restaurant\u003c/h2\u003e\r\n                \u003cp\u003e\u003c/p\u003e\r\n            \u003c/div\u003e\r\n            \u003cdiv id\u003d\"workers\"\u003e\r\n                \u003ch2\u003eBest Restaurant\u0027s workers\u003c/h2\u003e\r\n                \u003cp\u003e\u003c/p\u003e\r\n            \u003c/div\u003e\r\n        \u003c/div\u003e\r\n    \u003c/section\u003e\r\n`;\r\n\r\nresult();\r\n\r\nlet textarea \u003d document.querySelector(\"#inputs textarea\");\r\nlet button \u003d document.querySelector(\"button#btnSend\");\r\n\r\nlet bestRestaurantP \u003d document.querySelector(\"#outputs #bestRestaurant p\");\r\nlet bestWorkersP \u003d document.querySelector(\"#outputs #workers p\");\r\n\r\ntextarea.value \u003d \u0027[\"PizzaHut - Peter 500, George 300, Mark 800\",\"TheLake - Bob 1300, Joe 780, Jane 660\"]\u0027;\r\nbutton.click();\r\n\r\nlet actualResultRestuarant \u003d bestRestaurantP.textContent.trim();\r\nlet expectedRestaurant \u003d \"Name: TheLake Average Salary: 913.33 Best Salary: 1300.00\";\r\n\r\nassert.equal(actualResultRestuarant, expectedRestaurant, \"The restaurant information about average salary and best salary is invalid.\");\r\n\r\nlet actualBestWorkers \u003d bestWorkersP.textContent.trim();\r\nlet expectedBestWorkers \u003d \"Name: Bob With Salary: 1300 Name: Joe With Salary: 780 Name: Jane With Salary: 660\";\r\n\r\nassert.equal(actualBestWorkers, expectedBestWorkers, \"The best workers paragraph is invalid\");\r\n",
+          "Output": "yes",
+          "IsTrialTest": true,
+          "OrderBy": 1
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

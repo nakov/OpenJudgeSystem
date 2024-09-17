@@ -1,0 +1,32 @@
+// 1 RuntimeError
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "javascript-code",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "function solve(input){\r\n    let num1 = Number(input[0]);\r\n    let num2 = Number(input[1]);\r\n\r\n   undefinedFunction();\r\n}",
+    "TimeLimit": 200,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+        "MaxPoints": 100,
+        "CheckerType": "trim",
+        "CheckerParameter": null,
+        "Tests": [
+            {
+                "Id": 174016,
+                "Input": "undefined\r\nabc",
+                "Output": "5",
+                "IsTrialTest": false,
+                "OrderBy": 0
+            }
+        ],
+        "TaskSkeleton": null,
+        "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+        "KeepDetails": true,
+        "EscapeTests": false,
+        "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+}

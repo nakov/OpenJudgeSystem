@@ -1,0 +1,60 @@
+// Compile time error
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "dot-net-core-6-project",
+  "CompilerType": "DotNetCompiler",
+  "FileContent": "UEsDBBQAAAAIABSYHlnWwIbG6wAAAD0CAAAQAAAATGlzdHlJdGVyYXRvci5jc41PS07DMBDdW/IdZpmqwoJ1WjZsggTdwAXcdAqW3DjyjKtWVU7GgiNxBeyklCQtFU+2ZvGe3ufr41MKKQKZ6g1e9sS4UQtkVTDXqkC9Qk95UlR6g1TrEuHJEO8fGb1m56U4SFGHpTUllFYTDenZ670UEHHoTkLtzVZz5xN5sPHm57SpOP4V7mAOt22Fk6KLGwRlfbfJr7aXm8DvhlSSwHyc21yIWDpnodC0wB1nf7t65OCrY9tZa6weXIgDbu7+k/DstnjF3qwhO5WYDLmRNKGtMZ3m58yxJ/uAI7a5OGitLfWVDfwsiPr4vgFQSwMEFAAAAAgAfZMeWY8k3FeXAAAA+QAAABQAAABMaXN0eUl0ZXJhdG9yLmNzcHJval2PQQ6CMBBF9yS9A+EA1JUr7A6NC9DEeoCKI6kU2gzTKLe3JYQYlv/Ny8+f4or2DQ2lt2d3yCrdoB3ti/K6lHlAmWAJS9I0ag6QphNa70REAV48OU9yciDKLxT8Ly+GVNgCHVH18LHYiQFon+8KvuWLfu6d0Y2m+6iHdhQwqIcJvRu8yLU3Jt5XbQXzYr6dzJKZxW9D+gFQSwMEFAAAAAgABZoeWcx3LLxrAQAAcQQAAAoAAABQcm9ncmFtLmNznVPLasMwELwH8g8bnyQohl6bppfW0EBeNIWeVVkkS2xJSIqTEPplPfST+guVH2kTJw7Ug8FGM7uzGlnfn1+SpcJqxgWM0Lrd0AnDnDLdzr7bAQ+9fk+QA0+YtTAzamFYWjKVIId1zHlRpjCGMUNJ6B93JMuRMQMo9drBAB6VtCoR4Ytg8QilIDSc6wQdCSC4gbkzKBfFwlQ79FovTFUmolS7XSQ9LSztn7Y/2cS9LVo8QJKvekMpNpcVpBgpnK9Qk1savqoRWkdovXupBq7SlMm4Rm6WmAggpGIv7o9CbwBBNHkK6GlxLaXCbIOOL+HQj54rLhTl4MwKCGYGpQvuLktyOLNrJvfNlEcZaFhYkHpIx/hopjjzuyNDmbEE46nOz8OfcbTlojhs2nq2Q+pvBp0oYg8qF/i16QUtp343gq3613J/ZnYitleTP5+wzLMqPf/v/jfB2N+RNvZ5XTtvH1i305Bg9elf/vkBUEsBAh8AFAAAAAgAFJgeWdbAhsbrAAAAPQIAABAAJAAAAAAAAAAgAAAAAAAAAExpc3R5SXRlcmF0b3IuY3MKACAAAAAAAAEAGABGZJXD9fraAUZklcP1+toBWTB42/T62gFQSwECHwAUAAAACAB9kx5ZjyTcV5cAAAD5AAAAFAAkAAAAAAAAACAAAAAZAQAATGlzdHlJdGVyYXRvci5jc3Byb2oKACAAAAAAAAEAGABgzUsx8fraAWDNSzHx+toBIVdLMfH62gFQSwECHwAUAAAACAAFmh5ZzHcsvGsBAABxBAAACgAkAAAAAAAAACAAAADiAQAAUHJvZ3JhbS5jcwoAIAAAAAAAAQAYACitQe33+toBKK1B7ff62gF+80sx8fraAVBLBQYAAAAAAwADACQBAAB1AwAAAAA\u003d",
+  "Code": "",
+  "TimeLimit": 100,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 116118,
+        "Input": "Create\nPrint\nEND\n",
+        "Output": "Invalid Operation!\n",
+        "IsTrialTest": true,
+        "OrderBy": 1
+      },
+      {
+        "Id": 116119,
+        "Input": "Create Stephen George\r\nHasNext\r\nPrint\r\nMove\r\nPrint\r\nEND\r\n",
+        "Output": "True\r\nStephen\r\nTrue\r\nGeorge\r\n",
+        "IsTrialTest": true,
+        "OrderBy": 2
+      },
+      {
+        "Id": 116120,
+        "Input": "Create 1 2 3\nHasNext\nMove\nHasNext\nHasNext\nMove\nHasNext\nEND\n",
+        "Output": "True\nTrue\nTrue\nTrue\nTrue\nFalse\n",
+        "IsTrialTest": true,
+        "OrderBy": 3
+      },
+      {
+        "Id": 116121,
+        "Input": "Create Stefcho Goshky\nHasNext\nPrint\nMove\nPrint\nMove\nPrint\nMove\nPrint\nEND\n",
+        "Output": "True\nStefcho\nTrue\nGoshky\nFalse\nGoshky\nFalse\nGoshky\n",
+        "IsTrialTest": false,
+        "OrderBy": 1
+      },
+      {
+        "Id": 116122,
+        "Input": "Create Stefcho Goshky\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nPrint\nEND\n",
+        "Output": "True\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nStefcho\n",
+        "IsTrialTest": false,
+        "OrderBy": 2
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}
