@@ -85,51 +85,39 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(1050, LogLevel.Error, "Submission for processing #{SubmissionForProcessingId} for Submission #{SubmissionId} not found in the database.", SkipEnabledCheck = true)]
     public static partial void LogSubmissionForProcessingNotFoundForSubmission(this ILogger logger, int submissionForProcessingId, int submissionId);
 
-    [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} was already marked as Processed, before it is marked as Processing.")]
+    [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is already marked as Processed. Skipping step.")]
     public static partial void LogSubmissionAlreadyProcessed(this ILogger logger, int submissionId);
+
+    [LoggerMessage(1061, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is already marked as Processing. Skipping step.")]
+    public static partial void LogSubmissionAlreadyProcessing(this ILogger logger, int submissionId);
 
     [LoggerMessage(1100, LogLevel.Information, "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}")]
     public static partial void LogSubmissionProcessedSuccessfully(this ILogger logger, int submissionId, object submissionForProcessing);
 
-    [LoggerMessage(1101, LogLevel.Information, "Adding submission for processing: {SubmissionId}")]
-    public static partial void LogAddingSubmissionForProcessing(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1102, LogLevel.Information, "Updating submission for processing: {SubmissionId}")]
-    public static partial void LogUpdatingSubmissionForProcessing(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1103, LogLevel.Information, "Marking submission for processing: {SubmissionId}")]
-    public static partial void LogMarkingSubmissionForProcessing(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1104, LogLevel.Information, "Marking submission as processed: {SubmissionId}")]
-    public static partial void LogMarkingSubmissionAsProcessed(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1105, LogLevel.Information, "Removing submission for processing: {SubmissionId}")]
-    public static partial void LogRemovingSubmissionForProcessing(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1106, LogLevel.Information, "Received retest submission #{SubmissionId}")]
+    [LoggerMessage(1160, LogLevel.Information, "Received retest submission #{SubmissionId}")]
     public static partial void LogReceivedRetestSubmission(this ILogger logger, int submissionId);
 
-    [LoggerMessage(1107, LogLevel.Information, "Retested submission #{SubmissionId}")]
+    [LoggerMessage(1170, LogLevel.Information, "Retested submission #{SubmissionId}")]
     public static partial void LogRetestedSubmission(this ILogger logger, int submissionId);
 
-    [LoggerMessage(1108, LogLevel.Information, "Received execution result for submission #{SubmissionId} from worker {WorkerName}")]
+    [LoggerMessage(1180, LogLevel.Information, "Received execution result for submission #{SubmissionId} from worker {WorkerName}")]
     public static partial void LogReceivedExecutionResult(this ILogger logger, int submissionId, string? workerName);
 
-    [LoggerMessage(1109, LogLevel.Information, "Starting processing execution result for submission #{SubmissionId}: {@ExecutionResult}")]
+    [LoggerMessage(1190, LogLevel.Information, "Starting processing execution result for submission #{SubmissionId}: {@ExecutionResult}")]
     public static partial void LogStartingProcessingExecutionResult(this ILogger logger, int submissionId, object executionResult);
 
-    [LoggerMessage(1110, LogLevel.Information, "Processed execution result for submission #{SubmissionId} from worker {WorkerName}")]
+    [LoggerMessage(1201, LogLevel.Information, "Processed execution result for submission #{SubmissionId} from worker {WorkerName}")]
     public static partial void LogProcessedExecutionResult(this ILogger logger, int submissionId, string? workerName);
 
-    [LoggerMessage(1112, LogLevel.Information, "Starting processing submission #{SubmissionId} on worker {WorkerName}")]
+    [LoggerMessage(1202, LogLevel.Information, "Starting processing submission #{SubmissionId} on worker {WorkerName}")]
     public static partial void LogStartingProcessingSubmission(this ILogger logger, int submissionId, string? workerName);
 
-    [LoggerMessage(1113, LogLevel.Information, "Executing submission #{SubmissionId}: {@Submission}")]
+    [LoggerMessage(1203, LogLevel.Information, "Executing submission #{SubmissionId}: {@Submission}")]
     public static partial void LogExecutingSubmission(this ILogger logger, int submissionId, object submission);
 
-    [LoggerMessage(1114, LogLevel.Information, "Produced execution result for submission #{SubmissionId}: {@ExecutionResult}")]
+    [LoggerMessage(1204, LogLevel.Information, "Produced execution result for submission #{SubmissionId}: {@ExecutionResult}")]
     public static partial void LogProducedExecutionResult(this ILogger logger, int submissionId, object executionResult);
 
-    [LoggerMessage(1116, LogLevel.Information, "Published processed submission #{SubmissionId} from worker: {WorkerName}")]
+    [LoggerMessage(1206, LogLevel.Information, "Published processed submission #{SubmissionId} from worker: {WorkerName}")]
     public static partial void LogPublishedProcessedSubmission(this ILogger logger, int submissionId, string? workerName);
 }

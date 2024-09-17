@@ -8,7 +8,7 @@ import {
     setContestDetails,
 } from '../../redux/features/contestsSlice';
 import { useAppDispatch } from '../../redux/store';
-import { setLayout } from '../shared/set-layout';
+import setLayout from '../shared/set-layout';
 
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import styles from './HomePage.module.scss';

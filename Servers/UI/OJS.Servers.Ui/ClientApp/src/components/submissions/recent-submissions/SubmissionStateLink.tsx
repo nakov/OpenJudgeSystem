@@ -9,10 +9,11 @@ interface ISubmissionStateLinkProps {
     stateIndex: number;
     isSelected: boolean;
     text: string;
+    count?: number | null;
     handleOnSelect: (index: number) => void;
 }
 
-const SubmissionStateLink = ({ stateIndex, isSelected, text, handleOnSelect }: ISubmissionStateLinkProps) => {
+const SubmissionStateLink = ({ stateIndex, isSelected, text, count, handleOnSelect }: ISubmissionStateLinkProps) => {
     const btnId = useMemo(
         () => {
             const privilegedIdBtn = generateId();
@@ -25,12 +26,14 @@ const SubmissionStateLink = ({ stateIndex, isSelected, text, handleOnSelect }: I
         <Button
           id={btnId}
           onClick={() => handleOnSelect(stateIndex)}
-          internalClassName={`${styles.privilegedButtonClassName} 
+          internalClassName={`${styles.privilegedButtonClassName}
                               ${isSelected
               ? `${styles.active}`
               : ''}
                              `}
-          text={text}
+          text={text + (count
+              ? ` (${count})`
+              : '')}
         />
     );
 };

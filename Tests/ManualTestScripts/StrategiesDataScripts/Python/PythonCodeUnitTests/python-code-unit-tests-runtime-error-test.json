@@ -1,0 +1,32 @@
+// 1 RuntimeError
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "python-code-unit-tests",
+  "CompilerType": "None",
+  "FileContent": null,
+  "Code": "def even_odd_filter(**kwargs):\r\n    kwargs[\"odd\"] \u003d [x for x in kwargs[\"odd\"] if x % 2 \u003d\u003d 1]\r\n    kwargs[\"even\"] \u003d [x for x in kwargs[\"even\"] if x % 2 \u003d\u003d 0]\r\n    kwargs1 \u003d sorted(kwargs.items(), key\u003dlambda kvp: -len(kvp[1]))\r\n    return dict(kwargs1)",
+  "TimeLimit": 100,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 248422,
+        "Input": "import unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n   def test(self):\r\n      func \u003d even_odd_filter\r\n      res \u003d func(even\u003d[1, 5, 7, 11, 15])\r\n      self.assertEqual(res, {\u0027even\u0027: []})\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n   unittest.main()",
+        "Output": "Test Passed!",
+        "IsTrialTest": false,
+        "OrderBy": 6
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}

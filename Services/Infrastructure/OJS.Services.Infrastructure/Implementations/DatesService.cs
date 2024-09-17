@@ -7,6 +7,9 @@ namespace OJS.Services.Infrastructure.Implementations
         public DateTime GetUtcNow()
             => DateTime.UtcNow;
 
+        public DateTimeOffset GetUtcNowOffset()
+            => DateTimeOffset.UtcNow;
+
         public DateTime GetMaxValue()
             => DateTime.MaxValue;
 

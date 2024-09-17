@@ -4,6 +4,7 @@
     {
         All = 1,
         Processing = 2,
-        Pending = 3,
+        Enqueued = 3,
+        Pending = 4,
     }
 }

@@ -1,11 +1,13 @@
 namespace OJS.Services.Common.Implementations;
 
 using Microsoft.Extensions.Logging;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Extensions;
 using System;
@@ -19,17 +21,20 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
     private readonly ISubmissionsCommonDataService submissionsCommonDataService;
     private readonly ISubmissionsForProcessingCommonDataService submissionForProcessingData;
     private readonly ILogger<SubmissionsCommonBusinessService> logger;
+    private readonly IDatesService dates;
 
     public SubmissionsCommonBusinessService(
         IPublisherService publisher,
         ISubmissionsCommonDataService submissionsCommonDataService,
         ISubmissionsForProcessingCommonDataService submissionForProcessingData,
-        ILogger<SubmissionsCommonBusinessService> logger)
+        ILogger<SubmissionsCommonBusinessService> logger,
+        IDatesService dates)
     {
         this.publisher = publisher;
         this.submissionsCommonDataService = submissionsCommonDataService;
         this.submissionForProcessingData = submissionForProcessingData;
         this.logger = logger;
+        this.dates = dates;
     }
 
     public SubmissionServiceModel BuildSubmissionForProcessing(
@@ -59,9 +64,12 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
     public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission, SubmissionForProcessing submissionForProcessing)
     {
+        DateTimeOffset enqueuedAt;
+
         try
         {
             var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
+            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.Publish(pubSubModel);
         }
         catch (Exception ex)
@@ -77,25 +85,41 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         if (freshSubmissionForProcessing == null || freshSubmissionForProcessing.SubmissionId != submission.Id)
         {
             this.logger.LogSubmissionForProcessingNotFoundForSubmission(submissionForProcessing.Id, submission.Id);
+            return;
         }
-        else if (freshSubmissionForProcessing.Processed)
+
+        switch (freshSubmissionForProcessing.State)
         {
-            // Race condition can occur and the submission can already be marked as processed when we reach this point,
-            // but it is not a problem, as the submission is processed and there is no need to touch it anymore.
-            this.logger.LogSubmissionAlreadyProcessed(submission.Id);
-        }
-        else
-        {
-            this.submissionForProcessingData.MarkProcessing(freshSubmissionForProcessing);
-            await this.submissionForProcessingData.SaveChanges();
+            case SubmissionProcessingState.Processed:
+                // Race condition can occur and the submission can already be marked as processed when we reach this point,
+                // but it is not a problem, as the submission is already picked up and there is no need to touch it anymore.
+                // We just log the event and update the enqueued time. The worker will do the rest.
+                this.logger.LogSubmissionAlreadyProcessed(submission.Id);
+                await this.UpdateEnqueuedTime(freshSubmissionForProcessing, enqueuedAt);
+                break;
+            case SubmissionProcessingState.Processing:
+                // Same as above, but for processing state.
+                this.logger.LogSubmissionAlreadyProcessing(submission.Id);
+                await this.UpdateEnqueuedTime(freshSubmissionForProcessing, enqueuedAt);
+                break;
+            case SubmissionProcessingState.Enqueued:
+            case SubmissionProcessingState.Pending:
+            case SubmissionProcessingState.Invalid:
+            default:
+                // Submission is not yet picked up for processing, so we mark it as enqueued.
+                await this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing, enqueuedAt);
+                break;
         }
     }
 
     public async Task PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
     {
+        DateTimeOffset enqueuedAt;
+
         try
         {
             var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>();
+            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.PublishBatch(pubSubModels);
         }
         catch (Exception ex)
@@ -106,6 +130,13 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
         var submissionsIds = submissions.Select(s => s.Id).ToList();
 
-        await this.submissionForProcessingData.MarkMultipleForProcessing(submissionsIds);
+        await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds, enqueuedAt);
+    }
+
+    private async Task UpdateEnqueuedTime(SubmissionForProcessing freshSubmissionForProcessing, DateTimeOffset enqueuedAt)
+    {
+        freshSubmissionForProcessing.EnqueuedAt = enqueuedAt;
+        this.submissionForProcessingData.Update(freshSubmissionForProcessing);
+        await this.submissionForProcessingData.SaveChanges();
     }
 }

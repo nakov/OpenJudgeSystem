@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "javascript-code",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "function solve(input){\r\n    let num1 = Number(input[0]);\r\n    let num2 = Number(input[1]);\r\n\r\n    if (num1 > num2) {\r\n        console.log(num1);\r\n    } else {\r\n        console.log(num2);\r\n    }\r\n}",
+    "TimeLimit": 200,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+        "MaxPoints": 100,
+        "CheckerType": "trim",
+        "CheckerParameter": null,
+        "Tests": [
+            {
+                "Id": 174014,
+                "Input": "3\r\n5",
+                "Output": "5",
+                "IsTrialTest": false,
+                "OrderBy": 2
+            },
+            {
+                "Id": 174015,
+                "Input": "3\r\n5",
+                "Output": "3",
+                "IsTrialTest": false,
+                "OrderBy": 1
+            }
+        ],
+        "TaskSkeleton": null,
+        "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+        "KeepDetails": true,
+        "EscapeTests": false,
+        "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+}

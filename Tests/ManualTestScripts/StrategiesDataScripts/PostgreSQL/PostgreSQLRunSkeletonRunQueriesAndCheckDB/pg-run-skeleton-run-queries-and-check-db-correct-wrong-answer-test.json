@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "postgres-run-skeleton-run-queries-and-check-database",
+  "CompilerType": "None",
+  "FileContent": null,
+  "Code": "CREATE VIEW \r\n\tview_continents_countries_currencies_details\r\nAS\r\nSELECT \r\n\tCONCAT(cont.continent_name,\u0027: \u0027, cont.continent_code\r\n\t) AS continent_details,\r\n\tCONCAT(coun.country_name, \u0027 - \u0027, coun.capital, \u0027 - \u0027, coun.area_in_sq_km, \u0027km2\u0027\r\n\t) AS country_information,\r\n\tCONCAT(curr.description, \u0027 (\u0027, curr.currency_code, \u0027)\u0027\r\n\t) AS currencies\r\nFROM \r\n\tcontinents AS cont, \r\n\tcountries AS coun, \r\n\tcurrencies AS curr\r\nWHERE\r\n\tcoun.continent_code \u003d cont.continent_code\r\n\tAND\r\n\tcoun.currency_code \u003d curr.currency_code\r\nORDER BY \r\n\tcountry_information, \r\n\tcurrencies",
+  "TimeLimit": 10000,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 307439,
+        "Input": "SELECT lower(column_name)\r\nFROM information_schema.columns\r\nWHERE lower(table_schema) \u003d \u0027public\u0027\r\n    AND lower(table_name) \u003d \u0027view_continents_countries_currencies_details\u0027;",
+        "Output": "continent_details\r\ncountry_information\r\ncurrencies",
+        "IsTrialTest": false,
+        "OrderBy": 2
+      },
+      {
+        "Id": 307440,
+        "Input": "SELECT * FROM public.view_continents_countries_currencies_details;",
+        "Output": "Asia: AS\r\nAfghanistan - Kabul - 647500 - km2\r\nAfghanistan Afghani (AFN)\r\nEurope: EU\r\nAland - Mariehamn - 1580 - km2\r\nEuro Member Countries (EUR)\r\nNorth America: NA\r\nBahamas - Nassau - 13940 - km2\r\nBahamas Dollar (BSD)\r\nAsia: AS\r\nBahrain - Manama - 665 - km2\r\nBahrain Dinar (BHD)\r\nAsia: AS\r\nCambodia - Phnom Penh - 181040 - km2\r\nCambodia Riel (KHR)\r\nAfrica: AF\r\nCameroon - Yaoundé - 475440 - km2\r\nCommunauté Financière Africaine (BEAC) CFA Franc BEAC (XAF)\r\nAfrica: AF\r\nDemocratic Republic of the Congo - Kinshasa - 2345410 - km2\r\nCongo/Kinshasa Franc (CDF)\r\nOceania: OC\r\nEast Timor - Dili - 15007 - km2\r\nUnited States Dollar (USD)\r\nSouth America: SA\r\nFalkland Islands - Stanley - 12173 - km2\r\nFalkland Islands (Malvinas) Pound (FKP)",
+        "IsTrialTest": false,
+        "OrderBy": 3
+      }
+    ],
+    "TaskSkeleton": "jVXbauNIEH2Owf9QzEtsEKyuvrDsgqILMZZlI8lD8mQ6cs9YROr26rKQP9r5jvzYdrfuzswQbNxyVfXp6qpzSlbgmJEDkfngObBxwd9H4DxtwiiEmJIyIZiUBcymE4AvyfkLhE6wMT04BJudGTzD1nmWuK+LPcX0jMF6NIOZOhdo/tHzbmIIyjB8NQMRZsh93HQy/3M64Z+Nz06KYONH+1Ei44OkG9A5TCdfTe/ohHA3ndzN7k33XoJ781uexOh+LtU2X9hIifK4HNpDYS+SzuIcucWpcnrFrc03uc2neXkBM8ND4L3FXfsYI9JjhCI+pNUwnl3yTnyt35W/ImWe4E9Vn4e+/ab2SUEHXm0+2jZqh27ctg1dkxKlowDbcc2jNwyq8hyT+G10yE/CPkGTK71WKSoTSnj3xz6UY3RKyKn45/SafXRbez+MApPbu+qderxTfMHxKzvVsbYwG5zz918gz3+NwE7tDh1jjPMRML+icNfMYbOkrjHSqBvSuKAS3NK+T14aF0Vq+9VLoReCKBSXw/cLo2hRIiIY79aC4PRX14qqqKuFBAt9acgys2/RS5V2GnkawKSInIVAjkG9cIDFUlEkUIwV37tD7M4XlJF2/4PQ2MNjvSDmQoV4DG0hKy4WTVaWa7Zb0dY6B/FRUaCqQ3isEYIGIUcJqS12d4ultpJlnd1hYYgkWEk7PW7F/u3jji8Wyl7omYlVmIIOQNF1Q1vwKygrRRZZHC6EZnDA5NIiWTXELmiQcE6pSOWpmTr8V1mra13R1xKweuoC6RmxTp/ff3Q4InFrLxYbZzTOWWdjCPC1eknZA/0G5YWphZLvVITaPf5SXisLXWP4qqYbuiI6lpDigoruypHHwyNPFN1BRQlRktGc/zvWdReTS1EMfaEavHmyvOS5JGnSYrhbHud69YLSV9582BR8ER10twcx6ExBAm3FYFRlqXET41mK3z459Wref27s/XTojCbCGRdxnlyFytsBpsof3jh1WiPBDvK40eIA84PIaiX1+oLmuX+jBO0rBXY4e8E5a2szGnqN2AN1gE3TFOU9/e0B8cFOSO9rGNySGoIEd8JtOGnRLKsIqsr3H+CyveyG7//lGOo3JJswMHtwTGsOlmuCmzM/8P89VRsUxsQ/WprVcW1Iw6gjSUp8Btb7Et/eoaHKLYtgtkPpvyypYg4HLhHGmP8B",
+    "TaskSkeletonAsString": "CREATE TABLE IF NOT EXISTS continents (\r\n  \"id\" SERIAL PRIMARY KEY,\r\n  continent_code CHAR(2) NOT NULL,\r\n  continent_name VARCHAR(50) NOT NULL\r\n);\r\n\r\n\r\nINSERT INTO continents (continent_code, continent_name) \r\nVALUES \t\r\n\t(\u0027AF\u0027, \u0027Africa\u0027),\r\n\t(\u0027AN\u0027, \u0027Antarctica\u0027),\r\n\t(\u0027AS\u0027, \u0027Asia\u0027),\r\n\t(\u0027EU\u0027, \u0027Europe\u0027),\r\n\t(\u0027NA\u0027, \u0027North America\u0027),\r\n\t(\u0027OC\u0027, \u0027Oceania\u0027),\r\n\t(\u0027SA\u0027, \u0027South America\u0027);\r\n\t\r\n\t\r\nCREATE TABLE IF NOT EXISTS countries (\r\n  \"id\" SERIAL PRIMARY KEY,\r\n  country_code CHAR(2) NOT NULL,\r\n  iso_code CHAR(3),\r\n  country_name VARCHAR(45) NOT NULL,\r\n  capital VARCHAR(45) DEFAULT NULL,\r\n  currency_code CHAR(3) DEFAULT NULL,\r\n  continent_code CHAR(2) NOT NULL,\r\n  population INT NOT NULL,\r\n  area_in_sq_km INT NOT NULL,\r\n  CONSTRAINT countries_population_check CHECK (population \u003e\u003d 0),\r\n  CONSTRAINT countries_are_in_sq_km_check CHECK (area_in_sq_km \u003e\u003d 0)\r\n);\r\n\r\n\r\nINSERT INTO countries (country_code, iso_code, country_name, currency_code, continent_code, population, area_in_sq_km, capital) \r\nVALUES\r\n\t(\u0027AF\u0027, NULL, \u0027Afghanistan\u0027, \u0027AFN\u0027, \u0027AS\u0027, 29121286, 647500, \u0027Kabul\u0027),\r\n\t(\u0027AX\u0027, NULL, \u0027Aland\u0027, \u0027EUR\u0027, \u0027EU\u0027, 26711, 1580, \u0027Mariehamn\u0027),\r\n\t(\u0027BS\u0027, \u0027BHS\u0027, \u0027Bahamas\u0027, \u0027BSD\u0027, \u0027NA\u0027, 301790, 13940, \u0027Nassau\u0027),\r\n\t(\u0027BH\u0027, \u0027BHR\u0027, \u0027Bahrain\u0027, \u0027BHD\u0027, \u0027AS\u0027, 738004, 665, \u0027Manama\u0027),\r\n\t(\u0027KH\u0027, \u0027KHM\u0027, \u0027Cambodia\u0027, \u0027KHR\u0027, \u0027AS\u0027, 14453680, 181040, \u0027Phnom Penh\u0027),\r\n\t(\u0027CM\u0027, \u0027CMR\u0027, \u0027Cameroon\u0027, \u0027XAF\u0027, \u0027AF\u0027, 19294149, 475440, \u0027Yaoundé\u0027),\r\n\t(\u0027CD\u0027, \u0027COD\u0027, \u0027Democratic Republic of the Congo\u0027, \u0027CDF\u0027, \u0027AF\u0027, 70916439, 2345410, \u0027Kinshasa\u0027),\r\n\t(\u0027TL\u0027, \u0027TLS\u0027, \u0027East Timor\u0027, \u0027USD\u0027, \u0027OC\u0027, 1154625, 15007, \u0027Dili\u0027),\r\n\t(\u0027FK\u0027, \u0027FLK\u0027, \u0027Falkland Islands\u0027, \u0027FKP\u0027, \u0027SA\u0027, 2638, 12173, \u0027Stanley\u0027);\r\n\t\r\n\t\r\nCREATE TABLE IF NOT EXISTS currencies (\r\n  \"id\" SERIAL PRIMARY KEY,\r\n  currency_code CHAR(3) NOT NULL,\r\n  description VARCHAR(200) NOT NULL\r\n);\r\n\t\r\n\t\r\nINSERT INTO currencies (currency_code, description) \r\nVALUES\r\n\t(\u0027AFN\u0027, \u0027Afghanistan Afghani\u0027),\r\n\t(\u0027EUR\u0027, \u0027Euro Member Countries\u0027),\r\n\t(\u0027BSD\u0027, \u0027Bahamas Dollar\u0027),\r\n\t(\u0027BHD\u0027, \u0027Bahrain Dinar\u0027),\r\n\t(\u0027KHR\u0027, \u0027Cambodia Riel\u0027),\r\n\t(\u0027XAF\u0027, \u0027Communauté Financière Africaine (BEAC) CFA Franc BEAC\u0027),\r\n\t(\u0027CDF\u0027, \u0027Congo/Kinshasa Franc\u0027),\r\n\t(\u0027USD\u0027, \u0027United States Dollar\u0027),\r\n\t(\u0027FKP\u0027, \u0027Falkland Islands (Malvinas) Pound\u0027);"
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}

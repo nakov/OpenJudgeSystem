@@ -19,6 +19,7 @@
         public const string ContestCategoryNameFormat = "ContestCategoryName:{0}";
 
         public const string TotalSubmissionsCount = "TotalSubmissionsCount";
+        public const string LatestPublicSubmissions = "PublicSubmissions";
 
         public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
     }

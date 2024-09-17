@@ -86,6 +86,8 @@ namespace OJS.Services.Common.Data
             int? skip = null,
             int? take = null);
 
+        IDataService<TEntity> IgnoreQueryFilters();
+
         Task ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds);
     }
 }

@@ -1,0 +1,39 @@
+// 1 WrongAnswer, 1 CorrectAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "cpp-code",
+    "CompilerType": "CPlusPlusGcc",
+    "FileContent": null,
+    "Code": "#include \u003ciostream\u003e\r\n#include \u003cstring\u003e\r\nusing namespace std;\r\n\r\nint main() {\r\n\tint num1, num2;\r\n\tcin \u003e\u003e num1;\r\n\tcin \u003e\u003e num2;\r\n\r\n\tif (num1 \u003e num2) {\r\n\t\tcout \u003c\u003c \"The greater number is: \" \u003c\u003c num1 \u003c\u003c endl;\r\n\t}\r\n\telse if (num2 \u003e num1) {\r\n\t\tcout \u003c\u003c \"The greater number is: \" \u003c\u003c num2 \u003c\u003c endl;\r\n\t}\r\n\telse {\r\n\t\tcout \u003c\u003c \"Both numbers are equal.\" \u003c\u003c endl;\r\n\t}\r\n\r\n\t\r\n\r\n\r\n\r\n\r\n\treturn 0;\r\n}",
+    "TimeLimit": 100,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "csharp-code",
+      "CheckerParameter": "using System;\n\nusing OJS.Workers.Common;\nusing System.Text.RegularExpressions;\nusing System.Collections.Generic;\nusing System.Globalization;\n\npublic class NumbersChecker : IChecker\n{\n    const double DecimalPrecision \u003d 0.01;\n\n    public CheckerResult Check(string inputData, string receivedOutput,\n        string expectedOutput, bool isTrialTest)\n    {\n        string[] expectedNumbers \u003d ExtractNumbersFromText(expectedOutput);\n        if (expectedNumbers.Length \u003d\u003d 0)\n        {\n            return CompareTextOutput(receivedOutput, expectedOutput);\n        }\n\n        string[] receivedNumbers \u003d ExtractNumbersFromText(receivedOutput);\n\n        if (receivedNumbers.Length !\u003d expectedNumbers.Length)\n        {\n            // Different number of lines --\u003e incorrect result\n            string differenceText \u003d (receivedNumbers.Length \u003c expectedNumbers.Length) ? \"less\" : \"greater\";\n            return new CheckerResult()\n            {\n                IsCorrect \u003d false,\n                ResultType \u003d CheckerResultType.WrongAnswer,\n                CheckerDetails \u003d new CheckerDetails()\n                {\n                    Comment \u003d \"The number of numbers in the user output is \" + differenceText + \" than the expected output.\",\n                    UserOutputFragment \u003d string.Join(\"\\r\\n\", receivedNumbers),\n                    ExpectedOutputFragment \u003d string.Join(\"\\r\\n\", expectedNumbers)\n                }\n            };\n        }\n\n        // Scan for differences number by number (line by line)\n        for (int i \u003d 0; i \u003c receivedNumbers.Length; i++)\n        {\n            bool equalNums;\n            try\n            {\n                var numReceived \u003d double.Parse(receivedNumbers[i], CultureInfo.InvariantCulture);\n                var numExpected \u003d double.Parse(expectedNumbers[i], CultureInfo.InvariantCulture);\n                equalNums \u003d Math.Abs(numReceived - numExpected) \u003c DecimalPrecision;\n            }\n            catch (Exception)\n            {\n                equalNums \u003d false;\n            }\n\n            if (!equalNums)\n            {\n                // Numbers do not match (or parse failed) --\u003e incorrect result\n                return new CheckerResult()\n                {\n                    IsCorrect \u003d false,\n                    ResultType \u003d CheckerResultType.WrongAnswer,\n                    CheckerDetails \u003d new CheckerDetails()\n                    {\n                        Comment \u003d String.Format(\"Numbers \u0027{0}\u0027 and \u0027{1}\u0027 at line #{2} do not match.\", receivedNumbers[i], expectedNumbers[i], (i + 1)),\n                        UserOutputFragment \u003d string.Join(\"\\r\\n\", receivedNumbers),\n                        ExpectedOutputFragment \u003d string.Join(\"\\r\\n\", expectedNumbers)\n                    }\n                };\n            }\n        }\n        \n        // Correct result\n        return new CheckerResult()\n        {\n            IsCorrect \u003d true,\n            ResultType \u003d CheckerResultType.Ok,\n            CheckerDetails \u003d new CheckerDetails()\n        };\n    }\n\n    private CheckerResult CompareTextOutput(string receivedOutput, string expectedOutput)\n    {\n        var receivedOutputCleaned \u003d \n            Regex.Replace(receivedOutput, @\"\\W+\", \" \").Trim().ToLowerInvariant();\n        var expectedOutputCleaned \u003d\n            Regex.Replace(expectedOutput, @\"\\W+\", \" \").Trim().ToLowerInvariant();\n\n        if (!Regex.IsMatch(receivedOutputCleaned, @\"\\b\" + expectedOutputCleaned + @\"\\b\"))\n        {\n            // The expected output was not found in the user output --\u003e incorrect result\n            return new CheckerResult()\n            {\n                IsCorrect \u003d false,\n                ResultType \u003d CheckerResultType.WrongAnswer,\n                CheckerDetails \u003d new CheckerDetails()\n                {\n                    Comment \u003d \"The user output text does not contain the expected output text.\",\n                    UserOutputFragment \u003d receivedOutputCleaned,\n                    ExpectedOutputFragment \u003d expectedOutputCleaned\n                }\n            };\n        }\n\n        // Correct result\n        return new CheckerResult()\n        {\n            IsCorrect \u003d true,\n            ResultType \u003d CheckerResultType.Ok,\n            CheckerDetails \u003d new CheckerDetails()\n        };\n    }\n\n    private string[] ExtractNumbersFromText(string text)\n    {\n        string numberPattern \u003d @\"(-)?[0-9]+(\\.[0-9]+)?(e[+-]?[0-9]+)?\";\n        var numbers \u003d new List\u003cstring\u003e();\n        var matches \u003d Regex.Matches(text, numberPattern);\n        foreach (var m in matches)\n        {\n            Match match \u003d (Match)m;\n            if ((match.Index \u003d\u003d 0) || (!char.IsLetter(text[match.Index-1])))\n            {\n                if ((match.Index + match.Length \u003d\u003d text.Length) ||\n                    (!char.IsLetter(text[match.Index + match.Length])))\n                {\n                    numbers.Add(match.Value);\n                }\n            }\n        }\n        return numbers.ToArray();\n    }\n\n    public void SetParameter(string parameter)\n    {\n        throw new NotImplementedException();\n    }\n}\n",
+      "Tests": [
+        {
+          "Id": 107725,
+          "Input": "500\r\n-400",
+          "Output": "500",
+          "IsTrialTest": false,
+          "OrderBy": 4
+        },
+        {
+          "Id": 107726,
+          "Input": "200\r\n200",
+          "Output": "200",
+          "IsTrialTest": false,
+          "OrderBy": 5
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

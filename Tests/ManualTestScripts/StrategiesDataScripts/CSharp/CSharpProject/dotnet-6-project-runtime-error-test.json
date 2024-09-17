@@ -1,0 +1,32 @@
+// 1 RuntimeError
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "dot-net-core-6-project",
+  "CompilerType": "DotNetCompiler",
+  "FileContent": "UEsDBBQAAAAIAAWs1VjmXWZPsgAAADABAAAYAAAAMDEuIExpc3R5SXRlcmF0b3IuY3Nwcm9qXZBBDoIwEEX3JNyBcADQjavaHRoSRaO4JhVHUim0mQ5Rbm8hhCjL/+ZNMn/YGfULSgquj3obHmWJ2uonRVmSRw6F3Pd8LwiY0wwg9XvUneEDcvDUkeko7w3w5AMs/smTkQusgHYoGnhrrHkLtIlWLF7ySb9oTZlj1ogSeLFaR8VBWupTAhSkkcX/xrSWNkbJUtLNyrayHFpxV+6cBZ7krFNqmM/aDMai8bKp741seJJLX1BLAwQUAAAACACprNVYaEXy/2gBAADRAwAAEAAAAExpc3R5SXRlcmF0b3IuY3OFU8tuwjAQvEfKPyycEqFGcAZ6QVWLRB9SkXqoKmSSpVg1dmo7AVT1y3roJ/UXugkpeRWxSpTEM9kZj+2fr+/EcPkKj3tjcTN0nepnMFFCYGi5kia4Romah03KjMv35tgcd7Y1ttbIIhoI5sy8GYJdR7INmpiFCIv+IFjMuLH7qUXNrNKu8+E6QBUnS8FDCAUzBmqU0fzyQCmYOVvzlFnMiYQDJ+1MrIlzaemOcJcbOaIHrZqKV2vll+SKalZ2zU2Qc2Dcki0JmSYR+hXw8x8LS6UE3KoUvdOKfAVeJ+96w8wdZe75fp3R+CErjTbRElZMGGwYrPnIqnTc6w2bYNHI6gRr2MnZHE2enNBfyzKoUSVW2o0JrdoFDM5klyoewYOmJT4TXqv3mBbmfIR2rdUWJG5hKlMmeHQfZ1uFTsnVLsQ4e/G6BQRHrNP1Wxm2Ep/QSVMCgydNtuhoYcXjc5nLi1+PoHjQ9QtQSwMEFAAAAAgAuKzVWMNt/lSZAQAAXQUAAAoAAABQcm9ncmFtLmNzrVRda8IwFH0X/A93fUphFH3e3IsTJqiTOdiDDAn1qmFpUpLMD2S/bA/7SfsLS+rX2qYTYYdCm5t7zz33JPT780vQBHVKY4RJoxlNekybTdegokaqem1br4EFEzYiKIeYU61hqORc0WS3t09x0IYaFsNSsin0KRNEG8XEfPwKVM11eEq0NafFrtIlQiyThIoptKAthZYcoyek0x4TSMKbYk1O6u2O4Q7476glEu+cl0pXC8YRyKHdVQuCzuA+CPNZ2/zS4TjQvrQrZtI22a+iUcqZIQEE1zDKMrPAY2qYHcfOksgldpLUbDrCbqMuD+XAZkdpjn/ceIWWVdhWSA0WRTp4hDo4g46+MIOJPkl1xNHojaWkGUbP0qV6LD6gZCqu/PaTrI0jKlJ8lEPINVYNO7R05oJZjdr4NyryHXJTRVlH4pPu4JHvEFMTL4B01jFmhwy49mh2+EPH4a6/KOtedtlxHfVRazrH6jPxKLrQ4769jRdYXJaZN9DRkfAfzv6B6gGuLzn9c9L2jJXqysEzf6JCfeHTvuzzA1BLAQIUABQAAAAIAAWs1VjmXWZPsgAAADABAAAYAAAAAAAAAAEAIAAAAAAAAAAwMS4gTGlzdHlJdGVyYXRvci5jc3Byb2pQSwECFAAUAAAACACprNVYaEXy/2gBAADRAwAAEAAAAAAAAAABACAAAADoAAAATGlzdHlJdGVyYXRvci5jc1BLAQIUABQAAAAIALis1VjDbf5UmQEAAF0FAAAKAAAAAAAAAAEAIAAAAH4CAABQcm9ncmFtLmNzUEsFBgAAAAADAAMAvAAAAD8EAAAAAA\u003d\u003d",
+  "Code": "",
+  "TimeLimit": 100,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 116122,
+        "Input": "Create Stefcho Goshky\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nPrint\nEND\n",
+        "Output": "True\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nStefcho\n",
+        "IsTrialTest": false,
+        "OrderBy": 2
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}
