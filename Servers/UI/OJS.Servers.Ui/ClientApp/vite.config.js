@@ -8,6 +8,7 @@ import { resolve } from 'path';
 // For development server, we want to forward all requests to /administration to /admin.html
 const forwardToAdmin = () => {
     return {
+        sourceMap: true,
         name: 'forward-to-admin-html',
         apply: 'serve',
         enforce: 'post',
