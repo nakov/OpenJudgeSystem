@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "javascript-unit-tests-with-mochaV20",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "function cityTaxes(city,population,treasury) {\r\n    let obj \u003d {\r\n        name: city,\r\n        population: population,\r\n        treasury: treasury,\r\n        taxRate: 10,\r\n\r\n        collectTaxes() {\r\n            this.treasury +\u003d this.population * this.taxRate;\r\n        },\r\n\r\n        applyGrowth(percentage) {\r\n           increasment \u003d this.population * (percentage/100);\r\n           this.population +\u003d increasment; \r\n        },\r\n\r\n        applyRecession(percentage) {\r\n            dicreasment \u003d this.population * (percentage/100);\r\n            this.population -\u003d dicreasment; \r\n        }\r\n      };\r\n\r\n      return obj\r\n}",
+    "TimeLimit": 300,
+    "MemoryLimit": 33554432,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 202538,
+          "Input": "const city \u003d result(\u0027Sofia\u0027, 2000000, 1000000);\r\n\r\n//testing collecttaxes\r\ncity.collectTaxes();\r\nexpect(city.treasury).to.be.equal(21000000, \u0027collectTaxes works incorrect, the city.treasury is incorrect.\u0027);\r\n",
+          "Output": "yes",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        },
+        {
+          "Id": 202539,
+          "Input": "const city \u003d result(\u0027Sofia\u0027, 2000000, 1000000);\r\n\r\n//testing if all the properties are correct\r\nexpect(city.name).to.be.equal(\u0027Sofia\u0027, \u0027The name of the city is incorrect\u0027);\r\nexpect(city.population).to.be.equal(2000000, \u0027The city.population is incorrect\u0027);\r\nexpect(city.treasury).to.be.equal(1000000, \u0027The city.treasury is incorrect\u0027);\r\nexpect(city.taxRate).to.be.equal(10, \u0027The city.taxRate is incorrect\u0027);\r\n\r\n//testing the functions\r\nexpect(typeof city.collectTaxes).to.equals(\u0027function\u0027, \u0027Method \\\u0027collectTaxes\\\u0027 not found\u0027);\r\nexpect(typeof city.applyGrowth).to.equals(\u0027function\u0027, \u0027Method \\\u0027collectTaxes\\\u0027 not found\u0027);\r\nexpect(typeof city.applyRecession).to.equals(\u0027function\u0027, \u0027Method \\\u0027collectTaxes\\\u0027 not found\u0027);\r\n\r\n//testing collecttaxes\r\ncity.collectTaxes();\r\nexpect(city.treasury).to.be.equal(21000000, \u0027collectTaxes works incorrect, the city.treasury is incorrect.\u0027);\r\n\r\n//testing applyGrowth with 5 percents\r\ncity.applyGrowth(5);\r\nexpect(city.population).to.be.equal(2100000, \u0027applyGrowth with 5 percents works incorrect, the city.population is incorrect.\u0027);\r\n\r\n\r\n//testing applyRecession with 10 percents\r\ncity.applyRecession(10);\r\nexpect(city.treasury).to.be.equal(18900000, \u0027applyRecession with 10 percents works incorrect, the city.treasury is incorrect.\u0027);\r\n",
+          "Output": "yes",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

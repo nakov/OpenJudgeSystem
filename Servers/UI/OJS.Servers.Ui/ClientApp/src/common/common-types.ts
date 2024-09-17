@@ -18,13 +18,6 @@ interface IKeyValuePair<TValue> {
 
 type UrlType<T> = string | ((parameters?: IDictionary<T> | null) => string);
 
-interface INotificationType {
-    title: string;
-    message: string;
-    type?: 'success' | 'danger' | 'info' | 'default' | 'warning';
-    leaveTimeout: number | null;
-}
-
 interface IUrlParam {
     key: string;
     value: string | string[];
@@ -35,7 +28,6 @@ type Anything = Record<string | number, unknown>
 export type {
     IDictionary,
     IKeyValuePair,
-    INotificationType,
     IUrlParam,
     UrlType,
     Anything,

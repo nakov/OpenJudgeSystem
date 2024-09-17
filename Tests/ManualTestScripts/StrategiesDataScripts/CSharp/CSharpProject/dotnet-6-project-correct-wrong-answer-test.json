@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "dot-net-core-6-project",
+    "CompilerType": "DotNetCompiler",
+    "FileContent": "UEsDBBQAAAAIAImjJVkqW+3lsQAAAC8BAAAXAAAAMDEuTGlzdHlJdGVyYXRvci5jc3Byb2pdkEEOgjAQRfck3IFwAMCNq9odGhJFo7g2FUdSKbSZDlFubyGEKMv/5k0yf9gJ9QtKCi6PehMeZIna6idFeVpEDoXc93wvCJjTDCD1O9Sd4QNy8NiR6ajoDfD0Ayz+yZNRCKyAtigaeGuseQu0jhIWL/mkn7Wm3DFrRAn8lqyivbTUZwQoSCOL/4VpK2uMkqWkq5VtZTm04q7cNQs8yXmn1DCftRmMPeNlUd8b2fAjl75QSwMEFAAAAAgALKolWXRiLAsyAQAAWQMAABAAAABMaXN0eUl0ZXJhdG9yLmNzjVLdasIwGL0XfIdPr1qE4q6ru5HBBPdzMdjFGCO2nxiISUnS2jF8sl3skfYKS9pqk6p0H5Q0nNNzTk76+/3DyQ5VRhKEj+lNtKJKfy41SqKFHA6+hgMwk+VrRhNIGFEKPMrs5bamNMyKLWlBNFZEgwPVuFPxOU65Nk+KpcEctPbyXIKjFDNr2HIdUzt6S1VUucG8osaXcOto8KkDHi4EWAvB4EEU+IilDq6b0g0Eo0r5nqiaG/qMzgd2JOpcctgQprAT0stip009mcRdsBHSMsf/nOcU8epxjoJtVTOn12ghcq57nApBU3iW5np7auvqwtxcS395eivFHjjuYckLwmj6lNnfhAp+VyaY2Zdg3EBwwkbj8Lxpd+vvFoIrwTB6lSbginJ00r617byHfhnNcvgDUEsDBBQAAAAIAKyqJVk5IB/EfgEAABAFAAAKAAAAUHJvZ3JhbS5jc5VSwU4CMRC9k/APkz2VxGzkjHjRTSQBJGLiwRhTlmFp2G03bYElhC/z4Cf5C7YL4mKrsu/SbWfmzZs3+/H2zmmGKqcxwutlO+wzpTc9jZJqIZuNbbMBBvlykrIY4pQqBSMpEkmzfeSQUElSmmpzrASbwoAyTpSWjCfPL0Blolrf+ZVSC9v5ap97DbFEqrHHZ0Jmhk5w6MKN4EqkGD4gnfYZR9I6JbAIx3nKNAkguIBxyVU+3OeWQ5nSTKwwynK9ibgJo/JyLFhO2r7Io7AqSavTbLjij7Ydp0irr2YCjmt/JnHmdVus5yxFIFou8Ye0rat0zwuxyDLKp17zOm4VmwE5lnQhiIa3gccGTz+LiZlh4WHduU+YKnS6DcxqarT7muhJMo3lSCd2h5ZuiIXZlm/Uc0WNjI+6hiotN/7AL/kWp7rLjt71WHh0W8RUx3MgURFj+asDFh7NFn/ocB3FIhygUjTBGnrOtfaOKrufGub+t/ID41kbr1wPn+bYfQJQSwECFAAUAAAACACJoyVZKlvt5bEAAAAvAQAAFwAAAAAAAAABACAAAAAAAAAAMDEuTGlzdHlJdGVyYXRvci5jc3Byb2pQSwECFAAUAAAACAAsqiVZdGIsCzIBAABZAwAAEAAAAAAAAAABACAAAADmAAAATGlzdHlJdGVyYXRvci5jc1BLAQIUABQAAAAIAKyqJVk5IB/EfgEAABAFAAAKAAAAAAAAAAEAIAAAAEYCAABQcm9ncmFtLmNzUEsFBgAAAAADAAMAuwAAAOwDAAAAAA\u003d\u003d",
+    "Code": "",
+    "TimeLimit": 100,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 116122,
+          "Input": "Create Stefcho Goshky\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nHasNext\nPrint\nEND\n",
+          "Output": "True\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nTrue\nStefcho\n",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        },
+        {
+          "Id": 116121,
+          "Input": "Create Stefcho Goshky\nHasNext\nPrint\nMove\nPrint\nMove\nPrint\nMove\nPrint\nEND\n",
+          "Output": "True\nStefcho\nTrue\nGoshky\nFalse\nGoshky\nFalse\nGoshky\n",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

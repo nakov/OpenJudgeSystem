@@ -46,9 +46,5 @@ interface IContestResultsParticipationProblemBestSubmissionTestRunType {
 
 export type {
     IContestResultsType,
-    IContestResultsProblemType,
     IContestResultsParticipationType,
-    IContestResultsParticipationProblemType,
-    IContestResultsParticipationProblemBestSubmissionType,
-    IContestResultsParticipationProblemBestSubmissionTestRunType,
 };

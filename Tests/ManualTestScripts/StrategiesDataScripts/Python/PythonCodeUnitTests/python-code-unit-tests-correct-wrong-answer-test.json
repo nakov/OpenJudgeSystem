@@ -1,0 +1,193 @@
+// 2 CorrectAnswer, 22 WrongAnswer
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "python-code-unit-tests",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "def naughty_or_nice_list(kids_list, *args, **kwargs):\r\n    sorted_list \u003d {\"Nice\": [], \"Naughty\": [], \"Not found\": []}\r\n    def neznam_kak_da_go_krustia():\r\n        if len(kid_found) \u003d\u003d 1:\r\n            if type \u003d\u003d \"Nice\":\r\n                sorted_list[\"Nice\"].extend(kid_found)\r\n                kids_list.remove(*kid_found)\r\n            else:\r\n                sorted_list[\"Naughty\"].extend(kid_found)\r\n                kids_list.remove(*kid_found)\r\n    for type_kids in args:\r\n        number, type \u003d type_kids.split(\"-\")\r\n        kid_found \u003d [info for info in kids_list if info[0] \u003d\u003d int(number)]\r\n        neznam_kak_da_go_krustia()\r\n    for name, type in kwargs.items():\r\n        kid_found \u003d [info for info in kids_list if info[1] \u003d\u003d name]\r\n        neznam_kak_da_go_krustia()\r\n\r\n    if kids_list:\r\n        sorted_list[\"Not found\"].extend(kids_list)\r\n    result \u003d []\r\n    for k, v in sorted_list.items():\r\n        if k \u003d\u003d \"Nice\":\r\n            result.append(f\"Nice: {\u0027, \u0027.join(k[1] for k in v)}\")\r\n\r\n        if k \u003d\u003d \"Naughty\":\r\n            result.append(f\"Naughty: {\u0027, \u0027.join(k[1] for k in v)}\")\r\n\r\n        if k \u003d\u003d \"Not found\":\r\n            result.append(f\"Not found: {\u0027, \u0027.join(k[1] for k in v)}\")\r\n\r\n    return \"\\n\".join(result)\r\n",
+    "TimeLimit": 350,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 236673,
+          "Input": "import unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (3, \"Amy\"),\r\n                        (1, \"Tom\"),\r\n                        (7, \"George\"),\r\n                        (3, \"Katy\"),\r\n                    ],\r\n                    \"3-Nice\",\r\n                    \"1-Naughty\",\r\n                    Amy\u003d\"Nice\",\r\n                    Katy\u003d\"Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Amy\\n\"\r\n                                         \"Naughty: Tom, Katy\\n\"\r\n                                         \"Not found: George\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": true,
+          "OrderBy": 1
+        },
+        {
+          "Id": 236674,
+          "Input": "# 1 nice kid args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (6, \"Jhon\"),\r\n                    ],\r\n                    \"6-Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Jhon\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        },
+        {
+          "Id": 236675,
+          "Input": "import unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (7, \"Peter\"),\r\n                        (1, \"Lilly\"),\r\n                        (2, \"Peter\"),\r\n                        (12, \"Peter\"),\r\n                        (3, \"Simon\"),\r\n                    ],\r\n                    \"3-Nice\",\r\n                    \"5-Naughty\",\r\n                    \"2-Nice\",\r\n                    \"1-Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Simon, Peter, Lilly\\n\"\r\n                                         \"Not found: Peter, Peter\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": true,
+          "OrderBy": 2
+        },
+        {
+          "Id": 236682,
+          "Input": "import unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (6, \"John\"),\r\n                        (4, \"Karen\"),\r\n                        (2, \"Tim\"),\r\n                        (1, \"Merry\"),\r\n                        (6, \"Frank\"),\r\n                    ],\r\n                    \"6-Nice\",\r\n                    \"5-Naughty\",\r\n                    \"4-Nice\",\r\n                    \"3-Naughty\",\r\n                    \"2-Nice\",\r\n                    \"1-Naughty\",\r\n                    Frank\u003d\"Nice\",\r\n                    Merry\u003d\"Nice\",\r\n                    John\u003d\"Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Karen, Tim, Frank\\n\"\r\n                                         \"Naughty: Merry, John\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": true,
+          "OrderBy": 3
+        },
+        {
+          "Id": 236683,
+          "Input": "# 1 naughty kid args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (6, \"Jhon\"),\r\n                    ],\r\n                    \"6-Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Naughty: Jhon\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        },
+        {
+          "Id": 236684,
+          "Input": "# 1 not found kid args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (6, \"Jhon\"),\r\n                    ],\r\n                    \"1-Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Not found: Jhon\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 3
+        },
+        {
+          "Id": 236685,
+          "Input": "# 2 nice kids different names, multiple args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (6, \"Jhon\"),\r\n                        (2, \"Peter\"),\r\n                    ],\r\n                    \"2-Nice\",\r\n                    \"6-Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Peter, Jhon\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 4
+        },
+        {
+          "Id": 236686,
+          "Input": "# 2 nice kids same names, multiple args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (6, \"Jhon\"),\r\n                        (2, \"Jhon\"),\r\n                    ],\r\n                    \"2-Nice\",\r\n                    \"6-Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Jhon, Jhon\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 5
+        },
+        {
+          "Id": 236687,
+          "Input": "# 2 naughty kids different names, multiple args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Jhon\"),\r\n                        (2, \"Lilly\"),\r\n                    ],\r\n                    \"2-Naughty\",\r\n                    \"1-Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Naughty: Lilly, Jhon\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 6
+        },
+        {
+          "Id": 236688,
+          "Input": "# 2 naughty kids same names, multiple args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                        (2, \"Lilly\"),\r\n                    ],\r\n                    \"2-Naughty\",\r\n                    \"1-Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Naughty: Lilly, Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 7
+        },
+        {
+          "Id": 236689,
+          "Input": "# 2 not found kids with different names and numbers, multiple args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                        (2, \"Peter\"),\r\n                    ],\r\n                    \"3-Naughty\",\r\n                    \"4-Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Not found: Lilly, Peter\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 8
+        },
+        {
+          "Id": 236690,
+          "Input": "# 2 not found kids with same numbers, multiple args test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                        (1, \"Peter\"),\r\n                    ],\r\n                    \"1-Naughty\",\r\n                    \"1-Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Not found: Lilly, Peter\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 9
+        },
+        {
+          "Id": 236691,
+          "Input": "# 1 nice kid, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                    ],\r\n                    Lilly\u003d\"Nice\"\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 10
+        },
+        {
+          "Id": 236692,
+          "Input": "# 1 naughty kid, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                    ],\r\n                    Lilly\u003d\"Naughty\"\r\n                )\r\n        self.assertEqual(result.strip(), \"Naughty: Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 11
+        },
+        {
+          "Id": 236693,
+          "Input": "# 1 not found kid, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                    ],\r\n                    Peter\u003d\"Naughty\"\r\n                )\r\n        self.assertEqual(result.strip(), \"Not found: Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 12
+        },
+        {
+          "Id": 236694,
+          "Input": "# 2 nice kids with different names and numbers, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                        (2, \"Peter\"),\r\n                    ],\r\n                    Peter\u003d\"Nice\",\r\n                    Lilly\u003d\"Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Peter, Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 13
+        },
+        {
+          "Id": 236695,
+          "Input": "# 2 nice kids with different names but same numbers, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                        (1, \"Peter\"),\r\n                    ],\r\n                    Peter\u003d\"Nice\",\r\n                    Lilly\u003d\"Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Peter, Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 14
+        },
+        {
+          "Id": 236696,
+          "Input": "# 2 naughty kids with different names and different numbers, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                        (2, \"Peter\"),\r\n                    ],\r\n                    Peter\u003d\"Naughty\",\r\n                    Lilly\u003d\"Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Naughty: Peter, Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 15
+        },
+        {
+          "Id": 236697,
+          "Input": "# 2 naughty kids with different names but same numbers, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Lilly\"),\r\n                        (1, \"Peter\"),\r\n                    ],\r\n                    Peter\u003d\"Naughty\",\r\n                    Lilly\u003d\"Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Naughty: Peter, Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 16
+        },
+        {
+          "Id": 236698,
+          "Input": "# 2 kids with same names, kwargs test\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Peter\"),\r\n                        (2, \"Peter\"),\r\n                        (3, \"Lilly\"),\r\n                        (4, \"Lilly\"),\r\n\r\n                    ],\r\n                    Peter\u003d\"Naughty\",\r\n                    Lilly\u003d\"Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Not found: Peter, Peter, Lilly, Lilly\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 17
+        },
+        {
+          "Id": 236699,
+          "Input": "# args and kwargs test for nice and naughty\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Peter\"),\r\n                        (2, \"Peter\"),\r\n                        (3, \"Lilly\"),\r\n                        (2, \"Lilly\"),\r\n\r\n                    ],\r\n                    \"1-Nice\",\r\n                    \"2-Naughty\",\r\n                    \"3-Nice\",\r\n                    Peter\u003d\"Naughty\",\r\n                    Lilly\u003d\"Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Peter, Lilly, Lilly\\n\"\r\n                                         \"Naughty: Peter\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 18
+        },
+        {
+          "Id": 236700,
+          "Input": "# args and kwargs test for nice and not found\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Peter\"),\r\n                        (2, \"Peter\"),\r\n                        (3, \"Lilly\"),\r\n                        (2, \"Lilly\"),\r\n\r\n                    ],\r\n                    \"1-Nice\",\r\n                    \"4-Naughty\",\r\n                    \"3-Nice\",\r\n                    Karen\u003d\"Naughty\",\r\n                    Lilly\u003d\"Nice\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Peter, Lilly, Lilly\\n\"\r\n                                         \"Not found: Peter\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 19
+        },
+        {
+          "Id": 236708,
+          "Input": "# args and kwargs test for naughty and not found\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (1, \"Peter\"),\r\n                        (2, \"Peter\"),\r\n                        (3, \"Lilly\"),\r\n                        (2, \"Lilly\"),\r\n\r\n                    ],\r\n                    \"1-Naughty\",\r\n                    \"2-Naughty\",\r\n                    \"3-Naughty\",\r\n                    Lilly\u003d\"Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Naughty: Peter, Lilly, Lilly\\n\"\r\n                                         \"Not found: Peter\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 20
+        },
+        {
+          "Id": 236709,
+          "Input": "# args and kwargs test for all\r\nimport unittest\r\n\r\nclass Tests(unittest.TestCase):\r\n    def test(self):\r\n        result \u003d naughty_or_nice_list(\r\n                    [\r\n                        (7, \"Peter\"),\r\n                        (2, \"Peter\"),\r\n                        (3, \"Lilly\"),\r\n                        (2, \"Lilly\"),\r\n                        (10, \"Jhon\"),\r\n                        (5, \"Simon\"),\r\n                        (2, \"Monika\"),\r\n\r\n                    ],\r\n                    \"5-Naughty\",\r\n                    \"2-Nice\",\r\n                    \"3-Naughty\",\r\n                    \"4-Nice\",\r\n                    Lilly\u003d\"Nice\",\r\n                    Monika\u003d\"Nice\",\r\n                    Tom\u003d\"Naughty\",\r\n                )\r\n        self.assertEqual(result.strip(), \"Nice: Lilly, Monika\\n\"\r\n                                         \"Naughty: Simon, Lilly\\n\"\r\n                                         \"Not found: Peter, Peter, Jhon\")\r\n\r\nif __name__ \u003d\u003d \"__main__\":\r\n    unittest.main()",
+          "Output": "Test Passed!",
+          "IsTrialTest": false,
+          "OrderBy": 21
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

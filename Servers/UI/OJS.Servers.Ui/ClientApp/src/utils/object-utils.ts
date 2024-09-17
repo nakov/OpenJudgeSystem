@@ -3,9 +3,6 @@
 
 import isNaN from 'lodash/isNaN';
 
-export const toList = (obj: any) => Object.keys(obj)
-    .map((key) => ({ key, value: obj[key] }));
-
 export const getStringObjectKeys = (obj: any) => Object.keys(obj).filter((key) => isNaN(Number(key)));
 export const flexCenterObjectStyles = { display: 'flex', justifyContent: 'center', alignItems: 'center' };
 
@@ -23,5 +20,3 @@ export const modalStyles = {
     fontFamily: 'Roboto, Helvetica , Arial',
     overflow: 'auto',
 };
-
-export default { toListOfKeyValue: toList };

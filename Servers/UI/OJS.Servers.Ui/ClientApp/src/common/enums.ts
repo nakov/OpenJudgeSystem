@@ -21,12 +21,6 @@ enum ProblemGroupTypes {
     ExcludedFromHomework = 1,
 }
 
-enum PublicSubmissionState {
-    Ready = 1,
-    Processing = 2,
-    Queued = 3,
-}
-
 enum SubmissionStatus {
     All = 1,
     Processing = 2,
@@ -52,11 +46,6 @@ enum CheckboxSearchValues {
     contests = 'Contests',
     problems = 'Problems',
     users = 'Users',
-}
-
-enum FieldNameType {
-    search = 'Search',
-    checkbox = 'Radio',
 }
 
 enum SubmissionStrategyType {
@@ -149,10 +138,8 @@ export {
     ProblemGroupTypes,
     ProblemResourceType,
     SubmissionStatus,
-    PublicSubmissionState,
     SettingTypeEnums,
     SubmissionStrategyType,
     CompilerType,
     CheckboxSearchValues,
-    FieldNameType,
 };

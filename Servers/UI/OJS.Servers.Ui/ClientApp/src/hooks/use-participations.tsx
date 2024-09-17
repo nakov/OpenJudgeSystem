@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { IUserInfoUrlParams } from '../common/url-types';
@@ -102,12 +102,6 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
             {children}
         </ParticipationsContext.Provider>
     );
-};
-
-const useParticipations = () => useContext(ParticipationsContext);
-
-export {
-    useParticipations,
 };
 
 export type { IParticipationType };

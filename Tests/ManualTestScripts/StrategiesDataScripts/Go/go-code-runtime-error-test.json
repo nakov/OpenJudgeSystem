@@ -1,0 +1,32 @@
+// 1 RuntimeError
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "go-code",
+    "CompilerType": "GolangCompiler",
+    "FileContent": null,
+    "Code": "package main\r\n\r\nimport \"fmt\"\r\n\r\nfunc main() {\r\n\tvar n int\r\n\r\n\tfor i := 1111; i <= 9999; i++ {\r\n\t\ttmp := i\r\n\t\tisDivisible := true\r\n\t\tfor tmp > 0 {\r\n\t\t\tdigit := tmp % 10\r\n\r\n\t\t\tif n%digit == 1 {\r\n\t\t\t\tisDivisible = false\r\n\t\t\t\tbreak\r\n\t\t\t}\r\n\t\t\ttmp /= 10\r\n\t\t}\r\n\t\tif isDivisible {\r\n\t\t\tfmt.Printf(\"%d\", i)\r\n\t\t}\r\n\t}\r\n}\r\n",
+    "TimeLimit": 400,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 243408,
+          "Input": "3",
+          "Output": "1111 1113 1131 1133 1311 1313 1331 1333 3111 3113 3131 3133 3311 3313 3331 3333",
+          "IsTrialTest": true,
+          "OrderBy": 1
+        }
+      ],
+      "TaskSkeleton": "08jMKygt0VFIzk9J1VSwtVOoBjM1wMJ6aZk5JalFGqk5IBkgqWhrq6CurqmpUAsA",
+      "TaskSkeletonAsString": "(input, code) => { code(input.filter(el => el !== '')) }"
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

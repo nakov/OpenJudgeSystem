@@ -24,7 +24,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { setLayout } from '../../shared/set-layout';
+import setLayout from '../../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
 

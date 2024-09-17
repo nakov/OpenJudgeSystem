@@ -91,5 +91,4 @@ export default PageBreadcrumbs;
 
 export type {
     IPageBreadcrumbsItem,
-    IBreadcrumbProps,
 };
