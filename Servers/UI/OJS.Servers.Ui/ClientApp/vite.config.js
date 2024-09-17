@@ -8,7 +8,6 @@ import { resolve } from 'path';
 // For development server, we want to forward all requests to /administration to /admin.html
 const forwardToAdmin = () => {
     return {
-        sourceMap: true,
         name: 'forward-to-admin-html',
         apply: 'serve',
         enforce: 'post',
@@ -26,6 +25,7 @@ const forwardToAdmin = () => {
 export default defineConfig({
     appType: 'mpa', // Multi Page Application
     build: {
+        sourcemap: true,
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
