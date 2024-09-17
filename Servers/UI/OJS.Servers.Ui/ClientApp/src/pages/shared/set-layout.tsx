@@ -30,8 +30,4 @@ const setLayout = (ComponentToWrap: FC, isWide = false) => (props: Anything) => 
     </Layout>
 );
 
-export default Layout;
-
-export {
-    setLayout,
-};
+export default setLayout;

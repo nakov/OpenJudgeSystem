@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import { IFilter, ISort } from './contest-types';
 import { SubmissionStatus } from './enums';
 import { IGetAllAdminParams } from './types';
 
@@ -12,10 +11,6 @@ interface IContestDetailsUrlParams {
 }
 
 interface IExamGroupUrlParams {
-    id: number;
-}
-
-interface IUserUrlParams {
     id: number;
 }
 
@@ -43,27 +38,12 @@ interface IGetByExamGroupId extends IGetAllAdminParams {
     examGroupId: number;
 }
 
-interface IGetContestByProblemUrlParams {
-    problemId: number;
-}
-
-interface IAllContestsUrlParams {
-    filters: IFilter[];
-    sorting: ISort[];
-    page?: number;
-}
-
 interface IContestCategoriesUrlParams {
     id: number;
 }
 
 interface IRegisterForContestUrlParams {
     id: number;
-    isOfficial: boolean;
-}
-
-interface IStartParticipationParams {
-    id: string;
     isOfficial: boolean;
 }
 
@@ -88,10 +68,6 @@ interface ISubmitContestPasswordUrlParams {
 }
 
 interface IDownloadProblemResourceUrlParams {
-    id: number | null;
-}
-
-interface IDownloadSubmissionFileUrlParams {
     id: number | null;
 }
 
@@ -130,16 +106,7 @@ interface IGetContestResultsParams {
     page: number;
 }
 
-interface IGetSubmissionDetailsByIdUrlParams {
-    submissionId: number;
-    page: number;
-}
-
 interface IRetestSubmissionUrlParams {
-    id: number;
-}
-
-interface IContestProblemsUrlParams {
     id: number;
 }
 
@@ -147,22 +114,8 @@ interface IProblemUrlById {
     id: number;
 }
 
-interface IContestEditUrlParams {
-    id: number;
-}
-
 interface ISubmissionTypeDocumentUrlById {
     id: number;
-}
-
-interface ITerm {
-    key: string;
-    value: string;
-}
-
-interface IGetSearchResultsUrlParams {
-    searchTerm: string;
-    selectedTerms: ITerm[];
 }
 
 interface ISubmitContestSolutionParams {
@@ -184,7 +137,6 @@ export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
     IContestDetailsUrlParams,
-    IAllContestsUrlParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
@@ -192,26 +144,18 @@ export type {
     IDownloadProblemResourceUrlParams,
     IGetSubmissionsUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
-    IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
-    IGetSearchResultsUrlParams,
-    IGetContestByProblemUrlParams,
     IGetUserSubmissionsUrlParams,
     IGetByExamGroupId,
-    IDownloadSubmissionFileUrlParams,
-    IContestProblemsUrlParams,
-    IContestEditUrlParams,
     IGetByContestId,
     IProblemUrlById,
     IGetByProblemId,
     ISubmissionTypeDocumentUrlById,
     IExamGroupUrlParams,
-    IUserUrlParams,
     IGetByTestId,
     IGetByRoleId,
     IGetByUserId,
-    IStartParticipationParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
     IGetSubmissionsByUserParams,

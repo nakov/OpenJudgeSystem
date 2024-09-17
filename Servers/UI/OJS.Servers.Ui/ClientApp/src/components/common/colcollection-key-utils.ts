@@ -9,7 +9,3 @@ const defaultKeyFunc = <TValue>(value: TValue) => {
 };
 
 export default defaultKeyFunc;
-
-export {
-    defaultKeyFunc,
-};

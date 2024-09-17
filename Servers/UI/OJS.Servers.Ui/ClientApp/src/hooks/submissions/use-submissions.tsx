@@ -13,7 +13,6 @@ import { useCurrentContest } from '../use-current-contest';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useProblems } from '../use-problems';
 
-import { ISubmissionType, ITestRunType } from './types';
 import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsContext {
@@ -345,7 +344,5 @@ const useSubmissions = () => useContext(SubmissionsContext);
 export {
     useSubmissions,
 };
-
-export type { ISubmissionType, ITestRunType };
 
 export default SubmissionsProvider;

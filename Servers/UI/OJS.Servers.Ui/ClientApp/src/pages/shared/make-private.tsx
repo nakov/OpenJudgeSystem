@@ -41,7 +41,4 @@ const makePrivate = (ComponentToWrap: FC) => (props: Anything) => (
     </PrivatePage>
 );
 
-export default PrivatePage;
-export {
-    makePrivate,
-};
+export default makePrivate;

@@ -766,7 +766,6 @@ export type {
     IUserProfileType,
     IUsersState,
     IUserResponseType,
-    IUserPermissionsType,
     IContestDetailsResponseType,
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
