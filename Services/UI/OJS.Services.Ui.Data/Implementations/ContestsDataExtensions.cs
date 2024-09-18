@@ -34,8 +34,7 @@ public static class ContestsDataExtensions
     public static IQueryable<Contest> OrderByOrderBy(this IQueryable<Contest> contests)
         => contests
             .OrderBy(c => c.OrderBy)
-            .ThenByDescending(c => c.EndTime)
-            .ThenByDescending(c => c.PracticeEndTime);
+            .ThenByDescending(c => c.EndTime ?? c.PracticeEndTime ?? c.PracticeStartTime);
 
     /// <summary>
     /// Orders contests by their Category OrderBy then by Contest OrderBy, then by EndTime.
