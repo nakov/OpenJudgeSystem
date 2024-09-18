@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
-import { createFilterOptions } from '@material-ui/lab';
-import { debounce } from '@mui/material';
+import { createFilterOptions, debounce } from '@mui/material';
 
-import { IContestAutocomplete, IHasNameAndIdType } from '../../../common/types';
+import { IHasNameAndIdType } from '../../../common/types';
 
-const handleDateTimePickerChange = (name: string, newValue:any, onChange: Function) => {
+const handleDateTimePickerChange = (name: string, newValue: any, onChange: Function) => {
     const event = {
         target: {
             name,
