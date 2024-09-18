@@ -21,6 +21,7 @@ import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../ut
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
+import { autocompleteNameIdFormatFilterOptions } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -33,7 +34,7 @@ interface IExamGroupEditProps {
     setParentSuccessMessage?: Function;
 }
 
-const ExamGroupEdit = (props:IExamGroupEditProps) => {
+const ExamGroupEdit = (props: IExamGroupEditProps) => {
     const { examGroupId, isEditMode = true, getContestId, onSuccess, setParentSuccessMessage } = props;
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -223,7 +224,8 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
                                 'Exam Group name length must be between 2 and 600 characters long'}
                 />
                 <FormControl className={formStyles.inputRow} sx={{ margin: '20px 0' }}>
-                    <Autocomplete
+                    <Autocomplete<IContestAutocomplete>
+                      filterOptions={autocompleteNameIdFormatFilterOptions}
                       className={formStyles.inputRow}
                       onChange={(event, newValue) => handleAutocompleteChange('contest', newValue)}
                       onInputChange={onInputChange}

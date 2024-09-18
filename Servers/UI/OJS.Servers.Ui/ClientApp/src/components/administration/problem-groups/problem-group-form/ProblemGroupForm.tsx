@@ -16,6 +16,7 @@ import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../ut
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
+import { autocompleteNameIdFormatFilterOptions } from '../../utils/mui-utils';
 import { IProblemGroupAdministrationModel } from '../types';
 
 // The classes are used in multiple files. But not all of them are used in single file
@@ -175,8 +176,9 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                     </Select>
                 </FormGroup>
                 <FormControl className={formStyles.inputRow}>
-                    <Autocomplete
+                    <Autocomplete<IContestAutocomplete>
                       options={contestsData!}
+                      filterOptions={autocompleteNameIdFormatFilterOptions}
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       onChange={(event, newValue) => onSelect(newValue!)}
                       onInputChange={(event) => onAutocompleteChange(event)}

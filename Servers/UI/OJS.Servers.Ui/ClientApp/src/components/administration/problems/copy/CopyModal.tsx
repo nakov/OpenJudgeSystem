@@ -12,6 +12,7 @@ import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { modalStyles } from '../../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import { autocompleteNameIdFormatFilterOptions } from '../../utils/mui-utils';
 
  enum AllowedOperations {
     Copy = 'copy',
@@ -30,7 +31,7 @@ interface ICopyModalProps{
 
 const CopyModal = (props: ICopyModalProps) => {
     const { index, setShowModal, operation, sourceId, sourceName, problemToCopy = null, setParentSuccessMessage } = props;
-    const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
+    const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete | null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
     const [ problemGroupId, setNewProblemGroup ] = useState<number | undefined>(undefined);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
@@ -119,9 +120,10 @@ const CopyModal = (props: ICopyModalProps) => {
                         <>
                             {renderErrorMessagesAlert(errorMessages)}
                             <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
-                            <Autocomplete
+                            <Autocomplete<IContestAutocomplete>
                               disabled={sourceName === ''}
                               options={contestAutocomplete}
+                              filterOptions={autocompleteNameIdFormatFilterOptions}
                               renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                               onChange={(event, newValue) => onSelect(newValue!)}
                               onInputChange={(event) => onInputChange(event)}

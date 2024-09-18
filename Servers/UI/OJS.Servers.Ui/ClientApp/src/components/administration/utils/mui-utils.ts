@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
+import { createFilterOptions } from '@material-ui/lab';
 import { debounce } from '@mui/material';
+
+import { IContestAutocomplete, IHasNameAndIdType } from '../../../common/types';
 
 const handleDateTimePickerChange = (name: string, newValue:any, onChange: Function) => {
     const event = {
@@ -13,6 +16,17 @@ const handleDateTimePickerChange = (name: string, newValue:any, onChange: Functi
     };
     onChange(event);
 };
+
+/**
+ * Allows search by id when added to autocomplete {filterOptions} property
+ */
+const autocompleteNameIdFormatFilterOptions = createFilterOptions({
+    stringify: (option: IHasNameAndIdType) => {
+        const { name, id } = option;
+
+        return `${name} ${id}`;
+    },
+});
 
 const handleAutocompleteChange = <T extends { [key: string]: any }>(
     name: string,
@@ -37,6 +51,7 @@ const onAutocompleteInputChange = debounce((e: React.ChangeEvent<HTMLInputElemen
 }, 300);
 
 export {
+    autocompleteNameIdFormatFilterOptions,
     handleDateTimePickerChange,
     handleAutocompleteChange,
     onAutocompleteInputChange,

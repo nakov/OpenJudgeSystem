@@ -508,10 +508,12 @@ interface ISubmissionForProcessingAdminGridViewType {
     modifiedOn: Date;
 }
 
-interface IContestAutocomplete {
+interface IHasNameAndIdType {
     id: number;
     name: string;
 }
+
+interface IContestAutocomplete extends IHasNameAndIdType {}
 
 interface ITestsUploadModel {
     problemId: number;
@@ -796,6 +798,7 @@ export type {
     IIndexExamGroupsType,
     IExamGroupAdministration,
     IUserInExamGroupModel,
+    IHasNameAndIdType,
     IUserAutocomplete,
     ISubmissionTypesInListModel,
     ISubmissionTypeInSubmissionDocumentInListModel,
