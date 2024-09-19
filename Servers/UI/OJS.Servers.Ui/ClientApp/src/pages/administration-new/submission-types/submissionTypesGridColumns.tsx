@@ -16,8 +16,9 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import { useDeleteSubmissionTypeMutation } from '../../../redux/services/admin/submissionTypesAdminService';
 import { getStringObjectKeys } from '../../../utils/object-utils';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const submissionTypesFilterableColumns: GridColDef[] = [
+const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: ID,

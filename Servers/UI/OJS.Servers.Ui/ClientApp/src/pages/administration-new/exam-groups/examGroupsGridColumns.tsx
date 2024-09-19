@@ -7,8 +7,9 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteExamGroupMutation } from '../../../redux/services/admin/examGroupsAdminService';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const examGroupsFilterableColumns: GridColDef[] = [
+const examGroupsFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

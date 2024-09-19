@@ -7,8 +7,9 @@ import { IEnumType } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import { getStringObjectKeys } from '../../../utils/object-utils';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const settingsFilterableColumns: GridColDef[] = [
+const settingsFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

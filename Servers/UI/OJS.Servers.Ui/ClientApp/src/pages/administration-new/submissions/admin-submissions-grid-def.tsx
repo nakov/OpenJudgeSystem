@@ -6,6 +6,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import ExternalLink from '../../../components/guidelines/buttons/ExternalLink';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
@@ -13,7 +14,7 @@ import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
 import { useDeleteSubmissionMutation } from '../../../redux/services/admin/submissionsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
-const dataColumns: GridColDef[] = [
+const dataColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

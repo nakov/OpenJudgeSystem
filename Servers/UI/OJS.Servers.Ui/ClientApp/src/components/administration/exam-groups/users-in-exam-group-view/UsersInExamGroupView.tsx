@@ -20,6 +20,7 @@ import AdministrationModal from '../../common/modals/administration-modal/Admini
 import AddBulkUsersInGroupModal from '../add-bulk-users-in-group-modal/AddBulkUserInGroupModal';
 import AddUserInExamGroupModal from '../add-user-in-group-modal/AddUserInGroupModal';
 import DeleteUserFromGroupButton from '../delete-user-from-group-button/DeleteUserFromGroupButton';
+import { AdministrationGridColDef } from '../../utils/mui-utils';
 
 interface IUsersInExamGroupViewProps {
     examGroupId: number;
@@ -35,7 +36,7 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
     const [ openShowAddUserModal, setOpenShowAddUserModal ] = useState<boolean>(false);
     const [ openShowAddBulkUsersModal, setOpenShowAddBulkUsersModal ] = useState<boolean>(false);
 
-    const dataColumns: GridColDef[] = [
+    const dataColumns: AdministrationGridColDef[] = [
         {
             field: 'id',
             headerName: 'Id',
@@ -89,7 +90,7 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
         },
     ];
 
-    const notFilterableGridColumns: GridColDef[] = [
+    const notFilterableGridColumns: AdministrationGridColDef[] = [
         {
             field: 'actions',
             headerName: 'Actions',

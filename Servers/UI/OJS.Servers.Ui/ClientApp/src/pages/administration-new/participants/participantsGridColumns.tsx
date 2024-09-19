@@ -5,8 +5,9 @@ import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import { useDeleteParticipantMutation } from '../../../redux/services/admin/participantsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const participantsFilteringColumns: GridColDef[] = [
+const participantsFilteringColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

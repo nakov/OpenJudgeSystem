@@ -32,8 +32,9 @@ import RedirectButton from '../../../components/administration/common/edit/Redir
 import ExternalLink from '../../../components/guidelines/buttons/ExternalLink';
 import { useDeleteContestMutation } from '../../../redux/services/admin/contestsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const contestFilterableColumns: GridColDef[] = [
+const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: `${ID}`,

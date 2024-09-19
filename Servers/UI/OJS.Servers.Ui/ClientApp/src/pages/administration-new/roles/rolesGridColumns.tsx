@@ -8,8 +8,9 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteRolesMutation } from '../../../redux/services/admin/rolesAdminService';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const rolesFilterableColumns: GridColDef[] = [
+const rolesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

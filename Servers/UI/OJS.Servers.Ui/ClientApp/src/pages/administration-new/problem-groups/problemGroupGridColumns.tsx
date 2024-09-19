@@ -14,8 +14,9 @@ import RedirectButton from '../../../components/administration/common/edit/Redir
 import { useDeleteProblemGroupMutation } from '../../../redux/services/admin/problemGroupsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const filterableColumns: GridColDef[] = [
+const filterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

@@ -22,8 +22,9 @@ import ViewButton from '../../../components/administration/common/view/ViewButto
 import {
     useDeleteSubmissionTypeDocumentByIdAndSubmissionTypeIdMutation,
 } from '../../../redux/services/admin/submissionTypeDocumentsAdminService';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const submissionTypeDocumentsFilterableColumns: GridColDef[] = [
+const submissionTypeDocumentsFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'submissionTypeDocumentId',
         headerName: SUBMISSION_TYPE_DOCUMENT_ID,

@@ -7,8 +7,9 @@ import { NEW_ADMINISTRATION_PATH, USERS_PATH } from '../../../common/urls/admini
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const usersFilterableColumns: GridColDef[] = [
+const usersFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

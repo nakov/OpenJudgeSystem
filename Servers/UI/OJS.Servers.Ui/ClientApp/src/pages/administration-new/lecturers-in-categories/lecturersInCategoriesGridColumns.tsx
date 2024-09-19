@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridDeleteIcon, GridRenderCellParams } from '@mui/x-data-grid';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const lecturerInCategoriesFilterableColumns: GridColDef[] = [
+const lecturerInCategoriesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'contestCategoryId',
         headerName: 'Contest Category Id',
