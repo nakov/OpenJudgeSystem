@@ -32,6 +32,7 @@ const AdministrationContestCategoriesHierarchy = () => {
     } = useGetContestCategoriesHierarchyQuery();
 
     const [ editContestCategoriesHierarchy, {
+        reset,
         data: updateData,
         isSuccess: isSuccessfullyUpdated,
         isLoading: isUpdatingHierarchy,
@@ -64,9 +65,10 @@ const AdministrationContestCategoriesHierarchy = () => {
 
     useEffect(() => {
         if (isSuccessfullyUpdated) {
+            reset();
             refetchInitialContestCategories();
         }
-    }, [ isSuccessfullyUpdated, refetchInitialContestCategories ]);
+    }, [ isSuccessfullyUpdated, refetchInitialContestCategories, reset ]);
 
     // A standard DFS implementation
     const depthFirstSearch = useCallback((node: IContestCategoryHierarchy) => {
@@ -84,12 +86,14 @@ const AdministrationContestCategoriesHierarchy = () => {
 
     useEffect(() => {
         // If the categories have been fetched, save their initial state
-        if (initialContestCategories) {
+        if (initialContestCategories && !areCategoriesLoading && !areCategoriesFetching) {
             setContestCategories(initialContestCategories);
+
             // For each of the parent nodes ( main categories / nodes at level 0 ) - run DFS
+            initialCategoriesAdjacencyList.current = {};
             initialContestCategories.forEach(depthFirstSearch);
         }
-    }, [ depthFirstSearch, initialContestCategories, areCategoriesFetching ]);
+    }, [ depthFirstSearch, initialContestCategories, areCategoriesFetching, areCategoriesLoading ]);
 
     if (areCategoriesLoading || areCategoriesFetching) {
         return (
@@ -275,9 +279,8 @@ const AdministrationContestCategoriesHierarchy = () => {
 
                 // Validate the node's state
                 const hasNewParentId = initialNode.parentId !== updatedNode.parentId;
-                const hasValidParentId = initialNode.parentId && updatedNode.parentId;
 
-                if (hasNewParentId && hasValidParentId) {
+                if (hasNewParentId) {
                     // If its state is valid, add it to the adjacency list
                     acc[id] = { id, parentId: updatedNode.parentId };
                 }
@@ -301,6 +304,7 @@ const AdministrationContestCategoriesHierarchy = () => {
     };
 
     const onClearClick = () => {
+        clearSuccessMessages({ setSuccessMessage });
         setShowConfirmClear(!showConfirmClear);
     };
 
