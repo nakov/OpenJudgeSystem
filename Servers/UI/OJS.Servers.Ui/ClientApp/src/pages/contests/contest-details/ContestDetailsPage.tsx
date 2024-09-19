@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType } from '../../../common/types';
-import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
+import { CONTESTS_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls/administration-urls';
 import { getAllContestsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import MetaTags from '../../../components/common/MetaTags';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -109,6 +109,10 @@ const ContestDetailsPage = () => {
             <AdministrationLink
               to={`/${CONTESTS_PATH}/${contestId}#tab-problems`}
               text="Problems"
+            />
+            <AdministrationLink
+              to={`/${PROBLEM_GROUPS_PATH}?filter=contestid~equals~${contestId}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+              text="Problem Groups"
             />
             {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
                 (<AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />)}
