@@ -2,6 +2,7 @@
 import React from 'react';
 import { TbBinaryTree } from 'react-icons/tb';
 import AddIcon from '@mui/icons-material/Add';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
@@ -16,7 +17,6 @@ import RedirectButton from '../../../components/administration/common/edit/Redir
 import { useDeleteRolesMutation } from '../../../redux/services/admin/rolesAdminService';
 
 import styles from './AdministrationRolesPage.module.scss';
-import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 
 const rolesFilterableColumns: GridColDef[] = [
     {

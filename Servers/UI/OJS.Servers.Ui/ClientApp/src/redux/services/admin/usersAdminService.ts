@@ -12,7 +12,11 @@ const usersAdminService = createApi({
     endpoints: (builder) => ({
 
         getUsersAutocomplete: builder.query<Array<IUserAutocompleteData>, Array<string>>({
-            query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString[0])}&roleId=${queryString.length > 1 ? queryString[1] : ''}` }),
+            query: (queryString) => ({
+                url: `/GetNameAndId?searchString=${encodeURIComponent(queryString[0])}&roleId=${queryString.length > 1
+                    ? queryString[1]
+                    : ''}`,
+            }),
             keepUnusedDataFor: 10,
         }),
 
