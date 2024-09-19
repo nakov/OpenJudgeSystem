@@ -7,13 +7,13 @@ import FormActionButton from '../../../form-action-button/FormActionButton';
 import formStyles from '../../styles/FormStyles.module.scss';
 
 interface ILecturerFormProps {
-onClick: Function;
-disabled: boolean;
-data: Array<any>;
-name: string;
-label: string;
-onChange: Function;
-onInputChange?: Function;
+    onClick: Function;
+    disabled: boolean;
+    data: Array<any>;
+    name: string;
+    label: string;
+    onChange: Function;
+    onInputChange?: Function;
 }
 
 const LecturerForm = (props: ILecturerFormProps) => {

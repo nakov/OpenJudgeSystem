@@ -78,12 +78,12 @@ export const returnRolesNonFilterableColumns = (
                                 {
                                     icon: <AddIcon className={styles.button} />,
                                     label: 'Add Lecturer To Category',
-                                    handleClick: onAddLecturerToCategory,
+                                    handleClick: () => onAddLecturerToCategory(params.row.id),
                                 },
                                 {
                                     icon: <RemoveIcon className={styles.button} />,
                                     label: 'Remove Lecturer From Category',
-                                    handleClick: onRemoveLecturerFromCategory,
+                                    handleClick: () => onRemoveLecturerFromCategory(params.row.id),
                                 },
                             ]
                         }
@@ -97,12 +97,12 @@ export const returnRolesNonFilterableColumns = (
                                 {
                                     icon: <AddIcon className={styles.button} />,
                                     label: 'Add Lecturer To Contest',
-                                    handleClick: onAddLecturerToContest,
+                                    handleClick: () => onAddLecturerToContest(params.row.id),
                                 },
                                 {
                                     icon: <RemoveIcon className={styles.button} />,
                                     label: 'Remove Lecturer From Contest',
-                                    handleClick: onRemoveLecturerFromContest,
+                                    handleClick: () => onRemoveLecturerFromContest(params.row.id),
                                 },
                             ]
                         }
