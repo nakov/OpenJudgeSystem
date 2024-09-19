@@ -11,8 +11,8 @@ const usersAdminService = createApi({
     baseQuery: getCustomBaseQuery('users'),
     endpoints: (builder) => ({
 
-        getUsersAutocomplete: builder.query<Array<IUserAutocompleteData>, string>({
-            query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString)}` }),
+        getUsersAutocomplete: builder.query<Array<IUserAutocompleteData>, Array<string>>({
+            query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString[0])}&roleId=${queryString.length > 1 ? queryString[1] : ''}` }),
             keepUnusedDataFor: 10,
         }),
 
