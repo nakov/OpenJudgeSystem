@@ -10,6 +10,8 @@ public class ProblemGroupInListModel : IMapExplicitly
 {
     public int Id { get; set; }
 
+    public int ContestId { get; set; }
+
     public string? Contest { get; set; }
 
     public bool IsDeleted { get; set; }
