@@ -22,17 +22,12 @@ public class SubmissionStartedProcessingConsumer(
         if (submissionForProcessing == null)
         {
             logger.LogSubmissionForProcessingNotFoundForSubmission(0, submissionId);
+            return;
         }
-        else if (submissionForProcessing.State == SubmissionProcessingState.Processed)
-        {
-            // We have already processed this submission, so no need to mark it as processing.
-            logger.LogSubmissionAlreadyProcessed(submissionId);
-        }
-        else
-        {
-            await submissionsForProcessingCommonData.MarkProcessing(
-                submissionForProcessing,
-                context.Message.ProcessingStartedAt);
-        }
+
+        await submissionsForProcessingCommonData.SetProcessingState(
+            submissionForProcessing,
+            SubmissionProcessingState.Processing,
+            context.Message.ProcessingStartedAt);
     }
 }
