@@ -27,8 +27,8 @@ import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { makePrivate } from '../../shared/make-private';
-import { setLayout } from '../../shared/set-layout';
+import makePrivate from '../../shared/make-private';
+import setLayout from '../../shared/set-layout';
 import withTitle from '../../shared/with-title';
 
 import styles from './SubmissionsDetailsPage.module.scss';
@@ -168,15 +168,7 @@ const SubmissionDetailsPage = () => {
     }, [ handleRetestSubmission, problem, solutionId, userIsInRoleForContest ]);
 
     const renderSubmissionExecutionDetails = useCallback(() => {
-        const isSubmissionBeingProcessed =
-            // The submission has not yet been processed
-            !isProcessed ||
-            // The retesting of the submission has been started
-            isRetestingStarted ||
-            // If the test runs' length is 0 and the code is compiled successfully, and the
-            // submission is not eligible for retesting, then we are still processing the submission
-            ((testRuns && testRuns.length === 0) && isCompiledSuccessfully && !isEligibleForRetest);
-        if (isSubmissionBeingProcessed) {
+        if (!isProcessed || isRetestingStarted) {
             return (
                 <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
                     The submission is in queue and will be processed shortly. Please wait.

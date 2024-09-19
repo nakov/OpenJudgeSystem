@@ -1,6 +1,8 @@
 import React from 'react';
 import { concatClassnames } from 'react-alice-carousel/lib/utils';
+import { IconType } from 'react-icons';
 import { BiTransfer } from 'react-icons/bi';
+import { FaCalendarAlt, FaClock, FaFile, FaUser } from 'react-icons/fa';
 import { IoIosLock } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -31,15 +33,6 @@ interface IContestCardProps {
     contest: IIndexContestsType;
     showPoints?: boolean;
 }
-
-const iconNames = {
-    time: 'far fa-clock',
-    date: 'far fa-calendar-alt',
-    numberOfProblems: 'fas fa-file',
-    practiceResults: 'fas fa-user',
-    competeResults: 'fas fa-user',
-    remainingTime: 'far fa-clock',
-};
 
 const ContestCard = (props: IContestCardProps) => {
     const { contest, showPoints } = props;
@@ -90,21 +83,22 @@ const ContestCard = (props: IContestCardProps) => {
     const isUserAdminOrLecturer = internalUser.isAdmin || internalUser.isLecturer;
 
     const renderContestDetailsFragment = (
-        iconName: string,
+        Icon: IconType,
         text: string | number | undefined,
         tooltipTitle?: string,
         isGreenColor?: boolean,
         hasUnderLine?: boolean,
         participationType?: string,
     ) => {
-        if (!text || !iconName) {
+        if (!text) {
             return;
         }
 
         const renderBody = () => (
             <>
                 {' '}
-                <i className={`${iconName}`} />
+                <Icon className={styles.icon} />
+                {' '}
                 <div className={`${hasUnderLine
                     ? styles.hasUnderLine
                     : ''}`}
@@ -232,15 +226,15 @@ const ContestCard = (props: IContestCardProps) => {
                 }
                 <div className={styles.contestDetailsFragmentsWrapper}>
                     {contestStartTime && renderContestDetailsFragment(
-                        iconNames.date,
+                        FaCalendarAlt,
                         preciseFormatDate(contestStartTime, dateTimeFormatWithSpacing),
                         'Start date',
                     )}
-                    {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems, 'Problem count')}
+                    {renderContestDetailsFragment(FaFile, numberOfProblems, 'Problem count')}
                     {
                         getPracticeResultsAreVisible(contest, internalUser.canAccessAdministration) &&
                         renderContestDetailsFragment(
-                            iconNames.practiceResults,
+                            FaUser,
                             `Practice results: ${practiceResults}`,
                             undefined,
                             false,
@@ -252,7 +246,7 @@ const ContestCard = (props: IContestCardProps) => {
                         // Null compete points means user is not compete participant
                         getCompeteResultsAreVisible(contest, internalUser.canAccessAdministration) &&
                         renderContestDetailsFragment(
-                            iconNames.competeResults,
+                            FaUser,
                             `Compete results: ${competeResults}`,
                             undefined,
                             true,
@@ -265,7 +259,7 @@ const ContestCard = (props: IContestCardProps) => {
                         remainingDuration.seconds() > 0 &&
                         hasContestStartTimePassed &&
                         renderContestDetailsFragment(
-                            iconNames.remainingTime,
+                            FaClock,
                             `Remaining time: ${remainingTimeFormatted}`,
                             'Remaining time',
                             false,

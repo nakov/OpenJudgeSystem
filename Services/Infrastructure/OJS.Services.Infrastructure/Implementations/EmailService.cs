@@ -69,8 +69,8 @@ public class EmailService : IEmailService, IDisposable
         }
         catch (Exception e)
         {
-           // TODO
-           Console.WriteLine(e);
+            // TODO
+            Console.WriteLine(e);
         }
     }
 
@@ -86,8 +86,8 @@ public class EmailService : IEmailService, IDisposable
         }
         catch (Exception ex)
         {
-          // TODO
-          Console.WriteLine(ex);
+            // TODO
+            Console.WriteLine(ex);
         }
     }
 

@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
+import IconButton from '@mui/material/IconButton';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../../common/common-types';
+import { IPagedResultType, IPublicSubmission } from '../../../common/types';
 import { IGetSubmissionsUrlParams } from '../../../common/url-types';
-import { setCurrentPage, setLatestSubmissions } from '../../../redux/features/submissionsSlice';
 import {
-    useGetLatestSubmissionsInRoleQuery,
     useGetLatestSubmissionsQuery,
-    useGetUnprocessedCountQuery,
+    useLazyGetLatestSubmissionsInRoleQuery,
+    useLazyGetUnprocessedCountQuery,
 } from '../../../redux/services/submissionsService';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/store';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import RefreshIcon from '../../guidelines/icons/RefreshIcon';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../submissions-grid/SubmissionsGrid';
 
 import SubmissionStateLink from './SubmissionStateLink';
@@ -20,26 +25,26 @@ import styles from './RecentSubmissions.module.scss';
 
 const selectedSubmissionsStateMapping = {
     1: 'All',
-    2: 'In Queue',
-    3: 'Pending',
+    2: 'Processing',
+    3: 'Enqueued',
+    4: 'Pending',
 } as IDictionary<string>;
 
 const RecentSubmissions = () => {
     const [ selectedActive, setSelectedActive ] = useState<number>(1);
     const [ shouldLoadRegularUserSubmissions, setShouldLoadRegularUserSubmissions ] = useState<boolean>(false);
-    const [ shouldLoadAdminUserSubmissions, setShouldLoadAdminUserSubmissions ] = useState<boolean>(false);
-    const [ shouldLoadUnprocessedCount, setShouldLoadUnprocessedCount ] = useState<boolean>(false);
     const [ queryParams, setQueryParams ] = useState<IGetSubmissionsUrlParams>({
         status: selectedActive,
         page: 1,
     });
 
-    const appDispatch = useAppDispatch();
-
-    const {
-        latestSubmissions,
-        currentPage,
-    } = useAppSelector((state) => state.submissions);
+    const [ latestSubmissions, setLatestSubmissions ] = useState<IPagedResultType<IPublicSubmission>>({
+        items: [],
+        totalItemsCount: 0,
+        itemsPerPage: 0,
+        pagesCount: 0,
+        pageNumber: 0,
+    });
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
@@ -47,51 +52,58 @@ const RecentSubmissions = () => {
 
     const {
         isLoading: regularUserIsLoading,
+        isFetching: regularUserIsFetching,
         data: regularUserData,
     } = useGetLatestSubmissionsQuery(
-        { status: selectedActive, page: currentPage },
+        queryParams,
         { skip: !shouldLoadRegularUserSubmissions },
     );
 
-    const { data: unprocessedCount } = useGetUnprocessedCountQuery(null, { skip: !shouldLoadUnprocessedCount });
+    const [
+        getUnprocessedSubmissionsCount, { data: unprocessedSubmissionsCount },
+    ] = useLazyGetUnprocessedCountQuery();
 
-    const {
-        isLoading: inRoleLoading,
-        data: inRoleData,
-    } = useGetLatestSubmissionsInRoleQuery(
-        queryParams,
-        { skip: !shouldLoadAdminUserSubmissions },
-    );
-
-    useEffect(() => {
-        if (user.isAdmin) {
-            setShouldLoadAdminUserSubmissions(true);
-            setShouldLoadUnprocessedCount(true);
-            return;
-        }
-
-        setShouldLoadRegularUserSubmissions(true);
-    }, [ user ]);
+    const [
+        getLatestSubmissionsInRole, {
+            isLoading: inRoleLoading,
+            isFetching: inRoleIsFetching,
+            data: inRoleData,
+        },
+    ] = useLazyGetLatestSubmissionsInRoleQuery();
 
     const areSubmissionsLoading =
         loggedInUserInRole
             ? inRoleLoading
             : regularUserIsLoading;
 
-    const inRoleSubmissionsReady = loggedInUserInRole && !isNil(inRoleData) && !areSubmissionsLoading;
+    const areSubmissionsFetching =
+        loggedInUserInRole
+            ? inRoleIsFetching
+            : regularUserIsFetching;
 
-    const regularUserSubmissionsReady = !loggedInUserInRole && !isNil(regularUserData) && !areSubmissionsLoading;
+    const inRoleSubmissionsReady = loggedInUserInRole && !isNil(inRoleData) && !inRoleLoading && !inRoleIsFetching;
+    const regularUserSubmissionsReady = !loggedInUserInRole && !isNil(regularUserData) && !regularUserIsLoading && !regularUserIsFetching;
+
+    useEffect(() => {
+        if (loggedInUserInRole) {
+            getLatestSubmissionsInRole(queryParams);
+            getUnprocessedSubmissionsCount(null);
+        }
+    }, [ loggedInUserInRole, getLatestSubmissionsInRole, getUnprocessedSubmissionsCount, queryParams ]);
+
+    useEffect(() => {
+        if (!user.isAdmin) {
+            setShouldLoadRegularUserSubmissions(true);
+        }
+    }, [ user ]);
 
     useEffect(() => {
         if (inRoleSubmissionsReady) {
-            appDispatch(setLatestSubmissions(inRoleData));
-            return;
+            setLatestSubmissions(inRoleData);
+        } else if (regularUserSubmissionsReady) {
+            setLatestSubmissions(regularUserData);
         }
-
-        if (regularUserSubmissionsReady) {
-            appDispatch(setLatestSubmissions(regularUserData));
-        }
-    }, [ appDispatch, inRoleData, inRoleSubmissionsReady, regularUserData, regularUserSubmissionsReady ]);
+    }, [ inRoleData, inRoleSubmissionsReady, regularUserData, regularUserSubmissionsReady ]);
 
     const handlePageChange = useCallback(
         (newPage: number) => {
@@ -99,17 +111,13 @@ const RecentSubmissions = () => {
                 status: queryParams.status,
                 page: newPage,
             });
-
-            appDispatch(setCurrentPage(newPage));
         },
-        [ appDispatch, queryParams.status ],
+        [ queryParams.status ],
     );
 
     const handleSelectSubmissionState = useCallback(
         (typeKey: number) => {
             if (selectedActive) {
-                appDispatch(setCurrentPage(1));
-
                 setQueryParams({
                     status: typeKey,
                     page: 1,
@@ -118,50 +126,76 @@ const RecentSubmissions = () => {
                 setSelectedActive(typeKey);
             }
         },
-        [ appDispatch, selectedActive ],
+        [ selectedActive ],
     );
 
-    const renderSubmissionsStateAdminToggle = useCallback(
-        () => {
-            const { isAdmin } = user;
+    const getSubmissionsAwaitingExecution = useCallback((state: string = '') => {
+        if (isEmpty(unprocessedSubmissionsCount)) {
+            return 0;
+        }
 
-            return (
-                isAdmin && (
-                    <Heading
-                      type={HeadingType.secondary}
-                    >
-                        Submissions awaiting execution:
-                        {' '}
-                        {unprocessedCount}
-                        {' '}
-                        (
-                        <SubmissionStateLink
-                          stateIndex={1}
-                          isSelected={selectedActive === 1}
-                          text={selectedSubmissionsStateMapping[1]}
-                          handleOnSelect={handleSelectSubmissionState}
-                        />
-                        /
-                        <SubmissionStateLink
-                          stateIndex={2}
-                          isSelected={selectedActive === 2}
-                          text={selectedSubmissionsStateMapping[2]}
-                          handleOnSelect={handleSelectSubmissionState}
-                        />
-                        /
-                        <SubmissionStateLink
-                          stateIndex={3}
-                          isSelected={selectedActive === 3}
-                          text={selectedSubmissionsStateMapping[3]}
-                          handleOnSelect={handleSelectSubmissionState}
-                        />
-                        )
-                    </Heading>
+        if (isEmpty(state)) {
+            return Object.values(unprocessedSubmissionsCount).reduce((acc, curr) => acc + curr, 0);
+        }
+
+        return unprocessedSubmissionsCount[state];
+    }, [ unprocessedSubmissionsCount ]);
+
+    const renderSubmissionsStateAdminToggle = useCallback(() => {
+        const { isAdmin } = user;
+
+        return (
+            isAdmin && (
+            <Heading
+              type={HeadingType.secondary}
+            >
+                Submissions awaiting execution:
+                {' '}
+                {getSubmissionsAwaitingExecution()}
+                {' '}
+                (
+                <SubmissionStateLink
+                  stateIndex={1}
+                  isSelected={selectedActive === 1}
+                  text={selectedSubmissionsStateMapping[1]}
+                  handleOnSelect={handleSelectSubmissionState}
+                />
+                /
+                <SubmissionStateLink
+                  stateIndex={2}
+                  isSelected={selectedActive === 2}
+                  text={selectedSubmissionsStateMapping[2]}
+                  count={getSubmissionsAwaitingExecution(selectedSubmissionsStateMapping[2])}
+                  handleOnSelect={handleSelectSubmissionState}
+                />
+                /
+                <SubmissionStateLink
+                  stateIndex={3}
+                  isSelected={selectedActive === 3}
+                  text={selectedSubmissionsStateMapping[3]}
+                  count={getSubmissionsAwaitingExecution(selectedSubmissionsStateMapping[3])}
+                  handleOnSelect={handleSelectSubmissionState}
+                />
+                /
+                <SubmissionStateLink
+                  stateIndex={4}
+                  isSelected={selectedActive === 4}
+                  text={selectedSubmissionsStateMapping[4]}
+                  count={getSubmissionsAwaitingExecution(selectedSubmissionsStateMapping[4])}
+                  handleOnSelect={handleSelectSubmissionState}
+                />
                 )
-            );
-        },
-        [ user, unprocessedCount, selectedActive, handleSelectSubmissionState ],
-    );
+                <IconButton
+                  title="Refresh"
+                  className={styles.refreshIcon}
+                  onClick={() => setQueryParams((prev) => ({ ...prev, page: 1 }))}
+                >
+                    <RefreshIcon size={IconSize.Large} />
+                </IconButton>
+            </Heading>
+            )
+        );
+    }, [ user, getSubmissionsAwaitingExecution, selectedActive, handleSelectSubmissionState ]);
 
     return (
         <div className={styles.recentSubmissionsWrapper}>
@@ -185,19 +219,29 @@ const RecentSubmissions = () => {
                 )
             }
             {renderSubmissionsStateAdminToggle()}
-            <SubmissionsGrid
-              className={styles.recentSubmissionsGrid}
-              isDataLoaded={!areSubmissionsLoading}
-              submissions={latestSubmissions}
-              handlePageChange={handlePageChange}
-              options={{
-                  showDetailedResults: user.isAdmin,
-                  showTaskDetails: true,
-                  showCompeteMarker: user.isAdmin,
-                  showSubmissionTypeInfo: true,
-                  showParticipantUsername: true,
-              }}
-            />
+            {
+                areSubmissionsFetching && queryParams.page === 1
+                    ? (
+                        <div style={{ ...flexCenterObjectStyles, marginTop: '10px' }}>
+                            <SpinningLoader />
+                        </div>
+                    )
+                    : (
+                        <SubmissionsGrid
+                          className={styles.recentSubmissionsGrid}
+                          isDataLoaded={!areSubmissionsLoading}
+                          submissions={latestSubmissions}
+                          handlePageChange={handlePageChange}
+                          options={{
+                              showDetailedResults: user.isAdmin,
+                              showTaskDetails: true,
+                              showCompeteMarker: user.isAdmin,
+                              showSubmissionTypeInfo: true,
+                              showParticipantUsername: true,
+                          }}
+                        />
+                    )
+            }
         </div>
     );
 };

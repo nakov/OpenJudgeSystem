@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useMemo, useState } from 'react';
 
 import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
@@ -40,10 +40,4 @@ const RouteUrlParamsProvider = ({ children }: IRouteUrlParamsProvider) => {
     );
 };
 
-const useRouteUrlParams = () => useContext(RouteUrlParamsContext);
-
 export default RouteUrlParamsProvider;
-
-export {
-    useRouteUrlParams,
-};

@@ -6,7 +6,7 @@ import cacheService from '../../../redux/cacheService';
 import { resetInInternalUser, setIsLoggedIn } from '../../../redux/features/authorizationSlice';
 import { useLogOutMutation } from '../../../redux/services/authorizationService';
 import concatClassNames from '../../../utils/class-names';
-import { wait } from '../../../utils/promise-utils';
+import wait from '../../../utils/promise-utils';
 
 import styles from './LogoutPage.module.scss';
 

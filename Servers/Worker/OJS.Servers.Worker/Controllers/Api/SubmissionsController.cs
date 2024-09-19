@@ -35,14 +35,15 @@ public class SubmissionsController : BaseApiController
                 submissionCodeRequestModel.WithExceptionStackTrace)
             .ToOkResult();
 
+    // Dont think thats used anymore
+    // TODO: Remove this method
     [HttpPost]
     [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]
     [Route("/" + nameof(ExecuteFileSubmission))]
     public async Task<IActionResult> ExecuteFileSubmission(
         [FromForm] SubmissionFileRequestModel submissionFileRequestModel,
         bool keepDetails = false,
-        bool escapeTests = true,
-        bool keepCheckerFragmentsForCorrectAnswers = true)
+        bool escapeTests = true)
         => await this.ExecuteSubmission(
                 submissionFileRequestModel.Map<SubmissionServiceModel>(),
                 submissionFileRequestModel.WithExceptionStackTrace)

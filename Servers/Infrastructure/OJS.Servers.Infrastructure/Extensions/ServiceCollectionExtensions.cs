@@ -34,6 +34,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
     using OJS.Services.Infrastructure.Configurations;
+    using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
@@ -145,6 +146,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     opt.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
                     opt.Cookie.Domain = sharedAuthCookieDomain;
+                    opt.ExpireTimeSpan = TimeSpan.FromDays(7); // Set the cookie to expire after a week of inactivity
                     opt.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
                     opt.Events.OnRedirectToLogin = UnAuthorizedResponse;
                 });
@@ -240,11 +242,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     .AddConsumer(consumer)
                     .Endpoint(endpointConfig =>
                     {
-                        endpointConfig.Name = consumer.Name;
-                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator configurator)
-                        {
-                            configurator.Durable = true;
-                        }
+                        endpointConfig.Name = consumer.FullName ?? consumer.Name;
                     }));
 
                 config.UsingRabbitMq((context, rmq) =>
@@ -255,18 +253,23 @@ namespace OJS.Servers.Infrastructure.Extensions
                         h.Password(messageQueueConfig.Password);
                     });
 
-                    consumers.ForEach(consumer => rmq.ReceiveEndpoint(consumer.FullName!, endpoint =>
+                    if (messageQueueConfig.PrefetchCount.HasValue)
                     {
-                        if (messageQueueConfig.PrefetchCount.HasValue)
-                        {
-                            endpoint.PrefetchCount = messageQueueConfig.PrefetchCount.Value;
-                        }
+                        rmq.PrefetchCount = messageQueueConfig.PrefetchCount.Value;
+                    }
 
-                        endpoint.UseMessageRetry(retry =>
-                            retry.Interval(messageQueueConfig.RetryCount, messageQueueConfig.RetryInterval));
+                    rmq.UseMessageRetry(retry =>
+                        retry.Interval(messageQueueConfig.RetryCount, TimeSpan.FromMilliseconds(messageQueueConfig.RetryInterval)));
 
-                        endpoint.ConfigureConsumer(context, consumer);
-                    }));
+                    rmq.ConfigureEndpoints(context);
+                });
+
+                config.AddConfigureEndpointsCallback((_, cfg) =>
+                {
+                    if (cfg is IRabbitMqReceiveEndpointConfigurator configurator)
+                    {
+                        configurator.Durable = true;
+                    }
                 });
             });
 
@@ -339,14 +342,13 @@ namespace OJS.Servers.Infrastructure.Extensions
                             ShouldHandle = handleAllExceptions,
                             OnRetry = (args) =>
                             {
-                              logger.LogWarning(
-                                  "Retry attempt #{RetryAttempt}. Operation: Retry_{OperationKey} Outcome: [{ResilienceOutcome}]. Duration: {RetryDuration}ms. Delay: {RetryDelay}ms.",
-                                  args.AttemptNumber + 1,
-                                  args.Context.Properties.GetValue(new ResiliencePropertyKey<string>(OperationKey), string.Empty),
-                                  args.Outcome.Exception?.Message ?? (args.Outcome.Result ?? "No result."),
-                                  args.Duration.Milliseconds,
-                                  args.RetryDelay.Milliseconds);
-                              return default;
+                                logger.LogCircuitBreakerRetryAttempt(
+                                    args.AttemptNumber + 1,
+                                    args.Context.Properties.GetValue(new ResiliencePropertyKey<string>(OperationKey), string.Empty),
+                                    args.Outcome.Exception?.Message ?? args.Outcome.Result?.ToString() ?? "No result.",
+                                    args.Duration.Milliseconds,
+                                    args.RetryDelay.Milliseconds);
+                                return default;
                             },
                         })
                         .ConfigureTelemetry(new TelemetryOptions

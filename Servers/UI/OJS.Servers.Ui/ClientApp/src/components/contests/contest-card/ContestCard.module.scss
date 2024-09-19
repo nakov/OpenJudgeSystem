@@ -20,6 +20,7 @@
 
   .contestDetailsFragmentsWrapper {
     display: flex;
+    flex-wrap: wrap;
   }
 
   .contestCardTitle {
@@ -40,15 +41,11 @@
     color: colors.$primary-blue;
     display: flex;
     justify-content: space-between;
-    margin-top: spacings.$sp-16;
+    margin: spacings.$sp-16 spacings.$sp-16 0 0;
 
-    > i {
-      height: 16px;
-      width: 16px;
-    }
-
-    > div {
-      margin-right: spacings.$sp-32;
+    .icon {
+      margin-right: spacings.$sp-4;
+      font-size: variables.$f-size-12;
     }
   }
 

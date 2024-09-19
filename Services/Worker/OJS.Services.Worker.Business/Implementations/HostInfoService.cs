@@ -1,6 +1,7 @@
 namespace OJS.Services.Worker.Business.Implementations;
 
 using Microsoft.Extensions.Logging;
+using OJS.Services.Infrastructure.Constants;
 using OJS.Workers.Common;
 using OJS.Workers.Common.Helpers;
 using System;
@@ -34,9 +35,9 @@ public class HostInfoService : IHostInfoService
         {
             hostEntry = Dns.GetHostEntry(hostName);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            this.logger.LogError("Failed to get host entry for host name: {HostName}", hostName);
+            this.logger.LogFailedToGetHostEntryForHostName(hostName, ex);
             return null;
         }
 

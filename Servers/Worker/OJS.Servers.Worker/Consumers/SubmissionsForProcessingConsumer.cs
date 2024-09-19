@@ -11,6 +11,8 @@ using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Extensions;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Constants;
 
 public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessingPubSubModel>
 {
@@ -18,52 +20,62 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
     private readonly IPublisherService publisher;
     private readonly IHostInfoService hostInfoService;
     private readonly ILogger<SubmissionsForProcessingConsumer> logger;
+    private readonly IDatesService dates;
 
     public SubmissionsForProcessingConsumer(
         ISubmissionsBusinessService submissionsBusiness,
         IPublisherService publisher,
         IHostInfoService hostInfoService,
-        ILogger<SubmissionsForProcessingConsumer> logger)
+        ILogger<SubmissionsForProcessingConsumer> logger,
+        IDatesService dates)
     {
         this.submissionsBusiness = submissionsBusiness;
         this.publisher = publisher;
         this.hostInfoService = hostInfoService;
         this.logger = logger;
+        this.dates = dates;
     }
 
     public async Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
     {
-        this.logger.LogInformation("Received submission #{SubmissionId} for processing",  context.Message.Id);
+        var startedExecutionOn = this.dates.GetUtcNowOffset();
+        var workerName = this.hostInfoService.GetHostIp();
+
+        this.logger.LogStartingProcessingSubmission(context.Message.Id, workerName);
+
+        var submissionStartedProcessingPubSubModel = new SubmissionStartedProcessingPubSubModel
+        {
+            SubmissionId = context.Message.Id,
+            ProcessingStartedAt = startedExecutionOn,
+        };
+
+        await this.publisher.Publish(submissionStartedProcessingPubSubModel);
 
         var result = new ProcessedSubmissionPubSubModel(context.Message.Id)
         {
-            WorkerName = this.hostInfoService.GetHostIp(),
+            WorkerName = workerName,
         };
-
-        this.logger.LogInformation("Starting processing submission #{SubmissionId} on worker {WorkerName}", context.Message.Id, result.WorkerName);
-        var submission = context.Message.Map<SubmissionServiceModel>();
-        var startedExecutionOn = DateTime.UtcNow;
 
         try
         {
-            this.logger.LogInformation("Executing submission #{SubmissionId}: {@Submission}", submission.Id, submission.TrimDetails());
+            var submission = context.Message.Map<SubmissionServiceModel>();
+            this.logger.LogExecutingSubmission(submission.Id, submission.TrimDetails());
             var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
-            this.logger.LogInformation("Produced execution result for submission #{SubmissionId}: {@ExecutionResult}", submission.Id, executionResult);
+            this.logger.LogProducedExecutionResult(submission.Id, executionResult);
 
             result.SetExecutionResult(executionResult.Map<ExecutionResultServiceModel>());
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Error processing submission #{SubmissionId} on worker: {WorkerName}", submission.Id, result.WorkerName);
+            this.logger.LogErrorProcessingSubmission(context.Message.Id, result.WorkerName, ex);
             result.SetException(ex, true);
         }
         finally
         {
-            result.SetStartedAndCompletedExecutionOn(startedExecutionOn, completedExecutionOn: DateTime.UtcNow);
+            result.SetStartedAndCompletedExecutionOn(startedExecutionOn.UtcDateTime, completedExecutionOn: DateTime.UtcNow);
         }
 
-        this.logger.LogInformation("Publishing processed submission #{SubmissionId} from worker: {WorkerName}", submission.Id, result.WorkerName);
         await this.publisher.Publish(result);
-        this.logger.LogInformation("Published processed submission #{SubmissionId} from worker: {WorkerName}", submission.Id, result.WorkerName);
+        this.logger.LogPublishedProcessedSubmission(context.Message.Id, result.WorkerName);
     }
 }

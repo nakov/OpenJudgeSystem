@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
@@ -22,7 +23,7 @@ import { useGetContestByIdQuery } from '../../../redux/services/contestsService'
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { setLayout } from '../../shared/set-layout';
+import setLayout from '../../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -135,7 +136,7 @@ const ContestDetailsPage = () => {
                       isSimple: true,
                   })}
                 >
-                    <i className="fas fa-user" />
+                    <FaUser />
                     <div className={`${styles.underlinedBtnText}`}>
                         { isCompete
                             ? 'Compete'

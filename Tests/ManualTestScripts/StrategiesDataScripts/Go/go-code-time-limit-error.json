@@ -1,0 +1,32 @@
+// 1 TimeLimit
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "go-code",
+    "CompilerType": "GolangCompiler",
+    "FileContent": null,
+    "Code": "package main\r\n\r\nimport (\r\n\t\"fmt\"\r\n)\r\n\r\nfunc main() {\r\n\tvar input, ticket string\r\n\tvar seatsCount, countToSeats, standartTicketCount, studentTicketCount, kidTicketCount, totalTickets int\r\n\tfmt.Scanln(\u0026input)\r\n\r\n\tfor true {\r\n\r\n\t\tif input \u003d\u003d \"Finish\" {\r\n\t\t\tstudentTicketPercent :\u003d float64((studentTicketCount * 100) / totalTickets)\r\n\t\t\tstandartTicketPercent :\u003d float64((standartTicketCount * 100) / totalTickets)\r\n\t\t\tkidstTicketPercent :\u003d float64((kidTicketCount * 100) / totalTickets)\r\n\r\n\t\t\tfmt.Printf(\"Total tickets: %d\\n\", totalTickets)\r\n\t\t\tfmt.Printf(\"%.2f student tickets.\\n\", studentTicketPercent)\r\n\t\t\tfmt.Printf(\"%.2f standard tickets.\\n\", standartTicketPercent)\r\n\t\t\tfmt.Printf(\"%.2f kids tickets.\\n\", kidstTicketPercent)\r\n\t\t\tbreak\r\n\t\t}\r\n\t\t//input \u003d\u003d Movie\r\n\t\tfmt.Scanln(\u0026seatsCount)\r\n\t\tfmt.Scanln(\u0026ticket)\r\n\r\n\t\tfor true {\r\n\t\t\tif ticket \u003d\u003d \"End\" || countToSeats \u003d\u003d seatsCount {\r\n\t\t\t\tfullRoomPercent :\u003d float64((countToSeats * 100) / seatsCount)\r\n\r\n\t\t\t\tfmt.Printf(\"%s - %.2f%% full.\\n\", input, fullRoomPercent)\r\n\t\t\t\tfmt.Scanln(\u0026seatsCount)\r\n\t\t        fmt.Scanln(\u0026ticket)\r\n\t\t\t\tcountToSeats \u003d 1\r\n\t\t\t\tbreak\r\n\t\t\t}\r\n\r\n\t\t\tif ticket \u003d\u003d \"standart\" {\r\n\t\t\t\tstandartTicketCount++\r\n\t\t\t\ttotalTickets++\r\n\t\t\t} else if ticket \u003d\u003d \"student\" {\r\n\t\t\t\tstudentTicketCount++\r\n\t\t\t\ttotalTickets++\r\n\t\t\t} else if ticket \u003d\u003d \"kid\" {\r\n\t\t\t\tkidTicketCount++\r\n\t\t\t\ttotalTickets++\r\n\t\t\t}\r\n\r\n\t\t\tfmt.Scanln(\u0026ticket)\r\n\t\t\tcountToSeats++\r\n\t\t\tfmt.Println(countToSeats)\r\n\t\t}\r\n\r\n\t\tfmt.Scanln(\u0026input)\r\n\t}\r\n\r\n}\r\n",
+    "TimeLimit": 100,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 243421,
+          "Input": "Taxi\r\n10\r\nstandard\r\nkid\r\nstudent\r\nstudent\r\nstandard\r\nstandard\r\nEnd\r\nScaryMovie\r\n6\r\nstudent\r\nstudent\r\nstudent\r\nstudent\r\nstudent\r\nstudent\r\nFinish",
+          "Output": "Taxi - 60.00% full.\r\nScaryMovie - 100.00% full.\r\nTotal tickets: 12\r\n66.67% student tickets.\r\n25.00% standard tickets.\r\n8.33% kids tickets.",
+          "IsTrialTest": true,
+          "OrderBy": 1
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

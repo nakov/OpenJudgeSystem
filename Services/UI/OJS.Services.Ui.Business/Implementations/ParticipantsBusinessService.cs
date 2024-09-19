@@ -1,7 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
@@ -18,19 +17,16 @@ using SharedResource = OJS.Common.Resources.ContestsGeneral;
 public class ParticipantsBusinessService : IParticipantsBusinessService
 {
     private readonly IParticipantsDataService participantsData;
-    private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsDataService contestsData;
     private readonly IDatesService datesService;
 
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
-        ISubmissionsDataService submissionsData,
         IContestsDataService contestsData,
         IDatesService datesService)
     {
         this.participantsData = participantsData;
         this.contestsData = contestsData;
-        this.submissionsData = submissionsData;
         this.datesService = datesService;
     }
 
@@ -148,13 +144,6 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         return ServiceResult<ICollection<string>>.Success(invalidForUpdateParticipantUsernames);
     }
-
-    public Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions)
-        => contestLimitBetweenSubmissions != 0
-            ? this.submissionsData
-                .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
-                .ToTask()
-            : Task.FromResult(0);
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {

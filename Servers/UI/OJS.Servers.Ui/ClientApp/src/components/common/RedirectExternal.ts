@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export const RedirectExternal = (path: string) => {
+const RedirectExternal = (path: string) => {
     useEffect(() => {
         window.location.href = path;
     });
@@ -8,4 +8,4 @@ export const RedirectExternal = (path: string) => {
     return null;
 };
 
-export default { RedirectExternal };
+export default RedirectExternal;

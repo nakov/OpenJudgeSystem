@@ -10,6 +10,7 @@ using OJS.Data;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
+using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions;
@@ -23,6 +24,8 @@ using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Workers.Common.Models;
 using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Cache;
+using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
@@ -52,10 +55,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
     private readonly IRetestSubmissionValidationService retestSubmissionValidationService;
-    private readonly ISubmissionPublisherService submissionPublisher;
+    private readonly IPublisherService publisher;
     private readonly ISubmissionsHelper submissionsHelper;
     private readonly IDatesService dates;
     private readonly ITransactionsProvider transactionsProvider;
+    private readonly ICacheService cache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -74,10 +78,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
         IRetestSubmissionValidationService retestSubmissionValidationService,
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
-        ISubmissionPublisherService submissionPublisher,
+        IPublisherService publisher,
         ISubmissionsHelper submissionsHelper,
         IDatesService dates,
-        ITransactionsProvider transactionsProvider)
+        ITransactionsProvider transactionsProvider,
+        ICacheService cache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -94,11 +99,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
         this.retestSubmissionValidationService = retestSubmissionValidationService;
-        this.submissionPublisher = submissionPublisher;
+        this.publisher = publisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.submissionsHelper = submissionsHelper;
         this.dates = dates;
         this.transactionsProvider = transactionsProvider;
+        this.cache = cache;
     }
 
     public async Task Retest(int id)
@@ -126,7 +132,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        await this.submissionPublisher.PublishRetest(submission.Id);
+        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = id });
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -238,8 +244,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         };
     }
 
-    public Task<int> GetAllUnprocessedCount()
-        => this.submissionsCommonData.GetAllUnprocessedCount();
+    public Task<Dictionary<SubmissionProcessingState, int>> GetAllUnprocessedCount()
+        => this.submissionsForProcessingData
+            .GetAllUnprocessed()
+            .GroupBy(sfp => sfp.State)
+            .ToDictionaryAsync(sfp => sfp.Key, sfp => sfp.Count());
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
@@ -488,7 +497,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        await this.submissionsForProcessingData.Add(newSubmission.Id);
+        var submissionForProcessing = await this.submissionsForProcessingData.Add(newSubmission.Id);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
@@ -496,7 +505,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         // "The current TransactionScope is already complete"
         scope.Dispose();
 
-        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
+        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -561,14 +570,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submission.CompilerComment = ProcessingExceptionCompilerComment;
             }
 
-            this.submissionsForProcessingData.MarkProcessed(submissionForProcessing);
-            await this.submissionsData.SaveChanges();
+            await this.submissionsForProcessingData.MarkProcessed(submissionForProcessing);
         });
 
-        this.logger.LogInformation(
-            "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}",
-            submission.Id,
-            submissionForProcessing);
+        this.logger.LogSubmissionProcessedSuccessfully(submission.Id, submissionForProcessing);
     }
 
     public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page)
@@ -588,7 +593,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public Task<int> GetTotalCount()
-        => this.submissionsData.Count();
+        => this.cache.Get(
+            CacheConstants.TotalSubmissionsCount,
+            async () => await this.submissionsData.IgnoreQueryFilters().Count(),
+            CacheConstants.FiveMinutesInSeconds);
 
     public async Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
         SubmissionStatus status,
@@ -602,29 +610,42 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         IQueryable<Submission> query;
 
-        if (status == SubmissionStatus.Processing)
+        switch (status)
         {
-            query = this.submissionsCommonData.GetAllProcessing();
-        }
-        else if (status == SubmissionStatus.Pending)
-        {
-            query = this.submissionsCommonData.GetAllPending();
-        }
-        else
-        {
-            var user = this.userProviderService.GetCurrentUser();
-            if (user.IsAdminOrLecturer)
-            {
-                return await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, page);
-            }
+            case SubmissionStatus.Enqueued:
+                query = this.submissionsCommonData.GetAllEnqueued();
+                break;
+            case SubmissionStatus.Processing:
+                query = this.submissionsCommonData.GetAllProcessing();
+                break;
+            case SubmissionStatus.Pending:
+                query = this.submissionsCommonData.GetAllPending();
+                break;
+            case SubmissionStatus.All:
+            default:
+                return this.userProviderService.GetCurrentUser().IsAdminOrLecturer
+                    ? await this.submissionsData
+                        .GetLatestSubmissions<TServiceModel>()
+                        .ToPagedResultAsync(itemsPerPage, page)
+                    : await this.cache.Get(
+                        CacheConstants.LatestPublicSubmissions,
+                        async () =>
+                        {
+                            var submissions = await this.submissionsData
+                                .GetLatestSubmissions<TServiceModel>(DefaultSubmissionsPerPage)
+                                .ToListAsync();
 
-            var submissions = await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, 1);
+                            var totalItemsCount = await this.GetTotalCount();
 
-            return new PagedResult<TServiceModel>
-            {
-                Items = submissions.Items,
-                TotalItemsCount = submissions.TotalItemsCount,
-            };
+                            // Public submissions do not have pagination, but PagedResult is used for consistency.
+                            return new PagedResult<TServiceModel>
+                            {
+                                Items = submissions,
+                                TotalItemsCount = totalItemsCount,
+                                PageNumber = 1,
+                            };
+                        },
+                        CacheConstants.TwoMinutesInSeconds);
         }
 
         return await query
@@ -653,10 +674,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 new TestRun
                 {
                     ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
-                    CheckerComment = testResult.CheckerDetails.Comment,
+                    CheckerComment = testResult.CheckerDetails?.Comment,
                     ExecutionComment = testResult.ExecutionComment,
-                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    ExpectedOutputFragment = testResult.CheckerDetails?.ExpectedOutputFragment,
+                    UserOutputFragment = testResult.CheckerDetails?.UserOutputFragment,
                     IsTrialTest = testResult.IsTrialTest,
                     TimeUsed = testResult.TimeUsed,
                     MemoryUsed = testResult.MemoryUsed,

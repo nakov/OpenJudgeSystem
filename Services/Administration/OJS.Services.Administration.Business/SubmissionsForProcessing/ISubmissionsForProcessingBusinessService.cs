@@ -13,10 +13,10 @@ public interface ISubmissionsForProcessingBusinessService : IAdministrationOpera
     /// Enqueues all submissions that are pending (not added in the queue, nor processing).
     /// </summary>
     /// <returns>The count of submissions enqueued.</returns>
-    Task<int> EnqueuePendingSubmissions();
+    Task<int> EnqueuePendingSubmissions(int fromMinutesAgo);
 
     /// <summary>
     /// Deletes all processed (and not processing) submissions from the SubmissionsForProcessing table.
     /// </summary>
-    Task DeleteProcessedSubmissions();
+    Task<int> DeleteProcessedSubmissions(int fromMinutesAgo);
 }

@@ -1,0 +1,39 @@
+// 1 CorrectAnswer, 1 WrongAnswer
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "postgres-run-queries-and-check-database",
+  "CompilerType": "None",
+  "FileContent": null,
+  "Code": "CREATE TABLE minions_birthdays (\r\n    id SERIAL PRIMARY KEY,\r\n    name VARCHAR(50),\r\n    date_of_birth DATE,\r\n\tage INTEGER,\r\n\tpresent VARCHAR(100),\r\n\tparty TIMESTAMP\r\n);",
+  "TimeLimit": 15000,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 306736,
+        "Input": "SELECT DISTINCT lower(column_name)\r\nFROM information_schema.key_column_usage\r\nWHERE table_schema \u003d \u0027public\u0027\r\n    and lower(table_name) \u003d \u0027minions_birthdays\u0027;",
+        "Output": "id",
+        "IsTrialTest": false,
+        "OrderBy": 2
+      },
+      {
+        "Id": 306737,
+        "Input": "SELECT CONCAT_WS(\u0027 - \u0027, lower(column_name), lower(data_type))\r\nFROM information_schema.columns \r\nWHERE table_schema \u003d \u0027public\u0027\r\n  and lower(table_name) \u003d \u0027minions_birthdays\u0027;",
+        "Output": "id - integer\r\nname - character varying\r\ndate_of_birth - date\r\nage - integer\r\npresent - character varying\r\nparty - timestamp with time zone",
+        "IsTrialTest": false,
+        "OrderBy": 3
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}

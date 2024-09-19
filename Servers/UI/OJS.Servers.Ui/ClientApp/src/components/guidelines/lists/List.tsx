@@ -127,6 +127,5 @@ const List = <TValue, >({
 export default List;
 
 export {
-    ListType,
     Orientation,
 };

@@ -9,6 +9,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
     using FluentExtensions.Extensions;
     using Microsoft.Extensions.Logging;
     using OJS.Common.Extensions;
+    using OJS.Services.Infrastructure.Constants;
     using static OJS.Common.GlobalConstants.ErrorMessages;
     using static OJS.Common.GlobalConstants.MimeTypes;
 
@@ -123,7 +124,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
             try
             {
-                this.Logger.LogInformation($"Sending {HttpMethod.Post} {requestUrl} to {this.Client.BaseAddress}");
+                this.Logger.LogStartingHttpRequest(HttpMethod.Post.Method, this.Client.BaseAddress + requestUrl);
                 var response = await this.Client
                     .PostAsJsonAsync(requestUrl, requestData, cancellationToken: CancellationToken.None)
                     .ConfigureAwait(continueOnCapturedContext: false);
@@ -136,13 +137,13 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 else
                 {
                     externalDataResult.ErrorMessage = await response.Content.ReadAsStringAsync();
-                    this.Logger.LogError(externalDataResult.ErrorMessage);
+                    this.Logger.LogResponseNotSuccessfullyReceived(requestUrl, externalDataResult.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
                 externalDataResult.ErrorMessage = ex.InnerException?.Message ?? ex.Message;
-                this.Logger.LogError(externalDataResult.ErrorMessage);
+                this.Logger.LogRequestFailed(requestUrl, ex);
             }
 
             return externalDataResult;

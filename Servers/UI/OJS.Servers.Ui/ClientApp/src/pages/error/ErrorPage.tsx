@@ -4,7 +4,7 @@ import { LinkButton } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import NotFoundPage from '../not-found/NotFoundPage';
 import image from '../not-found/page-not-found.png';
-import { setLayout } from '../shared/set-layout';
+import setLayout from '../shared/set-layout';
 import withTitle from '../shared/with-title';
 
 // eslint-disable-next-line css-modules/no-unused-class

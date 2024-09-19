@@ -32,8 +32,8 @@
     width: 100%;
   }
 
-  @media only screen and (max-width: variables.$r-laptop-max) {
-    width: 70vw;
+  @media (max-width: variables.$r-laptop-max) {
+    max-width: 90vw;
   }
 }
 

@@ -1,0 +1,32 @@
+// 1 TimeLimit
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "java-code",
+    "CompilerType": "Java",
+    "FileContent": null,
+    "Code": "import java.util.Scanner;\r\n\r\npublic class Greater_Number_lab02 {\r\n    public static void main(String[] args) {\r\n      while (true) { int a = 5; }      }\r\n}\r\n",
+    "TimeLimit": 200,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+        "MaxPoints": 100,
+        "CheckerType": "trim",
+        "CheckerParameter": null,
+        "Tests": [
+            {
+                "Id": 174014,
+                "Input": "3\r\n5",
+                "Output": "5",
+                "IsTrialTest": false,
+                "OrderBy": 2
+            }
+        ],
+        "TaskSkeleton": "SyvNSy7JzM9TSExJLChJLVLQyMwrKC3RUUjOT0nVVKjm5VJQUChKLSktygMLaejp6YFVaFrzctUCAA\u003d\u003d",
+        "TaskSkeletonAsString": "function adapter (input, code) {\r\n   return code(...input);\r\n}"
+    },
+    "ExecutionOptions": {
+        "KeepDetails": true,
+        "EscapeTests": false,
+        "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+}

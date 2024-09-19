@@ -36,6 +36,9 @@ namespace OJS.Services.Administration.Data.Implementations
         public IQueryable<ContestCategory> GetAllVisible()
             => this.GetQuery(cc => cc.IsVisible);
 
+        public IQueryable<ContestCategory> GetAllVisibleAndNotDeleted()
+            => this.GetQuery(cc => cc.IsVisible && !cc.IsDeleted);
+
         public IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId)
             => this.GetAllVisible()
                 .Where(cc =>

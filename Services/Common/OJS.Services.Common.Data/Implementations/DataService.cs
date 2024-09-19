@@ -5,9 +5,9 @@ namespace OJS.Services.Common.Data.Implementations
     using OJS.Common.Extensions;
     using OJS.Common.Utils;
     using OJS.Data;
+    using OJS.Data.Models.Common;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure.Extensions;
-    using OJS.Data.Models.Common;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -19,6 +19,7 @@ namespace OJS.Services.Common.Data.Implementations
     {
         private readonly OjsDbContext db;
         private readonly DbSet<TEntity> dbSet;
+        private bool ignoreQueryFiltersOnNextQuery;
 
         public DataService(OjsDbContext db)
         {
@@ -50,6 +51,9 @@ namespace OJS.Services.Common.Data.Implementations
             this.Delete(entity!);
         }
 
+        public void Attach(TEntity entity)
+            => this.dbSet.Attach(entity);
+
         public void Detach(TEntity entity)
             => this.dbSet.Entry(entity).State = EntityState.Detached;
 
@@ -79,6 +83,9 @@ namespace OJS.Services.Common.Data.Implementations
             => await this.GetQuery(filter, orderBy, descending, skip, take)
                 .MapCollection<TResult>()
                 .ToListAsync();
+
+        public ValueTask<TEntity?> Find(params object[] keyValues)
+            => this.dbSet.FindAsync(keyValues);
 
         public virtual async Task<TEntity?> OneById(object id)
             => await this.GetByIdQuery(id)
@@ -138,6 +145,11 @@ namespace OJS.Services.Common.Data.Implementations
             {
                 query = query.IgnoreQueryFilters();
             }
+            else if (this.ignoreQueryFiltersOnNextQuery)
+            {
+                query = query.IgnoreQueryFilters();
+                this.ignoreQueryFiltersOnNextQuery = false;
+            }
 
             if (filter != null)
             {
@@ -172,6 +184,12 @@ namespace OJS.Services.Common.Data.Implementations
             int? skip = null,
             int? take = null)
             => this.GetQuery(this.GetUserFilter(user).CombineAndAlso(filter), orderBy, descending, skip, take);
+
+        IDataService<TEntity> IDataService<TEntity>.IgnoreQueryFilters()
+        {
+            this.ignoreQueryFiltersOnNextQuery = true;
+            return this;
+        }
 
         //// In case that the timeout is set to 0, this means that there is no timeout.
         public async Task ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds)

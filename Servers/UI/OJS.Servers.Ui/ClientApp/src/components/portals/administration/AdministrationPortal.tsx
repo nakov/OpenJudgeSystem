@@ -6,6 +6,7 @@ import { GiFiles } from 'react-icons/gi';
 import { IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
+import { TbBinaryTree } from 'react-icons/tb';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ArticleIcon from '@mui/icons-material/Article';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -46,7 +47,7 @@ import 'dayjs/locale/bg';
 
 import { ThemeMode } from '../../../common/enums';
 import {
-    CHECKERS_PATH,
+    CHECKERS_PATH, CONTEST_CATEGORIES_HIERARCHY_PATH,
     CONTEST_CATEGORIES_PATH,
     CONTESTS_PATH,
     EXAM_GROUPS_PATH,
@@ -69,6 +70,8 @@ import {
 import AdministrationThemeProvider, { getColors } from '../../../hooks/use-administration-theme-provider';
 import AdministrationContestCategories
     from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
+import AdministrationContestCategoriesHierarchy
+    from '../../../pages/administration-new/contest-categories-hierarchy/AdministrationContestCategoriesHierarchy';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
 import AdministrationExamGroupsPage from '../../../pages/administration-new/exam-groups/AdministrationExamGroups';
 import ParticipantsAdministrationPage
@@ -166,110 +169,116 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 const administrationItems = [
     {
         name: 'Contests',
-        icon: <AutoStoriesIcon />,
+        icon: <AutoStoriesIcon className={styles.iconSize} />,
         path: `${CONTESTS_PATH}`,
         visibleOnlyForAdmin: false,
     },
     {
         name: 'Contest Categories',
-        icon: <BookmarksIcon />,
+        icon: <BookmarksIcon className={styles.iconSize} />,
         path: `${CONTEST_CATEGORIES_PATH}`,
         visibleOnlyForAdmin: false,
 
     },
     {
+        name: 'Contest Categories Hierarchy',
+        icon: <TbBinaryTree className={styles.iconSize} />,
+        path: `${CONTEST_CATEGORIES_HIERARCHY_PATH}`,
+        visibleOnlyForAdmin: true,
+    },
+    {
         name: 'Submissions',
-        icon: <PlaylistAddCheckCircleIcon />,
+        icon: <PlaylistAddCheckCircleIcon className={styles.iconSize} />,
         path: `${SUBMISSIONS_PATH}`,
         visibleOnlyForAdmin: false,
     },
     {
         name: 'Submissions For Processing',
-        icon: <DataSaverOnIcon />,
+        icon: <DataSaverOnIcon className={styles.iconSize} />,
         path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
         visibleOnlyForAdmin: true,
 
     },
     {
         name: 'Tests',
-        icon: <ScienceIcon />,
+        icon: <ScienceIcon className={styles.iconSize} />,
         path: `${TESTS_PATH}`,
         visibleOnlyForAdmin: false,
 
     },
     {
         name: 'Problems',
-        icon: <NotListedLocationIcon />,
+        icon: <NotListedLocationIcon className={styles.iconSize} />,
         path: `${PROBLEMS_PATH}`,
         visibleOnlyForAdmin: false,
 
     },
     {
         name: 'Problem Groups',
-        icon: <TableViewIcon />,
+        icon: <TableViewIcon className={styles.iconSize} />,
         path: `${PROBLEM_GROUPS_PATH}`,
         visibleOnlyForAdmin: false,
 
     },
     {
         name: 'Problem Resources',
-        icon: <GiFiles />,
+        icon: <GiFiles className={styles.iconSize} />,
         path: `${PROBLEM_RESOURCES_PATH}`,
         visibleOnlyForAdmin: false,
 
     },
     {
         name: 'Submission Types',
-        icon: <BorderAllIcon />,
+        icon: <BorderAllIcon className={styles.iconSize} />,
         path: `${SUBMISSION_TYPES_PATH}`,
         visibleOnlyForAdmin: true,
 
     },
     {
         name: 'Submission Type Documents',
-        icon: <ArticleIcon />,
+        icon: <ArticleIcon className={styles.iconSize} />,
         path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}`,
         visibleOnlyForAdmin: true,
     },
     {
         name: 'Checkers',
-        icon: <FaCheckDouble />,
+        icon: <FaCheckDouble className={styles.iconSize} />,
         path: `${CHECKERS_PATH}`,
         visibleOnlyForAdmin: true,
     },
     {
         name: 'Participants',
-        icon: <MdOutlineRememberMe />,
+        icon: <MdOutlineRememberMe className={styles.iconSize} />,
         path: `${PARTICIPANTS_PATH}`,
         visibleOnlyForAdmin: false,
     },
     {
         name: 'Roles',
-        icon: <MdOutlineAirlineStops />,
+        icon: <MdOutlineAirlineStops className={styles.iconSize} />,
         path: `${ROLES_PATH}`,
         visibleOnlyForAdmin: true,
     },
     {
         name: 'Users',
-        icon: <FaUsers />,
+        icon: <FaUsers className={styles.iconSize} />,
         path: `${USERS_PATH}`,
         visibleOnlyForAdmin: true,
     },
     {
         name: 'Exam Groups',
-        icon: <FaLayerGroup />,
+        icon: <FaLayerGroup className={styles.iconSize} />,
         path: `${EXAM_GROUPS_PATH}`,
         visibleOnlyForAdmin: false,
     },
     {
         name: 'Settings',
-        icon: <IoSettingsSharp />,
+        icon: <IoSettingsSharp className={styles.iconSize} />,
         path: `${SETTINGS_PATH}`,
         visibleOnlyForAdmin: true,
     },
     {
         name: 'Submissions Simillarity',
-        icon: <IoMdCheckbox />,
+        icon: <IoMdCheckbox className={styles.iconSize} />,
         path: `${SUBMISSIONS_SIMILLARITY}`,
         visibleOnlyForAdmin: false,
     },
@@ -405,6 +414,11 @@ const AdministrationPortal = () => {
             path: `${CONTEST_CATEGORIES_PATH}`,
             Element: AdministrationContestCategories,
             visibleOnlyForAdmin: false,
+        },
+        {
+            path: `${CONTEST_CATEGORIES_HIERARCHY_PATH}`,
+            Element: AdministrationContestCategoriesHierarchy,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${SUBMISSIONS_PATH}`,

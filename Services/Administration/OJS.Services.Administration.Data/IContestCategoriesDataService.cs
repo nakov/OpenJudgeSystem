@@ -10,6 +10,8 @@ namespace OJS.Services.Administration.Data
     {
         IQueryable<ContestCategory> GetAllVisible();
 
+        IQueryable<ContestCategory> GetAllVisibleAndNotDeleted();
+
         IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId);
 
         Task<ContestCategory> GetById(int? id);

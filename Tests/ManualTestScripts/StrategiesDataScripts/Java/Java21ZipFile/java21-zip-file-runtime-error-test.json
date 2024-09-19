@@ -1,0 +1,32 @@
+// 1 RuntimeError
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "java-zip-file-code",
+  "CompilerType": "JavaZip",
+  "FileContent": "UEsDBBQAAAAIAFSJX1dhQi//gwEAAO0DAAAJAAAATWFpbi5qYXZhrVJNT8MwDL1P2n/Iekq1KRoc2Zi0CxLS4FJu0w7ZmpWgNClJOpjQ/jtOmkA/2A2rqtv4Pfs5Ni8rpS16oydKassFWWtNzxtu7GI84v3gtfPsQKVkGkLjUVXvBT+gg6DGoCfKJfoajxBYCBhLLbiT4jkqIYwzq7kstjtEdWHSiHYW0iIT/D2S7COe4uxsLCsJl6mvG0lO4zJTslghA28TWD99LVe4S+DSIgmoR2lZwTSpqDYMfnAoSyT7tBsuGU67xKPS2JE5kOcLcEvIA346TVtN+EZii07RWntRw+zEVIJbnKDE1RnyPfvlXDHHDom2893fWEnLDu7mCs7yLu5253vsYVWoHkcAnziqmflaM5+pL9xPgNA89+h29NIac6PkyIX1Qx7eTIu3V0owKpF5VbXIHyJn0rAJe6+pMDihQiSDaSH828hdo62zb874EU/aufujdBY2T9WWVCDdCunbIwWzz3AVzZ60CRcmDHOpI8zdm1tGGHpQ3OhP/6fc4JrBwfMNUEsDBBQAAAAIAFSJX1c9TRkkvwAAAL4CAAAJAAAAU29uZy5qYXZhlZFBDoIwEEX3JNxhlpgQL2C8gXGDF0BscBIsTTuQGOPdbaHCAK2Js+iiv/Pnza/qrg1WUDWlMVC0soZXmoAtpbEvSUBBGu0tPZU4oaFDUJXlQ4QVwkHx2jjMjclWvjm3ynn3zgO5ojua/bcFjmuq6YkzsTLDmrtxkDyXu34v4cbJtaCLN884gRbUabkECfr0Ld7AMJfVwn+sFQM82/WicGz3MNjQzULfAG1DjCaFP0CiSU8J4QwS/vDQl6WJPT5QSwECFAAUAAAACABUiV9XYUIv/4MBAADtAwAACQAAAAAAAAABACAAAAAAAAAATWFpbi5qYXZhUEsBAhQAFAAAAAgAVIlfVz1NGSS/AAAAvgIAAAkAAAAAAAAAAQAgAAAAqgEAAFNvbmcuamF2YVBLBQYAAAAAAgACAG4AAACQAgAAAAA\u003d",
+  "Code": "",
+  "TimeLimit": 200,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 104874,
+        "Input": "3\r\nfavourite_DownTown_3:14\r\nfavourite_Kiss_4:16\r\nfavourite_Smooth Criminal_4:01\r\nfavourite",
+        "Output": "DownTown\r\nKiss\r\nSmooth Criminal",
+        "IsTrialTest": true,
+        "OrderBy": 1
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}

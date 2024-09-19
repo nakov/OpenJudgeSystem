@@ -1,6 +1,6 @@
 import { LinkButton } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import { setLayout } from '../shared/set-layout';
+import setLayout from '../shared/set-layout';
 import withTitle from '../shared/with-title';
 
 import image from './page-not-found.png';

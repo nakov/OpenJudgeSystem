@@ -21,8 +21,8 @@ import isNilOrEmpty from '../../utils/check-utils';
 import { getErrorMessage } from '../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { capitalizeFirstLetter } from '../../utils/string-utils';
-import { makePrivate } from '../shared/make-private';
-import { setLayout } from '../shared/set-layout';
+import makePrivate from '../shared/make-private';
+import setLayout from '../shared/set-layout';
 import withTitle from '../shared/with-title';
 
 import styles from './ContestResultPage.module.scss';
@@ -79,7 +79,7 @@ const ContestResultsPage = () => {
                     name: contestResults!.name,
                     categoryId: contestResults!.categoryId,
                     isAdminOrLecturerInContest: contestResults!.userIsInRoleForContest,
-                } as IContestDetailsResponseType ?? null,
+                } as IContestDetailsResponseType,
             }));
         }
     }, [ contestResults, contestDetails, dispatch ]);

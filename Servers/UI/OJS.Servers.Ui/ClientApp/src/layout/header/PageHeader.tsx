@@ -3,7 +3,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { BsFillMoonFill } from 'react-icons/bs';
-import { FaBars } from 'react-icons/fa';
+import { FaBars, FaSearch } from 'react-icons/fa';
 import { RiSunLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
@@ -159,7 +159,7 @@ const PageHeader = () => {
                 ? styles.themeSwitchVisible
                 : ''}`}
             >
-                <i className={`fas fa-search ${styles.searchIcon}`} onClick={() => dispatch(setIsVisible(!isVisible))} />
+                <FaSearch className={styles.searchIcon} onClick={() => dispatch(setIsVisible(!isVisible))} />
                 {isLoggedIn
                     ? (
                         <div className={`${styles.navButtons} ${styles.profileNavButton}`}>

@@ -7,6 +7,7 @@
     using Microsoft.Extensions.Logging;
     using OJS.Common.Extensions;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Workers.Common.Extensions;
     using System;
@@ -31,7 +32,7 @@
             var errorCode = exception.GetErrorCode();
             var instanceId = Guid.NewGuid();
 
-            logger.LogError(exception, "An error with code: {ErrorCode} and ID: {InstanceId} occurred", errorCode, instanceId);
+            logger.LogErrorWithCodeAndId(errorCode, instanceId.ToString(), exception);
 
             var problemDetails = new ProblemDetails
             {
@@ -55,6 +56,7 @@
                     break;
             }
 
+            httpContext.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.InternalServerError;
             await httpContext.Response.WriteJson(problemDetails, cancellationToken);
             return true;
         }

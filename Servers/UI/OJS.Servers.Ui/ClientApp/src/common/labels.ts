@@ -19,7 +19,6 @@ export const MODIFIED_ON = 'Modified On';
 
 export const USERS = 'Users';
 
-export const VIEW = 'View';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';
@@ -37,7 +36,6 @@ export const VALUE = 'Value';
 
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
-export const CONTEST_ID = 'Contest Id';
 export const CONTEST_NAME = 'Contest Name';
 export const NUMBER_OF_PROBLEM_GROUPS = 'Number of problem groups';
 export const COMPETE_PASSWORD = 'Compete Password';
@@ -53,10 +51,7 @@ export const PRACTICE_END_TIME = 'Practice End Time';
 export const IS_VISIBLE = 'Is Visible';
 export const VISIBLE_FROM = 'Visible From';
 export const ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS = 'Allow parallel submissions in tasks';
-export const AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY = 'Auto change tests feedback visibility';
-export const CREATE_NEW_ENTITY = 'Create new contest';
 export const RECORD = 'Record';
-export const PROBLEM = 'Problem';
 export const LINK = 'Link';
 
 // Contest Categories
@@ -71,10 +66,7 @@ export const TIME_LIMIT = 'Time Limit';
 export const PROBLEM_GROUP_TYPE = 'Problem Group Type';
 export const SHOW_DETAILED_FEEDBACK = 'Show Detailed feedback';
 export const SHOW_RESULTS = 'Show Results';
-export const CREATE_NEW_PROBLEM = 'Create new Problem';
 export const SOLUTION_SKELETON = 'Solution Skeleton';
-
-export const SELECT_PROBLEM = 'Select Problem';
 
 // Submission types
 export const SUBMISSION_TYPE_NAME = 'Submission Type Name';
@@ -94,8 +86,6 @@ export const TESTS = 'Tests';
 export const TEST = 'Test';
 export const HIDE_INPUT = 'Hide Input';
 
-// Problem Resources
-export const FILE_EXTENSION = 'File Extension';
 // COMPILERS
 export const COMPILER = 'Compiler';
 export const ADDITIONAL_COMPILER_ARGUMENTS = 'Additional Compiler Arguments';

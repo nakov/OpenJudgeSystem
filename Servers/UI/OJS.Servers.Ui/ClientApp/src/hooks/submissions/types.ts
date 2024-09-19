@@ -24,45 +24,11 @@ interface ITestRunType {
     testId: number;
 }
 
-interface ISubmissionType {
-    id: number;
-    submittedOn: Date;
-    content: string;
-    problem: IProblemType;
-    submissionTypeName: string;
-    submissionType: ISubmissionTypeType;
-    points: number;
-    testRuns: ITestRunType[];
-    maxUsedTime: number;
-    maxUsedMemory: number;
-    isOfficial: boolean;
-    isCompiledSuccessfully: boolean;
-    isProcessed: boolean;
-    compilerComment: string;
-    createdOn: Date;
-    modifiedOn?: Date;
-    startedExecutionOn?: Date;
-    processingComment: string;
-    completedExecutionOn?: Date;
-    contestId:number;
-    memoryLimit: number;
-    user: IUserProfileType;
-    isEligibleForRetest: boolean;
-}
-
 interface ITestRunDetailsType extends ITestRunType {
     isTrialTest: boolean;
     input: string;
     showInput: boolean;
     testId: number;
-}
-
-interface ISubmissionDetailsType extends ISubmissionType {
-    testRuns: ITestRunDetailsType[];
-    user: IUserProfileType;
-    userIsInRoleForContest: boolean;
-    isEligibleForRetest: boolean;
-    totalTests : number;
 }
 
 interface ISubmissionDetailsResponseType {
@@ -112,46 +78,6 @@ interface ISubmissionResults {
     testRunsCount: number;
 }
 
-interface ITestCaseRun {
-    id: number;
-    checkerComment?: string;
-    executionComment?: string;
-    expectedOutputFragment?: string;
-    input?: string;
-    isTrialTest: boolean;
-    memoryUsed: number;
-    orderBy: number;
-    resultType: string;
-    showInput: boolean;
-    submissionId?: number;
-    timeUsed: number;
-    userOutputFragment?: string;
-    testId: number;
-}
-
-interface ITestRunDetailsCollapsed {
-    [id: string]: {
-        isExpanded: boolean;
-        detailsExpanded: boolean;
-    };
-}
-
-interface ISubmissionResultsDetails {
-    testRuns?: ITestCaseRun[];
-}
-
-interface IUserRole {
-    id: string;
-    name: string;
-}
-
-interface IUserAuthData {
-    email: string;
-    id: string;
-    roles: IUserRole[];
-    userName: string;
-}
-
 interface ITestRun {
     id: number;
     timeUsed: number;
@@ -170,17 +96,8 @@ interface ITestRun {
 }
 
 export type {
-    IProblemType,
     ITestRunType,
-    ISubmissionType,
-    ITestRunDetailsType,
-    ISubmissionDetailsType,
     ISubmissionResults,
-    ITestRunDetailsCollapsed,
-    ISubmissionResultsDetails,
     ISubmissionDetailsResponseType,
-    IUserAuthData,
-    ITestCaseRun,
-    IUserRole,
     ITestRun,
 };

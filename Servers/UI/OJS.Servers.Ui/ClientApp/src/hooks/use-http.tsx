@@ -26,10 +26,6 @@ interface IHttpResultType<T> {
     headers: IDictionary<string>;
 }
 
-interface IHttpJsonExceptionResponse {
-    detail: string;
-}
-
 const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = null, > ({
     url,
     parameters,
@@ -200,7 +196,5 @@ export {
 };
 
 export type {
-    IHttpProps,
-    IHttpJsonExceptionResponse,
     IErrorDataType,
 };

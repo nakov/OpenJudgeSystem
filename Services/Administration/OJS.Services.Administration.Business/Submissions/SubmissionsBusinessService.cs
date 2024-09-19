@@ -4,14 +4,12 @@ namespace OJS.Services.Administration.Business.Submissions
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
-    using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
@@ -164,11 +162,13 @@ namespace OJS.Services.Administration.Business.Submissions
             var submissionProblemId = submission.ProblemId;
             var submissionParticipantId = submission.ParticipantId;
             var submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(submission);
+            SubmissionForProcessing submissionForProcessing = new();
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
                 submission.Processed = false;
                 submission.ModifiedOn = this.dates.GetUtcNow();
+                this.submissionsData.Update(submission);
 
                 var submissionIsBestSubmission = await this.IsBestSubmission(
                     submissionProblemId,
@@ -184,13 +184,13 @@ namespace OJS.Services.Administration.Business.Submissions
 
                 await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
-                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id);
+                submissionForProcessing = await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;
             });
 
-            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
+            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing);
 
             return result;
         }

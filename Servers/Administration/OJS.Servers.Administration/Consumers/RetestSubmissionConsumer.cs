@@ -5,6 +5,7 @@ using MassTransit;
 using Microsoft.Extensions.Logging;
 using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Administration.Business.Submissions;
+using OJS.Services.Infrastructure.Constants;
 
 public class RetestSubmissionConsumer : IConsumer<RetestSubmissionPubSubModel>
 {
@@ -21,8 +22,8 @@ public class RetestSubmissionConsumer : IConsumer<RetestSubmissionPubSubModel>
 
     public async Task Consume(ConsumeContext<RetestSubmissionPubSubModel> context)
     {
-        this.logger.LogInformation("Received retest submission #{SubmissionId}", context.Message.Id);
+        this.logger.LogReceivedRetestSubmission(context.Message.Id);
         await this.submissionsBusinessService.Retest(context.Message.Id);
-        this.logger.LogInformation("Retested submission #{SubmissionId}", context.Message.Id);
+        this.logger.LogRetestedSubmission(context.Message.Id);
     }
 }
