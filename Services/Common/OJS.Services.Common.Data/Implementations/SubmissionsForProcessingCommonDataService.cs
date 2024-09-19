@@ -130,7 +130,7 @@ public class SubmissionsForProcessingCommonDataService(
                 break;
             case Pending:
             case Invalid:
-                throw new ArgumentException($"Cannot update state to {state} for submission for processing.", nameof(state));
+                throw new ArgumentException($"Not allowed to set processing state to {state}.", nameof(state));
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, "Processing state is not in the valid range.");
         }

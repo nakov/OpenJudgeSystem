@@ -19,9 +19,9 @@ public class SubmissionStartedProcessingConsumer(
 
         var submissionForProcessing = await submissionsForProcessingCommonData.GetBySubmission(submissionId);
 
-        if (submissionForProcessing == null)
+        if (submissionForProcessing == null || submissionForProcessing.SubmissionId != submissionId)
         {
-            logger.LogSubmissionForProcessingNotFoundForSubmission(0, submissionId);
+            logger.LogSubmissionForProcessingNotFoundForSubmission(null, submissionId);
             return;
         }
 
