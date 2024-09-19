@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 public interface IContestsBusinessService : IAdministrationOperationService<Contest, int, ContestAdministrationModel>
 {
+    Task<IEnumerable<LecturerInContestActionsModel>> GetForLecturerInContest(string userId);
+
     Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin);
 
     Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string searchString)
