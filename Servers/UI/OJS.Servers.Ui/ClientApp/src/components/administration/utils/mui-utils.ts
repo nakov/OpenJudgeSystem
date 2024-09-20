@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
 import { debounce } from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
+
+type AdministrationGridColDef = {
+    hidden?: boolean;
+} & GridColDef;
 
 const handleDateTimePickerChange = (name: string, newValue:any, onChange: Function) => {
     const event = {
@@ -35,6 +40,8 @@ const handleAutocompleteChange = <T extends { [key: string]: any }>(
 const onAutocompleteInputChange = debounce((e: React.ChangeEvent<HTMLInputElement>, setStateFunc: React.SetStateAction<any>) => {
     setStateFunc(e.target.value);
 }, 300);
+
+export type { AdministrationGridColDef };
 
 export {
     handleDateTimePickerChange,

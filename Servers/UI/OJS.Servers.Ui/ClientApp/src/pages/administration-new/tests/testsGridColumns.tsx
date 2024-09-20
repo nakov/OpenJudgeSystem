@@ -8,9 +8,11 @@ import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH, TESTS_PATH } from '../../../com
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { testTypesToFEStringsMapping } from '../../../components/administration/tests/types';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteTestMutation } from '../../../redux/services/admin/testsAdminService';
 
-const testsFilterableColums: GridColDef[] = [
+const testsFilterableColums: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -23,26 +25,6 @@ const testsFilterableColums: GridColDef[] = [
         valueFormatter: (params) => params.value.toString(),
     },
     {
-        field: 'isTrialTest',
-        headerName: 'Is Trial Test',
-        flex: 1,
-        type: 'boolean',
-        filterable: false,
-        sortable: false,
-        align: 'center',
-        headerAlign: 'center',
-    },
-    {
-        field: 'isOpenTest',
-        headerName: 'Is Open Test',
-        flex: 1,
-        type: 'boolean',
-        filterable: false,
-        sortable: false,
-        align: 'center',
-        headerAlign: 'center',
-    },
-    {
         field: 'orderBy',
         headerName: 'Order by',
         flex: 1,
@@ -51,6 +33,38 @@ const testsFilterableColums: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'isTrialTest',
+        headerName: 'Is Trial Test',
+        flex: 1,
+        type: 'boolean',
+        hidden: true,
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'isOpenTest',
+        flex: 1,
+        type: 'boolean',
+        filterable: false,
+        sortable: false,
+        hidden: true,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'type',
+        headerName: 'Test Type',
+        flex: 1,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        valueFormatter: (params) => testTypesToFEStringsMapping[params.value],
     },
     {
         field: 'problemName',
