@@ -8,13 +8,27 @@ using System.Threading;
 
 public class PublisherService(IPublishEndpoint publishEndpoint) : IPublisherService
 {
+    private const int DefaultTimeoutMilliseconds = 3000;
+
     public Task Publish<T>(T obj, CancellationToken? cancellationToken = null)
         where T : class
-        => publishEndpoint.Publish(obj, cancellationToken ?? GetCancellationToken(2000));
+        => publishEndpoint.Publish(
+            obj,
+            cancellationToken ?? GetCancellationToken(DefaultTimeoutMilliseconds));
 
-    public Task PublishBatch<T>(IEnumerable<T> objs, CancellationToken? cancellationToken = null)
+    public Task PublishBatch<T>(IReadOnlyCollection<T> objs, CancellationToken? cancellationToken = null)
         where T : class
-        => publishEndpoint.PublishBatch(objs, cancellationToken ?? GetCancellationToken(5000));
+    {
+        // The timeout is calculated based on the number of objects to be published. The more objects, the more time is needed.
+        // The timeout is limited to 10 times the default timeout, which is taken if more than 100_000 objects are to be published.
+        var objectsCoutTimeoutMultiplier = (int)Math.Min(10, objs.Count * 0.1);
+        var timeoutMultiplier = Math.Max(1, objectsCoutTimeoutMultiplier);
+
+        return publishEndpoint.PublishBatch(
+            objs,
+            cancellationToken ??
+            GetCancellationToken(DefaultTimeoutMilliseconds * timeoutMultiplier));
+    }
 
     private static CancellationToken GetCancellationToken(int timeoutMilliseconds)
     {

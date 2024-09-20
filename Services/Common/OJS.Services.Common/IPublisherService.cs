@@ -9,6 +9,6 @@ public interface IPublisherService
     Task Publish<T>(T obj, CancellationToken? cancellationToken = null)
         where T : class;
 
-    Task PublishBatch<T>(IEnumerable<T> objs, CancellationToken? cancellationToken = null)
+    Task PublishBatch<T>(IReadOnlyCollection<T> objs, CancellationToken? cancellationToken = null)
         where T : class;
 }
