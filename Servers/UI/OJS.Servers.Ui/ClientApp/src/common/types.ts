@@ -188,6 +188,7 @@ interface IContestDetailsResponseType {
     id: number;
     name: string;
     description: string;
+    type: ContestVariation;
     problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
