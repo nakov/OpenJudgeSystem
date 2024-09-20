@@ -62,13 +62,13 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     public async Task<IActionResult> GetAllForProblem(string? searchString)
     {
         var contestsById = new List<ContestCopyProblemsValidationServiceModel>();
-        if (int.TryParse(searchString, out _))
+        if (int.TryParse(searchString, out var contestId))
         {
             // If searchString is number, try to find contest by id and append it first in the result list
             contestsById = await this.contestsData
                 .GetQueryForUser(
                     this.User.Map<UserInfoModel>(),
-                    contest => contest.Id == int.Parse(searchString, CultureInfo.CurrentCulture))
+                    contest => contest.Id == contestId)
                 .MapCollection<ContestCopyProblemsValidationServiceModel>()
                 .ToListAsync();
         }

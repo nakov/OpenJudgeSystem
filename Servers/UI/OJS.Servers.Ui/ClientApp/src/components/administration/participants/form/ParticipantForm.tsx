@@ -178,6 +178,9 @@ const ParticipantForm = (props: IParticipantFormProps) => {
                       value={{ id: participant.contestId, name: participant.contestName } as IContestAutocomplete}
                       renderOption={(properties, option) => (
                           <MenuItem {...properties} key={option.id} value={option.id}>
+                              #
+                              {option.id}
+                              {' '}
                               {option.name}
                           </MenuItem>
                       )}

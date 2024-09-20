@@ -575,6 +575,9 @@ const ContestEdit = (props:IContestEditProps) => {
                               getOptionLabel={(option) => option?.name}
                               renderOption={(properties, option) => (
                                   <MenuItem {...properties} key={option.id} value={option.id}>
+                                      #
+                                      {option.id}
+                                      {' '}
                                       {option.name}
                                   </MenuItem>
                               )}
