@@ -20,6 +20,8 @@ public class PublisherService(IPublishEndpoint publishEndpoint) : IPublisherServ
         }
 
         using var cancellationTokenSource = new CancellationTokenSource(DefaultTimeoutMilliseconds);
+
+        // Await the result of the Publish, otherwise the cancellation token source might be disposed prematurely.
         await publishEndpoint.Publish(obj, cancellationTokenSource.Token);
     }
 
@@ -38,6 +40,8 @@ public class PublisherService(IPublishEndpoint publishEndpoint) : IPublisherServ
         var timeoutMultiplier = Math.Max(1, objectsCoutTimeoutMultiplier);
 
         using var cancellationTokenSource = new CancellationTokenSource(DefaultTimeoutMilliseconds * timeoutMultiplier);
+
+        // Await the result of the Publish, otherwise the cancellation token source might be disposed prematurely.
         await publishEndpoint.PublishBatch(objs, cancellationTokenSource.Token);
     }
 }
