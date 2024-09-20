@@ -188,6 +188,7 @@ interface IContestDetailsResponseType {
     id: number;
     name: string;
     description: string;
+    type: ContestVariation;
     problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
@@ -551,11 +552,12 @@ type ExceptionData = {
 }
 
 interface IProblemGroupsData {
-    id:number;
-    contest:string;
-    isDeleted:boolean;
-    orderBy:number;
-    type:string;
+    id :number;
+    contestId: number;
+    contest: string;
+    isDeleted: boolean;
+    orderBy: number;
+    type: string;
     createdOn: Date;
     modifiedOn: Date;
 }

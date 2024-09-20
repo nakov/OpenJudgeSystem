@@ -38,6 +38,17 @@ const filterableColumns: GridColDef[] = [
         headerAlign: 'center',
     },
     {
+        field: 'contestId',
+        headerName: 'Contest Id',
+        flex: 1,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        valueFormatter: (params) => params.value.toString(),
+    },
+    {
         field: 'isDeleted',
         headerName: 'Is Deleted',
         flex: 1,

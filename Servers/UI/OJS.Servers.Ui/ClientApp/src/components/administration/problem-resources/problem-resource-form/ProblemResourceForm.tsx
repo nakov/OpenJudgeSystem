@@ -8,7 +8,12 @@ import { LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IProblemResourceAdministrationModel } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
-import { useCreateProblemResourceMutation, useDownloadResourceQuery, useGetProblemResourceByIdQuery, useUpdateProblemResourceMutation } from '../../../../redux/services/admin/problemResourcesAdminService';
+import {
+    useCreateProblemResourceMutation,
+    useDownloadResourceQuery,
+    useGetProblemResourceByIdQuery,
+    useUpdateProblemResourceMutation,
+} from '../../../../redux/services/admin/problemResourcesAdminService';
 import downloadFile from '../../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -49,6 +54,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         isLoading: isGetting,
         refetch: refetchResource,
     } = useGetProblemResourceByIdQuery(id, { skip: !isEditMode });
+
     const [
         create,
         {
@@ -213,17 +219,6 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
-                      label={LINK}
-                      value={currentResource.link}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      name="link"
-                      onChange={(e) => onChange(e)}
-                    />
-                </FormControl>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
                       label={ORDER_BY}
                       value={currentResource.orderBy}
                       InputLabelProps={{ shrink: true }}
@@ -232,6 +227,20 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
+                {currentResource.type === ProblemResourceType.Link && (
+                    <FormControl className={formStyles.inputRow}>
+                        <TextField
+                          variant="standard"
+                          label={LINK}
+                          value={currentResource.link}
+                          InputLabelProps={{ shrink: true }}
+                          type="text"
+                          name="link"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </FormControl>
+                )}
+                {currentResource.type !== ProblemResourceType.Link && (
                 <FormControl className={formStyles.inputRow}>
                     <Typography variant="h4">File</Typography>
                     <Divider />
@@ -245,6 +254,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       disableClearButton={currentResource.file === null}
                     />
                 </FormControl>
+                )}
                 <AdministrationFormButtons
                   isEditMode={isEditMode}
                   onCreateClick={() => submitForm()}
