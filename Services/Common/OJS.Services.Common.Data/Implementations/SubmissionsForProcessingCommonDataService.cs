@@ -30,7 +30,7 @@ public class SubmissionsForProcessingCommonDataService(
         => fromMinutesAgo is null
             ? this.GetQuery(sfp => sfp.State == Pending)
             : this.GetQuery(sfp => sfp.State == Pending
-                && sfp.ModifiedOn < dates.GetUtcNow().AddMinutes(-fromMinutesAgo.Value));
+                && (sfp.ModifiedOn ?? sfp.CreatedOn) < dates.GetUtcNow().AddMinutes(-fromMinutesAgo.Value));
 
     public IQueryable<SubmissionForProcessing> GetAllEnqueued()
         => this.GetQuery(sfp => sfp.State == Enqueued);
