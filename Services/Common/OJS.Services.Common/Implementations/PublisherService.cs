@@ -10,24 +10,26 @@ public class PublisherService(IPublishEndpoint publishEndpoint) : IPublisherServ
 {
     private const int DefaultTimeoutMilliseconds = 3000;
 
-    public Task Publish<T>(T obj, CancellationToken? cancellationToken = null)
+    public async Task Publish<T>(T obj, CancellationToken? cancellationToken = null)
         where T : class
     {
         if (cancellationToken != null)
         {
-            return publishEndpoint.Publish(obj, cancellationToken.Value);
+            await publishEndpoint.Publish(obj, cancellationToken.Value);
+            return;
         }
 
         using var cancellationTokenSource = new CancellationTokenSource(DefaultTimeoutMilliseconds);
-        return publishEndpoint.Publish(obj, cancellationTokenSource.Token);
+        await publishEndpoint.Publish(obj, cancellationTokenSource.Token);
     }
 
-    public Task PublishBatch<T>(IReadOnlyCollection<T> objs, CancellationToken? cancellationToken = null)
+    public async Task PublishBatch<T>(IReadOnlyCollection<T> objs, CancellationToken? cancellationToken = null)
         where T : class
     {
         if (cancellationToken != null)
         {
-            return publishEndpoint.PublishBatch(objs, cancellationToken.Value);
+            await publishEndpoint.PublishBatch(objs, cancellationToken.Value);
+            return;
         }
 
         // The timeout is calculated based on the number of objects to be published. The more objects, the more time is needed.
@@ -36,6 +38,6 @@ public class PublisherService(IPublishEndpoint publishEndpoint) : IPublisherServ
         var timeoutMultiplier = Math.Max(1, objectsCoutTimeoutMultiplier);
 
         using var cancellationTokenSource = new CancellationTokenSource(DefaultTimeoutMilliseconds * timeoutMultiplier);
-        return publishEndpoint.PublishBatch(objs, cancellationTokenSource.Token);
+        await publishEndpoint.PublishBatch(objs, cancellationTokenSource.Token);
     }
 }
