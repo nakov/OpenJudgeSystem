@@ -6,8 +6,8 @@ import { CREATED_ON, EDIT, MODIFIED_ON } from '../../../common/labels';
 import { NEW_ADMINISTRATION_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const usersFilterableColumns: AdministrationGridColDef[] = [
     {

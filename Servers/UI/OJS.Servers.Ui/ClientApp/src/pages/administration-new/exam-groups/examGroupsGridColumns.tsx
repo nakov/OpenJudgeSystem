@@ -6,8 +6,8 @@ import { EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import { useDeleteExamGroupMutation } from '../../../redux/services/admin/examGroupsAdminService';
 import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
+import { useDeleteExamGroupMutation } from '../../../redux/services/admin/examGroupsAdminService';
 
 const examGroupsFilterableColumns: AdministrationGridColDef[] = [
     {

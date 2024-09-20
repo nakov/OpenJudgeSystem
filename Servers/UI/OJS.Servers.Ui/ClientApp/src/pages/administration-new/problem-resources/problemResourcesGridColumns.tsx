@@ -11,10 +11,10 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import DownloadIconButton from '../../../components/administration/common/download/DownloadIconButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteProblemResourceMutation, useDownloadResourceQuery } from '../../../redux/services/admin/problemResourcesAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
-import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
 const problemResourceFilterableColumns: AdministrationGridColDef[] = [
     {

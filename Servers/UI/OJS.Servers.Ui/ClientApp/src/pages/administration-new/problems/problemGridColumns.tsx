@@ -13,10 +13,10 @@ import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/adm
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteProblemMutation } from '../../../redux/services/admin/problemsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
-import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
 const problemFilterableColumns: AdministrationGridColDef[] = [
     {

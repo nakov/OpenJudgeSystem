@@ -14,9 +14,9 @@ import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteSubmissionTypeMutation } from '../../../redux/services/admin/submissionTypesAdminService';
 import { getStringObjectKeys } from '../../../utils/object-utils';
-import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
 const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
     {

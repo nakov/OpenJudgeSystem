@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import QueueIcon from '@mui/icons-material/Queue';
 import { IconButton, Tooltip } from '@mui/material';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridRenderCellParams } from '@mui/x-data-grid';
 
 import { DISABLED_USER_TO_EXAM_GROUP_BUTTON } from '../../../../common/messages';
 import { IGetAllAdminParams } from '../../../../common/types';
@@ -17,10 +17,10 @@ import { useAppSelector } from '../../../../redux/store';
 import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
+import { AdministrationGridColDef } from '../../utils/mui-utils';
 import AddBulkUsersInGroupModal from '../add-bulk-users-in-group-modal/AddBulkUserInGroupModal';
 import AddUserInExamGroupModal from '../add-user-in-group-modal/AddUserInGroupModal';
 import DeleteUserFromGroupButton from '../delete-user-from-group-button/DeleteUserFromGroupButton';
-import { AdministrationGridColDef } from '../../utils/mui-utils';
 
 interface IUsersInExamGroupViewProps {
     examGroupId: number;
