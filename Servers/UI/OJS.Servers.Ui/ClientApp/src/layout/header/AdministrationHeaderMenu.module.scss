@@ -1,0 +1,16 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
+@use 'src/styles/font-weights';
+
+.menuControlButton {
+    color: colors.$white-color;
+    font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-regular;
+    padding: 0 spacings.$sp-12;
+}
+
+.administrationMenu {
+    @extend %font-family-normal;
+}

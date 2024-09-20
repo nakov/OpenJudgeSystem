@@ -17,6 +17,8 @@ import { setIsVisible } from '../../redux/features/searchSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 
+import AdministrationHeaderMenu from './AdministrationHeaderMenu';
+
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
@@ -30,15 +32,20 @@ const PageHeader = () => {
     const { isVisible } = useAppSelector((state) => state.search);
 
     const [ areBurgerItemsOpened, setAreBurgerItemsOpened ] = useState<boolean>(false);
+    const [ isAdminMenuForceClosed, setIsAdminMenuForceClosed ] = useState<boolean>(false);
+
     const {
         isLoggedIn,
         internalUser: user,
     } = useAppSelector((state) => state.authorization);
+
     const {
         data: userData,
         isSuccess: isSuccessfulRequest,
         isFetching: isUserDataFetching,
     } = useGetUserinfoQuery(null);
+
+    const isThemeSwitchVisible = `${import.meta.env.VITE_IS_THEME_SWITCH_VISIBLE}` === 'true';
 
     useEffect(() => {
         if (!isUserDataFetching) {
@@ -59,7 +66,12 @@ const PageHeader = () => {
             if (areBurgerItemsOpened && window.innerWidth > 920) {
                 setAreBurgerItemsOpened(false);
             }
+
+            if (window.innerWidth > 920) {
+                setIsAdminMenuForceClosed(true);
+            }
         };
+
         handleResize();
         window.addEventListener('resize', handleResize);
 
@@ -97,6 +109,7 @@ const PageHeader = () => {
             const onMenuItemClick = () => {
                 setAreBurgerItemsOpened(false);
             };
+
             return (
                 <div className={`${styles.burgerMenuItems} ${areBurgerItemsOpened
                     ? styles.burgerMenuItemsOpened
@@ -142,8 +155,6 @@ const PageHeader = () => {
         return null;
     }
 
-    const isThemeSwitchVisible = `${import.meta.env.VITE_IS_THEME_SWITCH_VISIBLE}` === 'true';
-
     return (
         <header className={styles.header}>
             <div>
@@ -151,8 +162,7 @@ const PageHeader = () => {
                 <div className={styles.navButtons}>
                     <Link to={getAllContestsPageUrl({})} className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                    {user.canAccessAdministration &&
-                        <Link to={`/${NEW_ADMINISTRATION_PATH}`} target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
+                    <AdministrationHeaderMenu forceClose={isAdminMenuForceClosed} />
                 </div>
             </div>
             <div className={`${styles.authButtons} ${isThemeSwitchVisible
