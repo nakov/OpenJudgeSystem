@@ -23,6 +23,8 @@ public class SubmissionInListModel : IMapExplicitly
 
     public string? ContestId { get; set; }
 
+    public bool IsCompiledSuccessfully { get; set; }
+
     public bool Processed { get; set; }
 
     public int Points { get; set; }
@@ -34,6 +36,14 @@ public class SubmissionInListModel : IMapExplicitly
     public DateTime CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
+
+    public DateTime StartedExecutionOn { get; set; }
+
+    public DateTime CompletedExecutionOn { get; set; }
+
+    public string? FileExtension { get; set; }
+
+    public string? ProcessingComment { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionInListModel>()

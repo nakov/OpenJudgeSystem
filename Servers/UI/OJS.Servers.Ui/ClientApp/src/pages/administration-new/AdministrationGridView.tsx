@@ -7,7 +7,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
-import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
+import { AdjacencyList, ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
 import LegendBox from '../../components/administration/common/legend-box/LegendBox';
 import { AdministrationGridColDef } from '../../components/administration/utils/mui-utils';
@@ -49,10 +49,20 @@ interface IVisibleColumns {
     [key: string]: boolean;
 }
 
-// The default visible id columns should match the column's header name
-const defaultVisibleIdColumns: Set<string> = new Set([
-    'Submission Id',
-]);
+// Both collections should use the column's field property as keys.
+const defaultVisibleColumns: AdjacencyList<string, boolean> = { submissionId: true };
+
+const defaultNotVisibleColumns: AdjacencyList<string, boolean> = {
+    isDeleted: false,
+    isVisible: false,
+    createdOn: false,
+    modifiedOn: false,
+    deletedOn: false,
+    processingComment: false,
+    startedExecutionOn: false,
+    completedExecutionOn: false,
+    fileExtension: false,
+};
 
 const defaultFilterToAdd = 'isdeleted~equals~false';
 const defaultSorterToAdd = 'id=DESC';
@@ -152,11 +162,11 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         }
     };
 
-    const initialColumnVisibilityModel: IVisibleColumns = filterableGridColumnDef.reduce((acc, column) => {
+    const notVisibleIdColumns: IVisibleColumns = filterableGridColumnDef.reduce((acc, column) => {
         const headerName = column.headerName ?? '';
         const isHidden = column.hidden ?? false;
 
-        if (isHidden || (!defaultVisibleIdColumns.has(headerName) && idColumnPattern.test(headerName))) {
+        if (isHidden || idColumnPattern.test(headerName)) {
             acc[column.field] = false;
         }
 
@@ -166,12 +176,9 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const initialState = {
         columns: {
             columnVisibilityModel: {
-                isDeleted: false,
-                isVisible: false,
-                createdOn: false,
-                modifiedOn: false,
-                deletedOn: false,
-                ...initialColumnVisibilityModel,
+                ...notVisibleIdColumns,
+                ...defaultNotVisibleColumns,
+                ...defaultVisibleColumns,
             },
         },
         pagination: {

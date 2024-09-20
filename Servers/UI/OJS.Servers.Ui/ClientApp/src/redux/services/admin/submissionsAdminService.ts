@@ -16,7 +16,7 @@ const submissionsAdminService = createApi({
     endpoints: (builder) => ({
         getAllSubmissions: builder.query<IPagedResultType<ISubmissionsAdminGridViewType>, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
-                url: '/getAll',
+                url: '/GetAll',
                 params: {
                     filter,
                     page,
@@ -27,13 +27,13 @@ const submissionsAdminService = createApi({
         }),
         deleteSubmission: builder.mutation({
             query: (id) => ({
-                url: `/delete/${id}`,
+                url: `/Delete/${id}`,
                 method: 'DELETE',
             }),
         }),
         retest: builder.mutation({
             query: (submissionId) => ({
-                url: `/retest/${submissionId}`,
+                url: `/Retest/${submissionId}`,
                 method: 'POST',
             }),
         }),
