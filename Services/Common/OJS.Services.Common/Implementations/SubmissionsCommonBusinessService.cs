@@ -64,18 +64,18 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
     public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission, SubmissionForProcessing submissionForProcessing)
     {
-        DateTimeOffset enqueuedAt;
+        var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
+        var enqueuedAt = this.dates.GetUtcNowOffset();
 
         try
         {
-            var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
-            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.Publish(pubSubModel);
         }
         catch (Exception ex)
         {
-            this.logger.LogExceptionSubmittingSolution(submission.Id, ex);
-            throw;
+            // We log the exception and return. The submission will be retried later by the background job for Pending submissions.
+            this.logger.LogExceptionPublishingSubmission(submission.Id, ex);
+            return;
         }
 
         // We detach the entity to ensure we get fresh data from the database.
@@ -92,24 +92,24 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
             .SetProcessingState(freshSubmissionForProcessing, SubmissionProcessingState.Enqueued, enqueuedAt);
     }
 
-    public async Task PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
+    public async Task<int> PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
     {
-        DateTimeOffset enqueuedAt;
+        var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>().ToList();
+        var enqueuedAt = this.dates.GetUtcNowOffset();
 
         try
         {
-            var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>();
-            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.PublishBatch(pubSubModels);
         }
         catch (Exception ex)
         {
-            this.logger.LogExceptionSubmittingSolutionsBatch(ex);
+            this.logger.LogExceptionPublishingSubmissionsBatch(ex);
             throw;
         }
 
         var submissionsIds = submissions.Select(s => s.Id).ToList();
 
         await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds, enqueuedAt);
+        return pubSubModels.Count;
     }
 }

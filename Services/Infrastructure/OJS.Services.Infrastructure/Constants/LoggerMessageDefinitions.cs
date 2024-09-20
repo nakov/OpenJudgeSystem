@@ -67,11 +67,11 @@ public static partial class LoggerMessageDefinitions
     public static partial void LogPlatformDataReceived(this ILogger logger, string userName);
 
     // Submissions
-    [LoggerMessage(1010, LogLevel.Error, "Exception in submitting submission #{SubmissionId}", SkipEnabledCheck = true)]
-    public static partial void LogExceptionSubmittingSolution(this ILogger logger, int submissionId, Exception ex);
+    [LoggerMessage(1010, LogLevel.Error, "Exception in publishing submission #{SubmissionId}", SkipEnabledCheck = true)]
+    public static partial void LogExceptionPublishingSubmission(this ILogger logger, int submissionId, Exception ex);
 
-    [LoggerMessage(1020, LogLevel.Error, "Exception in submitting submissions batch.", SkipEnabledCheck = true)]
-    public static partial void LogExceptionSubmittingSolutionsBatch(this ILogger logger, Exception ex);
+    [LoggerMessage(1020, LogLevel.Error, "Exception in publishing submissions batch.", SkipEnabledCheck = true)]
+    public static partial void LogExceptionPublishingSubmissionsBatch(this ILogger logger, Exception ex);
 
     [LoggerMessage(1030, LogLevel.Error, "Exception returned for submission #{SubmissionId}: {@SubmissionException}", SkipEnabledCheck = true)]
     public static partial void LogExceptionReturnedForSubmission(this ILogger logger, int submissionId, ExceptionModel submissionException);
