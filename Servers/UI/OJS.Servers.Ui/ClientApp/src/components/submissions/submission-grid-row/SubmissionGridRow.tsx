@@ -42,7 +42,7 @@ const SubmissionGridRow = ({
     const {
         id: submissionId,
         createdOn,
-        user,
+        user = '',
         result: { points, maxPoints },
         strategyName,
         problem: {
@@ -69,10 +69,6 @@ const SubmissionGridRow = ({
     const isCompeteIconModalOpen = Boolean(competeIconAnchorElement);
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
-
-    const usernameFromSubmission = isNil(user)
-        ? 'test'
-        : user;
 
     const handleDetailsButtonSubmit = useCallback(
         () => {
@@ -109,12 +105,12 @@ const SubmissionGridRow = ({
             <LinkButton
               type={LinkButtonType.plain}
               size={ButtonSize.none}
-              to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(usernameFromSubmission))}
-              text={usernameFromSubmission}
+              to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(user))}
+              text={user}
               internalClassName={styles.redirectButton}
             />
         ),
-        [ usernameFromSubmission ],
+        [ user ],
     );
 
     const renderProblemInformation = useCallback(
@@ -152,7 +148,7 @@ const SubmissionGridRow = ({
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (usernameFromSubmission === internalUser.userName || internalUser.isAdmin) {
+            if (user === internalUser.userName || internalUser.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -164,7 +160,7 @@ const SubmissionGridRow = ({
 
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser, usernameFromSubmission ],
+        [ handleDetailsButtonSubmit, internalUser, user ],
     );
 
     return (
