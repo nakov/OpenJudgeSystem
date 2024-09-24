@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import { Autocomplete, Checkbox, debounce, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 
 import { IS_OFFICIAL } from '../../../../common/labels';
-import { IContestAutocomplete, IParticipantAdministrationModel, IUserAutocompleteData } from '../../../../common/types';
+import {
+    IContestAutocomplete,
+    IParticipantAdministrationModel,
+    IUserAutocompleteData,
+} from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
@@ -14,6 +18,7 @@ import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../ut
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
+import { autocompleteNameIdFormatFilterOptions } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -161,8 +166,9 @@ const ParticipantForm = (props: IParticipantFormProps) => {
                     Participant Administration Form
                 </Typography>
                 <FormControl className={formStyles.inputRow}>
-                    <Autocomplete
+                    <Autocomplete<IContestAutocomplete>
                       options={contestAutocomplete}
+                      filterOptions={autocompleteNameIdFormatFilterOptions}
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       onChange={(event, newValue) => onSelect(newValue!)}
                       onInputChange={(event) => onInputChange(event)}
@@ -172,6 +178,9 @@ const ParticipantForm = (props: IParticipantFormProps) => {
                       value={{ id: participant.contestId, name: participant.contestName } as IContestAutocomplete}
                       renderOption={(properties, option) => (
                           <MenuItem {...properties} key={option.id} value={option.id}>
+                              #
+                              {option.id}
+                              {' '}
                               {option.name}
                           </MenuItem>
                       )}

@@ -16,7 +16,7 @@ const NotFoundPage = ({ message }: INotFoundPageProps) => (
         <img
           className={styles.image}
           src={image}
-          alt="Not Found"
+          alt="Page Not Found"
         />
         <div className={styles.paragraphAndBtnContainer}>
             <p className={styles.httpCodeParagraph}>404</p>

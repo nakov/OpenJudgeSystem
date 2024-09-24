@@ -188,6 +188,7 @@ interface IContestDetailsResponseType {
     id: number;
     name: string;
     description: string;
+    type: ContestVariation;
     problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
@@ -508,10 +509,12 @@ interface ISubmissionForProcessingAdminGridViewType {
     modifiedOn: Date;
 }
 
-interface IContestAutocomplete {
+interface IHasNameAndIdType {
     id: number;
     name: string;
 }
+
+interface IContestAutocomplete extends IHasNameAndIdType {}
 
 interface ITestsUploadModel {
     problemId: number;
@@ -550,11 +553,12 @@ type ExceptionData = {
 }
 
 interface IProblemGroupsData {
-    id:number;
-    contest:string;
-    isDeleted:boolean;
-    orderBy:number;
-    type:string;
+    id :number;
+    contestId: number;
+    contest: string;
+    isDeleted: boolean;
+    orderBy: number;
+    type: string;
     createdOn: Date;
     modifiedOn: Date;
 }
@@ -796,6 +800,7 @@ export type {
     IIndexExamGroupsType,
     IExamGroupAdministration,
     IUserInExamGroupModel,
+    IHasNameAndIdType,
     IUserAutocomplete,
     ISubmissionTypesInListModel,
     ISubmissionTypeInSubmissionDocumentInListModel,

@@ -14,11 +14,12 @@ import AdministrationGridDropdown
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteRolesMutation } from '../../../redux/services/admin/rolesAdminService';
 
 import styles from './AdministrationRolesPage.module.scss';
 
-const rolesFilterableColumns: GridColDef[] = [
+const rolesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

@@ -22,6 +22,9 @@ using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Globalization;
+
 
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
@@ -60,7 +63,19 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     [ProtectedEntityAction(false)]
     public async Task<IActionResult> GetAllForProblem(string? searchString)
     {
-        var contests =
+        var contestsById = new List<ContestCopyProblemsValidationServiceModel>();
+        if (int.TryParse(searchString, out var contestId))
+        {
+            // If searchString is number, try to find contest by id and append it first in the result list
+            contestsById = await this.contestsData
+                .GetQueryForUser(
+                    this.User.Map<UserInfoModel>(),
+                    contest => contest.Id == contestId)
+                .MapCollection<ContestCopyProblemsValidationServiceModel>()
+                .ToListAsync();
+        }
+
+        var contestsByName =
             await this.contestsData
                 .GetQueryForUser(
                     this.User.Map<UserInfoModel>(),
@@ -68,7 +83,8 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
                 .MapCollection<ContestCopyProblemsValidationServiceModel>()
                 .Take(20)
                 .ToListAsync();
-        return this.Ok(contests);
+
+        return this.Ok(contestsById.Concat(contestsByName));
     }
 
     [HttpGet]

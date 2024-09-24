@@ -2,7 +2,9 @@
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridDeleteIcon, GridRenderCellParams } from '@mui/x-data-grid';
 
-const lecturerInCategoriesFilterableColumns: GridColDef[] = [
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
+
+const lecturerInCategoriesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'contestCategoryId',
         headerName: 'Contest Category Id',

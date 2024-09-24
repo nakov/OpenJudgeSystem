@@ -18,7 +18,7 @@ import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
-import { ITestAdministration, TestTypes } from '../types';
+import { ITestAdministration, testTypesToFEStringsMapping } from '../types';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -42,7 +42,7 @@ const TestForm = (props: ITestFormProps) => {
         output: '',
         orderBy: 0,
         retestProblem: false,
-        type: Object.keys(TestTypes).filter((key) => isNaN(Number(key)))[0],
+        type: Object.keys(testTypesToFEStringsMapping).filter((key) => isNaN(Number(key)))[0],
         hideInput: false,
         problemId,
         problemName,
@@ -165,9 +165,9 @@ const TestForm = (props: ITestFormProps) => {
                               onChange={(e) => onChange(e)}
                               onBlur={(e) => onChange(e)}
                             >
-                                {Object.keys(TestTypes).filter((key) => isNaN(Number(key))).map((key) => (
+                                {Object.entries(testTypesToFEStringsMapping).map(([ key, value ]) => (
                                     <MenuItem key={key} value={key}>
-                                        {key}
+                                        {value}
                                     </MenuItem>
                                 ))}
                             </Select>

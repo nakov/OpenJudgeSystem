@@ -22,26 +22,28 @@ const forwardToAdmin = () => {
     }
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     appType: 'mpa', // Multi Page Application
     build: {
+        sourcemap: mode === 'staging',
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
                 admin: resolve(__dirname, 'admin.html')
             },
             onwarn(warning, warn) {
-              if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-                return
-              }
-              warn(warning)
-            }},
-      },
+                if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+                    return
+                }
+                warn(warning)
+            }
+        },
+    },
     plugins: [
         react(),
         svgr(),
         forwardToAdmin(),
-        visualizer({ open: true, filename: 'bundle-analysis.html' }),
+        visualizer({open: true, filename: 'bundle-analysis.html'}),
     ],
-    server: { port: 5002 },
-});
+    server: {port: 5002},
+}));
