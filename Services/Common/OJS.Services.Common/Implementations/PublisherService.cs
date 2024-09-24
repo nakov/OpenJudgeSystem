@@ -36,8 +36,8 @@ public class PublisherService(IPublishEndpoint publishEndpoint) : IPublisherServ
 
         // The timeout is calculated based on the number of objects to be published. The more objects, the more time is needed.
         // The timeout is limited to 10 times the default timeout, which is taken if more than 100_000 objects are to be published.
-        var objectsCoutTimeoutMultiplier = (int)Math.Min(10, objs.Count * 0.1);
-        var timeoutMultiplier = Math.Max(1, objectsCoutTimeoutMultiplier);
+        var objectsCountTimeoutMultiplier = (int)Math.Min(10, objs.Count * 0.1);
+        var timeoutMultiplier = Math.Max(1, objectsCountTimeoutMultiplier);
 
         using var cancellationTokenSource = new CancellationTokenSource(DefaultTimeoutMilliseconds * timeoutMultiplier);
 
