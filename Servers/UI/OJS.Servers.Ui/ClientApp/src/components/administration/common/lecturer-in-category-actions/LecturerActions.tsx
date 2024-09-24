@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
+import { RolesEnum } from '../../../../common/enums';
 import { SELECT_CATEGORY, SELECT_CONTEST } from '../../../../common/labels';
 import {
     IContestAutocomplete,
@@ -18,6 +19,7 @@ import {
     useGetContestAutocompleteQuery,
     useGetForLecturerInContestQuery,
 } from '../../../../redux/services/admin/contestsAdminService';
+import { useGetIdByNameQuery } from '../../../../redux/services/admin/rolesAdminService';
 import {
     useAddLecturerToCategoryMutation, useAddLecturerToContestMutation,
     useGetUsersAutocompleteQuery,
@@ -35,7 +37,7 @@ import formStyles from '../styles/FormStyles.module.scss';
 
 interface ILecturerInCategoryActionsProps {
     index: number;
-    roleId: string | null;
+    roleId?: string | null;
     showModal: boolean;
     setShowModal: Function;
     isRemove: boolean;
@@ -65,6 +67,8 @@ const LecturerActions = ({
     const [ selectedUser, setSelectedUser ] = useState<IUserAutocompleteData | null>(null);
     const [ usersAutocomplete, setUsersAutocomplete ] = useState<Array<IUserAutocompleteData>>([]);
 
+    const { data: lecturerRoleId } = useGetIdByNameQuery(RolesEnum.Lecturer.toString(), { skip: roleId !== undefined && roleId !== null });
+
     const { data: contests } = useGetContestAutocompleteQuery(contestSearchString, { skip: isRemove || !isContest });
     const { data: lecturerContests } = useGetForLecturerInContestQuery(
         selectedUser?.id ?? '',
@@ -77,7 +81,7 @@ const LecturerActions = ({
         { skip: !isRemove || isContest || !selectedUser },
     );
 
-    const { data: usersAutocompleteData } = useGetUsersAutocompleteQuery([ usersSearchString, roleId ?? '' ], { skip: !roleId });
+    const { data: usersAutocompleteData } = useGetUsersAutocompleteQuery([ usersSearchString, roleId ?? lecturerRoleId! ]);
 
     const [ addLecturerToCategory,
         {
