@@ -8,13 +8,13 @@ import { autocompleteNameIdFormatFilterOptions } from '../../../utils/mui-utils'
 import formStyles from '../../styles/FormStyles.module.scss';
 
 interface ILecturerFormProps {
-onClick: Function;
-disabled: boolean;
-data: Array<any>;
-heading: string;
-label: string;
-onChange: Function;
-onInputChange?: Function;
+    onClick: Function;
+    disabled: boolean;
+    data: Array<any>;
+    heading: string;
+    label: string;
+    onChange: Function;
+    onInputChange?: Function;
 }
 
 const LecturerForm = (props: ILecturerFormProps) => {

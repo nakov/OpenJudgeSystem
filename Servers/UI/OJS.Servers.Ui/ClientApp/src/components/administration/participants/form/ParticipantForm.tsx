@@ -66,7 +66,7 @@ const ParticipantForm = (props: IParticipantFormProps) => {
     const {
         data: usersAutocompleteData,
         error: getUsersDataError,
-    } = useGetUsersAutocompleteQuery(usersSearchString);
+    } = useGetUsersAutocompleteQuery([ usersSearchString ]);
 
     const [
         createParticipant,
