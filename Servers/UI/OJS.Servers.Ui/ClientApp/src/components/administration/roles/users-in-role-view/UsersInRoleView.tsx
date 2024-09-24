@@ -88,7 +88,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
     const {
         data: usersAutocompleteData,
         error: getUsersDataError,
-    } = useGetUsersAutocompleteQuery(usersSearchString);
+    } = useGetUsersAutocompleteQuery([ usersSearchString ]);
 
     useSuccessMessageEffect({
         data: [

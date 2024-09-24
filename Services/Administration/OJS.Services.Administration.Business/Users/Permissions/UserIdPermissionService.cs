@@ -6,5 +6,6 @@ using System.Threading.Tasks;
 
 public class UserIdPermissionService : IEntityPermissionsService<UserProfile, string>
 {
-    public async Task<bool> HasPermission(UserInfoModel user, string value, string operation) => await Task.FromResult(user.IsAdmin);
+    public async Task<bool> HasPermission(UserInfoModel user, string value, string operation)
+        => await Task.FromResult(user.IsAdmin);
 }

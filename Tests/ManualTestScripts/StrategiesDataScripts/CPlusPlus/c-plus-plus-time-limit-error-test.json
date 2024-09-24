@@ -1,0 +1,32 @@
+// 1 TimeLimit
+{
+  "ExecutionType": "tests-execution",
+  "ExecutionStrategy": "cpp-code",
+  "CompilerType": "CPlusPlusGcc",
+  "FileContent": null,
+  "Code": "#include \u003ciostream\u003e\r\n#include \u003ciomanip\u003e\r\n\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n\tcout \u003c\u003c fixed \u003c\u003c setprecision(2);\r\n\r\n\tint juryCount; cin \u003e\u003e juryCount;\r\n\r\n\tstring presentationName; getline(cin \u003e\u003e ws, presentationName);\r\n\r\n\tint presentationCount \u003d 0;\r\n\r\n\tdouble totalGradeSum \u003d 0;\r\n\tdouble averageGrade \u003d 0;\r\n\tdouble finalAverageGrade \u003d 0;\r\n\tdouble presentationGradeSum;\r\n\tdouble grade;\r\n\r\n\twhile (presentationName !\u003d \"Finish\")\r\n\t{\r\n\t\tcout \u003c\u003c fixed \u003c\u003c setprecision(2);\r\n\r\n\t\tpresentationGradeSum \u003d 0;\r\n\r\n\t\tfor (int i \u003d 0; i \u003c juryCount; i++)\r\n\t\t{\r\n\t\t\tcin \u003e\u003e grade;\r\n\r\n\t\t\tpresentationGradeSum +\u003d grade;\r\n\t\t}\r\n\r\n\t\taverageGrade \u003d presentationGradeSum / juryCount;\r\n\t\tcout \u003c\u003c presentationName \u003c\u003c \" - \" \u003c\u003c averageGrade \u003c\u003c \u0027.\u0027 \u003c\u003c \u0027\\n\u0027;\r\n\r\n\t\ttotalGradeSum +\u003d presentationGradeSum;\r\n\t\tpresentationCount++;\r\n\r\n\t\tcin \u003e\u003e presentationName;\r\n\t}\r\n\r\n\tfinalAverageGrade \u003d totalGradeSum / (juryCount * presentationCount);\r\n\r\n\tcout \u003c\u003c \"Student\u0027s final assessment is \" \u003c\u003c finalAverageGrade \u003c\u003c \u0027.\u0027 \u003c\u003c \u0027\\n\u0027;\r\n\r\n\treturn 0;\r\n}",
+  "TimeLimit": 200,
+  "MemoryLimit": 16777216,
+  "ExecutionDetails": {
+    "MaxPoints": 100,
+    "CheckerType": "trim",
+    "CheckerParameter": null,
+    "Tests": [
+      {
+        "Id": 150835,
+        "Input": "3\r\nLinear Data Structures\r\n5.43\r\n6.23\r\n5.21\r\nSets And Maps\r\n4.24\r\n2.43\r\n5.23\r\nFiles And Directories\r\n4.34\r\n5.24\r\n6.00\r\nString Processing\r\n3.34\r\n5.23\r\n2.54\r\nFunctional Programming\r\n2.45\r\n5.34\r\n5.75\r\nStream API\r\n3.45\r\n5.34\r\n3.54\r\nFinish\r\n",
+        "Output": "Linear Data Structures - 5.62.\r\nSets And Maps - 3.97.\r\nFiles And Directories - 5.19.\r\nString Processing - 3.70.\r\nFunctional Programming - 4.51.\r\nStream API - 4.11.\r\nStudent\u0027s final assessment is 4.52.",
+        "IsTrialTest": false,
+        "OrderBy": 1
+      }
+    ],
+    "TaskSkeleton": null,
+    "TaskSkeletonAsString": null
+  },
+  "ExecutionOptions": {
+    "KeepDetails": true,
+    "EscapeTests": false,
+    "EscapeLineEndings": true
+  },
+  "WithExceptionStackTrace": true
+}

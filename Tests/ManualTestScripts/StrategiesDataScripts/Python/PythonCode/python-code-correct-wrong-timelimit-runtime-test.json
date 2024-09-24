@@ -1,0 +1,53 @@
+// 1 CorrectAnswer, 1 WrongAnswer, 1 RuntimeError, 1 TimeLimit
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "python-code",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "from collections import deque\r\n\r\ngreen_light_duration \u003d int(input())\r\nfree_window_duration \u003d int(input())\r\n\r\ncar_queue \u003d deque()\r\ncrossroads \u003d deque()\r\nall_cars \u003d []\r\nindex \u003d 0\r\ncrash \u003d False\r\n\r\ncommand \u003d input()\r\nwhile command !\u003d \"END\":\r\n    if command \u003d\u003d \"green\":\r\n        green_seconds \u003d green_light_duration\r\n        time_up \u003d False\r\n        while not time_up:\r\n            for index in range(len(car_queue)):\r\n                current_car \u003d car_queue[0]\r\n                crossroads.append(car_queue.popleft())\r\n                if time_up:\r\n                    break\r\n                for i in range(len(current_car)):\r\n                    if time_up:\r\n                        break\r\n                    crossroads[0].popleft()\r\n                    green_seconds -\u003d 1\r\n                    if green_seconds \u003d\u003d 0:\r\n                        time_up \u003d True\r\n                    if not crossroads[0]:\r\n                        crossroads.clear()\r\n                        if not car_queue:\r\n                            time_up \u003d True\r\n        free_seconds \u003d free_window_duration\r\n        while crossroads and free_seconds \u003e 0:\r\n            free_seconds -\u003d 1\r\n            if not crossroads[0]:\r\n                crossroads.clear()\r\n                break\r\n            crossroads[0].popleft()\r\n\r\n    else:\r\n        car_queue.append(deque(command))\r\n        all_cars.append(command)\r\n    if crossroads:\r\n        crash \u003d True\r\n        break\r\n\r\n    command \u003d input()\r\n\r\nif crash:\r\n    crashed_car \u003d all_cars[index]\r\n    hit_element \u003d crossroads[0].popleft()\r\n    print(\"A crash happened!\")\r\n    print(f\"{crashed_car} was hit at {hit_element}.\")\r\nelse:\r\n    total_cars \u003d len(set(all_cars))\r\n    print(\"Everyone is safe.\")\r\n    print(f\"{total_cars} total cars passed the crossroads.\")\r\n",
+    "TimeLimit": 200,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+      "MaxPoints": 100,
+      "CheckerType": "trim",
+      "CheckerParameter": null,
+      "Tests": [
+        {
+          "Id": 140096,
+          "Input": "12\r\n8\r\n1234\r\n5678\r\n////\r\n\\\\\\\\\r\ngreen\r\n\\\\\\\\\r\n\\\\\\\\\r\ngreen\r\n////\r\nEND",
+          "Output": "Everyone is safe.\r\n6 total cars passed the crossroads.",
+          "IsTrialTest": false,
+          "OrderBy": 1
+        },
+        {
+          "Id": 140097,
+          "Input": "17\r\n3\r\nMercedes\r\nMercedes\r\nMercedes\r\nMercedes\r\ngreen\r\nMercedes\r\nBMW\r\nMercedes\r\nSkoda\r\ngreen\r\nEND\r\n",
+          "Output": "A crash happened!\r\nMercedes was hit at e.",
+          "IsTrialTest": false,
+          "OrderBy": 2
+        },
+        {
+          "Id": 140099,
+          "Input": "30\r\n5\r\ngreen\r\nEND\r\n",
+          "Output": "Everyone is safe.\r\n0 total cars passed the crossroads.",
+          "IsTrialTest": false,
+          "OrderBy": 4
+        },
+        {
+          "Id": 140102,
+          "Input": "100\r\n100\r\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\r\ngreen\r\nEND",
+          "Output": "Everyone is safe.\r\n1 total cars passed the crossroads.",
+          "IsTrialTest": false,
+          "OrderBy": 7
+        }
+      ],
+      "TaskSkeleton": null,
+      "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+      "KeepDetails": true,
+      "EscapeTests": false,
+      "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+  }

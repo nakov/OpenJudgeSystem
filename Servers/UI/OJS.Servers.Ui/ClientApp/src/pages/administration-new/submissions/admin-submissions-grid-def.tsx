@@ -6,6 +6,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import ExternalLink from '../../../components/guidelines/buttons/ExternalLink';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
@@ -13,7 +14,7 @@ import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
 import { useDeleteSubmissionMutation } from '../../../redux/services/admin/submissionsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
-const dataColumns: GridColDef[] = [
+const dataColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -81,12 +82,22 @@ const dataColumns: GridColDef[] = [
         sortable: false,
     },
     {
+        field: 'isCompiledSuccessfully',
+        headerName: 'Is Compiled Successfully',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'boolean',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+    },
+    {
         field: 'processed',
         headerName: 'Processed',
         align: 'center',
         headerAlign: 'center',
         type: 'boolean',
-        flex: 2,
+        flex: 1,
         filterable: false,
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
@@ -118,6 +129,16 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
     },
     {
+        field: 'processingComment',
+        headerName: 'Processing Comment',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'string',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+    },
+    {
         field: 'createdOn',
         headerName: `${CREATED_ON}`,
         type: 'date',
@@ -132,7 +153,35 @@ const dataColumns: GridColDef[] = [
         type: 'date',
         flex: 1,
         filterable: false,
+        sortable: false,
         valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'startedExecutionOn',
+        headerName: 'Started Execution On',
+        type: 'date',
+        flex: 1.5,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'completedExecutionOn',
+        headerName: 'Completed Execution On',
+        type: 'date',
+        flex: 1.5,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'fileExtension',
+        headerName: 'File Extension',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'string',
+        flex: 1,
+        filterable: false,
         sortable: false,
     },
 ];
@@ -166,7 +215,6 @@ export const returnSubmissionsNonFilterableColumns = (
                   mutation={useDeleteSubmissionMutation}
                   onSuccess={onSuccessFullyDelete}
                 />
-
                 <Tooltip title="Download">
                     <span>
                         <IconButton

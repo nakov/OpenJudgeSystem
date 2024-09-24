@@ -5,6 +5,7 @@ using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Users;
 using OJS.Servers.Administration.Attributes;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Roles;
 using OJS.Services.Administration.Business.Roles.GridData;
 using OJS.Services.Administration.Business.Roles.Permissions;
@@ -63,4 +64,11 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
         await this.rolesBusinessService.RemoveFromRole(model);
         return this.Ok("User was successfully removed from role.");
     }
+
+    [HttpGet]
+    [ProtectedEntityAction("roleName", typeof(RoleIdPermissionService))]
+    public async Task<IActionResult> GetIdByName(string roleName)
+        => await this.rolesBusinessService
+            .GetIdByName(roleName)
+            .ToOkResult();
 }

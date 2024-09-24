@@ -1,8 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
-import { debounce } from '@mui/material';
+import { createFilterOptions, debounce } from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
 
-const handleDateTimePickerChange = (name: string, newValue:any, onChange: Function) => {
+import { IHasNameAndIdType } from '../../../common/types';
+
+type AdministrationGridColDef = {
+    hidden?: boolean;
+} & GridColDef;
+
+const handleDateTimePickerChange = (name: string, newValue: any, onChange: Function) => {
     const event = {
         target: {
             name,
@@ -13,6 +20,17 @@ const handleDateTimePickerChange = (name: string, newValue:any, onChange: Functi
     };
     onChange(event);
 };
+
+/**
+ * Allows search by id when added to autocomplete {filterOptions} property
+ */
+const autocompleteNameIdFormatFilterOptions = createFilterOptions({
+    stringify: (option: IHasNameAndIdType) => {
+        const { name, id } = option;
+
+        return `${name} ${id}`;
+    },
+});
 
 const handleAutocompleteChange = <T extends { [key: string]: any }>(
     name: string,
@@ -36,7 +54,10 @@ const onAutocompleteInputChange = debounce((e: React.ChangeEvent<HTMLInputElemen
     setStateFunc(e.target.value);
 }, 300);
 
+export type { AdministrationGridColDef };
+
 export {
+    autocompleteNameIdFormatFilterOptions,
     handleDateTimePickerChange,
     handleAutocompleteChange,
     onAutocompleteInputChange,

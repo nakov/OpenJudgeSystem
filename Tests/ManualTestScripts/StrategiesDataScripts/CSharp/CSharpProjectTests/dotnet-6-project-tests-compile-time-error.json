@@ -1,0 +1,32 @@
+// Compile time error
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "dot-net-core-6-project-tests",
+    "CompilerType": "DotNetCompiler",
+    "FileContent": "UEsDBBQAAAAIAEFIKFkoA/3OCwEAAHwCAAAKAAAAUHJvZ3JhbS5jc5WQwU7DMAyG75X6DtFO3SUPwMQBBkNIcKFDHBAHL7OKtTQpsTtAaE/GgUfiFUgoaFU3EFiJFP/+nXzO++tby+QqVT6zYD3Js36qp95aNELesT5Dh4HM0HJB7mGoXbVOqEZ97gSDb0oMazLIQ9scn2RHuw8IyyjoOfAqteSZgxq5AYNqBqHOs5c8UzGMBWZ15KgG2ylfhRRNu7Bk1NrTUp2CFONtqedKMY3DeYv6JpBgnAaLEYIkAq1H48nWvOmOmzzrv3/iK3XwF4pjCKv/YSxix68cvSc6mFIgyHWzw8EC8s1xCeQKlhBvvr1TECr+GSoNt4xbHSqHjykt+iQpYll/fvAevRt5L3pcH1BLAQIfABQAAAAIAEFIKFkoA/3OCwEAAHwCAAAKACQAAAAAAAAAIAAAAAAAAABQcm9ncmFtLmNzCgAgAAAAAAABABgAnu+zn7QB2wGe77OftAHbASF1zsDr/toBUEsFBgAAAAABAAEAXAAAADMBAAAAAA\u003d\u003d",
+    "Code": "",
+    "TimeLimit": 1000,
+    "MemoryLimit": 62777216,
+    "ExecutionDetails": {
+        "MaxPoints": 100,
+        "CheckerType": "trim",
+        "CheckerParameter": null,
+        "Tests": [
+            {
+                "Id": 116715,
+                "Input": "using System;\r\nusing System.Reflection;\r\nusing NUnit.Framework;\r\nusing Farm;\r\nusing System.Linq;\r\n\r\n[TestFixture]\r\nclass AnimalEatTests\r\n{\r\n    private static readonly Assembly ProjectAssembly \u003d typeof(StartUp).Assembly;\r\n\r\n    [Test]\r\n    public void AnimalEat()\r\n    {\r\n        Type animal \u003d GetType(\"Animal\"); // Get type pointer\r\n\r\n        var method \u003d animal.GetMethod(\"Eat\");\r\n\r\n        Assert.IsTrue(method.ReturnType \u003d\u003d typeof(void));\r\n    }\r\n\r\n    private static Type GetType(string name)\r\n    {\r\n        var type \u003d ProjectAssembly\r\n            .GetTypes()\r\n            .FirstOrDefault(t \u003d\u003e t.Name \u003d\u003d name);\r\n\r\n        return type;\r\n    }\r\n}",
+                "Output": "Test Passed!",
+                "IsTrialTest": true,
+                "OrderBy": 1
+            }
+        ],
+        "TaskSkeleton": null,
+        "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+        "KeepDetails": true,
+        "EscapeTests": false,
+        "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+}

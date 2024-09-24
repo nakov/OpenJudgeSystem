@@ -74,6 +74,7 @@ const MuiUiThemeProvider: FC<IMuiUiThemeProviderProps> = ({ children }) => {
                     },
                 },
             },
+            MuiIconButton: { styleOverrides: { root: { color: themeColors.textColor } } },
             MuiDataGrid: {
                 styleOverrides: {
                     columnHeaderTitle: {

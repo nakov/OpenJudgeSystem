@@ -8,4 +8,5 @@ public interface IRolesBusinessService : IAdministrationOperationService<Role, s
 {
     Task AddToRole(UserToRoleModel model);
     Task RemoveFromRole(UserToRoleModel model);
+    Task<string> GetIdByName(string roleName);
 }

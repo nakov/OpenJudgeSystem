@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Administration.Controllers;
 
-using FluentValidation;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business.SubmissionsForProcessing;
 using OJS.Services.Administration.Business.SubmissionsForProcessing.Validation;

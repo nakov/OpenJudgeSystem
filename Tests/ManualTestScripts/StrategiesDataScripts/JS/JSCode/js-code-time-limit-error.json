@@ -1,0 +1,32 @@
+// 1 TimeLimit
+{
+    "ExecutionType": "tests-execution",
+    "ExecutionStrategy": "javascript-code",
+    "CompilerType": "None",
+    "FileContent": null,
+    "Code": "function solve(input){\r\n    while (true) { console.log(5); }\r\n}",
+    "TimeLimit": 200,
+    "MemoryLimit": 16777216,
+    "ExecutionDetails": {
+        "MaxPoints": 100,
+        "CheckerType": "trim",
+        "CheckerParameter": null,
+        "Tests": [
+            {
+                "Id": 174014,
+                "Input": "3\r\n5",
+                "Output": "5",
+                "IsTrialTest": false,
+                "OrderBy": 2
+            }
+        ],
+        "TaskSkeleton": null,
+        "TaskSkeletonAsString": null
+    },
+    "ExecutionOptions": {
+        "KeepDetails": true,
+        "EscapeTests": false,
+        "EscapeLineEndings": true
+    },
+    "WithExceptionStackTrace": true
+}

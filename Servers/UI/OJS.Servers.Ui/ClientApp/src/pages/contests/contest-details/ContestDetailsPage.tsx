@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
 import { ContestParticipationType } from '../../../common/constants';
+import { ContestVariation } from '../../../common/contest-types';
 import { IProblemResourceType } from '../../../common/types';
-import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
+import { CONTESTS_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls/administration-urls';
 import { getAllContestsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import MetaTags from '../../../components/common/MetaTags';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -41,6 +42,7 @@ const ContestDetailsPage = () => {
     const {
         id,
         name,
+        type,
         allowedSubmissionTypes,
         description,
         problems,
@@ -110,6 +112,12 @@ const ContestDetailsPage = () => {
               to={`/${CONTESTS_PATH}/${contestId}#tab-problems`}
               text="Problems"
             />
+            {type === ContestVariation.OnlinePracticalExam && (
+            <AdministrationLink
+              to={`/${PROBLEM_GROUPS_PATH}?filter=contestid~equals~${contestId}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+              text="Problem Groups"
+            />
+            )}
             {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
                 (<AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />)}
         </div>

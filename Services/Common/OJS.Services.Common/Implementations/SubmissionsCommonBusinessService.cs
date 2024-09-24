@@ -1,11 +1,13 @@
 namespace OJS.Services.Common.Implementations;
 
 using Microsoft.Extensions.Logging;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Extensions;
 using System;
@@ -19,17 +21,20 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
     private readonly ISubmissionsCommonDataService submissionsCommonDataService;
     private readonly ISubmissionsForProcessingCommonDataService submissionForProcessingData;
     private readonly ILogger<SubmissionsCommonBusinessService> logger;
+    private readonly IDatesService dates;
 
     public SubmissionsCommonBusinessService(
         IPublisherService publisher,
         ISubmissionsCommonDataService submissionsCommonDataService,
         ISubmissionsForProcessingCommonDataService submissionForProcessingData,
-        ILogger<SubmissionsCommonBusinessService> logger)
+        ILogger<SubmissionsCommonBusinessService> logger,
+        IDatesService dates)
     {
         this.publisher = publisher;
         this.submissionsCommonDataService = submissionsCommonDataService;
         this.submissionForProcessingData = submissionForProcessingData;
         this.logger = logger;
+        this.dates = dates;
     }
 
     public SubmissionServiceModel BuildSubmissionForProcessing(
@@ -59,15 +64,18 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
     public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission, SubmissionForProcessing submissionForProcessing)
     {
+        var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
+        var enqueuedAt = this.dates.GetUtcNowOffset();
+
         try
         {
-            var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
             await this.publisher.Publish(pubSubModel);
         }
         catch (Exception ex)
         {
-            this.logger.LogExceptionSubmittingSolution(submission.Id, ex);
-            throw;
+            // We log the exception and return. The submission will be retried later by the background job for Pending submissions.
+            this.logger.LogExceptionPublishingSubmission(submission.Id, ex);
+            return;
         }
 
         // We detach the entity to ensure we get fresh data from the database.
@@ -77,35 +85,31 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         if (freshSubmissionForProcessing == null || freshSubmissionForProcessing.SubmissionId != submission.Id)
         {
             this.logger.LogSubmissionForProcessingNotFoundForSubmission(submissionForProcessing.Id, submission.Id);
+            return;
         }
-        else if (freshSubmissionForProcessing.Processed)
-        {
-            // Race condition can occur and the submission can already be marked as processed when we reach this point,
-            // but it is not a problem, as the submission is processed and there is no need to touch it anymore.
-            this.logger.LogSubmissionAlreadyProcessed(submission.Id);
-        }
-        else
-        {
-            this.submissionForProcessingData.MarkProcessing(freshSubmissionForProcessing);
-            await this.submissionForProcessingData.SaveChanges();
-        }
+
+        await this.submissionForProcessingData
+            .SetProcessingState(freshSubmissionForProcessing, SubmissionProcessingState.Enqueued, enqueuedAt);
     }
 
-    public async Task PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
+    public async Task<int> PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
     {
+        var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>().ToList();
+        var enqueuedAt = this.dates.GetUtcNowOffset();
+
         try
         {
-            var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>();
             await this.publisher.PublishBatch(pubSubModels);
         }
         catch (Exception ex)
         {
-            this.logger.LogExceptionSubmittingSolutionsBatch(ex);
+            this.logger.LogExceptionPublishingSubmissionsBatch(ex);
             throw;
         }
 
         var submissionsIds = submissions.Select(s => s.Id).ToList();
 
-        await this.submissionForProcessingData.MarkMultipleForProcessing(submissionsIds);
+        await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds, enqueuedAt);
+        return pubSubModels.Count;
     }
 }

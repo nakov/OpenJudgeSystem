@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Administration.Business.SubmissionsForProcessing;
 
-using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Models.SubmissionsForProcessing;
@@ -44,27 +43,21 @@ public class SubmissionsForProcessingBusinessService :
         return submission;
     }
 
-    public async Task<int> EnqueuePendingSubmissions()
+    public async Task<int> EnqueuePendingSubmissions(int fromMinutesAgo)
     {
         var pendingSubmissions = await this.submissionsCommonData
-            .GetAllPending()
+            .GetAllPending(fromMinutesAgo)
             .Include(s => s.SubmissionType)
             .MapCollection<SubmissionServiceModel>()
             .ToListAsync();
 
-        if (pendingSubmissions.IsEmpty())
-        {
-            return 0;
-        }
-
-        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(pendingSubmissions);
-
-        return pendingSubmissions.Count;
+        return pendingSubmissions.Count == 0
+            ? 0
+            : await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(pendingSubmissions);
     }
 
-    public async Task DeleteProcessedSubmissions()
-    {
-        this.submissionsForProcessingData.Delete(sfp => sfp.Processed && !sfp.Processing);
-        await this.submissionsForProcessingData.SaveChanges();
-    }
+    public async Task<int> DeleteProcessedSubmissions(int fromMinutesAgo)
+        => await this.submissionsForProcessingData
+            .GetAllProcessed(fromMinutesAgo)
+            .DeleteFromQueryAsync();
 }

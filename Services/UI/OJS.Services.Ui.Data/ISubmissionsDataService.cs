@@ -12,11 +12,7 @@ public interface ISubmissionsDataService : IDataService<Submission>
 {
     TServiceModel? GetSubmissionById<TServiceModel>(int id);
 
-    Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage);
-
-    Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(
-        int submissionsPerPage,
-        int pageNumber);
+    IQueryable<TServiceModel> GetLatestSubmissions<TServiceModel>(int? limit = null);
 
     Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(
         IEnumerable<int?> userParticipantsIds,

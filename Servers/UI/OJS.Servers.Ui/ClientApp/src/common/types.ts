@@ -38,12 +38,6 @@ interface IUsersState {
     profile: IUserProfileType | null;
 }
 
-interface IRecentSubmissionsReduxState {
-    latestSubmissions: IPagedResultType<IPublicSubmission>;
-    profileSubmissions: IPagedResultType<IPublicSubmission>;
-    currentPage: number;
-}
-
 interface ISearchSliceState {
     isVisible: boolean;
     searchValue: string;
@@ -194,6 +188,7 @@ interface IContestDetailsResponseType {
     id: number;
     name: string;
     description: string;
+    type: ContestVariation;
     problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
@@ -514,10 +509,12 @@ interface ISubmissionForProcessingAdminGridViewType {
     modifiedOn: Date;
 }
 
-interface IContestAutocomplete {
+interface IHasNameAndIdType {
     id: number;
     name: string;
 }
+
+interface IContestAutocomplete extends IHasNameAndIdType {}
 
 interface ITestsUploadModel {
     problemId: number;
@@ -556,11 +553,12 @@ type ExceptionData = {
 }
 
 interface IProblemGroupsData {
-    id:number;
-    contest:string;
-    isDeleted:boolean;
-    orderBy:number;
-    type:string;
+    id :number;
+    contestId: number;
+    contest: string;
+    isDeleted: boolean;
+    orderBy: number;
+    type: string;
     createdOn: Date;
     modifiedOn: Date;
 }
@@ -764,7 +762,6 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
-    IRecentSubmissionsReduxState,
     IPublicSubmission,
     ISubmissionTypeType,
     IPagedResultType,
@@ -803,6 +800,7 @@ export type {
     IIndexExamGroupsType,
     IExamGroupAdministration,
     IUserInExamGroupModel,
+    IHasNameAndIdType,
     IUserAutocomplete,
     ISubmissionTypesInListModel,
     ISubmissionTypeInSubmissionDocumentInListModel,
