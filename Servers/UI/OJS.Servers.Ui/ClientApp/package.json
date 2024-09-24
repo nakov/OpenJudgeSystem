@@ -27,7 +27,6 @@
     "@types/react-youtube": "^7.10.0",
     "@vitejs/plugin-react": "^2.0.1",
     "add": "^2.0.6",
-    "axios": "^1.1.3",
     "connected-react-router": "6.9.3",
     "date-fns": "^2.25.0",
     "dayjs": "^1.11.10",
