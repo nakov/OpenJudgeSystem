@@ -2,19 +2,23 @@ namespace OJS.Services.Common.Data.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static OJS.Common.Enumerations.SubmissionProcessingState;
 
 public class SubmissionsForProcessingCommonDataService(
     OjsDbContext submissionsForProcessing,
-    IDatesService dates)
+    IDatesService dates,
+    ILogger<SubmissionsForProcessingCommonDataService> logger)
     : DataService<SubmissionForProcessing>(submissionsForProcessing), ISubmissionsForProcessingCommonDataService
 {
     public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
@@ -24,21 +28,21 @@ public class SubmissionsForProcessingCommonDataService(
 
     public IQueryable<SubmissionForProcessing> GetAllPending(int? fromMinutesAgo)
         => fromMinutesAgo is null
-            ? this.GetQuery(sfp => sfp.State == SubmissionProcessingState.Pending)
-            : this.GetQuery(sfp => sfp.State == SubmissionProcessingState.Pending
-                && sfp.ModifiedOn < dates.GetUtcNow().AddMinutes(-fromMinutesAgo.Value));
+            ? this.GetQuery(sfp => sfp.State == Pending)
+            : this.GetQuery(sfp => sfp.State == Pending
+                && (sfp.ModifiedOn ?? sfp.CreatedOn) < dates.GetUtcNow().AddMinutes(-fromMinutesAgo.Value));
 
     public IQueryable<SubmissionForProcessing> GetAllEnqueued()
-        => this.GetQuery(sfp => sfp.State == SubmissionProcessingState.Enqueued);
+        => this.GetQuery(sfp => sfp.State == Enqueued);
 
     public IQueryable<SubmissionForProcessing> GetAllUnprocessed()
-        => this.GetQuery(sfp => sfp.State != SubmissionProcessingState.Processed);
+        => this.GetQuery(sfp => sfp.State != Processed);
 
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
-        => this.GetQuery(sfp => sfp.State == SubmissionProcessingState.Processing);
+        => this.GetQuery(sfp => sfp.State == Processing);
 
     public IQueryable<SubmissionForProcessing> GetAllProcessed(int fromMinutesAgo)
-        => this.GetQuery(sfp => sfp.State == SubmissionProcessingState.Processed
+        => this.GetQuery(sfp => sfp.State == Processed
             && sfp.ProcessedAt < dates.GetUtcNowOffset().AddMinutes(-fromMinutesAgo));
 
     public async Task<SubmissionForProcessing> Add(int submissionId)
@@ -46,7 +50,7 @@ public class SubmissionsForProcessingCommonDataService(
         var submissionForProcessing = new SubmissionForProcessing
         {
             SubmissionId = submissionId,
-            State = SubmissionProcessingState.Pending,
+            State = Pending,
         };
 
         await this.Add(submissionForProcessing);
@@ -64,7 +68,7 @@ public class SubmissionsForProcessingCommonDataService(
         }
         else
         {
-            entity.State = SubmissionProcessingState.Pending;
+            entity.State = Pending;
 
             this.Update(entity);
         }
@@ -103,10 +107,45 @@ public class SubmissionsForProcessingCommonDataService(
         }
     }
 
-    public async Task MarkEnqueued(SubmissionForProcessing submissionForProcessing, DateTimeOffset? enqueuedAt = null)
+    public async Task SetProcessingState(
+        SubmissionForProcessing submissionForProcessing,
+        SubmissionProcessingState state,
+        DateTimeOffset? stateChangedAt = null)
     {
-        submissionForProcessing.State = SubmissionProcessingState.Enqueued;
-        submissionForProcessing.EnqueuedAt = enqueuedAt ?? dates.GetUtcNowOffset();
+        var updateState = true;
+        stateChangedAt ??= dates.GetUtcNowOffset();
+
+        switch (state)
+        {
+            case Enqueued:
+                submissionForProcessing.EnqueuedAt = stateChangedAt;
+                updateState = submissionForProcessing.State == Pending;
+                break;
+            case Processing:
+                submissionForProcessing.ProcessingStartedAt = stateChangedAt;
+                updateState = submissionForProcessing.State is Enqueued or Pending;
+                break;
+            case Processed:
+                submissionForProcessing.ProcessedAt = stateChangedAt;
+                break;
+            case Pending:
+            case Invalid:
+                throw new ArgumentException($"Not allowed to set processing state to {state}.", nameof(state));
+            default:
+                throw new ArgumentOutOfRangeException(nameof(state), state, "Processing state is not in the valid range.");
+        }
+
+        if (updateState)
+        {
+            submissionForProcessing.State = state;
+        }
+        else
+        {
+            logger.LogSubmissionProcessingStateNotUpdated(
+                submissionForProcessing.SubmissionId,
+                submissionForProcessing.State.ToString(),
+                state.ToString());
+        }
 
         this.Update(submissionForProcessing);
         await this.SaveChanges();
@@ -119,26 +158,8 @@ public class SubmissionsForProcessingCommonDataService(
             .IgnoreQueryFilters()
             .UpdateFromQueryAsync(sfp => new SubmissionForProcessing
             {
-                State = SubmissionProcessingState.Enqueued,
+                State = Enqueued,
                 EnqueuedAt = enqueuedAtDate,
             });
-    }
-
-    public async Task MarkProcessing(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processingStartedAt = null)
-    {
-        submissionForProcessing.State = SubmissionProcessingState.Processing;
-        submissionForProcessing.ProcessingStartedAt = processingStartedAt ?? dates.GetUtcNowOffset();
-
-        this.Update(submissionForProcessing);
-        await this.SaveChanges();
-    }
-
-    public async Task MarkProcessed(SubmissionForProcessing submissionForProcessing, DateTimeOffset? processedAt = null)
-    {
-        submissionForProcessing.State = SubmissionProcessingState.Processed;
-        submissionForProcessing.ProcessedAt = processedAt ?? dates.GetUtcNowOffset();
-
-        this.Update(submissionForProcessing);
-        await this.SaveChanges();
     }
 }
