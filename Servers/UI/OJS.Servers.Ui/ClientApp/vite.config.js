@@ -46,4 +46,9 @@ export default defineConfig(({ mode }) => ({
         visualizer({open: true, filename: 'bundle-analysis.html'}),
     ],
     server: {port: 5002},
+    resolve: {
+        alias: {
+            'src': resolve(__dirname, 'src'),
+        },
+    },
 }));
