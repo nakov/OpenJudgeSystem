@@ -365,10 +365,7 @@ module.exports = {
                             'Do not import from `react-icons/all` directly, but use concrete file:' +
                             ' i.e. instead of `import {...} from \'react-icons/all\'` use `import { ... } from \'react-icons/md\'`',
                     },
-                    { name: '@material-ui/core' },
-                    { name: '@material-ui/lab' },
                     // { name: '@mui/material' },
-                    { name: '@mui/styles' },
                 ],
             },
         ],

@@ -11,24 +11,9 @@ interface IDictionary<TValue> {
     [key: string]: TValue;
 }
 
-interface IKeyValuePair<TValue> {
-    key: string;
-    value: TValue;
-}
-
-type UrlType<T> = string | ((parameters?: IDictionary<T> | null) => string);
-
-interface IUrlParam {
-    key: string;
-    value: string | string[];
-}
-
 type Anything = Record<string | number, unknown>
 
 export type {
     IDictionary,
-    IKeyValuePair,
-    IUrlParam,
-    UrlType,
     Anything,
 };

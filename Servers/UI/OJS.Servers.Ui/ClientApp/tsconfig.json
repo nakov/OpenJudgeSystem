@@ -18,7 +18,11 @@
     ],
     "skipLibCheck": true,
     "sourceMap": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"] // Map 'src' to the './src' directory
+    }
   },
   "include": [
     "src",

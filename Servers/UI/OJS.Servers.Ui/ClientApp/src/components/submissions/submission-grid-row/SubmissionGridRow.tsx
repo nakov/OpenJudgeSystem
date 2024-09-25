@@ -7,8 +7,6 @@ import isNil from 'lodash/isNil';
 
 import { IPublicSubmission } from '../../../common/types';
 import { getContestsDetailsPageUrl } from '../../../common/urls/compose-client-urls';
-import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
-import { useProblems } from '../../../hooks/use-problems';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { setProfile } from '../../../redux/features/usersSlice';
@@ -44,7 +42,7 @@ const SubmissionGridRow = ({
     const {
         id: submissionId,
         createdOn,
-        user,
+        user = '',
         result: { points, maxPoints },
         strategyName,
         problem: {
@@ -63,10 +61,8 @@ const SubmissionGridRow = ({
         testRuns,
     } = submission;
 
-    const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { internalUser } =
         useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
-    const { actions: { getDecodedUsernameFromProfile } } = useUserProfileSubmissions();
     const dispatch = useAppDispatch();
 
     const [ competeIconAnchorElement, setCompeteIconAnchorElement ] = useState<HTMLElement | null>(null);
@@ -74,17 +70,13 @@ const SubmissionGridRow = ({
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
 
-    const usernameFromSubmission = isNil(user)
-        ? getDecodedUsernameFromProfile()
-        : user;
-
     const handleDetailsButtonSubmit = useCallback(
         () => {
             const submissionDetailsUrl = getSubmissionDetailsRedirectionUrl({ submissionId });
 
-            initiateRedirectionToProblem(problemId, submissionDetailsUrl);
+            navigate(submissionDetailsUrl);
         },
-        [ initiateRedirectionToProblem, problemId, submissionId ],
+        [ submissionId, navigate ],
     );
 
     const handleContestDetailsButtonSubmit = useCallback(
@@ -113,12 +105,12 @@ const SubmissionGridRow = ({
             <LinkButton
               type={LinkButtonType.plain}
               size={ButtonSize.none}
-              to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(usernameFromSubmission))}
-              text={usernameFromSubmission}
+              to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(user))}
+              text={user}
               internalClassName={styles.redirectButton}
             />
         ),
-        [ usernameFromSubmission ],
+        [ user ],
     );
 
     const renderProblemInformation = useCallback(
@@ -156,7 +148,7 @@ const SubmissionGridRow = ({
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (usernameFromSubmission === internalUser.userName || internalUser.isAdmin) {
+            if (user === internalUser.userName || internalUser.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -168,7 +160,7 @@ const SubmissionGridRow = ({
 
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser, usernameFromSubmission ],
+        [ handleDetailsButtonSubmit, internalUser, user ],
     );
 
     return (
