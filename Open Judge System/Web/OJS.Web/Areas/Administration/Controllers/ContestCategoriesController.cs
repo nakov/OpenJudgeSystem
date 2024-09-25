@@ -2,13 +2,15 @@
 {
     using System.Collections;
     using System.Linq;
+    using System.Web;
     using System.Web.Mvc;
 
     using Kendo.Mvc.Extensions;
     using Kendo.Mvc.UI;
-
+    using OJS.Common;
     using OJS.Data;
     using OJS.Web.Areas.Administration.Controllers.Common;
+    using OJS.Web.Areas.Administration.ViewModels.ContestCategory;
     using OJS.Web.Infrastructure.Filters.Attributes;
 
     using DatabaseModelType = OJS.Data.Models.ContestCategory;
@@ -97,6 +99,21 @@
                 category.ParentId = to;
                 this.Data.SaveChanges();
             }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        public ActionResult ImportContests(int categoryId)
+        {
+            var contestCategory = this.Data.ContestCategories.GetById(categoryId) ?? throw new HttpException(404, "Category not found");
+
+            var model = new ImportContestsViewModel
+            {
+                CategoryId = categoryId,
+                CategoryName = contestCategory.Name,
+            };
+
+            return this.View(model);
         }
 
         private void CascadeDeleteCategories(DatabaseModelType contest)

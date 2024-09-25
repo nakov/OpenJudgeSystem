@@ -1,0 +1,9 @@
+@model OJS.Web.Areas.Administration.ViewModels.ContestCategory.ImportContestsViewModel
+
+@using Resource = Resources.Areas.Administration.ContestCategories.Views.ContestCategoriesViews;
+
+@{
+    ViewBag.Title = $"{Resource.Import_contests_page_title} {Model.CategoryName}";
+}
+
+<h1>@ViewBag.Title</h1>

@@ -156,4 +156,7 @@
   <data name="Transfer" xml:space="preserve">
     <value>Прехвърли</value>
   </data>
+  <data name="Import_contests" xml:space="preserve">
+    <value>Импортирай състезания</value>
+  </data>
 </root>

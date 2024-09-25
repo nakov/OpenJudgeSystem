@@ -156,4 +156,7 @@
   <data name="Transfer" xml:space="preserve">
     <value>Transfer</value>
   </data>
+  <data name="Import_contests" xml:space="preserve">
+    <value>Import contests</value>
+  </data>
 </root>

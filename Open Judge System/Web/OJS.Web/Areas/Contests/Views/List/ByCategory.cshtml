@@ -19,12 +19,19 @@
 
         @if (Model.Id != default(int) && Model.IsUserLecturerInContestCategory && !Model.SubCategories.Any())
         {
-            <div class="col-xs-6 pull-right">
+            <div class="col-xs-2 pull-right">
                 @(Html.ActionLink<ContestsController>(
                     Resource.Create_contest,
                     c => c.Create(Model.Id),
                     null,
                     new { @class = "btn btn-sm btn-primary pull-right top-buffer-lg" }))
+            </div>
+            <div class="col-xs-2 pull-right no-padding-right">
+                @(Html.ActionLink<ContestCategoriesController>(
+                Resource.Import_contests,
+                c => c.ImportContests(Model.Id),
+                null,
+                new { @class = "btn btn-sm btn-primary pull-right top-buffer-lg" }))
             </div>
         }
     </div>

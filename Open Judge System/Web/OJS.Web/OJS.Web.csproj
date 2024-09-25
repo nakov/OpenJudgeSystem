@@ -1784,6 +1784,7 @@
     <Compile Include="Areas\Administration\Controllers\TestsController.cs" />
     <Compile Include="Areas\Administration\Controllers\UsersController.cs" />
     <Compile Include="Areas\Administration\InputModels\AntiCheat\SubmissionSimilarityFiltersInputModel.cs" />
+    <Compile Include="Areas\Administration\ViewModels\ContestCategory\ImportContestsViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Contest\ChangeParticipationEndTimeByUserViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Contest\ChangeParticipationEndTimeViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Contest\ChangeParticipationEndTimeByTimeIntervalViewModel.cs" />
@@ -1960,6 +1961,7 @@
     <Compile Include="ViewModels\TestRun\TestRunViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Administration\Views\ContestCategories\ImportContests.cshtml" />
     <Content Include="Content\css\administration\administration-styles.css" />
     <Content Include="Content\bootstrap\bootstrap-amelia.css" />
     <Content Include="Content\bootstrap\bootstrap-amelia.min.css" />
@@ -3473,18 +3475,18 @@
     </EmbeddedResource>
     <Content Include="Scripts\Helpers\test-results.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config">
+    <None Include="Web.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Web.Dev.config">
+    <None Include="Web.Dev.config">
       <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
+    </None>
+    <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
-    </Content>
+    </None>
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />

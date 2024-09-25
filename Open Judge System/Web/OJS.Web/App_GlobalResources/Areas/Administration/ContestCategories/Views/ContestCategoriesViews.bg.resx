@@ -126,4 +126,7 @@
   <data name="Index_page_title" xml:space="preserve">
     <value>Категории състезания</value>
   </data>
+  <data name="Import_contests_page_title" xml:space="preserve">
+    <value>Импортиране на контести в категория</value>
+  </data>
 </root>
