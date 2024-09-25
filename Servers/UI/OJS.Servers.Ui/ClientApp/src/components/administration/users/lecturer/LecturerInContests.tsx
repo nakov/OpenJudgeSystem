@@ -153,7 +153,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
               data={contestAutocomplete}
               disabled={contestToAdd === 0}
               label="Select Contest"
-              name="Add lecturer to contest"
+              heading="Add lecturer to contest"
               onChange={onSelect}
               onInputChange={(e: ChangeEvent<HTMLInputElement>) => onAutocompleteInputChange(e, setContestSearchString)}
               onClick={() => addLecturerToContest({ lecturerId: userId, contestId: contestToAdd })}

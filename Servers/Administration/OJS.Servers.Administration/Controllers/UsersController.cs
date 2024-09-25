@@ -60,17 +60,20 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
 
     [HttpGet]
     [ProtectedEntityAction(false)]
-    public async Task<IActionResult> GetNameAndId(string? searchString)
+    public async Task<IActionResult> GetNameAndId(string? searchString, string? roleId)
     {
         var users =
             await this.usersDataService
                 .GetQueryForUser(
                     this.User.Map<UserInfoModel>(),
-                    user => user.UserName!.Contains(searchString ?? string.Empty))
+                    roleId != null
+                    ? user => user.UserName!.Contains(searchString ?? string.Empty) && user.UsersInRoles.Any(ur => ur.RoleId == roleId)
+                    : user => user.UserName!.Contains(searchString ?? string.Empty))
                 .AsNoTracking()
                 .MapCollection<UserDropdownModel>()
                 .Take(20)
                 .ToListAsync();
+
         return this.Ok(users);
     }
 

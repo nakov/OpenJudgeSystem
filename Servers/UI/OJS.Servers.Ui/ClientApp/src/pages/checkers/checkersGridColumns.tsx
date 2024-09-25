@@ -5,9 +5,10 @@ import { CREATED_ON, MODIFIED_ON } from '../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../common/messages';
 import DeleteButton from '../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../components/administration/common/edit/QuickEditButton';
+import { AdministrationGridColDef } from '../../components/administration/utils/mui-utils';
 import { adminFormatDate } from '../../utils/administration/administration-dates';
 
-const checkersFilterableColumns: GridColDef[] = [
+const checkersFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

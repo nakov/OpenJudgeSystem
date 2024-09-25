@@ -53,7 +53,11 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import DeleteButton from '../../common/delete/DeleteButton';
 import TransferParticipantsButton from '../../common/transfer-participants/TransferParticipantsButton';
-import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
+import {
+    autocompleteNameIdFormatFilterOptions,
+    handleAutocompleteChange,
+    handleDateTimePickerChange,
+} from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -562,6 +566,7 @@ const ContestEdit = (props:IContestEditProps) => {
                             <Autocomplete
                               sx={{ width: '100%' }}
                               className={formStyles.inputRow}
+                              filterOptions={autocompleteNameIdFormatFilterOptions}
                               onChange={(event, newValue) => handleAutocompleteChange('category', newValue!, 'id', onChange)}
                               value={contestCategories?.find((category) => category.id === contest.categoryId) ??
                                   getDefaultContestCategory()}
@@ -570,6 +575,9 @@ const ContestEdit = (props:IContestEditProps) => {
                               getOptionLabel={(option) => option?.name}
                               renderOption={(properties, option) => (
                                   <MenuItem {...properties} key={option.id} value={option.id}>
+                                      #
+                                      {option.id}
+                                      {' '}
                                       {option.name}
                                   </MenuItem>
                               )}
