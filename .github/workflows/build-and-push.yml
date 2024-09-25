@@ -73,7 +73,13 @@ jobs:
       id: prepare_docker_tags
       shell: bash
       run: |
-        TAGS="${{ env.IMAGE }}:${{ env.GIT_SHA }},${{ env.IMAGE }}:${{ env.BUILD_VER }}"
+        TAGS=""
+        if [[ -n "${{ inputs.docker_image_tag }}" ]]; then
+          CURRENT_DATE=$(date +'%d-%m-%Y_%H%M')
+          TAGS="${{ env.IMAGE }}:${CURRENT_DATE},${{ env.IMAGE }}:${{ env.GIT_SHA }},${{ env.IMAGE }}:${{ env.BUILD_VER }}"
+        else
+          TAGS="${{ env.IMAGE }}:${{ env.GIT_SHA }},${{ env.IMAGE }}:${{ env.BUILD_VER }}"
+        fi
         if [[ -n "${{ env.BRANCH_NAME }}" ]]; then
           TAGS="$TAGS,${{ env.IMAGE }}:${{ env.BRANCH_NAME }}"
         fi

@@ -84,6 +84,7 @@ const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
     {
         field: 'baseMemoryUsedInBytes',
@@ -94,6 +95,7 @@ const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
     {
         field: 'maxAllowedTimeLimitInMilliseconds',
@@ -104,6 +106,7 @@ const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
     {
         field: 'maxAllowedMemoryLimitInBytes',
@@ -114,7 +117,7 @@ const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
-        hideable: true,
+        hidden: true,
     },
     {
         field: 'allowBinaryFilesUpload',
@@ -125,6 +128,7 @@ const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
 ];
 
