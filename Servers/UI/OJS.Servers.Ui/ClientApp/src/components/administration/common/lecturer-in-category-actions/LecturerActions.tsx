@@ -29,7 +29,7 @@ import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import FormActionButton from '../../form-action-button/FormActionButton';
-import { onAutocompleteInputChange } from '../../utils/mui-utils';
+import { autocompleteNameIdFormatFilterOptions, onAutocompleteInputChange } from '../../utils/mui-utils';
 import AdministrationModal from '../modals/administration-modal/AdministrationModal';
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -232,17 +232,21 @@ const LecturerActions = ({
                         {isContest
                             ? (
                                 <FormControl fullWidth margin="normal" className={formStyles.inputRow}>
-                                    <Autocomplete
+                                    <Autocomplete<IContestAutocomplete>
                                       sx={{ width: '90%' }}
                                       disabled={!selectedUser && !contestToAdd}
                                       className={formStyles.centralize}
                                       onChange={(event, newValue) => onContestSelect(newValue!)}
                                       onInputChange={(e: any) => onAutocompleteInputChange(e, setContestSearchString)}
                                       options={contests || lecturerContests || []}
+                                      filterOptions={autocompleteNameIdFormatFilterOptions}
                                       renderInput={(params) => <TextField {...params} label={SELECT_CONTEST} key={params.id} />}
                                       getOptionLabel={(option) => option?.name}
                                       renderOption={(properties, option) => (
                                           <MenuItem {...properties} key={option.id} value={option.id}>
+                                              #
+                                              {option.id}
+                                              {' '}
                                               {option.name}
                                           </MenuItem>
                                       )}
@@ -251,16 +255,20 @@ const LecturerActions = ({
                             )
                             : (
                                 <FormControl fullWidth margin="normal" className={formStyles.inputRow}>
-                                    <Autocomplete
+                                    <Autocomplete<IContestAutocomplete>
                                       sx={{ width: '90%' }}
                                       disabled={!selectedUser && !categoryToAdd}
                                       className={formStyles.centralize}
                                       onChange={(event, newValue) => onCategorySelect(newValue!)}
                                       options={contestCategories || lecturerContestCategories || []}
+                                      filterOptions={autocompleteNameIdFormatFilterOptions}
                                       renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} />}
                                       getOptionLabel={(option) => option?.name || ''}
                                       renderOption={(properties, option) => (
                                           <MenuItem {...properties} key={option.id}>
+                                              #
+                                              {option.id}
+                                              {' '}
                                               {option.name}
                                           </MenuItem>
                                       )}
