@@ -21,15 +21,17 @@ public class DataService<TEntity> : IDataService<TEntity>
     private readonly DbSet<TEntity> dbSet;
     private bool ignoreQueryFiltersOnNextQuery;
     private bool useQueryFiltersOnNextQuery;
+    private bool ignoreQueryFilters;
 
     public DataService(OjsDbContext db)
     {
         this.db = db;
         this.dbSet = db.Set<TEntity>();
-        this.IgnoreQueryFilters = false;
+        this.ignoreQueryFilters = false;
     }
 
-    protected bool IgnoreQueryFilters { get; init; }
+    protected void SetIgnoreQueryFilters(bool ignore)
+        => this.ignoreQueryFilters = ignore;
 
     public virtual async Task Add(TEntity entity)
         => await this.dbSet.AddAsync(entity);
@@ -142,7 +144,7 @@ public class DataService<TEntity> : IDataService<TEntity>
     {
         var query = this.dbSet.AsQueryable();
 
-        if (this.IgnoreQueryFilters)
+        if (this.ignoreQueryFilters || this.ignoreQueryFiltersOnNextQuery)
         {
             if (this.useQueryFiltersOnNextQuery)
             {
@@ -151,12 +153,8 @@ public class DataService<TEntity> : IDataService<TEntity>
             else
             {
                 query = query.IgnoreQueryFilters();
+                this.ignoreQueryFiltersOnNextQuery = false;
             }
-        }
-        else if (this.ignoreQueryFiltersOnNextQuery)
-        {
-            query = query.IgnoreQueryFilters();
-            this.ignoreQueryFiltersOnNextQuery = false;
         }
 
         if (filter != null)
@@ -193,7 +191,7 @@ public class DataService<TEntity> : IDataService<TEntity>
         int? take = null)
         => this.GetQuery(this.GetUserFilter(user).CombineAndAlso(filter), orderBy, descending, skip, take);
 
-    public IDataService<TEntity> UseQueryFilters()
+    public IDataService<TEntity> WithQueryFilters()
     {
         this.useQueryFiltersOnNextQuery = true;
         return this;
