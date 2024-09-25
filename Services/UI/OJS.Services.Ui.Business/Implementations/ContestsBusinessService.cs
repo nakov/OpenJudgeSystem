@@ -95,18 +95,15 @@ namespace OJS.Services.Ui.Business.Implementations
             contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
             contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
 
-            var competeParticipant = await this.participantsData
-                .GetWithProblemsForParticipantsByContestByUserAndIsOfficial(
-                    id,
-                    user.Id,
-                    true);
+            var userParticipants = await this.participantsData
+                .GetWithProblemsForParticipantsByContestByUser(id, user.Id)
+                .ToListAsync();
+
+            var competeParticipant = userParticipants.FirstOrDefault(p => p.IsOfficial);
 
             var participantToGetProblemsFrom = contestDetailsServiceModel.CanBeCompeted
                 ? competeParticipant
-                : await this.participantsData.GetWithProblemsForParticipantsByContestByUserAndIsOfficial(
-                    id,
-                    user.Id,
-                    false);
+                : userParticipants.FirstOrDefault(p => !p.IsOfficial);
 
             if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted)
             {
