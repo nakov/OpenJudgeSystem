@@ -106,7 +106,7 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
             <LecturerForm
               data={contestCategories!}
               disabled={categoryToAdd === 0}
-              name="Add lecturer to contest"
+              heading="Add lecturer to contest"
               label={SELECT_CATEGORY}
               onChange={onChange}
               onClick={() => addLecturerToCategory({ lecturerId: userId, categoryId: categoryToAdd })}

@@ -35,6 +35,10 @@ const contestCategoriesAdminService = createApi({
             query: ({ id }) => ({ url: `Get/${id}` }),
             keepUnusedDataFor: 0,
         }),
+        getForLecturerInCategory: builder.query<Array<IContestCategories>, string>({
+            query: (id) => ({ url: `/GetForLecturerInContestCategory?userId=${id}` }),
+            keepUnusedDataFor: 0,
+        }),
         getCategories: builder.query<Array<IContestCategories>, null>({ query: () => ({ url: '/GetForContestDropdown' }) }),
         getContestCategoriesHierarchy: builder.query<Array<IContestCategoryHierarchy>, void>({
             query: () => ({ url: '/GetHierarchy' }),
@@ -84,6 +88,7 @@ const contestCategoriesAdminService = createApi({
 
 export const {
     useGetCategoriesQuery,
+    useGetForLecturerInCategoryQuery,
     useGetContestCategoriesHierarchyQuery,
     useEditContestCategoriesHierarchyMutation,
     useGetAllAdminContestCategoriesQuery,

@@ -44,6 +44,7 @@ export const NEW_IP_PASSWORD = 'New Ip password';
 export const ALLOWED_IPS = 'Allowed Ips';
 export const DURATION = 'Duration';
 export const SELECT_CATEGORY = 'Select Category';
+export const SELECT_CONTEST = 'Select Contest';
 export const COMPETE_START_TIME = 'Compete Start Time';
 export const COMPETE_END_TIME = 'Compete End Time';
 export const PRACTICE_START_TIME = 'Practice Start Time';

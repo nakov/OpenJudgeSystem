@@ -48,6 +48,12 @@ enum CheckboxSearchValues {
     users = 'Users',
 }
 
+enum RolesEnum {
+    Lecturer = 'Lecturer',
+    Developer = 'Developer',
+    Administrator = 'Administrator',
+}
+
 enum SubmissionStrategyType {
     NotFound = 0,
     CompileExecuteAndCheck = 1,
@@ -139,6 +145,7 @@ export {
     ProblemResourceType,
     SubmissionStatus,
     SettingTypeEnums,
+    RolesEnum,
     SubmissionStrategyType,
     CompilerType,
     CheckboxSearchValues,

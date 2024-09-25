@@ -54,7 +54,7 @@ const AddUserInGroupModal = (props:IAddUserInExamGroupProps) => {
     });
 
     const { data, isFetching, isLoading } = useGetExamGroupByIdQuery({ id: Number(examGroupId) });
-    const { data: usersForDropdown } = useGetUsersAutocompleteQuery(userSearchString);
+    const { data: usersForDropdown } = useGetUsersAutocompleteQuery([ userSearchString ]);
 
     const [
         addUserToExamGroup, {

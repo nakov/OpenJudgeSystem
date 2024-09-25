@@ -67,11 +67,11 @@ public static partial class LoggerMessageDefinitions
     public static partial void LogPlatformDataReceived(this ILogger logger, string userName);
 
     // Submissions
-    [LoggerMessage(1010, LogLevel.Error, "Exception in submitting submission #{SubmissionId}", SkipEnabledCheck = true)]
-    public static partial void LogExceptionSubmittingSolution(this ILogger logger, int submissionId, Exception ex);
+    [LoggerMessage(1010, LogLevel.Error, "Exception in publishing submission #{SubmissionId}", SkipEnabledCheck = true)]
+    public static partial void LogExceptionPublishingSubmission(this ILogger logger, int submissionId, Exception ex);
 
-    [LoggerMessage(1020, LogLevel.Error, "Exception in submitting submissions batch.", SkipEnabledCheck = true)]
-    public static partial void LogExceptionSubmittingSolutionsBatch(this ILogger logger, Exception ex);
+    [LoggerMessage(1020, LogLevel.Error, "Exception in publishing submissions batch.", SkipEnabledCheck = true)]
+    public static partial void LogExceptionPublishingSubmissionsBatch(this ILogger logger, Exception ex);
 
     [LoggerMessage(1030, LogLevel.Error, "Exception returned for submission #{SubmissionId}: {@SubmissionException}", SkipEnabledCheck = true)]
     public static partial void LogExceptionReturnedForSubmission(this ILogger logger, int submissionId, ExceptionModel submissionException);
@@ -83,13 +83,10 @@ public static partial class LoggerMessageDefinitions
     public static partial void LogErrorProcessingSubmission(this ILogger logger, int submissionId, string? workerName, Exception ex);
 
     [LoggerMessage(1050, LogLevel.Error, "Submission for processing #{SubmissionForProcessingId} for Submission #{SubmissionId} not found in the database.", SkipEnabledCheck = true)]
-    public static partial void LogSubmissionForProcessingNotFoundForSubmission(this ILogger logger, int submissionForProcessingId, int submissionId);
+    public static partial void LogSubmissionForProcessingNotFoundForSubmission(this ILogger logger, int? submissionForProcessingId, int submissionId);
 
-    [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is already marked as Processed. Skipping step.")]
-    public static partial void LogSubmissionAlreadyProcessed(this ILogger logger, int submissionId);
-
-    [LoggerMessage(1061, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is already marked as Processing. Skipping step.")]
-    public static partial void LogSubmissionAlreadyProcessing(this ILogger logger, int submissionId);
+    [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is in state {CurrentProcessingState} state. Skipping updating it to {UpdateToProcessingState}.")]
+    public static partial void LogSubmissionProcessingStateNotUpdated(this ILogger logger, int submissionId, string currentProcessingState, string updateToProcessingState);
 
     [LoggerMessage(1100, LogLevel.Information, "Result for submission #{SubmissionId} processed successfully with SubmissionForProcessing: {@SubmissionForProcessing}")]
     public static partial void LogSubmissionProcessedSuccessfully(this ILogger logger, int submissionId, object submissionForProcessing);
