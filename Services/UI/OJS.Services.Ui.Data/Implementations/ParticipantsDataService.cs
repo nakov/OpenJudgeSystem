@@ -39,7 +39,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Include(p => p.ProblemsForParticipants)
                 .FirstOrDefaultAsync();
 
-        public IQueryable<Participant> GetWithProblemsForParticipantsByContestByUser(int contestId,
+        public IQueryable<Participant> GetWithProblemsForParticipantsByContestAndUser(int contestId,
             string userId)
             => this.GetAllByContestAndUser(contestId, userId)
                 .Include(p => p.ProblemsForParticipants)

@@ -92,7 +92,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetContestActivity(contestDetailsServiceModel!.Map<ContestForActivityServiceModel>());
 
             var userParticipants = await this.participantsData
-                .GetWithProblemsForParticipantsByContestByUser(id, user.Id)
+                .GetWithProblemsForParticipantsByContestAndUser(id, user.Id)
                 .ToListAsync();
 
             var competeParticipant = userParticipants.FirstOrDefault(p => p.IsOfficial);
