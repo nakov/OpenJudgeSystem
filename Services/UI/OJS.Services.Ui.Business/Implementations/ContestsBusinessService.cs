@@ -91,19 +91,16 @@ namespace OJS.Services.Ui.Business.Implementations
             var contestActivityEntity = await this.activityService
                 .GetContestActivity(contestDetailsServiceModel!.Map<ContestForActivityServiceModel>());
 
-            contestDetailsServiceModel!.CanBeCompeted = contestActivityEntity.CanBeCompeted;
-            contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
-            contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
-
             var userParticipants = await this.participantsData
                 .GetWithProblemsForParticipantsByContestByUser(id, user.Id)
                 .ToListAsync();
 
             var competeParticipant = userParticipants.FirstOrDefault(p => p.IsOfficial);
+            var practiceParticipant = userParticipants.FirstOrDefault(p => !p.IsOfficial);
 
-            var participantToGetProblemsFrom = contestDetailsServiceModel.CanBeCompeted
+            var participantToGetProblemsFrom = contestActivityEntity.CanBeCompeted
                 ? competeParticipant
-                : userParticipants.FirstOrDefault(p => !p.IsOfficial);
+                : practiceParticipant;
 
             if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted)
             {
@@ -125,7 +122,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.CanViewCompeteResults = true;
             }
 
-            if (isLecturerInContestOrAdmin || contestDetailsServiceModel.CanBeCompeted || contestDetailsServiceModel.CanBePracticed)
+            if (isLecturerInContestOrAdmin || contestActivityEntity.CanBeCompeted || contestActivityEntity.CanBePracticed)
             {
                 contestDetailsServiceModel.CanViewPracticeResults = true;
             }
@@ -134,6 +131,11 @@ namespace OJS.Services.Ui.Business.Implementations
 
             contestDetailsServiceModel.CompeteParticipantsCount = participantsCount.Official;
             contestDetailsServiceModel.PracticeParticipantsCount = participantsCount.Practice;
+
+            contestDetailsServiceModel!.CanBeCompeted = contestActivityEntity.CanBeCompeted;
+            contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
+
+            contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
 
             return contestDetailsServiceModel;
         }
