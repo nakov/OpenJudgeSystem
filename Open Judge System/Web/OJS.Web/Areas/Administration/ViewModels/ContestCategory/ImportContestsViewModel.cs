@@ -15,7 +15,7 @@ namespace OJS.Web.Areas.Administration.ViewModels.ContestCategory
         [UIHint(MultiLineText)]
         [RegularExpression(
             "^\\d+(?:[\\s,]*\\d+)*",
-            ErrorMessage = "Please enter a comma or space-separated list of contest IDs.")]
+            ErrorMessage = "Please enter a comma or space-separated list of valid contest IDs.")]
         public string ContestIdsToImport { get; set; }
 
         [Display(Name = "OJS Platform URL")]
@@ -26,5 +26,10 @@ namespace OJS.Web.Areas.Administration.ViewModels.ContestCategory
 
         [Display(Name = "Replace existing contests by matching their Name")]
         public bool ReplaceExistingContests { get; set; }
+
+        [Display(Name = "Your profile ID")]
+        [Required(ErrorMessage = "Please enter your ID. You can get it from your profile page.")]
+        [UIHint(SingleLineText)]
+        public string UserApiKey { get; set; }
     }
 }

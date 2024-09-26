@@ -12,6 +12,7 @@
     using OJS.Data;
     using OJS.Services.Business.ContestCategories;
     using OJS.Services.Common.BackgroundJobs;
+    using OJS.Services.Common.HttpRequester;
     using OJS.Web.Areas.Administration.Controllers.Common;
     using OJS.Web.Areas.Administration.ViewModels.ContestCategory;
     using OJS.Web.Common.Extensions;
@@ -23,12 +24,17 @@
     public class ContestCategoriesController : AdministrationBaseGridController
     {
         private readonly IHangfireBackgroundJobService backgroundJobs;
+        private readonly IHttpRequesterService httpRequester;
 
         public ContestCategoriesController(
             IOjsData data,
-            IHangfireBackgroundJobService backgroundJobs)
-            : base(data) =>
+            IHangfireBackgroundJobService backgroundJobs,
+            IHttpRequesterService httpRequester)
+            : base(data)
+        {
             this.backgroundJobs = backgroundJobs;
+            this.httpRequester = httpRequester;
+        }
 
         public override IEnumerable GetData()
         {
@@ -140,7 +146,36 @@
             var contestIdsToImport = model.ContestIdsToImport
                 .Split(new[] { '\r', '\n', ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse)
+                .Distinct()
                 .ToArray();
+
+            var existingContestIds = this.httpRequester.Get<int[]>(
+                new { ids = contestIdsToImport },
+                $"{model.OjsPlatformUrl.TrimEnd('/')}/api/Contests/GetExistingIds",
+                model.UserApiKey);
+
+            if (!existingContestIds.IsSuccess)
+            {
+                if (existingContestIds.ErrorMessage.Contains("Invalid API key"))
+                {
+                    this.ModelState.AddModelError(nameof(model.UserApiKey), "Invalid user API key.");
+                }
+                else
+                {
+                    this.ModelState.AddModelError(nameof(model.OjsPlatformUrl), existingContestIds.ErrorMessage);
+                }
+
+                return this.View(model);
+            }
+
+            if (existingContestIds.Data.Length != contestIdsToImport.Length)
+            {
+                var invalidIds = contestIdsToImport.Except(existingContestIds.Data).ToArray();
+                this.ModelState.AddModelError(
+                    nameof(model.ContestIdsToImport),
+                    $"Some contests do not exist in the provided OJS platform. The following IDs are invalid: {string.Join(", ", invalidIds)}");
+                return this.View(model);
+            }
 
             this.backgroundJobs.AddFireAndForgetJob<IContestCategoriesImportService>(
                 x => x.ImportContestsIntoCategory(
