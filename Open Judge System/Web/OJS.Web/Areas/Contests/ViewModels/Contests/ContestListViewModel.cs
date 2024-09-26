@@ -35,6 +35,10 @@
 
         public ContestType Type { get; set; }
 
+        public DateTime? ImportedOn { get; set; }
+
+        public string ImportedFromUrl { get; set; }
+
         public static Expression<Func<Contest, ContestListViewModel>> FromContest(string userId, bool isUserAdmin) =>
             contest => new ContestListViewModel
             {
@@ -44,6 +48,8 @@
                 Type = contest.Type,
                 HasContestPassword = contest.ContestPassword != null,
                 HasPracticePassword = contest.PracticePassword != null,
+                ImportedOn = contest.ImportedOn,
+                ImportedFromUrl = contest.ImportedFromUrl,
                 CanBeCompeted = contest.StartTime.HasValue &&
                         contest.StartTime.Value <= DateTime.Now &&
                         (!contest.EndTime.HasValue || contest.EndTime.Value >= DateTime.Now),
