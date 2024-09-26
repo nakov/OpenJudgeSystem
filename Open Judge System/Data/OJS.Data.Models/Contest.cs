@@ -96,6 +96,17 @@ namespace OJS.Data.Models
 
         public bool EnsureValidAuthorSubmisions { get; set; }
 
+        /// <summary>
+        /// Gets or sets the date and time when the contest was imported from another platform.
+        /// </summary>
+        public DateTime? ImportedOn { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URL of the OJS platform from which the contest was imported.
+        /// </summary>
+        [MaxLength(GlobalConstants.ContestImportedFromUrlMaxLength)]
+        public string ImportedFromUrl { get; set; }
+
         public WorkerType DefaultWorkerType { get; set; }
         
         public virtual ICollection<LecturerInContest> Lecturers { get; set; } = new HashSet<LecturerInContest>();

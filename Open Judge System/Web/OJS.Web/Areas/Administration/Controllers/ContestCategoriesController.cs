@@ -1,16 +1,20 @@
 ﻿namespace OJS.Web.Areas.Administration.Controllers
 {
+    using System;
     using System.Collections;
     using System.Linq;
     using System.Web;
     using System.Web.Mvc;
-
     using Kendo.Mvc.Extensions;
     using Kendo.Mvc.UI;
     using OJS.Common;
+    using OJS.Common.Extensions;
     using OJS.Data;
+    using OJS.Services.Business.ContestCategories;
+    using OJS.Services.Common.BackgroundJobs;
     using OJS.Web.Areas.Administration.Controllers.Common;
     using OJS.Web.Areas.Administration.ViewModels.ContestCategory;
+    using OJS.Web.Common.Extensions;
     using OJS.Web.Infrastructure.Filters.Attributes;
 
     using DatabaseModelType = OJS.Data.Models.ContestCategory;
@@ -18,10 +22,13 @@
 
     public class ContestCategoriesController : AdministrationBaseGridController
     {
-        public ContestCategoriesController(IOjsData data)
-            : base(data)
-        {
-        }
+        private readonly IHangfireBackgroundJobService backgroundJobs;
+
+        public ContestCategoriesController(
+            IOjsData data,
+            IHangfireBackgroundJobService backgroundJobs)
+            : base(data) =>
+            this.backgroundJobs = backgroundJobs;
 
         public override IEnumerable GetData()
         {
@@ -105,15 +112,48 @@
         [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         public ActionResult ImportContests(int categoryId)
         {
-            var contestCategory = this.Data.ContestCategories.GetById(categoryId) ?? throw new HttpException(404, "Category not found");
+            var category = this.Data.ContestCategories.GetById(categoryId) ?? throw new HttpException(404, "Category not found");
 
             var model = new ImportContestsViewModel
             {
-                CategoryId = categoryId,
-                CategoryName = contestCategory.Name,
+                CategoryId = category.Id,
+                CategoryName = category.Name,
             };
 
+            this.ViewBag.ReturnUrl = this.HttpContext.Request.UrlReferrer?.AbsoluteUri ?? "/";
+
             return this.View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        public ActionResult ImportContests(ImportContestsViewModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(model);
+            }
+
+            var category = this.Data.ContestCategories.GetById(model.CategoryId) ?? throw new HttpException(404, "Category not found");
+
+            var contestIdsToImport = model.ContestIdsToImport
+                .Split(new[] { '\r', '\n', ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToArray();
+
+            this.backgroundJobs.AddFireAndForgetJob<IContestCategoriesImportService>(
+                x => x.ImportContestsIntoCategory(
+                    category.Id,
+                    model.OjsPlatformUrl,
+                    model.ReplaceExistingContests,
+                    contestIdsToImport));
+
+            this.TempData.AddInfoMessage(
+                "Contests are being imported. This may take a while." +
+                "You can continue working in the meantime and check the results later.");
+
+            return this.Redirect($"/Contests/#!/List/ByCategory/{category.Id}/{category.Name.ToUrl()}");
         }
 
         private void CascadeDeleteCategories(DatabaseModelType contest)

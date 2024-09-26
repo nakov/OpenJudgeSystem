@@ -7,3 +7,75 @@
 }
 
 <h1>@ViewBag.Title</h1>
+<hr/>
+
+<div id="import-form" class="container">
+    @using (Html.BeginForm("ImportContests", "ContestCategories", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.CategoryId)
+        @Html.HiddenFor(model => model.CategoryName)
+
+        <fieldset>
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.OjsPlatformUrl)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-5">
+                    @Html.EditorFor(m => m.OjsPlatformUrl, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary"
+                          title="The url of the OJS platform from which to import the contests"
+                          data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.OjsPlatformUrl)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.ContestIdsToImport)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-5">
+                    @Html.EditorFor(m => m.ContestIdsToImport, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary"
+                          title="The IDs of the contests to import from the given OJS platform, separated by comma or space"
+                          data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.ContestIdsToImport)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-5">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.ReplaceExistingContests)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-3">
+                    @Html.EditorFor(m => m.ReplaceExistingContests, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary"
+                          title="If checked and a contest with the same Name already exists in the category, it's data will be replaced with the imported data, otherwise new contests will be created"
+                          data-tooltip="true"></span>
+                </div>
+            </div>
+        </fieldset>
+        <hr />
+        <div class="row">
+            <div class="editor-label col-xs-3">
+                <button type="submit" class="btn btn-primary pull-right">Import</button>
+            </div>
+            <div class="editor-label col-xs-4">
+                <a href="@ViewBag.ReturnUrl" class="btn btn-primary">Back</a>
+            </div>
+        </div>
+    }
+</div>
