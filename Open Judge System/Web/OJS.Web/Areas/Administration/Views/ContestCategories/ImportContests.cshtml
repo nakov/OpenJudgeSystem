@@ -10,7 +10,7 @@
 <hr/>
 
 <div id="import-form" class="container">
-    @using (Html.BeginForm("ImportContests", "ContestCategories", FormMethod.Post))
+    @using (Html.BeginForm("ImportContests", "ContestCategories", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
     {
         @Html.AntiForgeryToken()
 

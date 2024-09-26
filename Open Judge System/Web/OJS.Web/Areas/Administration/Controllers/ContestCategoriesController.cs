@@ -126,16 +126,17 @@
                 CategoryName = category.Name,
             };
 
-            this.ViewBag.ReturnUrl = this.HttpContext.Request.UrlReferrer?.AbsoluteUri ?? "/";
-
+            this.ViewBag.ReturnUrl = $"/Contests/#!/List/ByCategory/{model.CategoryId}/{model.CategoryName.ToUrl()}";
             return this.View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
-        public ActionResult ImportContests(ImportContestsViewModel model)
+        public ActionResult ImportContests(ImportContestsViewModel model, string returnUrl)
         {
+            this.ViewBag.ReturnUrl = returnUrl;
+
             if (!this.ModelState.IsValid)
             {
                 return this.View(model);
@@ -188,7 +189,7 @@
                 $"Contests are being imported into {category.Name}. This may take a while. " +
                 "You can continue working in the meantime and check the results later.");
 
-            return this.Redirect($"/Contests/#!/List/ByCategory/{category.Id}/{category.Name.ToUrl()}");
+            return this.Redirect(returnUrl);
         }
 
         private void CascadeDeleteCategories(DatabaseModelType contest)
