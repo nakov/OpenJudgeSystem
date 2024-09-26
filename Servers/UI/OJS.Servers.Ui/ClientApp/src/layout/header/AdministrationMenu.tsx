@@ -2,8 +2,18 @@ import React, { useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
 
 import {
-    CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH,
-    PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, ROLES_PATH, TESTS_PATH, USERS_PATH,
+    CONTEST_CATEGORIES_PATH,
+    CONTESTS_PATH,
+    EXAM_GROUPS_PATH,
+    NEW_ADMINISTRATION_PATH,
+    PARTICIPANTS_PATH,
+    PROBLEM_GROUPS_PATH,
+    PROBLEMS_PATH,
+    ROLES_PATH,
+    SUBMISSION_TYPES_PATH,
+    SUBMISSIONS_PATH,
+    TESTS_PATH,
+    USERS_PATH,
 } from '../../common/urls/administration-urls';
 import Button, { ButtonType } from '../../components/guidelines/buttons/Button';
 import useNavigation from '../../hooks/common/use-routing';
@@ -60,11 +70,14 @@ const AdministrationMenu = () => {
                         <span onClick={() => onClickNavigate(CONTESTS_PATH)}>Contests</span>
                         <span onClick={() => onClickNavigate(CONTEST_CATEGORIES_PATH)}>Categories</span>
                         <span onClick={() => onClickNavigate(PARTICIPANTS_PATH)}>Participants</span>
+                        <span onClick={() => onClickNavigate(EXAM_GROUPS_PATH)}>Exam Groups</span>
+                        <span onClick={() => onClickNavigate(SUBMISSIONS_PATH)}>Submissions</span>
                     </div>
                     <div className={styles.menuSection}>
                         <span onClick={() => onClickNavigate(PROBLEMS_PATH)}>Problems</span>
                         <span onClick={() => onClickNavigate(PROBLEM_GROUPS_PATH)}>Problem Groups</span>
                         <span onClick={() => onClickNavigate(TESTS_PATH)}>Tests</span>
+                        <span onClick={() => onClickNavigate(SUBMISSION_TYPES_PATH)}>Submission Types</span>
                     </div>
                     <div className={styles.menuSection}>
                         <span onClick={() => onClickNavigate(USERS_PATH)}>Users</span>
