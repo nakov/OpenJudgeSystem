@@ -17,7 +17,7 @@ import { setIsVisible } from '../../redux/features/searchSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-import AdministrationHeaderMenu from './AdministrationHeaderMenu';
+import AdministrationMenu from './AdministrationMenu';
 
 import styles from './PageHeader.module.scss';
 
@@ -32,7 +32,6 @@ const PageHeader = () => {
     const { isVisible } = useAppSelector((state) => state.search);
 
     const [ areBurgerItemsOpened, setAreBurgerItemsOpened ] = useState<boolean>(false);
-    const [ isAdminMenuForceClosed, setIsAdminMenuForceClosed ] = useState<boolean>(false);
 
     const {
         isLoggedIn,
@@ -65,10 +64,6 @@ const PageHeader = () => {
         const handleResize = () => {
             if (areBurgerItemsOpened && window.innerWidth > 920) {
                 setAreBurgerItemsOpened(false);
-            }
-
-            if (window.innerWidth > 920) {
-                setIsAdminMenuForceClosed(true);
             }
         };
 
@@ -162,7 +157,7 @@ const PageHeader = () => {
                 <div className={styles.navButtons}>
                     <Link to={getAllContestsPageUrl({})} className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                    <AdministrationHeaderMenu forceClose={isAdminMenuForceClosed} />
+                    <AdministrationMenu />
                 </div>
             </div>
             <div className={`${styles.authButtons} ${isThemeSwitchVisible
