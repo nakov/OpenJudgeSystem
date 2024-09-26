@@ -12,5 +12,7 @@ public interface IContestCategoriesBusinessService : IAdministrationOperationSer
 
     Task<IEnumerable<ContestCategoriesHierarchyModel>> GetHierarchy();
 
+    Task<IEnumerable<LecturerInContestCategoryActionsModel>> GetForLecturerInContestCategory(string userId);
+
     Task EditHierarchy(Dictionary<int, ContestCategoriesHierarchyEditModel> categoriesToUpdate);
 }

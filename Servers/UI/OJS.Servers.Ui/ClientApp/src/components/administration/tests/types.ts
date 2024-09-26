@@ -1,4 +1,6 @@
-interface ITestAdministration{
+import { IDictionary } from '../../../common/common-types';
+
+interface ITestAdministration {
     id: number;
     input: string;
     output: string;
@@ -11,21 +13,23 @@ interface ITestAdministration{
 }
 
 interface ITestInListData {
-    id:number;
-    isTrialTest:boolean;
-    isOpenTest:boolean;
-    hideInput:boolean;
-    orderBy:number;
-    problemId:number;
-    problemName:string;
+    id: number;
+    isTrialTest: boolean;
+    isOpenTest: boolean;
+    hideInput: boolean;
+    orderBy: number;
+    problemId: number;
+    problemName: string;
     retestProblem: boolean;
+    type: string;
 }
 
-enum TestTypes {
-    'Standard' = 0,
-    'Trial' = 1,
-    'Open' = 2,
-}
+const testTypesToFEStringsMapping = {
+    Standard: 'Compete',
+    Trial: 'Practice',
+    Open: 'Open',
+} as IDictionary<string>;
 
-export { TestTypes };
+export { testTypesToFEStringsMapping };
+
 export type { ITestAdministration, ITestInListData };

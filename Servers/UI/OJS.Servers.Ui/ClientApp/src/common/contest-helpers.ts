@@ -9,14 +9,14 @@ const contestParticipationType =
         ? ContestParticipationType.Compete
         : ContestParticipationType.Practice;
 
-const getCompeteResultsAreVisible = (
+const getCompeteResultsAreVisibleInContestCards = (
     contest: IIndexContestsType,
     loggedInUserCanAccessAdministration: boolean,
 ) => (loggedInUserCanAccessAdministration ||
     (contest.canBeCompeted && !isNil(contest.userParticipationResult?.competePoints))) &&
     contest.competeResults > 0;
 
-const getPracticeResultsAreVisible = (
+const getPracticeResultsAreVisibleInContestCards = (
     contest: IIndexContestsType,
     loggedInUserCanAccessAdministration: boolean,
 ) => (loggedInUserCanAccessAdministration || (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed))) &&
@@ -53,7 +53,7 @@ const createUrlFriendlyPath = (inputString: string | undefined | null): string =
 
 export {
     contestParticipationType,
-    getCompeteResultsAreVisible,
-    getPracticeResultsAreVisible,
+    getCompeteResultsAreVisibleInContestCards,
+    getPracticeResultsAreVisibleInContestCards,
     createUrlFriendlyPath,
 };

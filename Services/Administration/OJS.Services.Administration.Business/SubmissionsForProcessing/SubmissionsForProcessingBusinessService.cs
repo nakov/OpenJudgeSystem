@@ -51,14 +51,9 @@ public class SubmissionsForProcessingBusinessService :
             .MapCollection<SubmissionServiceModel>()
             .ToListAsync();
 
-        if (pendingSubmissions.Count == 0)
-        {
-            return 0;
-        }
-
-        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(pendingSubmissions);
-
-        return pendingSubmissions.Count;
+        return pendingSubmissions.Count == 0
+            ? 0
+            : await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(pendingSubmissions);
     }
 
     public async Task<int> DeleteProcessedSubmissions(int fromMinutesAgo)

@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions.Strings;
-using OJS.Data;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
@@ -31,7 +30,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
 using Resource = OJS.Common.Resources.ContestsGeneral;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
@@ -51,7 +49,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     private readonly IParticipantScoresDataService participantScoresDataService;
     private readonly ISubmissionsDataService submissionsDataService;
     private readonly IZipArchivesService zipArchivesService;
-    private readonly ITransactionsProvider transactions;
+    private readonly IDataService<LecturerInContest> lecturerInContestDataService;
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
@@ -68,7 +66,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         IParticipantScoresDataService participantScoresDataService,
         ISubmissionsDataService submissionsDataService,
         IZipArchivesService zipArchivesService,
-        ITransactionsProvider transactions)
+        IDataService<LecturerInContest> lecturerInContestDataService)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
@@ -84,8 +82,14 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         this.participantScoresDataService = participantScoresDataService;
         this.submissionsDataService = submissionsDataService;
         this.zipArchivesService = zipArchivesService;
-        this.transactions = transactions;
+        this.lecturerInContestDataService = lecturerInContestDataService;
     }
+
+    public async Task<IEnumerable<LecturerInContestActionsModel>> GetForLecturerInContest(string userId)
+        => await this.lecturerInContestDataService
+            .GetQuery(lic => lic.LecturerId == userId)
+            .MapCollection<LecturerInContestActionsModel>()
+            .ToListAsync();
 
     public async Task<bool> UserHasContestPermissions(
         int contestId,

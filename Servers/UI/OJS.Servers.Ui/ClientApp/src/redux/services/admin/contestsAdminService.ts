@@ -25,6 +25,11 @@ const contestService = createApi({
             keepUnusedDataFor: 3,
         }),
 
+        getForLecturerInContest: builder.query<Array<IContestAutocomplete>, string>({
+            query: (id) => ({ url: `/GetForLecturerInContest?userId=${id}` }),
+            keepUnusedDataFor: 0,
+        }),
+
         getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({
             query: ({ id }) => ({ url: `/${GET_ENDPOINT}/${id}` }),
             keepUnusedDataFor: 10,
@@ -111,6 +116,7 @@ const contestService = createApi({
 
 export const {
     useGetAllAdminContestsQuery,
+    useGetForLecturerInContestQuery,
     useGetContestByIdQuery,
     useDeleteContestMutation,
     useUpdateContestMutation,

@@ -2,10 +2,6 @@
 import { SubmissionStatus } from './enums';
 import { IGetAllAdminParams } from './types';
 
-interface IUserInfoUrlParams {
-    username: string;
-}
-
 interface IContestDetailsUrlParams {
     id: number;
 }
@@ -42,33 +38,10 @@ interface IContestCategoriesUrlParams {
     id: number;
 }
 
-interface IRegisterForContestUrlParams {
-    id: number;
-    isOfficial: boolean;
-}
-
 interface ISubmitContestPasswordParams {
     contestId: string;
     isOfficial: boolean;
     password: string;
-}
-
-interface IStartContestParticipationUrlParams {
-    id: number;
-    isOfficial: boolean;
-}
-
-interface IGetContestParticipationScoresForParticipantUrlParams {
-    participantId: number;
-}
-
-interface ISubmitContestPasswordUrlParams {
-    id: number;
-    isOfficial: boolean;
-}
-
-interface IDownloadProblemResourceUrlParams {
-    id: number | null;
 }
 
 interface IGetSubmissionsUrlParams {
@@ -84,18 +57,6 @@ interface IGetSubmissionsByUserParams {
 
 interface IGetUserSubmissionsUrlParams {
     username: string;
-    page: number;
-}
-
-interface IGetUserSubmissionsForProfileByContestUrlParams {
-    username: string;
-    page: number;
-    contestId: string;
-}
-
-interface IGetSubmissionResultsByProblemUrlParams {
-    problemId: number;
-    isOfficial: boolean;
     page: number;
 }
 
@@ -133,17 +94,9 @@ interface IRegisterUserForContestParams {
 }
 
 export type {
-    IUserInfoUrlParams,
-    IRegisterForContestUrlParams,
-    ISubmitContestPasswordUrlParams,
     IContestDetailsUrlParams,
     IContestCategoriesUrlParams,
-    IStartContestParticipationUrlParams,
-    IGetContestParticipationScoresForParticipantUrlParams,
-    IGetUserSubmissionsForProfileByContestUrlParams,
-    IDownloadProblemResourceUrlParams,
     IGetSubmissionsUrlParams,
-    IGetSubmissionResultsByProblemUrlParams,
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
     IGetUserSubmissionsUrlParams,

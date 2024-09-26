@@ -3,10 +3,11 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteParticipantMutation } from '../../../redux/services/admin/participantsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
-const participantsFilteringColumns: GridColDef[] = [
+const participantsFilteringColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
