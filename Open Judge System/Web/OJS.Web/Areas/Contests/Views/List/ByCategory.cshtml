@@ -26,13 +26,17 @@
                     null,
                     new { @class = "btn btn-sm btn-primary pull-right top-buffer-lg" }))
             </div>
-            <div class="col-xs-2 pull-right no-padding-right">
-                @(Html.ActionLink<ContestCategoriesController>(
-                Resource.Import_contests,
-                c => c.ImportContests(Model.Id),
-                null,
-                new { @class = "btn btn-sm btn-primary pull-right top-buffer-lg" }))
-            </div>
+
+            if (User.IsAdmin())
+            {
+                <div class="col-xs-2 pull-right no-padding-right">
+                    @(Html.ActionLink<ContestCategoriesController>(
+                        Resource.Import_contests,
+                        c => c.ImportContests(Model.Id),
+                        null,
+                        new { @class = "btn btn-sm btn-primary pull-right top-buffer-lg" }))
+                </div>
+            }
         }
     </div>
 
