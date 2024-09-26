@@ -7,7 +7,7 @@ import { DELETE } from '../../../../common/labels';
 import { IMappingEntityId } from '../../../../common/types';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
