@@ -14,7 +14,7 @@ namespace OJS.Services.Business.ContestCategories
             this.contestsImportService = contestsImportService;
         }
 
-        public IEnumerable<ContestImportResult> ImportContestsIntoCategory(
+        public string ImportContestsIntoCategory(
             int categoryId,
             string ojsPlatformUrl,
             bool replace,
@@ -39,7 +39,30 @@ namespace OJS.Services.Business.ContestCategories
                 }
             }
 
-            return contestImportResults;
+            var failedResults = contestImportResults.FindAll(r => !r.IsSuccess);
+            var successfulResults = contestImportResults.FindAll(r => r.IsSuccess);
+            var message = GenerateImportMessage(failedResults, successfulResults);
+            return message;
+        }
+
+        private static string GenerateImportMessage(
+            List<ContestImportResult> failedResults,
+            List<ContestImportResult> successfulResults)
+        {
+            var message = string.Empty;
+            if (failedResults.Count > 0)
+            {
+                message += Environment.NewLine + "The following contests failed to import: " +
+                    string.Join(Environment.NewLine, failedResults.ConvertAll(r => $"{r.ContestImportedFromId} - {r.ErrorMessage}"));
+            }
+
+            if (successfulResults.Count > 0)
+            {
+                message += Environment.NewLine + "The following contests were imported successfully: " +
+                    string.Join(", ", successfulResults.ConvertAll(r => r.ContestImportedFromId));
+            }
+
+            return message;
         }
     }
 }
