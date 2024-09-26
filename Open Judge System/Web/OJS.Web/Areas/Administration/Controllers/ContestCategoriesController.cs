@@ -150,7 +150,7 @@
                     contestIdsToImport));
 
             this.TempData.AddInfoMessage(
-                "Contests are being imported. This may take a while." +
+                $"Contests are being imported into {category.Name}. This may take a while. " +
                 "You can continue working in the meantime and check the results later.");
 
             return this.Redirect($"/Contests/#!/List/ByCategory/{category.Id}/{category.Name.ToUrl()}");

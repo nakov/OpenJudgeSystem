@@ -71,7 +71,7 @@
         <hr />
         <div class="row">
             <div class="editor-label col-xs-3">
-                <button type="submit" class="btn btn-primary pull-right">Import</button>
+                <button type="submit" class="btn btn-primary pull-right" id="import-button">Import</button>
             </div>
             <div class="editor-label col-xs-4">
                 <a href="@ViewBag.ReturnUrl" class="btn btn-primary">Back</a>
@@ -79,3 +79,15 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        document.getElementById("import-button").addEventListener("click", function(event) {
+            const confirmation = confirm("Are you sure you want to import the contests?");
+            if (!confirmation) {
+                // Prevent form submission if the user cancels
+                event.preventDefault();
+            }
+        });
+    </script>
+}
