@@ -29,11 +29,12 @@ import AdministrationGridDropdown from '../../../components/administration/commo
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import ExternalLink from '../../../components/guidelines/buttons/ExternalLink';
 import { useDeleteContestMutation } from '../../../redux/services/admin/contestsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
-const contestFilterableColumns: GridColDef[] = [
+const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: `${ID}`,

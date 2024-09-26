@@ -2,6 +2,7 @@
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using OJS.Data.Models;
 using System.Collections.Generic;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Exceptions;
@@ -10,21 +11,25 @@ using System.Linq;
 using OJS.Data.Models.Contests;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.ContestCategories;
+using OJS.Services.Common.Data;
 
 public class ContestCategoriesBusinessService : AdministrationOperationService<ContestCategory, int, ContestCategoryAdministrationModel>, IContestCategoriesBusinessService
 {
     private readonly IContestCategoriesDataService categoriesDataService;
     private readonly IOrderableService<ContestCategory> contestCategoriesOrderableService;
     private readonly IContestCategoriesCacheService contestCategoriesCache;
+    private readonly IDataService<LecturerInContestCategory> lecturerInContestCategoryDataService;
 
     public ContestCategoriesBusinessService(
         IContestCategoriesDataService categoriesDataService,
         IOrderableService<ContestCategory> contestCategoriesOrderableService,
-        IContestCategoriesCacheService contestCategoriesCache)
+        IContestCategoriesCacheService contestCategoriesCache,
+        IDataService<LecturerInContestCategory> lecturerInContestCategoryDataService)
     {
         this.categoriesDataService = categoriesDataService;
         this.contestCategoriesCache = contestCategoriesCache;
         this.contestCategoriesOrderableService = contestCategoriesOrderableService;
+        this.lecturerInContestCategoryDataService = lecturerInContestCategoryDataService;
     }
 
     public async Task<IEnumerable<ContestCategoriesHierarchyModel>> GetHierarchy()
@@ -76,6 +81,12 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         await this.categoriesDataService.SaveChanges();
         await this.contestCategoriesCache.ClearMainContestCategoriesCache();
     }
+
+    public async Task<IEnumerable<LecturerInContestCategoryActionsModel>> GetForLecturerInContestCategory(string userId)
+        => await this.lecturerInContestCategoryDataService
+            .GetQuery(licc => licc.LecturerId == userId)
+            .MapCollection<LecturerInContestCategoryActionsModel>()
+            .ToListAsync();
 
     public IQueryable<ContestCategory> GetAllVisible() => this.categoriesDataService.GetAllVisible();
 

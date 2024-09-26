@@ -24,13 +24,6 @@ interface ITestRunType {
     testId: number;
 }
 
-interface ITestRunDetailsType extends ITestRunType {
-    isTrialTest: boolean;
-    input: string;
-    showInput: boolean;
-    testId: number;
-}
-
 interface ISubmissionDetailsResponseType {
     id: number;
     problem: IProblemType;
@@ -60,24 +53,6 @@ interface ISubmissionDetailsResponseType {
     maxPoints: number;
 }
 
-interface ISubmissionResults {
-    id: number;
-    problemId: number;
-    submissionType: string;
-    points: number;
-    maximumPoints: number;
-    createdOn: Date;
-    content: string;
-    isProcessed: boolean;
-    isCompiledSuccessfully: boolean;
-    isOfficial: boolean;
-    compilerComment: string;
-    testRuns: ITestRunDetailsType[];
-    maxMemoryUsed: number;
-    maxTimeUsed: number;
-    testRunsCount: number;
-}
-
 interface ITestRun {
     id: number;
     timeUsed: number;
@@ -97,7 +72,6 @@ interface ITestRun {
 
 export type {
     ITestRunType,
-    ISubmissionResults,
     ISubmissionDetailsResponseType,
     ITestRun,
 };

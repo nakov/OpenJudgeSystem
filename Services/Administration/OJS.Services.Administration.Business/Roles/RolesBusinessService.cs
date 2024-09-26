@@ -77,6 +77,15 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
         await this.userManager.RemoveFromRoleAsync(user, roleName);
     }
 
+    public async Task<string> GetIdByName(string roleName)
+    {
+        var role = await this.roleManager.FindByNameAsync(roleName);
+
+        return role is null
+            ? throw new BusinessServiceException($"A role with name \"{roleName}\" does not exist.")
+            : role.Id;
+    }
+
     private async Task<(string, UserProfile)> GetUserAndRoleName(UserToRoleModel model)
     {
          var roleName = await this.roleDataService!

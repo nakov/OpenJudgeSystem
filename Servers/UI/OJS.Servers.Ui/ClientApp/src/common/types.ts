@@ -206,7 +206,8 @@ interface IContestDetailsSliceType {
     name?: string;
     description?: string;
     problems?: IProblemType[];
-    canViewResults?: boolean;
+    canViewCompeteResults?: boolean;
+    canViewPracticeResults?: boolean;
     isOnlineExam?: boolean;
     canBeCompeted?: boolean;
     canBePracticed?: boolean;
@@ -320,29 +321,6 @@ interface IContestCategoryAdministration {
     modifiedOn: Date | null;
 }
 
-interface IRegisterForContestResponseType {
-    id: number;
-    name: string;
-    requirePassword: boolean;
-    participantId: number| null;
-    isOnlineExam: boolean;
-    duration: number;
-    numberOfProblems: number;
-    categoryId: number;
-    shouldConfirmParticipation: boolean;
-}
-
-interface IStartParticipationResponseType {
-    contest: IContestType;
-    participantId: number;
-    contestIsCompete: boolean;
-    lastSubmissionTime: Date;
-    endDateTimeForParticipantOrContest: Date | null;
-    userSubmissionsTimeLimit: number;
-    shouldEnterPassword: boolean;
-    participantsCount: number;
-}
-
 interface IRegisterUserForContestResponseType {
     id: number;
     name: string;
@@ -375,10 +353,6 @@ interface IPagedResultType<TItem> {
     pagesCount: number;
     pageNumber: number;
     items?: TItem[];
-}
-
-interface IPage {
-    page: number;
 }
 
 interface IUserType {
@@ -509,10 +483,12 @@ interface ISubmissionForProcessingAdminGridViewType {
     modifiedOn: Date;
 }
 
-interface IContestAutocomplete {
+interface IHasNameAndIdType {
     id: number;
     name: string;
 }
+
+interface IContestAutocomplete extends IHasNameAndIdType {}
 
 interface ITestsUploadModel {
     problemId: number;
@@ -755,16 +731,12 @@ interface IContestCategoryHierarchyEdit {
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
-    IRegisterForContestResponseType,
-    IStartParticipationResponseType,
-    IContestType,
     IProblemType,
     IProblemResourceType,
     IPublicSubmission,
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
-    IPage,
     IUserProfileType,
     IUsersState,
     IUserResponseType,
@@ -798,6 +770,7 @@ export type {
     IIndexExamGroupsType,
     IExamGroupAdministration,
     IUserInExamGroupModel,
+    IHasNameAndIdType,
     IUserAutocomplete,
     ISubmissionTypesInListModel,
     ISubmissionTypeInSubmissionDocumentInListModel,

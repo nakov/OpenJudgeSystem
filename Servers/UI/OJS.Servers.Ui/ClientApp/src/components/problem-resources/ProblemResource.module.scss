@@ -6,10 +6,13 @@
   color: colors.$secondary-green;
   cursor: pointer;
   display: flex;
-  text-decoration: underline;
 
   svg {
     margin-right: spacings.$sp-4;
+  }
+
+  &:hover {
+      text-decoration: underline !important;
   }
 
   &:not(:first-child) {

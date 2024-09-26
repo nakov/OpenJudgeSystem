@@ -14,10 +14,11 @@ import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteSubmissionTypeMutation } from '../../../redux/services/admin/submissionTypesAdminService';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
-const submissionTypesFilterableColumns: GridColDef[] = [
+const submissionTypesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: ID,
@@ -83,6 +84,7 @@ const submissionTypesFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
     {
         field: 'baseMemoryUsedInBytes',
@@ -93,6 +95,7 @@ const submissionTypesFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
     {
         field: 'maxAllowedTimeLimitInMilliseconds',
@@ -103,6 +106,7 @@ const submissionTypesFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
     {
         field: 'maxAllowedMemoryLimitInBytes',
@@ -113,7 +117,7 @@ const submissionTypesFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
-        hideable: true,
+        hidden: true,
     },
     {
         field: 'allowBinaryFilesUpload',
@@ -124,6 +128,7 @@ const submissionTypesFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        hidden: true,
     },
 ];
 

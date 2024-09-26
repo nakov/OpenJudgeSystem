@@ -1,18 +1,16 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import axios, { ResponseType } from 'axios';
-import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
 
-import { IDictionary, UrlType } from '../common/common-types';
+import { IDictionary } from '../common/common-types';
 import { ExceptionData } from '../common/types';
-import { IErrorDataType } from '../hooks/use-http';
 
-const getUrl = <P>(url: UrlType<P>, params?: IDictionary<P> | null) => (
-    isFunction(url)
-        ? url(params)
-        : url
-);
+interface IErrorDataType {
+    title: string;
+    status: number;
+    detail: string;
+    extensions: IDictionary<object>;
+}
 
 const getErrorMessage = (
     err: FetchBaseQueryError | SerializedError | ExceptionData[] | undefined,
@@ -56,51 +54,10 @@ const getErrorMessage = (
     return defaultErrorMessage;
 };
 
-interface IHttpCallParams {
-    url: string;
-    method: string;
-    headers?: IDictionary<string>;
-    responseType: string;
-    onSuccess: (response: any) => Promise<void>;
-    onError: (err: any) => Promise<void>;
-    body?: any;
-    onBeforeCall?: () => Promise<void>;
-    onAfterCall?: () => Promise<void>;
-}
-
-const makeHttpCall = async ({
-    url,
-    method,
-    headers = {},
-    body = null,
-    responseType,
-    onSuccess,
-    onError,
-    onBeforeCall = () => Promise.resolve(),
-    onAfterCall = () => Promise.resolve(),
-}: IHttpCallParams) => {
-    const makeCall = () => axios({
-        method,
-        url,
-        data: body,
-        responseType: responseType as ResponseType,
-        withCredentials: true,
-        headers,
-    });
-
-    try {
-        await onBeforeCall();
-        const resp = await makeCall();
-        await onSuccess(await resp);
-    } catch (err: any) {
-        await onError(err);
-    } finally {
-        await onAfterCall();
-    }
+export type {
+    IErrorDataType,
 };
 
 export {
-    getUrl,
-    makeHttpCall,
     getErrorMessage,
 };
