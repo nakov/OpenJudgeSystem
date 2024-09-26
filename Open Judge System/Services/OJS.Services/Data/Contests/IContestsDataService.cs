@@ -65,6 +65,8 @@
 
         void Update(Contest contest);
 
+        void ClearImportMetadata(int id);
+
         IEnumerable<SubmissionTypeForProblem> GetSumbissionTypesForProblemsWithCurrentAuthorSolution(int id);
     }
 }

@@ -230,6 +230,12 @@ namespace OJS.Data.Models
             }
         }
 
+        public void ClearImportMetadata()
+        {
+            this.ImportedOn = null;
+            this.ImportedFromUrl = null;
+        }
+
         [NotMapped]
         public bool HasContestPassword => this.ContestPassword != null;
 

@@ -158,7 +158,7 @@ namespace OJS.Web.Areas.Administration.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [ValidateAntiForgeryToken]
-        [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
+        [ClearContestFromProblem(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult Create(int id, ViewModelType problem)
         {
             if (!this.CheckIfUserHasContestPermissions(id))
@@ -340,7 +340,7 @@ namespace OJS.Web.Areas.Administration.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [ValidateAntiForgeryToken]
-        [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
+        [ClearContestFromProblem(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult Edit(int id, ViewModelType problem)
         {
             if (!this.CheckIfUserHasProblemPermissions(id))
@@ -469,6 +469,7 @@ namespace OJS.Web.Areas.Administration.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ClearContestFromProblem(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult ConfirmDelete(int problemId)
         {
             if (!this.CheckIfUserHasProblemPermissions(problemId))
@@ -536,7 +537,7 @@ namespace OJS.Web.Areas.Administration.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
+        [ClearContestFromProblem(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult ConfirmDeleteAll(int contestId)
         {
             if (!this.CheckIfUserHasContestPermissions(contestId))

@@ -249,6 +249,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             this.AddIpsToContest(contest, model.AllowedIps);
 
             contest.DefaultWorkerType = model.DefaultWorkerType;
+            contest.ClearImportMetadata();
             this.contestsData.Update(contest);
             this.cacheItemsProvider.ClearContests();
 
