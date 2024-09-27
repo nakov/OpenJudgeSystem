@@ -10,7 +10,7 @@ import { Tooltip } from '@mui/material';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
+import { getCompeteResultsAreVisibleInContestCards, getPracticeResultsAreVisibleInContestCards } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
 import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
 import { getContestsDetailsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
@@ -232,7 +232,7 @@ const ContestCard = (props: IContestCardProps) => {
                     )}
                     {renderContestDetailsFragment(FaFile, numberOfProblems, 'Problem count')}
                     {
-                        getPracticeResultsAreVisible(contest, internalUser.canAccessAdministration) &&
+                        getPracticeResultsAreVisibleInContestCards(contest, internalUser.canAccessAdministration) &&
                         renderContestDetailsFragment(
                             FaUser,
                             `Practice results: ${practiceResults}`,
@@ -243,8 +243,7 @@ const ContestCard = (props: IContestCardProps) => {
                         )
                     }
                     {
-                        // Null compete points means user is not compete participant
-                        getCompeteResultsAreVisible(contest, internalUser.canAccessAdministration) &&
+                        getCompeteResultsAreVisibleInContestCards(contest, internalUser.canAccessAdministration) &&
                         renderContestDetailsFragment(
                             FaUser,
                             `Compete results: ${competeResults}`,

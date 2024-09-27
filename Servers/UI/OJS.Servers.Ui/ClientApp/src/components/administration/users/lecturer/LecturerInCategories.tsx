@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 
 import { SELECT_CATEGORY } from '../../../../common/labels';
 import { IContestCategories, IGetAllAdminParams } from '../../../../common/types';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
+import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import lecturerInCategoriesFilterableColumns, { returnLecturerInCategoriesNonFilterableColumns } from '../../../../pages/administration-new/lecturers-in-categories/lecturersInCategoriesGridColumns';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useAddLecturerToCategoryMutation, useGetLecturerCategoriesQuery, useRemoveLecturerFromCategoryMutation } from '../../../../redux/services/admin/usersAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -19,20 +21,23 @@ import AdministrationModal from '../../common/modals/administration-modal/Admini
 
 interface ILecturerInCategoriesProps {
     userId: string;
+    setParentSuccessMessage: Function;
 }
 
 const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
-    const { userId } = props;
+    const defaultSorter = 'contestCategoryId=DESC';
+    const { userId, setParentSuccessMessage } = props;
 
     const [ showConfirmDialog, setShowConfirmDialog ] = useState<boolean>(false);
 
     const [ categoryId, setCategoryId ] = useState<number>(0);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
-    const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
     const [ categoryToAdd, setCategoryToAdd ] = useState<number>(0);
 
-    // eslint-disable-next-line max-len
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(
+        defaultFilterToAdd,
+        defaultSorter,
+    ));
 
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
 
@@ -50,6 +55,7 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
             error: addError,
             isSuccess: isSuccessfullyAdded,
             isLoading: isAdding,
+            reset: resetAdd,
         },
     ] = useAddLecturerToCategoryMutation();
 
@@ -60,6 +66,7 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
             error: removeError,
             isSuccess: isSuccessfullyRemoved,
             isLoading: isRemoving,
+            reset: resetRemove,
         },
     ] = useRemoveLecturerFromCategoryMutation();
 
@@ -70,8 +77,23 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
             { message: addData, shouldGet: isSuccessfullyAdded },
             { message: removeData, shouldGet: isSuccessfullyRemoved },
         ],
-        setSuccessMessage,
+        setParentSuccessMessage,
         clearFlags: [ isAdding, isRemoving ],
+    });
+
+    useDelayedSuccessEffect({
+        isSuccess: isSuccessfullyAdded || isSuccessfullyRemoved,
+        onSuccess: () => {
+            setShowCreateModal(false);
+
+            if (isSuccessfullyAdded) {
+                resetAdd();
+            }
+
+            if (isSuccessfullyRemoved) {
+                resetRemove();
+            }
+        },
     });
 
     useEffect(() => {
@@ -82,16 +104,16 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ addError, removeError ], setErrorMessages);
-        clearSuccessMessages({ setSuccessMessage });
-    }, [ addError, removeError ]);
+        clearSuccessMessages({ setParentSuccessMessage });
+    }, [ addError, removeError, setParentSuccessMessage ]);
 
     const onRemoveFromRowClicked = (uId: number) => {
         setCategoryId(uId);
         setShowConfirmDialog(true);
     };
 
-    const onChange = (category: IContestCategories) => {
-        setCategoryToAdd(category.id);
+    const onChange = (category?: IContestCategories) => {
+        setCategoryToAdd(category?.id ?? 0);
     };
 
     const renderCreateModal = (i: number) => (
@@ -109,7 +131,10 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
               heading="Add lecturer to contest"
               label={SELECT_CATEGORY}
               onChange={onChange}
-              onClick={() => addLecturerToCategory({ lecturerId: userId, categoryId: categoryToAdd })}
+              onClick={() => {
+                  addLecturerToCategory({ lecturerId: userId, categoryId: categoryToAdd });
+                  setCategoryToAdd(0);
+              }}
             />
         </AdministrationModal>
     );
@@ -145,7 +170,6 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
     return (
         <>
             {renderErrorMessagesAlert(errorMessages)}
-            {renderSuccessfullAlert(successMessage)}
             <AdministrationGridView
               data={data}
               error={error}

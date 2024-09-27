@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { ChangeEvent, useEffect, useState } from 'react';
 
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../../common/messages';
 import { IContestAutocomplete, IGetAllAdminParams } from '../../../../common/types';
+import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
+import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import lecturerInContestFilterableColumns, { returnLecturerInContestNonFilterableColumns } from '../../../../pages/administration-new/lecturers-in-contests/lecturersInContestsGridColumns';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useAddLecturerToContestMutation, useGetLecturerContestsQuery, useRemoveLecturerFromContestMutation } from '../../../../redux/services/admin/usersAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -18,11 +20,13 @@ import LecturerForm from '../../common/lecturer/lecturer-form/LecturerForm';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import { onAutocompleteInputChange } from '../../utils/mui-utils';
 
-interface ILeturerInContestsProps {
+interface ILecturerInContestsProps {
     userId: string;
+    setParentSuccessMessage: Function;
 }
-const LecturerInContests = (props: ILeturerInContestsProps) => {
-    const { userId } = props;
+const LecturerInContests = (props: ILecturerInContestsProps) => {
+    const defaultSorter = 'contestId=DESC';
+    const { userId, setParentSuccessMessage } = props;
 
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
 
@@ -31,10 +35,11 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
     const [ contestToAdd, setContestToAdd ] = useState<number>(0);
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
-    const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
 
-    // eslint-disable-next-line max-len
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(
+        defaultFilterToAdd,
+        defaultSorter,
+    ));
 
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([
         {
@@ -59,6 +64,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
             error: addError,
             isSuccess: isSuccessfullyAdded,
             isLoading: isAdding,
+            reset: resetAdd,
         },
     ] = useAddLecturerToContestMutation();
 
@@ -74,6 +80,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
             error: removeError,
             isSuccess: isSuccessfullyRemoved,
             isLoading: isRemoving,
+            reset: resetRemove,
         },
     ] = useRemoveLecturerFromContestMutation();
 
@@ -82,8 +89,23 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
             { message: addData, shouldGet: isSuccessfullyAdded },
             { message: removeData, shouldGet: isSuccessfullyRemoved },
         ],
-        setSuccessMessage,
+        setParentSuccessMessage,
         clearFlags: [ isAdding, isRemoving ],
+    });
+
+    useDelayedSuccessEffect({
+        isSuccess: isSuccessfullyAdded || isSuccessfullyRemoved,
+        onSuccess: () => {
+            setShowCreateModal(false);
+
+            if (isSuccessfullyAdded) {
+                resetAdd();
+            }
+
+            if (isSuccessfullyRemoved) {
+                resetRemove();
+            }
+        },
     });
 
     useEffect(() => {
@@ -100,8 +122,8 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, addError, removeError ], setErrorMessages);
-        clearSuccessMessages({ setSuccessMessage });
-    }, [ addError, getContestDataError, removeError ]);
+        clearSuccessMessages({ setParentSuccessMessage });
+    }, [ addError, getContestDataError, removeError, setParentSuccessMessage ]);
 
     const onSelect = (contest: IContestAutocomplete) => {
         let currContestId = 0;
@@ -156,7 +178,10 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
               heading="Add lecturer to contest"
               onChange={onSelect}
               onInputChange={(e: ChangeEvent<HTMLInputElement>) => onAutocompleteInputChange(e, setContestSearchString)}
-              onClick={() => addLecturerToContest({ lecturerId: userId, contestId: contestToAdd })}
+              onClick={() => {
+                  addLecturerToContest({ lecturerId: userId, contestId: contestToAdd });
+                  setContestToAdd(0);
+              }}
             />
         </AdministrationModal>
     );
@@ -168,7 +193,6 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
     return (
         <>
             {renderErrorMessagesAlert(errorMessages)}
-            {renderSuccessfullAlert(successMessage)}
             <AdministrationGridView
               data={data}
               error={error}
