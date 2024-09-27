@@ -2,41 +2,53 @@ namespace OJS.Services.Business.ContestCategories
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using OJS.Data.Models;
     using OJS.Services.Business.Contests;
     using OJS.Services.Business.Contests.Models;
+    using OJS.Services.Common.HttpRequester;
 
     public class ContestCategoriesImportService : IContestCategoriesImportService
     {
         private readonly IContestsImportService contestsImportService;
+        private readonly IHttpRequesterService httpRequester;
 
-        public ContestCategoriesImportService(IContestsImportService contestsImportService)
+        public ContestCategoriesImportService(
+            IContestsImportService contestsImportService,
+            IHttpRequesterService httpRequester)
         {
             this.contestsImportService = contestsImportService;
+            this.httpRequester = httpRequester;
         }
 
-        public string ImportContestsIntoCategory(
+        public async Task<string> ImportContestsIntoCategory(
             int categoryId,
             string ojsPlatformUrl,
             bool replace,
+            string apiKey,
             params int[] contestIds)
         {
             var contestImportResults = new List<ContestImportResult>();
+
             foreach (var contestId in contestIds)
             {
-                try
-                {
-                    var result = this.contestsImportService.ImportContest(contestId, categoryId, ojsPlatformUrl, replace);
-                    contestImportResults.Add(result);
-                }
-                catch (Exception e)
+                var url = $"{ojsPlatformUrl}/api/contests/export/{contestId}";
+                var externalContestResult = await this.httpRequester.GetAsync<Contest>(null, url, apiKey);
+
+                if (!externalContestResult.IsSuccess)
                 {
                     contestImportResults.Add(new ContestImportResult
                     {
                         IsSuccess = false,
-                        ErrorMessage = e.Message,
+                        ErrorMessage = externalContestResult.ErrorMessage,
                         ContestImportedFromId = contestId,
                     });
+
+                    continue;
                 }
+
+                var result = this.contestsImportService.ImportContest(externalContestResult.Data, categoryId, replace);
+                contestImportResults.Add(result);
             }
 
             var failedResults = contestImportResults.FindAll(r => !r.IsSuccess);

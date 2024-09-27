@@ -183,6 +183,7 @@
                     category.Id,
                     model.OjsPlatformUrl,
                     model.ReplaceExistingContests,
+                    model.UserApiKey,
                     contestIdsToImport));
 
             this.TempData.AddInfoMessage(
