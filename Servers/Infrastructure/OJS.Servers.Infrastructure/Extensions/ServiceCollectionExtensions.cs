@@ -419,7 +419,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static Task ForbiddenResponse(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             return Task.CompletedTask;
         }
 
