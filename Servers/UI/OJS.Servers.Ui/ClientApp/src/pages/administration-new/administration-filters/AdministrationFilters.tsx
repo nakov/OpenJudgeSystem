@@ -14,8 +14,7 @@ import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum, SortingEnum } from '../../../common/enums';
 import { IEnumType, IFilterColumn, IGetAllAdminParams } from '../../../common/types';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
-import { useAppSelector } from '../../../redux/store';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import { getDateAsLocal } from '../../../utils/administration/administration-dates';
 import concatClassNames from '../../../utils/class-names';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
@@ -116,7 +115,7 @@ const sorterSeparator = '&';
 const sorterParamSeparator = '=';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const {
         filterColumns,
         withSearchParams = true,

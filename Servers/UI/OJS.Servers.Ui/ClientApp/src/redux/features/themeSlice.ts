@@ -4,10 +4,9 @@ import { ThemeMode } from '../../common/enums';
 
 interface IThemeState {
     mode: ThemeMode;
-    administrationMode: ThemeMode;
 }
 
-const initialState: IThemeState = { mode: ThemeMode.Dark, administrationMode: ThemeMode.Dark };
+const initialState: IThemeState = { mode: ThemeMode.Dark };
 
 // eslint-disable-next-line import/group-exports
 export const themeSlice = createSlice({
@@ -22,14 +21,10 @@ export const themeSlice = createSlice({
                 // eslint-disable-next-line no-param-reassign,prefer-destructuring
                 : state.mode = ThemeMode.Light;
         },
-        toggleAdministrationThemeMode: (state, action: PayloadAction<ThemeMode>) => {
-            // eslint-disable-next-line no-param-reassign
-            state.administrationMode = action.payload;
-        },
     },
 });
 
 // eslint-disable-next-line prefer-destructuring,import/group-exports
-export const { toggleTheme, toggleAdministrationThemeMode } = themeSlice.actions;
+export const { toggleTheme } = themeSlice.actions;
 
 export default themeSlice.reducer;

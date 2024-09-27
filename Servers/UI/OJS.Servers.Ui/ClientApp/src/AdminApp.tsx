@@ -1,6 +1,7 @@
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
+import AdministrationThemeProvider from 'src/hooks/use-administration-theme-provider';
 
 import { NEW_ADMINISTRATION_PATH } from './common/urls/administration-urls';
 import AdministrationPortal from './components/portals/administration/AdministrationPortal';
@@ -17,12 +18,14 @@ const AdminRoutes = () => {
     }
 
     return (
-        <Routes>
-            <Route
-              path={`/${NEW_ADMINISTRATION_PATH}/*`}
-              element={<AdministrationPortal />}
-            />
-        </Routes>
+        <AdministrationThemeProvider>
+            <Routes>
+                <Route
+                  path={`/${NEW_ADMINISTRATION_PATH}/*`}
+                  element={<AdministrationPortal />}
+                />
+            </Routes>
+        </AdministrationThemeProvider>
     );
 };
 

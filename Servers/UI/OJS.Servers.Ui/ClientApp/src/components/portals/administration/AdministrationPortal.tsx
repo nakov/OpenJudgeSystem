@@ -67,7 +67,10 @@ import {
     TESTS_PATH,
     USERS_PATH,
 } from '../../../common/urls/administration-urls';
-import AdministrationThemeProvider, { getColors } from '../../../hooks/use-administration-theme-provider';
+import {
+    getColors,
+    useAdministrationTheme,
+} from '../../../hooks/use-administration-theme-provider';
 import AdministrationContestCategories
     from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestCategoriesHierarchy
@@ -101,8 +104,7 @@ import AdministrationTestsPage from '../../../pages/administration-new/tests/Adm
 import AdministrationUsersPage from '../../../pages/administration-new/users/AdministrationUsersPage';
 import AdministrationCheckersPage from '../../../pages/checkers/AdministrationCheckersPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
-import { toggleAdministrationThemeMode } from '../../../redux/features/themeSlice';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationExamGroupPage from '../../administration/exam-groups/AdministrationExamGroupPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
@@ -334,11 +336,9 @@ const mobileBreak = 1300;
 
 const AdministrationPortal = () => {
     const location = useLocation();
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { toggleThemeMode, themeMode } = useAdministrationTheme();
 
-    const dispatch = useAppDispatch();
     const user = useAppSelector((x) => x.authorization.internalUser);
-    const currentThemeMode = useAppSelector((x) => x.theme.administrationMode);
 
     const [ open, setOpen ] = useState(true);
     const [ showMenu, setShowMenu ] = useState<boolean>(false);
@@ -392,13 +392,13 @@ const AdministrationPortal = () => {
 
     const handleThemeChange = (event: ChangeEvent<HTMLInputElement>) => {
         const isChecked = event.target.checked;
+        const newThemeMode = isChecked
+            ? ThemeMode.Light
+            : ThemeMode.Dark;
 
-        if (isChecked) {
-            dispatch(toggleAdministrationThemeMode(ThemeMode.Light));
-        } else {
-            dispatch(toggleAdministrationThemeMode(ThemeMode.Dark));
-        }
+        toggleThemeMode(newThemeMode);
     };
+
     const adminRoutes = [
         {
             path: `${CONTESTS_PATH}`,
@@ -564,7 +564,7 @@ const AdministrationPortal = () => {
     };
 
     return (
-        <AdministrationThemeProvider mode={currentThemeMode}>
+        <>
             <CssBaseline />
             <Box>
                 <Box sx={{ display: 'flex' }}>
@@ -624,7 +624,7 @@ const AdministrationPortal = () => {
                                       control={(
                                           <MaterialUISwitch
                                             onChange={handleThemeChange}
-                                            checked={currentThemeMode === ThemeMode.Light}
+                                            checked={themeMode === ThemeMode.Light}
                                           />
                                     )}
                                       label="Switch Theme"
@@ -678,7 +678,7 @@ const AdministrationPortal = () => {
                     </Box>
                 </Box>
             </Box>
-        </AdministrationThemeProvider>
+        </>
     );
 };
 export default AdministrationPortal;
