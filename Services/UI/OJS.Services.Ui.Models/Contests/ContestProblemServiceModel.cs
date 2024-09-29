@@ -32,19 +32,9 @@
 
         public bool IsExcludedFromHomework { get; set; }
 
-        public double MemoryLimit
-        {
-            get => (double)this.memoryLimitInBytes / 1024 / 1024;
+        public double MemoryLimit { get; set; }
 
-            set => this.memoryLimitInBytes = (int)value;
-        }
-
-        public double TimeLimit
-        {
-            get => this.timeLimitInMs / 1000.00;
-
-            set => this.timeLimitInMs = (int)value;
-        }
+        public double TimeLimit { get; set; }
 
         public double? FileSizeLimit
         {
@@ -83,13 +73,13 @@
                 .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(
                     d => d.AllowedSubmissionTypes,
-                    opt => opt.MapFrom(s => s.SubmissionTypesInProblems.Select(st => st.SubmissionType)))
+                    opt => opt.MapFrom(s => s.SubmissionTypesInProblems))
                 .ForMember(
                     d => d.Points,
                     opt => opt.MapFrom(s => 0))
                 .ForMember(
                     d => d.MemoryLimit,
-                    opt => opt.MapFrom(s => (double)s.MemoryLimit))
+                    opt => opt.MapFrom(s => (double?)s.MemoryLimit / 1024 / 1024))
                 .ForMember(
                     d => d.OrderBy,
                     opt => opt.MapFrom(s => (int)s.OrderBy))
@@ -98,6 +88,6 @@
                     opt => opt.MapFrom(s => s.Resources.OrderBy(x => x.OrderBy)))
                 .ForMember(
                     d => d.TimeLimit,
-                    opt => opt.MapFrom(s => (double)s.TimeLimit));
+                    opt => opt.MapFrom(s => (double?)s.TimeLimit / 1000));
     }
 }

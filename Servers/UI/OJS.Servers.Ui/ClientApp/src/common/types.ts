@@ -9,6 +9,8 @@ interface ISubmissionTypeType {
     isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
+    timeLimit: number;
+    memoryLimit: number;
 }
 interface ISubmissionTypeInProblem {
     id: number;

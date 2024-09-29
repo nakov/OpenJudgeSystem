@@ -7,6 +7,7 @@ import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
 import Popover from '@mui/material/Popover';
+import isNil from 'lodash/isNil';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -133,25 +134,26 @@ const ContestSolutionSubmitPage = () => {
         endDateTimeForParticipantOrContest,
     } = data || {};
 
-    const { problems, allowedSubmissionTypes = [] } = contest || {};
+    const { problems = [] } = contest || {};
 
     const {
         memoryLimit,
         timeLimit,
         fileSizeLimit,
         checkerName,
+        allowedSubmissionTypes: problemAllowedSubmissionTypes,
     } = selectedContestDetailsProblem || {};
 
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
-        const submissionType = allowedSubmissionTypes.find((type: ISubmissionTypeType) => type.id === s.id);
+        const submissionType = selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
 
         setSelectedStrategyValue(s.id);
         setSelectedSubmissionType(submissionType);
-    }, [ allowedSubmissionTypes ]);
+    }, [ selectedContestDetailsProblem ]);
 
     const strategyDropdownItems = useMemo(
-        () => selectedContestDetailsProblem?.allowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
-        [ selectedContestDetailsProblem ],
+        () => problemAllowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
+        [ problemAllowedSubmissionTypes ],
     );
 
     const handleRefreshClick = () => {
@@ -465,14 +467,22 @@ const ContestSolutionSubmitPage = () => {
                         <div>
                             <span className={styles.title}>Allowed working time:</span>
                             {' '}
-                            <span>{timeLimit}</span>
+                            <span>
+                                {isNil(selectedSubmissionType?.timeLimit)
+                                    ? timeLimit
+                                    : selectedSubmissionType?.timeLimit}
+                            </span>
                             {' '}
                             sec
                         </div>
                         <div>
                             <span className={styles.title}>Allowed memory:</span>
                             {' '}
-                            <span>{memoryLimit}</span>
+                            <span>
+                                {isNil(selectedSubmissionType?.memoryLimit)
+                                    ? memoryLimit
+                                    : selectedSubmissionType?.memoryLimit}
+                            </span>
                             {' '}
                             MB
                         </div>
@@ -495,7 +505,7 @@ const ContestSolutionSubmitPage = () => {
             </div>
         );
     }, [
-        selectedContestDetailsProblem, isModalOpen, anchorEl, textColorClassName,
+        selectedContestDetailsProblem, selectedSubmissionType, isModalOpen, anchorEl, textColorClassName,
         lightBackgroundClassName, timeLimit, memoryLimit, fileSizeLimit, checkerName ]);
 
     const renderRemainingTimeForContest = useCallback(() => {
