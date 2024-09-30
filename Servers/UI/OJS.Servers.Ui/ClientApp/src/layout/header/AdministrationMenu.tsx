@@ -40,27 +40,28 @@ const AdministrationMenu = () => {
 
     const onClickNavigate = (administrationEntity: string) => navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}/${administrationEntity}`);
 
-    return user.canAccessAdministration && (
-        <div
-          className={styles.adminMenuContainer}
-          onMouseOver={handleMouseEnter}
-          onMouseOut={handleMouseLeave}
-          onFocus={handleMouseEnter}
-          onBlur={handleMouseEnter}
-        >
-            <Button
-              onClick={() => navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}`)}
-              type={ButtonType.plain}
-              internalClassName={styles.menuButton}
+    return user.canAccessAdministration
+        ? (
+            <div
+              className={styles.adminMenuContainer}
+              onMouseOver={handleMouseEnter}
+              onMouseOut={handleMouseLeave}
+              onFocus={handleMouseEnter}
+              onBlur={handleMouseEnter}
             >
-                Administration
-                <IoIosArrowDown />
-            </Button>
+                <Button
+                  onClick={() => navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}`)}
+                  type={ButtonType.plain}
+                  internalClassName={styles.menuButton}
+                >
+                    Administration
+                    <IoIosArrowDown />
+                </Button>
 
-            {/* Transparent spacer to cover the gap */}
-            {isMenuVisible && <div className={styles.spacer} />}
+                {/* Transparent spacer to cover the gap */}
+                {isMenuVisible && <div className={styles.spacer} />}
 
-            {isMenuVisible && (
+                {isMenuVisible && (
                 <div
                   className={concatClassNames(
                       styles.dropdownMenu,
@@ -98,9 +99,10 @@ const AdministrationMenu = () => {
                         </>
                     )}
                 </div>
-            )}
-        </div>
-    );
+                )}
+            </div>
+        )
+        : null;
 };
 
 export default AdministrationMenu;
