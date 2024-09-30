@@ -19,15 +19,13 @@ public class DataService<TEntity> : IDataService<TEntity>
 {
     private readonly OjsDbContext db;
     private readonly DbSet<TEntity> dbSet;
-    private bool ignoreQueryFiltersOnNextQuery;
-    private bool useQueryFiltersOnNextQuery;
+    private bool? ignoreQueryFiltersOnNextQuery;
     private bool ignoreQueryFilters;
 
     public DataService(OjsDbContext db)
     {
         this.db = db;
         this.dbSet = db.Set<TEntity>();
-        this.ignoreQueryFilters = false;
     }
 
     protected void SetIgnoreQueryFilters(bool ignore)
@@ -144,17 +142,10 @@ public class DataService<TEntity> : IDataService<TEntity>
     {
         var query = this.dbSet.AsQueryable();
 
-        if (this.ignoreQueryFilters || this.ignoreQueryFiltersOnNextQuery)
+        if ((this.ignoreQueryFilters && this.ignoreQueryFiltersOnNextQuery == null) || this.ignoreQueryFiltersOnNextQuery == true)
         {
-            if (this.useQueryFiltersOnNextQuery)
-            {
-                this.useQueryFiltersOnNextQuery = false;
-            }
-            else
-            {
-                query = query.IgnoreQueryFilters();
-                this.ignoreQueryFiltersOnNextQuery = false;
-            }
+            query = query.IgnoreQueryFilters();
+            this.ignoreQueryFiltersOnNextQuery = null;
         }
 
         if (filter != null)
@@ -193,11 +184,11 @@ public class DataService<TEntity> : IDataService<TEntity>
 
     public IDataService<TEntity> WithQueryFilters()
     {
-        this.useQueryFiltersOnNextQuery = true;
+        this.ignoreQueryFiltersOnNextQuery = false;
         return this;
     }
 
-    IDataService<TEntity> IDataService<TEntity>.IgnoreQueryFilters()
+    public IDataService<TEntity> IgnoreQueryFilters()
     {
         this.ignoreQueryFiltersOnNextQuery = true;
         return this;

@@ -47,8 +47,7 @@
             => this.GetQuery(s => ids.Contains(s.Id));
 
         public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
-            => this.WithQueryFilters()
-                .GetQuery(s => s.ParticipantId == participantId && s.ProblemId == problemId);
+            => this.GetQuery(s => s.ParticipantId == participantId && s.ProblemId == problemId);
 
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId)
             => this.GetQuery(s =>
