@@ -118,6 +118,7 @@ export const returnparticipantsNonFilterableColumns = (onSuccessFullDelete: () =
         field: 'actions',
         headerName: 'Actions',
         flex: 1,
+        minWidth: 50,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

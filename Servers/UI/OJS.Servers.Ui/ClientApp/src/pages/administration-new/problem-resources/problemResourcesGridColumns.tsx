@@ -63,7 +63,7 @@ const problemResourceFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'link',
         headerName: 'Link',
-        flex: 1,
+        flex: 0.4,
         type: 'string',
         filterable: false,
         sortable: false,

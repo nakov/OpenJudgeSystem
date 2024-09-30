@@ -99,6 +99,7 @@ export const returnCheckersNonFilterableColumns = (
         field: 'actions',
         headerName: 'Actions',
         flex: 0.5,
+        minWidth: 100,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

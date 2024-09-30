@@ -35,7 +35,7 @@ export const returnLecturerInContestNonFilterableColumns = (removeFromRoleFunc?:
         field: 'actions',
         headerName: 'Actions',
         flex: 0.5,
-        width: 100,
+        minWidth: 50,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
