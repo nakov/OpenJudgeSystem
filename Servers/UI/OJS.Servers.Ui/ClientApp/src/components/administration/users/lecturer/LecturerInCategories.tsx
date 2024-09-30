@@ -94,7 +94,11 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
             if (isSuccessfullyRemoved) {
                 resetRemove();
             }
+        },
+    });
 
+    useEffect(() => {
+        if (isSuccessfullyRemoved || isSuccessfullyAdded) {
             refetch();
         },
     });

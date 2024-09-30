@@ -1,0 +1,65 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/font-weights';
+@use 'src/styles/shadows';
+@use 'src/styles/variables';
+
+.adminMenuContainer {
+    @extend %font-family-normal;
+
+    position: relative;
+    display: inline-block;
+    width: 300px;
+}
+
+.menuButton {
+    @extend %font-family-normal;
+
+    color: colors.$white-color;
+    font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-regular;
+    text-transform: uppercase;
+    padding: 0 spacings.$sp-12;
+    background: none;
+    border: none;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 25px);
+    left: 0;
+    padding: 10px;
+    z-index: 1000;
+    width: 300px;
+    border-radius: 3px;
+    box-shadow: shadows.$dp-shadow-4;
+}
+
+.spacer {
+    position: absolute;
+    top: 100%; /* Positions the spacer directly below the button */
+    left: 0;
+    width: 300px;
+    height: 25px; /* Height of the gap */
+    background: transparent; /* Invisible */
+}
+
+.dropdownMenu .menuSection {
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdownMenu .menuSection:not(:last-child) {
+    margin-bottom: spacings.$sp-16;
+    border-bottom: 1px solid colors.$dark-base-color-100;
+}
+
+.dropdownMenu span {
+    padding: spacings.$sp-8 spacings.$sp-4;
+    cursor: pointer;
+}
+
+.dropdownMenu span:hover {
+    color: colors.$primary-blue;
+}

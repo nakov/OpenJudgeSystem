@@ -206,7 +206,8 @@ interface IContestDetailsSliceType {
     name?: string;
     description?: string;
     problems?: IProblemType[];
-    canViewResults?: boolean;
+    canViewCompeteResults?: boolean;
+    canViewPracticeResults?: boolean;
     isOnlineExam?: boolean;
     canBeCompeted?: boolean;
     canBePracticed?: boolean;
@@ -523,6 +524,7 @@ interface IFilterColumn {
 type ExceptionData = {
     name: string;
     message: string;
+    status?: number;
 }
 
 interface IProblemGroupsData {

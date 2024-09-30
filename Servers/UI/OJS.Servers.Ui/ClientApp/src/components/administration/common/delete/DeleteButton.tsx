@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io';
 import { IconButton, Tooltip } from '@mui/material';
@@ -6,11 +7,12 @@ import { DELETE } from '../../../../common/labels';
 import { IMappingEntityId } from '../../../../common/types';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 interface IDeleteButtonProps {
+    setParentSuccessMessage?: Function;
     onSuccess?: () => void;
     id: number | string | IMappingEntityId;
     name: string;
@@ -21,14 +23,15 @@ interface IDeleteButtonProps {
 
 const DeleteButton = (props: IDeleteButtonProps) => {
     const {
+        setParentSuccessMessage,
         onSuccess,
         id,
         name,
         style = {},
-        text, mutation,
+        text,
+        mutation,
     } = props;
     const [ showConfirmDelete, setShowConfirmDelete ] = useState<boolean>(false);
-    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
 
     const [ deleteRequest, { data, isLoading, isSuccess, error, reset } ] = mutation();
@@ -40,7 +43,7 @@ const DeleteButton = (props: IDeleteButtonProps) => {
         data: [
             { message: data as string, shouldGet: isSuccess },
         ],
-        setSuccessMessage,
+        setParentSuccessMessage,
         clearFlags: [ isLoading ],
     });
 
@@ -63,7 +66,6 @@ const DeleteButton = (props: IDeleteButtonProps) => {
                     ? { ...style }
                     : {}}
                 >
-                    {renderSuccessfullAlert(successMessage)}
                     {renderErrorMessagesAlert(errorMessages) }
                     <Tooltip title={DELETE}>
                         <IconButton onClick={confirmDelete}>

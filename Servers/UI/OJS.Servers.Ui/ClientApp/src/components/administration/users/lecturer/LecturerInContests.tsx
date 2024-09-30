@@ -106,7 +106,11 @@ const LecturerInContests = (props: ILecturerInContestsProps) => {
             if (isSuccessfullyRemoved) {
                 resetRemove();
             }
+        },
+    });
 
+    useEffect(() => {
+        if (isSuccessfullyRemoved || isSuccessfullyAdded) {
             refetch();
         },
     });
