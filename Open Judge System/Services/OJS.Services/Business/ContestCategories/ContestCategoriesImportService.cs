@@ -1,7 +1,7 @@
 namespace OJS.Services.Business.ContestCategories
 {
-    using System;
     using System.Collections.Generic;
+    using System.Text;
     using System.Threading.Tasks;
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
@@ -63,20 +63,29 @@ namespace OJS.Services.Business.ContestCategories
             List<ContestImportResult> failedResults,
             List<ContestImportResult> successfulResults)
         {
-            var message = string.Empty;
+            var message = new StringBuilder();
+
             if (failedResults.Count > 0)
             {
-                message += Environment.NewLine + "The following contests failed to import: " +
-                    string.Join(Environment.NewLine, failedResults.ConvertAll(r => $"{r.ContestImportedFromId} - {r.ErrorMessage}"));
+                message.AppendLine("The following contests failed to import:");
+
+                foreach (var failedResult in failedResults)
+                {
+                    message.AppendLine($"{failedResult.ContestImportedFromId} - {failedResult.ErrorMessage}");
+                }
             }
 
             if (successfulResults.Count > 0)
             {
-                message += Environment.NewLine + "The following contests were imported successfully: " +
-                    string.Join(", ", successfulResults.ConvertAll(r => r.ContestImportedFromId));
+                message.AppendLine("The following contests were imported successfully:");
+
+                foreach (var successfulResult in successfulResults)
+                {
+                    message.AppendLine(successfulResult.ContestImportedFromId.ToString());
+                }
             }
 
-            return message;
+            return message.ToString();
         }
     }
 }
