@@ -27,9 +27,9 @@ namespace OJS.Web.Areas.Administration.ViewModels.ContestCategory
         [Display(Name = "Replace existing contests by matching their Name")]
         public bool ReplaceExistingContests { get; set; }
 
-        [Display(Name = "Your profile ID")]
-        [Required(ErrorMessage = "Please enter your ID. You can get it from your profile page.")]
+        [Display(Name = "API key")]
+        [Required(ErrorMessage = "Please enter the API key for the chosen OJS Platform.")]
         [UIHint(SingleLineText)]
-        public string UserApiKey { get; set; }
+        public string ApiKey { get; set; }
     }
 }

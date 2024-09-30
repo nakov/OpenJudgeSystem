@@ -153,13 +153,13 @@
             var existingContestIds = this.httpRequester.Get<int[]>(
                 new { ids = contestIdsToImport },
                 $"{model.OjsPlatformUrl.TrimEnd('/')}/api/Contests/GetExistingIds",
-                model.UserApiKey);
+                model.ApiKey);
 
             if (!existingContestIds.IsSuccess)
             {
                 if (existingContestIds.ErrorMessage.Contains("Invalid API key"))
                 {
-                    this.ModelState.AddModelError(nameof(model.UserApiKey), "Invalid user API key.");
+                    this.ModelState.AddModelError(nameof(model.ApiKey), "Invalid user API key.");
                 }
                 else
                 {
@@ -183,7 +183,7 @@
                     category.Id,
                     model.OjsPlatformUrl,
                     model.ReplaceExistingContests,
-                    model.UserApiKey,
+                    model.ApiKey,
                     contestIdsToImport));
 
             this.TempData.AddInfoMessage(
