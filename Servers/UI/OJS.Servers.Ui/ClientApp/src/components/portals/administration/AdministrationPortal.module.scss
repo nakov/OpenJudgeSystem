@@ -63,11 +63,10 @@
 .drawerHeader {
   align-items: flex-start;
   color: inherit !important;
-  display: 'flex';
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 1rem;
-  overflow: hidden;
 }
 
 .profileIcon {
