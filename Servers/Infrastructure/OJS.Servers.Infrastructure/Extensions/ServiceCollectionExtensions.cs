@@ -21,6 +21,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.Options;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
+    using OJS.Common.Exceptions;
     using OJS.Data;
     using OJS.Data.Implementations;
     using OJS.Servers.Infrastructure.Configurations;
@@ -52,6 +53,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Net.Http;
     using System.Reflection;
     using System.Security.Claims;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
@@ -147,8 +149,8 @@ namespace OJS.Servers.Infrastructure.Extensions
                     opt.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
                     opt.Cookie.Domain = sharedAuthCookieDomain;
                     opt.ExpireTimeSpan = TimeSpan.FromDays(7); // Set the cookie to expire after a week of inactivity
-                    opt.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
-                    opt.Events.OnRedirectToLogin = UnAuthorizedResponse;
+                    opt.Events.OnRedirectToAccessDenied = ForbiddenResponse;
+                    opt.Events.OnRedirectToLogin = UnauthorizedResponse;
                 });
 
             // By default, the data protection API that encrypts the authentication cookie generates a unique key for each application,
@@ -401,9 +403,23 @@ namespace OJS.Servers.Infrastructure.Extensions
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);
 
-        private static Task UnAuthorizedResponse(RedirectContext<CookieAuthenticationOptions> context)
+        private static Task UnauthorizedResponse(RedirectContext<CookieAuthenticationOptions> context)
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            context.Response.ContentType = "application/json";
+
+            var result = JsonSerializer.Serialize(new ExceptionResponseModel
+            {
+                Name = "You are not logged in.",
+                Message = "Your session may have expired or you may not be authenticated."
+            });
+
+            return context.Response.WriteAsync(result);
+        }
+
+        private static Task ForbiddenResponse(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             return Task.CompletedTask;
         }
 

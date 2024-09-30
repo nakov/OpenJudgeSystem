@@ -2,10 +2,11 @@
 /* eslint-disable import/prefer-default-export */
 
 export const UNEXPECTED_ERROR_MESSAGE = 'Unexpected error. Please contact an administrator.';
-export const SOMETHING_WENT_WRONG_MESSAGE = 'Something went wrong';
+export const SOMETHING_WENT_WRONG_MESSAGE = 'Something went wrong.';
 export const DELETE_CONFIRMATION_MESSAGE = 'Are you sure that you want to delete the record?';
 export const CLEAR_SELECTION = 'Clear selection';
-export const UNAUTHORIZED_MESSAGE = 'You do not have a permission to perform this action';
+export const UNAUTHORIZED_MESSAGE = 'You do not have a permission to perform this action.';
+export const NOT_LOGGED_IN_MESSAGE = 'You are not logged in.';
 
 export const DISABLED_USER_TO_EXAM_GROUP_BUTTON = 'You cannot add users to exam group which has no contest attached to it.';
 

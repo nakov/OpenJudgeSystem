@@ -17,8 +17,8 @@
             public const string LegacyCSharpCode = "csharp-code";
             public const string CSharpCoreCode = "csharpcorecode";
 
-            public static string[] All => new[]
-            {
+            public static string[] All =>
+            [
                 ExactMatch,
                 LegacyExactMatch,
                 CaseInsensitive,
@@ -30,8 +30,8 @@
                 LegacyTrimEnd,
                 CSharpCode,
                 LegacyCSharpCode,
-                CSharpCoreCode,
-            };
+                CSharpCoreCode
+            ];
         }
 
         public static class CodeExecutionContext
