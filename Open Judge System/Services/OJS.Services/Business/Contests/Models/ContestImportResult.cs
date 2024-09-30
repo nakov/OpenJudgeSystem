@@ -12,6 +12,6 @@ namespace OJS.Services.Business.Contests.Models
 
         public int ContestImportedFromId { get; set; }
 
-        public int CategoryImportedFromId { get; set; }
+        public int? CategoryImportedFromId { get; set; }
     }
 }
