@@ -47,6 +47,8 @@ namespace OJS.Services.Business.ContestCategories
                     continue;
                 }
 
+                var contest = externalContestResult.Data;
+                contest.ImportedFromUrl = ojsPlatformUrl;
                 var result = this.contestsImportService.ImportContest(externalContestResult.Data, categoryId, replace);
                 contestImportResults.Add(result);
             }

@@ -1,5 +1,7 @@
 namespace OJS.Services.Business.Contests
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using OJS.Data;
     using OJS.Data.Models;
@@ -18,6 +20,18 @@ namespace OJS.Services.Business.Contests
         {
             var contestImportedFromId = contest.Id;
             var categoryImportedFromId = contest.CategoryId;
+            var existingContest = this.dbContext.Contests
+                .SingleOrDefault(c => c.CategoryId == categoryIdToImportTo && c.Name == contest.Name);
+
+            replace = replace && existingContest != null;
+
+            var problems = contest.ProblemGroups.SelectMany(pg => pg.Problems).ToList();
+
+            this.TryAddExistingCheckers(problems);
+            this.TryAddExistingSubmissionTypes(problems);
+
+            contest.CategoryId = categoryIdToImportTo;
+            contest.ImportedOn = DateTime.Now;
 
             if (replace)
             {
@@ -25,15 +39,12 @@ namespace OJS.Services.Business.Contests
             }
             else
             {
-                contest = ImportAsNewContest(contest);
+                contest.Id = default;
+                contest.ProblemGroups = GetNewProblemGroups(contest.ProblemGroups);
+
+                this.dbContext.Contests.Add(contest);
+                this.dbContext.SaveChanges();
             }
-
-            this.TryAddExistingCheckers(contest);
-            this.TryAddExistingSubmissionTypes(contest);
-
-            contest.CategoryId = categoryIdToImportTo;
-            this.dbContext.Contests.Add(contest);
-            this.dbContext.SaveChanges();
 
             return new ContestImportResult
             {
@@ -45,65 +56,90 @@ namespace OJS.Services.Business.Contests
             };
         }
 
-        private static Contest ImportAsNewContest(Contest contest)
-        {
-            contest.Id = default;
-
-            foreach (var problemGroup in contest.ProblemGroups)
-            {
-                problemGroup.Id = default;
-                problemGroup.Contest = contest;
-                problemGroup.ContestId = contest.Id;
-
-                foreach (var problem in problemGroup.Problems)
+        private static List<ProblemGroup> GetNewProblemGroups(IEnumerable<ProblemGroup> problemGroups)
+            => problemGroups
+                .Where(pg => !pg.IsDeleted)
+                .Select(problemGroup => new ProblemGroup
                 {
-                    problem.Id = default;
-                    problem.ProblemGroup = problemGroup;
-                    problem.ProblemGroupId = problemGroup.Id;
+                    Type = problemGroup.Type,
+                    OrderBy = problemGroup.OrderBy,
+                    Problems = GetNewProblems(problemGroup.Problems),
+                })
+                .ToList();
 
-                    foreach (var resource in problem.Resources)
-                    {
-                        resource.Id = default;
-                        resource.Problem = problem;
-                        resource.ProblemId = problem.Id;
-                    }
 
-                    foreach (var test in problem.Tests)
-                    {
-                        test.Id = default;
-                        test.Problem = problem;
-                        test.ProblemId = problem.Id;
-                    }
-                }
-            }
+        private static List<Problem> GetNewProblems(IEnumerable<Problem> problems)
+            => problems
+                .Where(p => !p.IsDeleted)
+                .Select(problem => new Problem
+                {
+                    Name = problem.Name,
+                    OrderBy = problem.OrderBy,
+                    CheckerId = problem.CheckerId,
+                    TimeLimit = problem.TimeLimit,
+                    MemoryLimit = problem.MemoryLimit,
+                    AdditionalFiles = problem.AdditionalFiles,
+                    SolutionSkeleton = problem.SolutionSkeleton,
+                    MaximumPoints = problem.MaximumPoints,
+                    ShowResults = problem.ShowResults,
+                    ShowDetailedFeedback = problem.ShowDetailedFeedback,
+                    DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId,
+                    ProblemSubmissionTypeExecutionDetails = problem.ProblemSubmissionTypeExecutionDetails,
+                    Resources = GetNewResources(problem.Resources),
+                    Tests = GetNewTests(problem.Tests),
+                })
+                .ToList();
 
-            return contest;
-        }
+        private static List<ProblemResource> GetNewResources(IEnumerable<ProblemResource> resources)
+            => resources
+                .Where(r => !r.IsDeleted)
+                .Select(resource => new ProblemResource
+                {
+                    Name = resource.Name,
+                    OrderBy = resource.OrderBy,
+                    Link = resource.Link,
+                    FileExtension = resource.FileExtension,
+                    Type = resource.Type,
+                    File = resource.File,
+                })
+                .ToList();
 
-        private void TryAddExistingCheckers(Contest contest)
+        private static List<Test> GetNewTests(IEnumerable<Test> tests)
+            => tests
+                .Select(test => new Test
+                {
+                    OrderBy = test.OrderBy,
+                    InputData = test.InputData,
+                    OutputData = test.OutputData,
+                    HideInput = test.HideInput,
+                    IsTrialTest = test.IsTrialTest,
+                    IsOpenTest = test.IsOpenTest,
+                })
+                .ToList();
+
+        private void TryAddExistingCheckers(List<Problem> problems)
         {
-            var checkerNames = contest.ProblemGroups
-                .SelectMany(pg => pg.Problems)
+            var checkerNames = problems
                 .Select(p => p.Checker)
                 .Select(c => c.Name)
                 .Distinct()
                 .ToList();
 
             var existingCheckers = this.dbContext.Checkers
+                .Where(c => !c.IsDeleted)
                 .Where(c => checkerNames.Contains(c.Name))
                 .ToList();
 
-            foreach (var problem in contest.ProblemGroups.SelectMany(pg => pg.Problems))
+            foreach (var problem in problems)
             {
                 problem.CheckerId = existingCheckers.FirstOrDefault(c => c.Name == problem.Checker?.Name)?.Id;
                 problem.Checker = null;
             }
         }
 
-        private void TryAddExistingSubmissionTypes(Contest contest)
+        private void TryAddExistingSubmissionTypes(List<Problem> problems)
         {
-            var submissionTypeNames = contest.ProblemGroups
-                .SelectMany(pg => pg.Problems)
+            var submissionTypeNames = problems
                 .SelectMany(p => p.SubmissionTypes)
                 .Select(st => st.Name)
                 .Distinct()
@@ -113,7 +149,7 @@ namespace OJS.Services.Business.Contests
                 .Where(st => submissionTypeNames.Contains(st.Name))
                 .ToList();
 
-            foreach (var problem in contest.ProblemGroups.SelectMany(pg => pg.Problems))
+            foreach (var problem in problems)
             {
                 problem.SubmissionTypes = problem.SubmissionTypes
                     .Where(st => existingSubmissionTypes.Any(est => est.Name == st.Name))
@@ -123,17 +159,14 @@ namespace OJS.Services.Business.Contests
                     .Where(ed => existingSubmissionTypes.Any(st => st.Name == ed.SubmissionType.Name))
                     .ToList();
 
-                foreach (var submissionType in problem.SubmissionTypes)
-                {
-                    submissionType.Id = existingSubmissionTypes.First(st => st.Name == submissionType.Name).Id;
-                }
+                problem.DefaultSubmissionTypeId = existingSubmissionTypes.FirstOrDefault(st => st.Name == problem.DefaultSubmissionType?.Name)?.Id;
 
                 foreach (var executionDetail in problem.ProblemSubmissionTypeExecutionDetails)
                 {
                     var submissionTypeId = existingSubmissionTypes.First(st => st.Name == executionDetail.SubmissionType.Name).Id;
 
-                    executionDetail.Problem = problem;
-                    executionDetail.ProblemId = default;
+                    executionDetail.ProblemId = problem.Id;
+                    executionDetail.Problem = null;
                     executionDetail.SubmissionTypeId = submissionTypeId;
                     executionDetail.SubmissionType = null;
                 }
