@@ -84,6 +84,7 @@ namespace OJS.Services.Business.Contests
                     ShowResults = problem.ShowResults,
                     ShowDetailedFeedback = problem.ShowDetailedFeedback,
                     DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId,
+                    SubmissionTypes = problem.SubmissionTypes,
                     ProblemSubmissionTypeExecutionDetails = problem.ProblemSubmissionTypeExecutionDetails,
                     Resources = GetNewResources(problem.Resources),
                     Tests = GetNewTests(problem.Tests),
@@ -132,7 +133,8 @@ namespace OJS.Services.Business.Contests
 
             foreach (var problem in problems)
             {
-                problem.CheckerId = existingCheckers.FirstOrDefault(c => c.Name == problem.Checker?.Name)?.Id;
+                var checker = existingCheckers.FirstOrDefault(c => c.Name == problem.Checker?.Name);
+                problem.CheckerId = checker?.Id;
                 problem.Checker = null;
             }
         }
@@ -160,6 +162,15 @@ namespace OJS.Services.Business.Contests
                     .ToList();
 
                 problem.DefaultSubmissionTypeId = existingSubmissionTypes.FirstOrDefault(st => st.Name == problem.DefaultSubmissionType?.Name)?.Id;
+
+                var problemSubmissionTypeNames = problem.SubmissionTypes.Select(st => st.Name).ToList();
+
+                problem.SubmissionTypes.Clear();
+
+                foreach (var problemSubmissionTypeName in problemSubmissionTypeNames)
+                {
+                    problem.SubmissionTypes.Add(existingSubmissionTypes.First(st => st.Name == problemSubmissionTypeName));
+                }
 
                 foreach (var executionDetail in problem.ProblemSubmissionTypeExecutionDetails)
                 {
