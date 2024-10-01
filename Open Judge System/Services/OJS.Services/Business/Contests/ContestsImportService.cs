@@ -20,10 +20,14 @@ namespace OJS.Services.Business.Contests
         {
             var contestImportedFromId = contest.Id;
             var categoryImportedFromId = contest.CategoryId;
-            var existingContest = this.dbContext.Contests
-                .SingleOrDefault(c => c.CategoryId == categoryIdToImportTo && c.Name == contest.Name);
+            Contest existingContest = null;
 
-            replace = replace && existingContest != null;
+            if (replace)
+            {
+                existingContest = this.dbContext.Contests
+                    .Where(c => !c.IsDeleted)
+                    .SingleOrDefault(c => c.CategoryId == categoryIdToImportTo && c.Name == contest.Name);
+            }
 
             var problems = contest.ProblemGroups.SelectMany(pg => pg.Problems).ToList();
 
@@ -33,7 +37,7 @@ namespace OJS.Services.Business.Contests
             contest.CategoryId = categoryIdToImportTo;
             contest.ImportedOn = DateTime.Now;
 
-            if (replace)
+            if (replace && existingContest != null)
             {
                 // TODO: Implement replacing
             }
@@ -78,6 +82,7 @@ namespace OJS.Services.Business.Contests
                     CheckerId = problem.CheckerId,
                     TimeLimit = problem.TimeLimit,
                     MemoryLimit = problem.MemoryLimit,
+                    SourceCodeSizeLimit = problem.SourceCodeSizeLimit,
                     AdditionalFiles = problem.AdditionalFiles,
                     SolutionSkeleton = problem.SolutionSkeleton,
                     MaximumPoints = problem.MaximumPoints,
