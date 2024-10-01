@@ -4,31 +4,34 @@ namespace OJS.Web.Areas.Administration.ViewModels.ContestCategory
 
     using static OJS.Common.Constants.EditorTemplateConstants;
 
+    using Resource = Resources.Areas.Administration.ContestCategories.ViewModels.ContestsImportViewModel;
+
     public class ImportContestsViewModel
     {
         public int CategoryId { get; set; }
 
         public string CategoryName { get; set; }
 
-        [Display(Name = "Contest IDs to Import")]
-        [Required(ErrorMessage = "Please enter the contest IDs to import.")]
+        [Display(Name = "Contest_ids", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceName = "Contest_ids_required_error_message", ErrorMessageResourceType = typeof(Resource))]
         [UIHint(MultiLineText)]
         [RegularExpression(
             "^\\d+(?:[\\s,]*\\d+)*",
-            ErrorMessage = "Please enter a comma or space-separated list of valid contest IDs.")]
+            ErrorMessageResourceName = "Contest_ids_regex_error_message",
+            ErrorMessageResourceType = typeof(Resource))]
         public string ContestIdsToImport { get; set; }
 
-        [Display(Name = "OJS Platform URL")]
-        [Required(ErrorMessage = "Please enter the OJS Platform URL.")]
-        [MinLength(10, ErrorMessage = "The OJS Platform URL must be at least 10 characters long.")]
+        [Display(Name = "Ojs_platform_url", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceName = "Ojs_platform_url_required_error_message", ErrorMessageResourceType = typeof(Resource))]
+        [MinLength(10, ErrorMessageResourceName = "Ojs_platform_url_min_length_error_message", ErrorMessageResourceType = typeof(Resource))]
         [UIHint(SingleLineText)]
         public string OjsPlatformUrl { get; set; }
 
-        [Display(Name = "Replace existing contests by matching their Name")]
+        [Display(Name = "Replace_existing_contests", ResourceType = typeof(Resource))]
         public bool ReplaceExistingContests { get; set; }
 
-        [Display(Name = "API key")]
-        [Required(ErrorMessage = "Please enter the API key for the chosen OJS Platform.")]
+        [Display(Name = "Api_key", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceName = "Api_key_required_error_message", ErrorMessageResourceType = typeof(Resource))]
         [UIHint(SingleLineText)]
         public string ApiKey { get; set; }
     }

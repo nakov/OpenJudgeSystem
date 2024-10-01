@@ -668,6 +668,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ContestCategoryAdministrationViewModel.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_GlobalResources\Areas\Administration\ContestCategories\ViewModels\ContestsImportViewModel.bg.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContestsImportViewModel.bg.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Areas\Administration\ContestCategories\ViewModels\ContestsImportViewModel.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContestsImportViewModel.resx</DependentUpon>
+    </Compile>
     <Compile Include="App_GlobalResources\Areas\Administration\ContestCategories\Views\ContestCategoriesViews.bg.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2713,6 +2723,16 @@
     <EmbeddedResource Include="App_GlobalResources\Areas\Administration\ContestCategories\ViewModels\ContestCategoryAdministrationViewModel.bg.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ContestCategoryAdministrationViewModel.bg.designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources.Areas.Administration.ContestCategories.ViewModels</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Areas\Administration\ContestCategories\ViewModels\ContestsImportViewModel.bg.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ContestsImportViewModel.bg.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources.Areas.Administration.ContestCategories.ViewModels</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Areas\Administration\ContestCategories\ViewModels\ContestsImportViewModel.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ContestsImportViewModel.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Areas.Administration.ContestCategories.ViewModels</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Areas\Administration\ContestCategories\Views\ContestCategoriesViews.resx">
