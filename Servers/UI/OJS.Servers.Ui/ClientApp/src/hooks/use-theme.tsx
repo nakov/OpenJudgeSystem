@@ -36,7 +36,7 @@ const useTheme = () => {
             textColor: 'rgb(104, 116, 135)',
             baseColor100: '#FFFFFF',
             baseColor200: '#E6E6E6',
-            baseColor300: '#bebebe',
+            baseColor300: '#E6E6E6',
             baseColor400: '#F7F7F7',
             baseColor500: '#E6E6E6',
         },

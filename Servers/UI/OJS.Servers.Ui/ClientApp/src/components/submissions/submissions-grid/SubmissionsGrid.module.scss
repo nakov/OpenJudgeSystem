@@ -37,7 +37,8 @@
   }
 
   .lightSubmissionsGridHeader {
-    background: colors.$wrappers-border-color;
+    background: colors.$primary-blue;
+    color: colors.$light-base-color-100 !important;
     box-shadow: shadows.$dp-shadow-1;
   }
 

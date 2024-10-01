@@ -33,7 +33,7 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     const { data, isLoading, refetch } = useGetContestCategoriesQuery();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor300);
 
     // fetch contests data, if it's not present beforehand
     useEffect(() => {
