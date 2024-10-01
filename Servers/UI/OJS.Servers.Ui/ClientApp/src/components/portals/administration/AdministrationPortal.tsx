@@ -593,6 +593,16 @@ const AdministrationPortal = () => {
                                     <ChevronLeftIcon />
                                 </IconButton>
                             )}
+                        <FormControlLabel
+                          sx={{ position: 'absolute', top: 1, right: 1, marginRight: '0.5rem', marginTop: '0.5rem' }}
+                          control={(
+                              <MaterialUISwitch
+                                onChange={handleThemeChange}
+                                checked={currentThemeMode === ThemeMode.Light}
+                              />
+                            )}
+                          label=""
+                        />
                         <DrawerHeader className={styles.drawerHeader}>
                             <IconButton ref={iconButtonRef} onClick={() => setShowMenu(!showMenu)}>
                                 <FaUserCircle className={styles.profileIcon} />
@@ -617,17 +627,6 @@ const AdministrationPortal = () => {
                                       type={LinkButtonType.plain}
                                       className={styles.adminHeaderLink}
                                       text="Log out"
-                                    />
-                                </MenuItem>
-                                <MenuItem>
-                                    <FormControlLabel
-                                      control={(
-                                          <MaterialUISwitch
-                                            onChange={handleThemeChange}
-                                            checked={currentThemeMode === ThemeMode.Light}
-                                          />
-                                    )}
-                                      label="Switch Theme"
                                     />
                                 </MenuItem>
                             </Menu>
