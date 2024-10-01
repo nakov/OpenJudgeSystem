@@ -6,6 +6,7 @@ namespace OJS.Web.Areas.Api.Controllers
     using System.Web.Mvc;
     using Newtonsoft.Json;
     using OJS.Data;
+    using OJS.Data.Models;
     using OJS.Web.Infrastructure.Filters.Attributes;
 
     [ValidateRemoteDataApiKey]
@@ -39,6 +40,8 @@ namespace OJS.Web.Areas.Api.Controllers
                 return this.HttpNotFound($"Contest with id {id} not found.");
             }
 
+            RemoveCircularReferences(contest);
+
             var jsonSettings = new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -56,6 +59,39 @@ namespace OJS.Web.Areas.Api.Controllers
                 .ToList();
 
             return this.Content(JsonConvert.SerializeObject(existingContestIds));
+        }
+
+        private static void RemoveCircularReferences(Contest contest)
+        {
+            foreach (var problemGroup in contest.ProblemGroups)
+            {
+                problemGroup.Contest = null;
+
+                foreach (var problem in problemGroup.Problems)
+                {
+                    problem.ProblemGroup = null;
+
+                    foreach (var test in problem.Tests)
+                    {
+                        test.Problem = null;
+                    }
+
+                    foreach (var resource in problem.Resources)
+                    {
+                        resource.Problem = null;
+                    }
+
+                    foreach (var submissionType in problem.SubmissionTypes)
+                    {
+                        submissionType.Problems = null;
+                    }
+
+                    foreach (var executionDetail in problem.ProblemSubmissionTypeExecutionDetails)
+                    {
+                        executionDetail.Problem = null;
+                    }
+                }
+            }
         }
     }
 }
