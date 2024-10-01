@@ -1,11 +1,5 @@
 @use 'src/styles/colors';
 
-.adminHeaderLink {
-  font-family: Roboto, Helvetica, Arial, sans-serif;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
 .adminNavLink {
   color: #3e4c5d;
   text-decoration: none;
@@ -43,8 +37,8 @@
 }
 
 .list {
-  overflow-x: hidden;
-  overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .listItemIcon {
@@ -61,22 +55,17 @@
 }
 
 .drawerHeader {
-  align-items: flex-start;
   color: inherit !important;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
+  min-height: 0 !important;
 
-.profileIcon {
-  color: #2196f3 !important;
-  height: 3rem;
-  width: 3rem;
-}
-
-.userName {
-  font-size: 14px;
+  .username {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.6rem;
+    font-size: 14px;
+  }
 }
 
 .iconSize {
