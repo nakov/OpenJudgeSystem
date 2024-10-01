@@ -40,6 +40,10 @@ const AdministrationProblemGroupsPage = () => {
         setProblemGroupId(id);
     };
 
+    const onDelete = () => {
+        retakeGroups();
+    };
+
     const onFormModalClose = (isCreate: boolean) => {
         if (isCreate) {
             setOpenCreateModal(false);
@@ -90,7 +94,11 @@ const AdministrationProblemGroupsPage = () => {
             {renderErrorMessagesAlert(errorMessages)}
             <AdministrationGridView
               filterableGridColumnDef={filterableColumns}
-              notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
+              notFilterableGridColumnDef={returnNonFilterableColumns(
+                  onEditClick,
+                  setSuccessMessage,
+                  onDelete,
+              )}
               data={data}
               renderActionButtons={renderGridSettings}
               error={error}

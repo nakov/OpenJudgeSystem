@@ -6,7 +6,7 @@ import { DataGrid, GridPaginationModel } from '@mui/x-data-grid';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
+import { ACTION_NOT_ALLOWED_MESSAGE, NOT_LOGGED_IN_MESSAGE } from '../../common/messages';
 import { AdjacencyList, ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
 import LegendBox from '../../components/administration/common/legend-box/LegendBox';
@@ -62,6 +62,9 @@ const defaultNotVisibleColumns: AdjacencyList<string, boolean> = {
     startedExecutionOn: false,
     completedExecutionOn: false,
     fileExtension: false,
+    contestPassword: false,
+    limitBetweenSubmissions: false,
+    allowParallelSubmissionsInTasks: false,
 };
 
 const defaultFilterToAdd = 'isdeleted~equals~false';
@@ -195,7 +198,14 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                 {modals.map((m, i) => m.showModal && m.modal(i))}
                 { renderGridSettings() }
                 { error
-                    ? <div className={styles.errorText}>Error loading data</div>
+                    ? (
+                        <div className={styles.errorText}>
+                            Error loading data.
+                            {Array.isArray(error) && error[0]?.name === NOT_LOGGED_IN_MESSAGE
+                                ? `${error[0]?.message}`
+                                : ''}
+                        </div>
+                    )
                     : (
                         <DataGrid
                           columns={[ ...filterableGridColumnDef, ...notFilterableGridColumnDef ]}

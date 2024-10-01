@@ -524,6 +524,7 @@ interface IFilterColumn {
 type ExceptionData = {
     name: string;
     message: string;
+    status?: number;
 }
 
 interface IProblemGroupsData {

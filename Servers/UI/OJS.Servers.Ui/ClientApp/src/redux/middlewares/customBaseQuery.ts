@@ -1,7 +1,12 @@
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 import { defaultPathIdentifier } from '../../common/constants';
-import { SOMETHING_WENT_WRONG_MESSAGE, UNAUTHORIZED_MESSAGE, UNEXPECTED_ERROR_MESSAGE } from '../../common/messages';
+import {
+    NOT_LOGGED_IN_MESSAGE,
+    SOMETHING_WENT_WRONG_MESSAGE,
+    UNAUTHORIZED_MESSAGE,
+    UNEXPECTED_ERROR_MESSAGE,
+} from '../../common/messages';
 import { ExceptionData } from '../../common/types';
 
 type ExtraOptionsType = object
@@ -47,7 +52,7 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
     const result = await baseQuery(args, api, extraOptions);
     const response = result.meta?.response;
 
-    if (response && errorStatusCodes.some((status) => status === Number(response.status))) {
+    if (response && errorStatusCodes.some((status) => status === response.status)) {
         const errorsArray = result.error as ResultError;
         let data = [] as Array<ExceptionData>;
         try {
@@ -59,16 +64,22 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
                 }
             });
         } catch {
-            if (Number(response.status) === 401 || Number(response.status) === 403) {
-                data = [ { message: UNAUTHORIZED_MESSAGE, name: '' } ] as Array<ExceptionData>;
-            } else {
-                data = [ { message: SOMETHING_WENT_WRONG_MESSAGE, name: '' } ] as Array<ExceptionData>;
-            }
+            const errorData = result?.error?.data as ExceptionData;
+            const message = response.status === 401
+                ? errorData?.name === NOT_LOGGED_IN_MESSAGE
+                    ? NOT_LOGGED_IN_MESSAGE
+                    : UNAUTHORIZED_MESSAGE
+                : response.status === 403
+                    ? UNAUTHORIZED_MESSAGE
+                    : SOMETHING_WENT_WRONG_MESSAGE;
+
+            data = [ { message, name: errorData?.name || '', status: response.status } ] as Array<ExceptionData>;
         }
+
         return { error: data };
     }
 
-    if (response && successfulStatusCodes.some((status) => status === Number(response!.status))) {
+    if (response && successfulStatusCodes.some((status) => status === response!.status)) {
         const contentType = response.headers.get('Content-Type');
         if (contentType?.includes('text')) {
             return { data: result.error?.data };

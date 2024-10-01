@@ -101,11 +101,16 @@ const filterableColumns: AdministrationGridColDef[] = [
     },
 ];
 
-export const returnNonFilterableColumns = (onEditClick: Function) => [
+export const returnNonFilterableColumns = (
+    onEditClick: Function,
+    setParentSuccessMessage: Function,
+    onDelete: () => void,
+) => [
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
+        minWidth: 150,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
@@ -121,6 +126,8 @@ export const returnNonFilterableColumns = (onEditClick: Function) => [
                   id={Number(params.row.id)}
                   name={`${PROBLEM_GROUP}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
+                  setParentSuccessMessage={setParentSuccessMessage}
+                  onSuccess={onDelete}
                   mutation={useDeleteProblemGroupMutation}
                 />
             </div>
