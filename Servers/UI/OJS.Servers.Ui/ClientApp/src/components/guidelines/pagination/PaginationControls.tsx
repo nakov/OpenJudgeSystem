@@ -31,7 +31,7 @@ const PaginationControls = ({
     const useStyles = makeStyles(() => ({
         ul: {
             // This sets the background color of the selected page button
-            '& .MuiPaginationItem-root.Mui-selected': { backgroundColor: '#44a9f8' },
+            '& .MuiPaginationItem-root.Mui-selected': { backgroundColor: '#44a9f8', color: '#ffffff' },
             '& .MuiPaginationItem-root': { color: themeColors.textColor },
         },
     }));
