@@ -96,6 +96,7 @@ const testRunsFilterableColumns: AdministrationGridColDef[] = [
         field: 'submissionId',
         headerName: 'Submission Id',
         flex: 1,
+        minWidth: 150,
         type: 'number',
         filterable: false,
         sortable: false,

@@ -47,7 +47,8 @@ import 'dayjs/locale/bg';
 
 import { ThemeMode } from '../../../common/enums';
 import {
-    CHECKERS_PATH, CONTEST_CATEGORIES_HIERARCHY_PATH,
+    CHECKERS_PATH,
+    CONTEST_CATEGORIES_HIERARCHY_PATH,
     CONTEST_CATEGORIES_PATH,
     CONTESTS_PATH,
     EXAM_GROUPS_PATH,
@@ -178,7 +179,6 @@ const administrationItems = [
         icon: <BookmarksIcon className={styles.iconSize} />,
         path: `${CONTEST_CATEGORIES_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Contest Categories Hierarchy',
@@ -197,42 +197,36 @@ const administrationItems = [
         icon: <DataSaverOnIcon className={styles.iconSize} />,
         path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
         visibleOnlyForAdmin: true,
-
     },
     {
         name: 'Tests',
         icon: <ScienceIcon className={styles.iconSize} />,
         path: `${TESTS_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Problems',
         icon: <NotListedLocationIcon className={styles.iconSize} />,
         path: `${PROBLEMS_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Problem Groups',
         icon: <TableViewIcon className={styles.iconSize} />,
         path: `${PROBLEM_GROUPS_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Problem Resources',
         icon: <GiFiles className={styles.iconSize} />,
         path: `${PROBLEM_RESOURCES_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Submission Types',
         icon: <BorderAllIcon className={styles.iconSize} />,
         path: `${SUBMISSION_TYPES_PATH}`,
         visibleOnlyForAdmin: true,
-
     },
     {
         name: 'Submission Type Documents',
@@ -283,6 +277,7 @@ const administrationItems = [
         visibleOnlyForAdmin: false,
     },
 ];
+
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {
@@ -354,8 +349,8 @@ const AdministrationPortal = () => {
                 ? section.name
                 : '');
         } else {
-            pageTitle = capitalizeFirstLetter(`${locationPathnameElements[locationPathnameElements.length - 2]}
-            Id: ${lastElementOfThePathname}`);
+            pageTitle =
+                capitalizeFirstLetter(`${locationPathnameElements[locationPathnameElements.length - 2]} Id: ${lastElementOfThePathname}`);
         }
 
         document.title = `Administration ${pageTitle} - SoftUni Judge`;
@@ -567,7 +562,7 @@ const AdministrationPortal = () => {
         <AdministrationThemeProvider mode={currentThemeMode}>
             <CssBaseline />
             <Box>
-                <Box sx={{ display: 'flex' }}>
+                <Box sx={{ display: 'flex', height: '100vh' }}>
                     <Drawer
                       variant="permanent"
                       open={open}
@@ -607,18 +602,13 @@ const AdministrationPortal = () => {
                             <IconButton ref={iconButtonRef} onClick={() => setShowMenu(!showMenu)}>
                                 <FaUserCircle className={styles.profileIcon} />
                             </IconButton>
-                            {open && (
-                                <>
-                                    <Typography variant="subtitle1" className={styles.userName}>
-                                        {user.userName}
-                                    </Typography>
-                                    <Divider sx={{ color: 'red', width: '90%' }} />
-                                </>
-                            )}
-                            <Menu
-                              anchorEl={iconButtonRef.current}
-                              open={showMenu}
-                              onClose={() => setShowMenu(false)}
+                        )
+                        : (
+                            <IconButton
+                              className={`${styles.arrow} ${styles.arrowCommon}`}
+                              sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
+                              color="primary"
+                              onClick={handleDrawerClose}
                             >
                                 <MenuItem>
                                     <LinkButton
@@ -642,39 +632,47 @@ const AdministrationPortal = () => {
                                           ? styles.activeAdminNavLink
                                           : ''} ${styles.adminNavLink}`}
                                     >
-                                        <ListItemButton className={isSelected(item.path)
-                                            ? styles.selectedSection
-                                            : ''}
+                                        <ListItemIcon
+                                          className={isSelected(item.path)
+                                              ? styles.listItemIcon
+                                              : ''}
                                         >
-                                            <ListItemIcon className={isSelected(item.path)
-                                                ? styles.listItemIcon
-                                                : ''}
-                                            >
-                                                {renderSectionicon(item.name, item.icon)}
-                                            </ListItemIcon>
-                                            <ListItemText primary={item.name} />
-                                        </ListItemButton>
-                                    </Link>
-                                </ListItem>
-                                <Divider />
-                            </Box>
-                            ))}
-                        </List>
-                    </Drawer>
-                    <Box className={styles.main} component="main" sx={{ flexGrow: 1 }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
-                            <Routes>
-                                {adminRoutes.map(({ path, Element, visibleOnlyForAdmin }) => {
-                                    if (user.isAdmin || !visibleOnlyForAdmin) {
-                                        return <Route key={path} path={path} element={<Element />} />;
-                                    }
-                                    return null;
-                                })}
-                                <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
-                                <Route path="*" element={<NotFoundPage />} />
-                            </Routes>
-                        </LocalizationProvider>
-                    </Box>
+                                            {renderSectionicon(item.name, item.icon)}
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name} />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <Divider />
+                        </Box>
+                        ))}
+                    </List>
+                </Drawer>
+                <Box
+                  className={styles.main}
+                  component="main"
+                  sx={{ flexGrow: 1, overflow: 'auto', height: '100vh' }}
+                >
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
+                        <Routes>
+                            {adminRoutes.map(({ path, Element, visibleOnlyForAdmin }) => {
+                                if (user.isAdmin || !visibleOnlyForAdmin) {
+                                    return <Route key={path} path={path} element={<Element />} />;
+                                }
+                                return null;
+                            })}
+                            <Route
+                              path="/"
+                              element={(
+                                  <Navigate
+                                    to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
+                                    replace
+                                  />
+                                  )}
+                            />
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                    </LocalizationProvider>
                 </Box>
             </Box>
         </AdministrationThemeProvider>

@@ -52,6 +52,7 @@ const LecturerInContests = (props: ILecturerInContestsProps) => {
 
     const {
         refetch,
+        isFetching,
         data,
         isLoading,
         error,
@@ -71,7 +72,7 @@ const LecturerInContests = (props: ILecturerInContestsProps) => {
     const {
         data: contestsAutocompleteData,
         error: getContestDataError,
-    } = useGetContestAutocompleteQuery(contestSearchString);
+    } = useGetContestAutocompleteQuery(contestSearchString, { skip: contestSearchString === undefined });
 
     const [
         removeLecturerFromContest,
@@ -105,14 +106,10 @@ const LecturerInContests = (props: ILecturerInContestsProps) => {
             if (isSuccessfullyRemoved) {
                 resetRemove();
             }
+
+            refetch();
         },
     });
-
-    useEffect(() => {
-        if (isSuccessfullyRemoved || isSuccessfullyAdded) {
-            refetch();
-        }
-    }, [ isSuccessfullyAdded, isSuccessfullyRemoved, refetch ]);
 
     useEffect(() => {
         if (contestsAutocompleteData) {
@@ -186,7 +183,7 @@ const LecturerInContests = (props: ILecturerInContestsProps) => {
         </AdministrationModal>
     );
 
-    if (isLoading || isAdding || isRemoving) {
+    if (isLoading || (isFetching && !showConfirmDialog)) {
         return <SpinningLoader />;
     }
 

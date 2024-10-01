@@ -109,7 +109,8 @@ export const returnNonFilterableColumns = (
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
+        minWidth: 150,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

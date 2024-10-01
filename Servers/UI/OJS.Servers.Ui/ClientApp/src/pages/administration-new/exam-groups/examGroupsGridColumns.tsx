@@ -70,7 +70,8 @@ export const returnExamGroupsNonFilterableColumns = (onEditClick: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 160,
+        flex: 1,
+        minWidth: 150,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

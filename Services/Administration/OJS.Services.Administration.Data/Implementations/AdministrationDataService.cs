@@ -9,5 +9,5 @@ public class AdministrationDataService<TEntity> : DataService<TEntity>
 {
     public AdministrationDataService(OjsDbContext db)
         : base(db)
-        => this.IgnoreQueryFilters = true;
+        => this.SetIgnoreQueryFilters(true);
 }

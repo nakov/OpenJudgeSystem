@@ -154,6 +154,7 @@ export const returnProblemsNonFilterableColumns = (
         field: 'actions',
         headerName: 'Actions',
         flex: 1.5,
+        minWidth: 250,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
