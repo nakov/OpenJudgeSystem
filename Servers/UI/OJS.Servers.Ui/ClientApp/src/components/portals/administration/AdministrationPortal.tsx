@@ -602,13 +602,18 @@ const AdministrationPortal = () => {
                             <IconButton ref={iconButtonRef} onClick={() => setShowMenu(!showMenu)}>
                                 <FaUserCircle className={styles.profileIcon} />
                             </IconButton>
-                        )
-                        : (
-                            <IconButton
-                              className={`${styles.arrow} ${styles.arrowCommon}`}
-                              sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
-                              color="primary"
-                              onClick={handleDrawerClose}
+                            {open && (
+                                <>
+                                    <Typography variant="subtitle1" className={styles.userName}>
+                                        {user.userName}
+                                    </Typography>
+                                    <Divider sx={{ color: 'red', width: '90%' }} />
+                                </>
+                            )}
+                            <Menu
+                              anchorEl={iconButtonRef.current}
+                              open={showMenu}
+                              onClose={() => setShowMenu(false)}
                             >
                                 <MenuItem>
                                     <LinkButton
@@ -624,55 +629,63 @@ const AdministrationPortal = () => {
                         <List className={styles.list}>
                             <Divider />
                             {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
-                            <Box key={item.path}>
-                                <ListItem key={item.name} disablePadding>
-                                    <Link
-                                      to={item.path}
-                                      className={`${isSelected(item.path)
-                                          ? styles.activeAdminNavLink
-                                          : ''} ${styles.adminNavLink}`}
-                                    >
-                                        <ListItemIcon
-                                          className={isSelected(item.path)
-                                              ? styles.listItemIcon
-                                              : ''}
+                                <Box key={item.path}>
+                                    <ListItem key={item.name} disablePadding>
+                                        <Link
+                                          to={item.path}
+                                          className={`${isSelected(item.path)
+                                              ? styles.activeAdminNavLink
+                                              : ''} ${
+                                              styles.adminNavLink
+                                          }`}
                                         >
-                                            {renderSectionicon(item.name, item.icon)}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <Divider />
-                        </Box>
-                        ))}
-                    </List>
-                </Drawer>
-                <Box
-                  className={styles.main}
-                  component="main"
-                  sx={{ flexGrow: 1, overflow: 'auto', height: '100vh' }}
-                >
-                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
-                        <Routes>
-                            {adminRoutes.map(({ path, Element, visibleOnlyForAdmin }) => {
-                                if (user.isAdmin || !visibleOnlyForAdmin) {
-                                    return <Route key={path} path={path} element={<Element />} />;
-                                }
-                                return null;
-                            })}
-                            <Route
-                              path="/"
-                              element={(
-                                  <Navigate
-                                    to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
-                                    replace
-                                  />
+                                            <ListItemButton
+                                              className={isSelected(item.path)
+                                                  ? styles.selectedSection
+                                                  : ''}
+                                            >
+                                                <ListItemIcon
+                                                  className={isSelected(item.path)
+                                                      ? styles.listItemIcon
+                                                      : ''}
+                                                >
+                                                    {renderSectionicon(item.name, item.icon)}
+                                                </ListItemIcon>
+                                                <ListItemText primary={item.name} />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <Divider />
+                                </Box>
+                            ))}
+                        </List>
+                    </Drawer>
+                    <Box
+                      className={styles.main}
+                      component="main"
+                      sx={{ flexGrow: 1, overflow: 'auto', height: '100vh' }}
+                    >
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
+                            <Routes>
+                                {adminRoutes.map(({ path, Element, visibleOnlyForAdmin }) => {
+                                    if (user.isAdmin || !visibleOnlyForAdmin) {
+                                        return <Route key={path} path={path} element={<Element />} />;
+                                    }
+                                    return null;
+                                })}
+                                <Route
+                                  path="/"
+                                  element={(
+                                      <Navigate
+                                        to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
+                                        replace
+                                      />
                                   )}
-                            />
-                            <Route path="*" element={<NotFoundPage />} />
-                        </Routes>
-                    </LocalizationProvider>
+                                />
+                                <Route path="*" element={<NotFoundPage />} />
+                            </Routes>
+                        </LocalizationProvider>
+                    </Box>
                 </Box>
             </Box>
         </AdministrationThemeProvider>
