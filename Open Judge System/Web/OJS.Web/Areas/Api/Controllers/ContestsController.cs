@@ -24,6 +24,7 @@ namespace OJS.Web.Areas.Api.Controllers
             this.dbContext.DbContext.Configuration.ProxyCreationEnabled = false;
 
             var contest = this.dbContext.Contests
+                .Where(c => !c.IsDeleted)
                 .Include(c => c.ProblemGroups)
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems.Select(p => p.Tests)))
@@ -32,6 +33,11 @@ namespace OJS.Web.Areas.Api.Controllers
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems.Select(p => p.ProblemSubmissionTypeExecutionDetails)))
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems.Select(p => p.Resources)))
                 .FirstOrDefault(c => c.Id == id);
+
+            if (contest == null)
+            {
+                return this.HttpNotFound($"Contest with id {id} not found.");
+            }
 
             var jsonSettings = new JsonSerializerSettings
             {
