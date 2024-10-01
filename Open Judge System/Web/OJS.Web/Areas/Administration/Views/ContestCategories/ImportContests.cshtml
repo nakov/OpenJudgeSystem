@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="editor-field col-xs-3">
-                    @Html.EditorFor(m => m.ReplaceExistingContests, new { @class = "form-control pull-left full-editor" })
+                    @Html.EditorFor(m => m.ReplaceExistingContests, new { htmlAttributes = new { disabled = "disabled" } })
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary"
