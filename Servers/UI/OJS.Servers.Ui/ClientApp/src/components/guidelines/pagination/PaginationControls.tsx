@@ -1,5 +1,6 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Pagination from '@mui/material/Pagination';
+import useTheme from 'src/hooks/use-theme';
 
 import { PAGE_BOUNDARY_COUNT, PAGE_SIBLING_COUNT } from '../../../common/constants';
 import concatClassNames from '../../../utils/class-names';
@@ -19,14 +20,22 @@ const PaginationControls = ({
     onChange,
     className = '',
 } : IPaginationControlsProps) => {
-    const paginationClassNames = concatClassNames(styles.paginationControlsMenu, className);
+    const { themeColors, getColorClassName } = useTheme();
+
+    const paginationClassNames = concatClassNames(
+        styles.paginationControlsMenu,
+        getColorClassName(themeColors.textColor),
+        className,
+    );
 
     const useStyles = makeStyles(() => ({
         ul: {
             // This sets the background color of the selected page button
             '& .MuiPaginationItem-root.Mui-selected': { backgroundColor: '#44a9f8' },
+            '& .MuiPaginationItem-root': { color: themeColors.textColor },
         },
     }));
+
     const classes = useStyles();
 
     return count > 1

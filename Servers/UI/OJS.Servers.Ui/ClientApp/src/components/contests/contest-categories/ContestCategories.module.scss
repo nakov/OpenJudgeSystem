@@ -30,8 +30,6 @@
   }
 
   .categoryListItem {
-    border-bottom: 1px solid colors.$dark-text-color;
-
     .isChild {
       border-bottom: 0 solid transparent;
     }
@@ -41,10 +39,20 @@
       padding: spacings.$sp-8 spacings.$sp-4;
 
       &:hover {
-        background-color: #76a2d2;
+        background-color: colors.$primary-blue;
         border-radius: 0;
+        // white
+        color: colors.$light-base-color-100;
       }
     }
+  }
+
+  .lightCategoryListItem {
+    border-bottom: 1px solid colors.$light-text-color;
+  }
+
+  .darkCategoryListItem {
+    border-bottom: 1px solid colors.$dark-text-color;
   }
 
   // categories with no children that are links and load the contests
@@ -75,7 +83,9 @@
     }
 
     &:hover {
-      background-color: #76a2d2;
+      background-color: colors.$primary-blue;
+      // white
+      color: colors.$light-base-color-100;
     }
   }
 
@@ -86,5 +96,7 @@
 
   .selectedCategory {
     background-color: colors.$primary-blue !important;
+    // white
+    color: colors.$light-base-color-100;
   }
 }

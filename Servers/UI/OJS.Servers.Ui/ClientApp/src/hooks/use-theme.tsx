@@ -31,12 +31,14 @@ const useTheme = () => {
 
     const themeColors: ITheme = {
         light: {
-            textColor: '#14181c',
-            baseColor100: '#6c6c6c',
-            baseColor200: '#9a9a9a',
-            baseColor300: '#adadad',
-            baseColor400: '#d7d7d7',
-            baseColor500: '#fdfdfd',
+            // Using rgb() to avoid dictionary key collision
+            // with dark.baseColor100 in colorClassName below
+            textColor: 'rgb(104, 116, 135)',
+            baseColor100: '#FFFFFF',
+            baseColor200: '#E6E6E6',
+            baseColor300: '#bebebe',
+            baseColor400: '#F7F7F7',
+            baseColor500: '#E6E6E6',
         },
         dark: {
             textColor: '#f3f1f1',
@@ -50,7 +52,7 @@ const useTheme = () => {
 
     const colorClassName: IThemeClassName = {
         // text color class names
-        [themeColors.light.textColor]: styles.blackColorClassName,
+        [themeColors.light.textColor]: styles.darkGrayClassName,
         [themeColors.dark.textColor]: styles.whiteColorClassName,
         // dark color class names
         [themeColors.dark.baseColor100]: styles.darkBaseColor100ClassName,
