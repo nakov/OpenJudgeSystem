@@ -43,7 +43,7 @@ namespace OJS.Services.Business.Contests
             }
             else
             {
-                contest.Id = default;
+                contest.Id = default(int);
                 contest.ProblemGroups = GetNewProblemGroups(contest.ProblemGroups);
 
                 this.dbContext.Contests.Add(contest);
