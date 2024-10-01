@@ -48,7 +48,7 @@
   }
 
   .lightCategoryListItem {
-    border-bottom: 1px solid colors.$light-text-color;
+    border-bottom: 1px solid colors.$light-base-color-500;
   }
 
   .darkCategoryListItem {
@@ -58,7 +58,7 @@
   // categories with no children that are links and load the contests
   .categoryItem {
     align-items: center;
-    border-bottom: 1px solid colors.$light-text-color;
+    border-bottom: 1px solid colors.$light-base-color-500;
     border-radius: 0;
     color: colors.$light-text-color;
     cursor: pointer;
