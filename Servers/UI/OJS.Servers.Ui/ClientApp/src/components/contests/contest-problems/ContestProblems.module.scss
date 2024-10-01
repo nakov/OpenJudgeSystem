@@ -5,12 +5,20 @@
 @use 'src/styles/shadows';
 @use 'src/styles/font-weights';
 
-.problemsHeader {
+.problemsHeader,
+%problemsHeader {
   align-items: center;
   display: flex;
   font-size: variables.$f-size-18;
   justify-content: space-between;
   padding: spacings.$sp-16 spacings.$sp-32;
+}
+
+.lightProblemsHeader {
+    @extend %problemsHeader;
+
+    background-color: colors.$primary-blue;
+    color: colors.$light-base-color-100;
 }
 
 .problemsWrapper {
@@ -54,7 +62,6 @@
 
 .problemsInfoSection {
   align-items: center;
-  box-shadow: shadows.$dp-shadow-4;
   display: flex;
   font-weight: font-weights.$font-weight-semi-bold;
   justify-content: space-between;
