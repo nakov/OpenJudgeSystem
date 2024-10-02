@@ -676,12 +676,36 @@ const ContestSolutionSubmitPage = () => {
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <Link
-                  to={getContestsDetailsPageUrl({ contestId: contest?.id, contestName: contest?.name })}
-                  className={`${styles.title} ${textColorClassName}`}
-                >
-                    {contest?.name}
-                </Link>
+                <div className={styles.contestNameAndAdminButtons}>
+                    <Link
+                      to={getContestsDetailsPageUrl({ contestId: contest?.id, contestName: contest?.name })}
+                      className={`${styles.title} ${textColorClassName}`}
+                    >
+                        {contest?.name}
+                    </Link>
+                    { user.canAccessAdministration && (
+                        <div className={styles.adminButtonsContainer}>
+                            <AdministrationLink
+                              text="Contest"
+                              to={`/contests/${contestId}`}
+                            />
+                            {user.isAdmin && (
+                                <AdministrationLink
+                                  text="View docs"
+                                  to={`/submission-type-documents-view?submissionTypeIds=${problems
+                                      ?.flatMap((p) => p.allowedSubmissionTypes)
+                                      ?.reduce((acc, st) => {
+                                          if (!acc.includes(st.id)) {
+                                              acc.push(st.id);
+                                          }
+                                          return acc;
+                                      }, [] as number[])
+                                      ?.join(',') ?? ''}`}
+                                />
+                            )}
+                        </div>
+                    ) }
+                </div>
                 <div
                   className={styles.allResultsLink}
                   onClick={() => navigate(getContestsResultsPageUrl({
@@ -694,28 +718,6 @@ const ContestSolutionSubmitPage = () => {
                     Show all results
                 </div>
             </div>
-            { user.canAccessAdministration && (
-                <div className={styles.administrationButtonWrapper}>
-                    <AdministrationLink
-                      text="Contest"
-                      to={`/contests/${contestId}`}
-                    />
-                    {user.isAdmin && (
-                    <AdministrationLink
-                      text="View docs"
-                      to={`/submission-type-documents-view?submissionTypeIds=${problems
-                          ?.flatMap((p) => p.allowedSubmissionTypes)
-                          ?.reduce((acc, st) => {
-                              if (!acc.includes(st.id)) {
-                                  acc.push(st.id);
-                              }
-                              return acc;
-                          }, [] as number[])
-                          ?.join(',') ?? ''}`}
-                    />
-                    )}
-                </div>
-            ) }
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
                   problems={updatedProblems || problems || []}
@@ -730,14 +732,12 @@ const ContestSolutionSubmitPage = () => {
                             {selectedContestDetailsProblem?.name}
                             {selectedContestDetailsProblem?.isExcludedFromHomework && (
                                 <span className={textColorClassName}>(not included in final score)</span>)}
+                            {renderProblemAdminButtons()}
                         </div>
                         {renderRemainingTimeForContest()}
                     </div>
                     <div className={styles.problemDetailsWrapper}>
-                        <div>
-                            {renderProblemAdminButtons()}
-                            {renderProblemResources()}
-                        </div>
+                        {renderProblemResources()}
                         {renderProblemResourcesAndParameters()}
                     </div>
                     {renderSubmissionsInput()}

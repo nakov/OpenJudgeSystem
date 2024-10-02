@@ -67,6 +67,7 @@ const CodeEditor = ({
                   hideCursorInOverviewRuler: true,
                   lineHeight: 20,
                   scrollbar: { vertical: 'hidden' },
+                  scrollBeyondLastLine: false,
               }}
               onChange={onCodeChange}
               keepCurrentModel={false}

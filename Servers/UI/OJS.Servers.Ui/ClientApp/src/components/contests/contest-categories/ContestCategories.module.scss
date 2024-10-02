@@ -52,7 +52,7 @@
   }
 
   .darkCategoryListItem {
-    border-bottom: 1px solid colors.$dark-text-color;
+    border-bottom: 1px solid colors.$dark-base-color-300;
   }
 
   // categories with no children that are links and load the contests
@@ -70,7 +70,7 @@
     transition: background-color 0.2s ease-in-out;
 
     &.darkCategoryItem {
-      border-color: colors.$dark-text-color;
+      border-color: colors.$dark-base-color-300;
       color: colors.$dark-text-color;
     }
 

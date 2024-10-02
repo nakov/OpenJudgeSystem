@@ -28,16 +28,11 @@ const ContestProblems = (props: IContestProblemsProps) => {
 
     const [ excludedFromHomeworkAnchorElement, setExcludedFromHomeworkAnchorElement ] = useState<HTMLElement | null>(null);
 
-    // const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
     const backgroundColorClassName = getColorClassName(isDarkMode
         ? themeColors.baseColor200
         : themeColors.baseColor100);
     const modalBackgroundColorClassName = getColorClassName(themeColors.baseColor100);
     const headersClassname = getColorClassName(themeColors.baseColor500);
-
-    // const headersClassname = isDarkMode
-    //     ? getColorClassName(themeColors.baseColor500)
-    //     : styles.lightProblemsHeader;
 
     const colorClassName = getColorClassName(themeColors.textColor);
 
@@ -85,7 +80,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                               style={{
                                   borderBottom: `${isLast
                                       ? 0
-                                      : 1}px solid ${themeColors.textColor}`,
+                                      : 1}px solid ${themeColors.baseColor300}`,
                               }}
                               onClick={() => onProblemClick(problem)}
                             >
