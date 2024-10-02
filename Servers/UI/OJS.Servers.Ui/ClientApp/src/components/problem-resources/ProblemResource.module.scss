@@ -6,6 +6,7 @@
   color: colors.$secondary-green;
   cursor: pointer;
   display: flex;
+  margin-left: spacings.$sp-12;
 
   svg {
     margin-right: spacings.$sp-4;
@@ -14,8 +15,6 @@
   &:hover {
     text-decoration: underline !important;
   }
-  
-  margin-left: spacings.$sp-12;
 }
 
 .problemResourceIndicator {
