@@ -593,7 +593,7 @@ const AdministrationPortal = () => {
                           control={(
                               <MaterialUISwitch
                                 onChange={handleThemeChange}
-                                checked={currentThemeMode === ThemeMode.Light}
+                                checked={themeMode === ThemeMode.Light}
                               />
                             )}
                           label=""

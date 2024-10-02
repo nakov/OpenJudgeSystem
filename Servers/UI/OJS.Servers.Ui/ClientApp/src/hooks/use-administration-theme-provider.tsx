@@ -96,7 +96,7 @@ const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = ({ ch
             MuiCssBaseline: {
                 styleOverrides: {
                     body: {
-                        backgroundColor: getColors(themeMode).background.default,
+                        backgroundColor: `${getColors(themeMode).background.default} !important`,
                         color: getColors(themeMode).textColors.primary,
                         '.box-wrapper': { backgroundColor: getColors(themeMode).background.default },
                     },
@@ -127,7 +127,7 @@ const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = ({ ch
                     },
                     '::-webkit-scrollbar-thumb': {
                         background: themeMode === ThemeMode.Light
-                            ? '#7c7c7cbf '
+                            ? '#7c7c7cbf'
                             : '#555',
                         borderRadius: '10px',
                         '&:hover': {
