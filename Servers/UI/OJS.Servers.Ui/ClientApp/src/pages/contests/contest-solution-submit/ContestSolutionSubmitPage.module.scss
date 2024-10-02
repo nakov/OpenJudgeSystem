@@ -19,7 +19,8 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin-top: spacings.$sp-18;
+    margin-top: spacings.$sp-32;
+      margin-bottom: spacings.$sp-32;
 
     .contestNameAndAdminButtons {
       align-items: center;
@@ -91,7 +92,6 @@
 
 .problemResources {
   display: flex;
-  // margin-top: spacings.$sp-12;
 }
 
 .selectedProblemWrapper {
