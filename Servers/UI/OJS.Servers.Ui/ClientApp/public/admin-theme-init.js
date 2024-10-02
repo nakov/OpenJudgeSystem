@@ -1,17 +1,12 @@
 ﻿(function() {
+    const darkBackgroundColor = "#212328";
+    const lightBackgroundColor = "#ececec";
     try {
         const mode = localStorage.getItem("administrationMode");
-        if (!mode) {
-            document.body.classList.add("body-dark-theme");
-            return;
-        }
-
-        if (mode === "dark") {
-            document.body.classList.add("body-dark-theme");
-            document.body.classList.remove("body-light-theme");
+        if (!mode || mode === "dark") {
+            document.body.style.backgroundColor = darkBackgroundColor;
         } else {
-            document.body.classList.add("body-light-theme");
-            document.body.classList.remove("body-dark-theme");
+            document.body.style.backgroundColor = lightBackgroundColor;
         }
     } catch (e) {
         console.error("Error applying theme for administration from localStorage:", e);
