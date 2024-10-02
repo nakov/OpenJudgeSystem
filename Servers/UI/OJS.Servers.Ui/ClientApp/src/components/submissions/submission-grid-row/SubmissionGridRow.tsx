@@ -70,15 +70,6 @@ const SubmissionGridRow = ({
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
 
-    const handleDetailsButtonSubmit = useCallback(
-        () => {
-            const submissionDetailsUrl = getSubmissionDetailsRedirectionUrl({ submissionId });
-
-            navigate(submissionDetailsUrl);
-        },
-        [ submissionId, navigate ],
-    );
-
     const handleContestDetailsButtonSubmit = useCallback(
         () => {
             navigate(getContestsDetailsPageUrl({ contestId, contestName }));
@@ -150,17 +141,18 @@ const SubmissionGridRow = ({
         () => {
             if (user === internalUser.userName || internalUser.isAdmin) {
                 return (
-                    <Button
+                    <LinkButton
+                      to={getSubmissionDetailsRedirectionUrl({ submissionId })}
+                      target="_blank"
                       text="Details"
-                      onClick={handleDetailsButtonSubmit}
-                      type={ButtonType.secondary}
+                      type={LinkButtonType.secondary}
                     />
                 );
             }
 
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser, user ],
+        [ internalUser.isAdmin, internalUser.userName, submissionId, user ],
     );
 
     return (
