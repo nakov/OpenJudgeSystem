@@ -66,7 +66,10 @@ const CodeEditor = ({
                   automaticLayout: true,
                   hideCursorInOverviewRuler: true,
                   lineHeight: 20,
-                  scrollbar: { vertical: 'hidden' },
+                  scrollbar: {
+                      vertical: 'hidden',
+                      alwaysConsumeMouseWheel: false,
+                  },
                   scrollBeyondLastLine: false,
               }}
               onChange={onCodeChange}
