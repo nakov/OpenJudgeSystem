@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { GoGear } from 'react-icons/go';
 import { IoIosArrowDown } from 'react-icons/io';
+import isNilOrEmpty from 'src/utils/check-utils';
 
 import {
     CONTEST_CATEGORIES_PATH,
@@ -23,7 +25,25 @@ import concatClassNames from '../../utils/class-names';
 
 import styles from './AdministrationMenu.module.scss';
 
-const AdministrationMenu = () => {
+enum AdministrationMenuButtonType {
+    gear = 0,
+    text = 1,
+}
+
+interface IAdministrationMenuItem {
+    text: string;
+    link: string;
+}
+
+interface IAdministrationMenuProps {
+    buttonType: AdministrationMenuButtonType;
+    /* If no value is provided, default full menu items is rendered based on user role */
+    items?: IAdministrationMenuItem[] | IAdministrationMenuItem[][];
+    /* Adds margin to align with header */
+    isUsedInPageHeader?: boolean;
+}
+
+const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: IAdministrationMenuProps) => {
     const [ isMenuVisible, setMenuVisible ] = useState(false);
     const { navigateInNewWindow } = useNavigation();
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -38,7 +58,48 @@ const AdministrationMenu = () => {
         setMenuVisible(false);
     };
 
-    const onClickNavigate = (administrationEntity: string) => navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}/${administrationEntity}`);
+    const onClickNavigate = useCallback(
+        (administrationEntity: string) => navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}/${administrationEntity}`),
+        [ navigateInNewWindow ],
+    );
+
+    const renderDefaultMenuItems = useCallback(() => (
+        <>
+            <div className={styles.menuSection}>
+                <span onClick={() => onClickNavigate(CONTESTS_PATH)}>Contests</span>
+                <span onClick={() => onClickNavigate(EXAM_GROUPS_PATH)}>Exam Groups</span>
+                <span onClick={() => onClickNavigate(SUBMISSIONS_PATH)}>Submissions</span>
+                {user.isAdmin && (
+                    <span onClick={() => onClickNavigate(CONTEST_CATEGORIES_PATH)}>Categories</span>)}
+                {user.isAdmin && (
+                    <span onClick={() => onClickNavigate(PARTICIPANTS_PATH)}>Participants</span>)}
+            </div>
+            {user.isAdmin && (
+                <>
+                    <div className={styles.menuSection}>
+                        <span onClick={() => onClickNavigate(PROBLEMS_PATH)}>Problems</span>
+                        <span onClick={() => onClickNavigate(PROBLEM_GROUPS_PATH)}>Problem Groups</span>
+                        <span onClick={() => onClickNavigate(TESTS_PATH)}>Tests</span>
+                        <span onClick={() => onClickNavigate(SUBMISSION_TYPES_PATH)}>Submission Types</span>
+                    </div>
+                    <div className={styles.menuSection}>
+                        <span onClick={() => onClickNavigate(USERS_PATH)}>Users</span>
+                        <span onClick={() => onClickNavigate(ROLES_PATH)}>Roles</span>
+                        {/* TODO */}
+                        {/* <span onClick={() => onClickNavigate(TESTS_PATH)}>
+                                Lecturers in contests and categories</span> */}
+                    </div>
+                    <div className={styles.menuSection}>
+                        <span onClick={() => onClickNavigate('')}>All Administrations</span>
+                    </div>
+                </>
+            )}
+        </>
+    ), [ onClickNavigate, user ]);
+
+    useEffect(() => {
+        console.log(isMenuVisible);
+    }, [ isMenuVisible ]);
 
     return user.canAccessAdministration
         ? (
@@ -46,59 +107,65 @@ const AdministrationMenu = () => {
               className={styles.adminMenuContainer}
               onMouseOver={handleMouseEnter}
               onMouseOut={handleMouseLeave}
-              onFocus={handleMouseEnter}
-              onBlur={handleMouseEnter}
+              onBlur={() => {}}
+              onFocus={() => {}}
             >
                 <Button
-                  onClick={() => navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}`)}
+                  onClick={() => {
+                      setMenuVisible(false);
+                      navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}`);
+                  }}
                   type={ButtonType.plain}
                   internalClassName={styles.menuButton}
                 >
-                    Administration
-                    <IoIosArrowDown />
+                    {buttonType === AdministrationMenuButtonType.text
+                        ? (
+                            <>
+                                Administration
+                                <IoIosArrowDown />
+                            </>
+                        )
+                        : (<GoGear />)}
                 </Button>
 
                 {/* Transparent spacer to cover the gap */}
                 {isMenuVisible && <div className={styles.spacer} />}
 
                 {isMenuVisible && (
-                <div
-                  className={concatClassNames(
-                      styles.dropdownMenu,
-                      getColorClassName(themeColors.textColor),
-                      getColorClassName(themeColors.baseColor200),
-                  )}
-                >
-                    <div className={styles.menuSection}>
-                        <span onClick={() => onClickNavigate(CONTESTS_PATH)}>Contests</span>
-                        <span onClick={() => onClickNavigate(EXAM_GROUPS_PATH)}>Exam Groups</span>
-                        <span onClick={() => onClickNavigate(SUBMISSIONS_PATH)}>Submissions</span>
-                        {user.isAdmin && (
-                            <span onClick={() => onClickNavigate(CONTEST_CATEGORIES_PATH)}>Categories</span>)}
-                        {user.isAdmin && (
-                            <span onClick={() => onClickNavigate(PARTICIPANTS_PATH)}>Participants</span>)}
+                    <div
+                      className={concatClassNames(
+                          styles.dropdownMenu,
+                          isUsedInPageHeader
+                              ? styles.dropdownMenuInHeader
+                              : '',
+                          getColorClassName(themeColors.textColor),
+                          getColorClassName(themeColors.baseColor200),
+                      )}
+                    >
+                        { isNilOrEmpty(items)
+                            ? renderDefaultMenuItems()
+                            : Array.isArray(items?.[0])
+                                // Render sections if items is an array of arrays
+                                ? (items as IAdministrationMenuItem[][]).map((section, sectionIndex) => (
+                                    <div key={sectionIndex} className={styles.menuSection}>
+                                        {section.map((menuItem, itemIndex) => (
+                                            <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
+                                                {menuItem.text}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ))
+                                // Render individual spans if items is a flat array or not provided
+                                : (
+                                    <div key={1} className={styles.menuSection}>
+                                        {(items as IAdministrationMenuItem[] || []).map((menuItem, itemIndex) => (
+                                            <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
+                                                {menuItem.text}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                     </div>
-                    {user.isAdmin && (
-                        <>
-                            <div className={styles.menuSection}>
-                                <span onClick={() => onClickNavigate(PROBLEMS_PATH)}>Problems</span>
-                                <span onClick={() => onClickNavigate(PROBLEM_GROUPS_PATH)}>Problem Groups</span>
-                                <span onClick={() => onClickNavigate(TESTS_PATH)}>Tests</span>
-                                <span onClick={() => onClickNavigate(SUBMISSION_TYPES_PATH)}>Submission Types</span>
-                            </div>
-                            <div className={styles.menuSection}>
-                                <span onClick={() => onClickNavigate(USERS_PATH)}>Users</span>
-                                <span onClick={() => onClickNavigate(ROLES_PATH)}>Roles</span>
-                                {/* TODO */}
-                                {/* <span onClick={() => onClickNavigate(TESTS_PATH)}>
-                                Lecturers in contests and categories</span> */}
-                            </div>
-                            <div className={styles.menuSection}>
-                                <span onClick={() => onClickNavigate('')}>All Administrations</span>
-                            </div>
-                        </>
-                    )}
-                </div>
                 )}
             </div>
         )
@@ -106,3 +173,5 @@ const AdministrationMenu = () => {
 };
 
 export default AdministrationMenu;
+
+export { AdministrationMenuButtonType };

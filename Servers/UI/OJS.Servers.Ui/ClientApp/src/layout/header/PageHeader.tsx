@@ -12,12 +12,17 @@ import MyProfileSvg from '../../assets/my-profile.svg';
 import { NEW_ADMINISTRATION_PATH } from '../../common/urls/administration-urls';
 import { getAllContestsPageUrl } from '../../common/urls/compose-client-urls';
 import useTheme from '../../hooks/use-theme';
-import { resetInInternalUser, setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import {
+    resetInInternalUser,
+    setInternalUser,
+    setIsGetUserInfoCompleted,
+    setIsLoggedIn,
+} from '../../redux/features/authorizationSlice';
 import { setIsVisible } from '../../redux/features/searchSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-import AdministrationMenu from './AdministrationMenu';
+import AdministrationMenu, { AdministrationMenuButtonType } from './AdministrationMenu';
 
 import styles from './PageHeader.module.scss';
 
@@ -157,7 +162,7 @@ const PageHeader = () => {
                 <div className={styles.navButtons}>
                     <Link to={getAllContestsPageUrl({})} className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                    <AdministrationMenu />
+                    <AdministrationMenu buttonType={AdministrationMenuButtonType.text} isUsedInPageHeader />
                 </div>
             </div>
             <div className={`${styles.authButtons} ${isThemeSwitchVisible
