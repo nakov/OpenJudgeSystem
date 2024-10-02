@@ -253,7 +253,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
 }));
 
@@ -534,7 +533,14 @@ const AdministrationPortal = () => {
         <AdministrationThemeProvider mode={currentThemeMode}>
             <CssBaseline />
             <Box>
-                <Box sx={{ display: 'flex', height: '100vh' }}>
+                <Box sx={{
+                    display: 'flex',
+                    overflowY: 'hidden',
+                    '&::-webkit-scrollbar': { display: 'none' },
+                    '-ms-overflow-style': 'none',
+                    'scrollbar-width': 'none',
+                }}
+                >
                     <Drawer
                       variant="permanent"
                       open={open}
@@ -624,7 +630,13 @@ const AdministrationPortal = () => {
                     <Box
                       className={styles.main}
                       component="main"
-                      sx={{ flexGrow: 1, overflow: 'auto', height: '100vh' }}
+                      sx={{
+                          flexGrow: 1,
+                          overflowY: 'scroll',
+                          '&::-webkit-scrollbar': { display: 'none' },
+                          '-ms-overflow-style': 'none',
+                          'scrollbar-width': 'none',
+                      }}
                     >
                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
                             <Routes>
