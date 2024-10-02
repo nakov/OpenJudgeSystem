@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { IGetAllAdminParams } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
 import LecturerActions
-    from '../../../components/administration/common/lecturer-in-category-actions/LecturerActions';
+    from '../../../components/administration/common/lecturer-actions/LecturerActions';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import RoleForm from '../../../components/administration/roles/form/RoleForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
