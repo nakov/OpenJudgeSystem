@@ -14,16 +14,9 @@
   padding: spacings.$sp-16 spacings.$sp-32;
 }
 
-.lightProblemsHeader {
-    @extend %problemsHeader;
-
-    background-color: colors.$primary-blue;
-    color: colors.$light-base-color-100;
-}
-
 .problemsWrapper {
   font-size: variables.$f-size-18;
-  height: 582px;
+  height: 400px;
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 0.5s ease-in-out;
