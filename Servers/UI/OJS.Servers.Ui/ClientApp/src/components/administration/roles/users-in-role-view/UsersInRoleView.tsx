@@ -3,13 +3,12 @@ import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui
 
 import { IGetAllAdminParams, IUserAutocompleteData } from '../../../../common/types';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
-import { getColors } from '../../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../../hooks/use-administration-theme-provider';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import usersFilterableColumns, { returnUsersNonFilterableColumns } from '../../../../pages/administration-new/users/usersGridColumns';
 import { useAddUserToRoleMutation, useRemoveUserFromRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
 import { useGetUsersAutocompleteQuery, useGetUsersByRoleQuery } from '../../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
@@ -33,7 +32,7 @@ interface IUsersInRoleViewProps {
 
 const UsersInRoleView = (props: IUsersInRoleViewProps) => {
     const { roleId, roleName } = props;
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
 

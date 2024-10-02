@@ -7,9 +7,8 @@ import CopyModal, { AllowedOperations } from '../../../components/administration
 import ProblemForm from '../../../components/administration/problems/problem-form/ProblemForm';
 import ProblemRetest from '../../../components/administration/problems/retest/ProblemRetest';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import { useGetAllAdminProblemsQuery, useLazyExportProblemsToExcelQuery } from '../../../redux/services/admin/problemsAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
@@ -20,7 +19,7 @@ import filterableColumns, { returnProblemsNonFilterableColumns } from './problem
 const AdministrationProblemsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ openEditProblemModal, setOpenEditProblemModal ] = useState(false);
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ problemId, setProblemId ] = useState<number | null>(null);
     const [ showRetestModal, setShowRetestModal ] = useState<boolean>(false);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);

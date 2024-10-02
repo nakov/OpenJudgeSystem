@@ -5,12 +5,11 @@ import { IconButton, Tooltip } from '@mui/material';
 import { ContestVariation } from '../../../../common/contest-types';
 import { IGetAllAdminParams } from '../../../../common/types';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
-import { getColors } from '../../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../../hooks/use-administration-theme-provider';
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColumns, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import isNilOrEmpty from '../../../../utils/check-utils';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -43,7 +42,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ problemId, setProblemId ] = useState<number>(-1);
     // eslint-disable-next-line max-len
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultProblemsSorterToAdd));
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
 

@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 
@@ -6,8 +6,14 @@ import { ThemeMode } from '../common/enums';
 
 interface IAdministrationThemeProviderProps {
     children: ReactNode;
-    mode: ThemeMode;
 }
+
+interface IThemeContext {
+    themeMode: ThemeMode;
+    toggleThemeMode: (newThemeMode: ThemeMode) => void;
+}
+
+const ThemeContext = createContext<IThemeContext | undefined>(undefined);
 
 const getColors = (mode: ThemeMode) => ({
     palette: {
@@ -39,12 +45,29 @@ const getColors = (mode: ThemeMode) => ({
 const isDeletedClassName = 'is-deleted-record';
 const isVisibleClassName = 'is-visible-record';
 
-const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = (props: IAdministrationThemeProviderProps) => {
-    const { children, mode } = props;
+const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = ({ children }) => {
+    const [ themeMode, setThemeMode ] = useState<ThemeMode>(ThemeMode.Dark);
+
+    useEffect(() => {
+        const storedMode = localStorage.getItem('administrationMode') as ThemeMode;
+        if (storedMode) {
+            setThemeMode(storedMode);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('administrationMode', themeMode);
+    }, [ themeMode ]);
+
+    const toggleThemeMode = useCallback((newThemeMode: ThemeMode) => {
+        setThemeMode(newThemeMode);
+    }, []);
+
+    const contextValue = useMemo(() => ({ themeMode, toggleThemeMode }), [ themeMode, toggleThemeMode ]);
 
     const drawerProps = {
-        backgroundColor: getColors(mode).palette.secondary.main,
-        color: getColors(mode).textColors.primary,
+        backgroundColor: getColors(themeMode).palette.secondary.main,
+        color: getColors(themeMode).textColors.primary,
         borderBottomRightRadius: '16px',
         borderTopRightRadius: '16px',
         height: '90vh',
@@ -55,8 +78,8 @@ const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = (prop
 
     const theme = createTheme({
         palette: {
-            mode,
-            text: { primary: getColors(mode).textColors.primary },
+            mode: themeMode,
+            text: { primary: getColors(themeMode).textColors.primary },
         },
         components: {
             MuiDrawer: {
@@ -71,29 +94,30 @@ const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = (prop
             MuiDataGrid: { styleOverrides: { root: { borderRadius: '14px', borderWidth: '1px' } } },
             MuiButton: { styleOverrides: { root: { borderRadius: 8 } } },
             MuiCssBaseline: {
-                styleOverrides:
-                {
+                styleOverrides: {
                     body: {
-                        backgroundColor: getColors(mode).background.default,
-                        color: getColors(mode).textColors.primary,
-                        '.box-wrapper': { backgroundColor: getColors(mode).background.default },
+                        backgroundColor: `${getColors(themeMode).background.default} !important`,
+                        color: getColors(themeMode).textColors.primary,
+                        '.box-wrapper': { backgroundColor: getColors(themeMode).background.default },
                     },
                     a: {
                         color: 'inherit',
                         textDecoration: 'none',
                     },
                     '.is-deleted-record': {
-                        backgroundColor: `${getColors(mode).palette.deleted} !important`,
+                        backgroundColor: `${getColors(themeMode).palette.deleted} !important`,
                         '&:hover': {
-                            backgroundColor: `${mode === ThemeMode.Light
-                                ? '#e04545'
-                                : '#FF7A7A'} !important`,
+                            backgroundColor: `${
+                                themeMode === ThemeMode.Light
+                                    ? '#e04545'
+                                    : '#FF7A7A'
+                            } !important`,
                         },
                     },
-                    '.is-visible-record': { backgroundColor: getColors(mode).palette.visible },
+                    '.is-visible-record': { backgroundColor: getColors(themeMode).palette.visible },
                     '::-webkit-scrollbar': {
                         width: '10px',
-                        backgroundColor: mode === ThemeMode.Light
+                        backgroundColor: themeMode === ThemeMode.Light
                             ? '#F0F0F0'
                             : '#2C2C2C',
                     },
@@ -102,12 +126,12 @@ const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = (prop
                         borderRadius: '10px',
                     },
                     '::-webkit-scrollbar-thumb': {
-                        background: mode === ThemeMode.Light
-                            ? '#7c7c7cbf '
+                        background: themeMode === ThemeMode.Light
+                            ? '#7c7c7cbf'
                             : '#555',
                         borderRadius: '10px',
                         '&:hover': {
-                            background: mode === ThemeMode.Light
+                            background: themeMode === ThemeMode.Light
                                 ? '#ccc'
                                 : '#777',
                         },
@@ -118,15 +142,28 @@ const AdministrationThemeProvider: FC<IAdministrationThemeProviderProps> = (prop
     });
 
     return (
-        <ThemeProvider theme={theme}>
-            {children}
-        </ThemeProvider>
+        <ThemeContext.Provider value={contextValue}>
+            <ThemeProvider theme={theme}>
+                {children}
+            </ThemeProvider>
+        </ThemeContext.Provider>
     );
+};
+
+const useAdministrationTheme = () => {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useAdministrationTheme must be used within a AdministrationThemeProvider');
+    }
+    return context;
 };
 
 export {
     isDeletedClassName,
     isVisibleClassName,
     getColors,
+    AdministrationThemeProvider,
+    useAdministrationTheme,
 };
+
 export default AdministrationThemeProvider;

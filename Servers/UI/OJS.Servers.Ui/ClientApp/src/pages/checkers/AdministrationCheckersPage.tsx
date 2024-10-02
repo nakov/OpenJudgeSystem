@@ -6,9 +6,8 @@ import CheckerForm from '../../components/administration/checkers/checker-form/C
 import CreateButton from '../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../components/administration/common/modals/administration-modal/AdministrationModal';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import { getColors } from '../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../hooks/use-administration-theme-provider';
 import { useDeleteCheckerMutation, useGetAllCheckersQuery, useLazyExportCheckersToExcelQuery } from '../../redux/services/admin/checkersAdminService';
-import { useAppSelector } from '../../redux/store';
 import { renderSuccessfullAlert } from '../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../administration-new/AdministrationGridView';
@@ -20,7 +19,7 @@ const AdministrationCheckersPage = () => {
 
     // eslint-disable-next-line max-len
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd, searchParams));
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ openEditModal, setOpenEditModal ] = useState(false);
     const [ checkerId, setCheckerId ] = useState<number | null>(null);
