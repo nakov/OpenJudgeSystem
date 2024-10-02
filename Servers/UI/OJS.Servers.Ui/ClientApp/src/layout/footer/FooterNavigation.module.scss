@@ -8,9 +8,10 @@
 
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
   margin: 0 auto;
-  padding: 60px 0;
+  padding: 30px 0;
 }
 
 .footerLogo {
@@ -19,16 +20,12 @@
 }
 
 .systemInfoAndLinksContainer {
-  align-content: flex-start;
-  align-items: flex-start;
+  align-content: center;
+  align-items: center;
   display: flex;
   flex-direction: row;
   gap: 30px;
-  justify-content: flex-start;
-}
-
-.systemInfo {
-  // body
+  place-content: center;
 }
 
 .links {
