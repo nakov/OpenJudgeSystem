@@ -51,7 +51,7 @@
                             <a href="@ContestsHelper.GetUrl(contest.Id, contest.Name)">@contest.Name</a>
                             @if (User.IsAdmin() && contest.ImportedOn != null)
                             {
-                                var importDate = contest.ImportedOn.Value.ToString("dd.MM.yyyy");
+                                var importDate = contest.ImportedOn.Value.ToString("dd.MM.yyyy HH:mm");
                                 var importFrom = contest.ImportedFromUrl?.Substring(contest.ImportedFromUrl.IndexOf('/') + 2);
                                 <p class="text-muted h6">imported on @importDate from @importFrom</p>
                             }
