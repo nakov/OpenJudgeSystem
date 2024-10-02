@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAdministrationTheme } from 'src/hooks/use-administration-theme-provider';
 
 import { ThemeMode } from '../../../common/enums';
 import { ISubmissionTypeInSubmissionDocumentInViewModel } from '../../../common/types';
@@ -8,14 +9,13 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import {
     useGetAllSubmissionTypesInSubmissionDocumentsByMultipleSubmissionTypeIdsQuery,
 } from '../../../redux/services/admin/submissionTypesInSubmissionDocumentsAdminService';
-import { useAppSelector } from '../../../redux/store';
 
 import styles from './AdministrationSubmissionTypeDocumentViewPage.module.scss';
 
 const AdministrationSubmissionTypeDocumentViewPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const currentThemeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
 
     const queryParams = new URLSearchParams(location.search);
 
@@ -39,7 +39,7 @@ const AdministrationSubmissionTypeDocumentViewPage = () => {
     }
 
     return (
-        <div className={`${styles.container} ${currentThemeMode === ThemeMode.Dark
+        <div className={`${styles.container} ${themeMode === ThemeMode.Dark
             ? styles.dark
             : styles.light}`}
         >
@@ -64,7 +64,7 @@ const AdministrationSubmissionTypeDocumentViewPage = () => {
                         <div className={styles.entityContainer}>
                             <h2 className={styles.title}>{submissionType.submissionTypeDocumentTitle}</h2>
                             <div
-                              className={`ql-editor ${currentThemeMode === ThemeMode.Dark
+                              className={`ql-editor ${themeMode === ThemeMode.Dark
                                   ? 'quill-dark-theme'
                                   : 'quill-light-theme'} ${styles.content}`}
                               dangerouslySetInnerHTML={{ __html: submissionType.submissionTypeDocumentContent }}
