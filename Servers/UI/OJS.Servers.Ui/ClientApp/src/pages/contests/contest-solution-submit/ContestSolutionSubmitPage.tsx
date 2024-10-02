@@ -445,7 +445,7 @@ const ContestSolutionSubmitPage = () => {
         const tLimit = !isNil(selectedSubmissionType?.timeLimit)
             ? selectedSubmissionType?.timeLimit
             : timeLimit;
-        
+
         const mLimit = !isNil(selectedSubmissionType?.memoryLimit)
             ? selectedSubmissionType?.memoryLimit
             : memoryLimit;
