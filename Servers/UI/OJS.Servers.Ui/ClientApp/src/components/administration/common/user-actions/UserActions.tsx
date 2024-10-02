@@ -13,7 +13,7 @@ import styles from './UserActions.module.scss';
 interface IUserActionsProps {
     isDropdown: boolean;
     handleThemeChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    currentThemeMode: ThemeMode;
+    themeMode: ThemeMode;
     showMenu: boolean;
     setShowMenu: (show: boolean) => void;
     iconButtonRef: React.RefObject<HTMLButtonElement>;
@@ -69,7 +69,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 const UserActions: FC<IUserActionsProps> = ({
     isDropdown,
     handleThemeChange,
-    currentThemeMode,
+    themeMode,
     showMenu,
     setShowMenu,
     iconButtonRef,
@@ -97,7 +97,7 @@ const UserActions: FC<IUserActionsProps> = ({
               control={(
                   <MaterialUISwitch
                     onChange={handleThemeChange}
-                    checked={currentThemeMode === ThemeMode.Light}
+                    checked={themeMode === ThemeMode.Light}
                   />
                   )}
               label=""
@@ -151,7 +151,7 @@ const UserActions: FC<IUserActionsProps> = ({
                           control={(
                               <MaterialUISwitch
                                 onChange={handleThemeChange}
-                                checked={currentThemeMode === ThemeMode.Light}
+                                checked={themeMode === ThemeMode.Light}
                               />
                             )}
                           label="Theme"

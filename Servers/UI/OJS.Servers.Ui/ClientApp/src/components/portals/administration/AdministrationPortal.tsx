@@ -563,7 +563,7 @@ const AdministrationPortal = () => {
                             <UserActions
                               isDropdown={!open}
                               handleThemeChange={handleThemeChange}
-                              currentThemeMode={currentThemeMode}
+                              themeMode={themeMode}
                               showMenu={showMenu}
                               setShowMenu={setShowMenu}
                               iconButtonRef={iconButtonRef}
