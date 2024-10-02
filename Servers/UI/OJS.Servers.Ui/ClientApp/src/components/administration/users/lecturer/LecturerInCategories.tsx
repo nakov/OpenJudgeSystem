@@ -43,6 +43,7 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
 
     const {
         refetch,
+        isFetching,
         data,
         isLoading,
         error,
@@ -93,14 +94,10 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
             if (isSuccessfullyRemoved) {
                 resetRemove();
             }
+
+            refetch();
         },
     });
-
-    useEffect(() => {
-        if (isSuccessfullyRemoved || isSuccessfullyAdded) {
-            refetch();
-        }
-    }, [ isSuccessfullyAdded, isSuccessfullyRemoved, refetch ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ addError, removeError ], setErrorMessages);
@@ -163,7 +160,7 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
         />
     );
 
-    if (isLoading || isAdding || isRemoving) {
+    if (isLoading || (isFetching && !showConfirmDialog)) {
         return <SpinningLoader />;
     }
 

@@ -226,27 +226,12 @@ namespace OJS.Services.Administration.Business.Submissions
                 throw new BusinessServiceException($"Submission with Id:{id} not found.");
             }
 
-            var submissionProblemId = submission.ProblemId;
-            var submissionParticipantId = submission.ParticipantId;
-
             await this.transactions.ExecuteInTransaction(async () =>
             {
                 await this.testRunsData.DeleteBySubmission(submission.Id);
                 await this.submissionsData.DeleteById(submission.Id);
                 await this.submissionsData.SaveChanges();
                 await this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
-
-                var isBestSubmission = await this.IsBestSubmission(
-                    submissionProblemId,
-                    submissionParticipantId,
-                    submission.Id);
-
-                if (isBestSubmission)
-                {
-                    await this.participantScoresBusiness.RecalculateForParticipantByProblem(
-                        submission.ParticipantId,
-                        submission.ProblemId);
-                }
             });
         }
 

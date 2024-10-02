@@ -73,6 +73,7 @@ export const returnNonFilterableColumns = (onSuccessfulDelete: () => void) => [
         field: 'actions',
         headerName: 'Actions',
         flex: 1,
+        minWidth: 150,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

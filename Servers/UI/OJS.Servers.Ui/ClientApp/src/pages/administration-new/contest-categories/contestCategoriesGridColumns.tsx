@@ -121,7 +121,8 @@ export const returnCategoriesNonFilterableColumns = (onEditClick: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
+        minWidth: 100,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

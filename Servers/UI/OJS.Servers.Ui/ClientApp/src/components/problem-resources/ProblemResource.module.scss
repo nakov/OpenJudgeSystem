@@ -12,12 +12,10 @@
   }
 
   &:hover {
-      text-decoration: underline !important;
+    text-decoration: underline !important;
   }
-
-  &:not(:first-child) {
-    margin-left: spacings.$sp-12;
-  }
+  
+  margin-left: spacings.$sp-12;
 }
 
 .problemResourceIndicator {
