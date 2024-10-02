@@ -104,6 +104,7 @@ const ContestSolutionSubmitPage = () => {
         getSubmissionsData, {
             data: submissionsData,
             isError: submissionsError,
+            error: submissionsErrorData,
             isLoading: submissionsDataLoading,
             isFetching: submissionsDataFetching,
         },
@@ -779,7 +780,7 @@ const ContestSolutionSubmitPage = () => {
                     </Tooltip>
                 </div>
                 { submissionsError
-                    ? <>Error loading submissions</>
+                    ? getErrorMessage(submissionsErrorData, 'Error loading submissions')
                     : (
                         <SubmissionsGrid
                           isDataLoaded={!submissionsDataLoading}
