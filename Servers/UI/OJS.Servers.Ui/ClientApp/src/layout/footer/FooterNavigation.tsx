@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 import logo from '../../assets/softuni-logo-horizontal-white.svg';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-import GithubIcon from '../../components/guidelines/icons/GitHubIcon';
 
 import styles from './FooterNavigation.module.scss';
 
 const FooterNavigation = () => {
     const renderSystemInfoAndLinksSection = useCallback(() => (
         <div className={styles.systemInfoAndLinksContainer}>
-            <span className={styles.systemInfo}>
+            <span>
                 © 2011 -
                 {' '}
                 {new Date().getFullYear()}
@@ -22,7 +22,7 @@ const FooterNavigation = () => {
                   type={LinkButtonType.plain}
                   isToExternal
                 >
-                    <GithubIcon />
+                    <GitHubIcon />
                 </LinkButton>
             </span>
         </div>
