@@ -55,10 +55,10 @@
                     opt => opt.MapFrom(s => s.SubmissionType.IsSelectedByDefault))
                 .ForMember(
                     d => d.TimeLimit,
-                    opt => opt.MapFrom(s => s.TimeLimit != null ? (double?)s.TimeLimit / 1000 : null))
+                    opt => opt.MapFrom(s => s.TimeLimit != null ? (double?)s.TimeLimit : null))
                 .ForMember(
                     d => d.MemoryLimit,
-                    opt => opt.MapFrom(s => s.MemoryLimit != null ? (double?)s.MemoryLimit / 1024 / 1024 : null))
+                    opt => opt.MapFrom(s => s.MemoryLimit != null ? (double?)s.MemoryLimit : null))
                 .ForMember(
                     d => d.AllowedFileExtensions,
                     opt => opt.MapFrom(s =>

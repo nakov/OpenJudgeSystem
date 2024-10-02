@@ -442,6 +442,14 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
 
+        const tLimit = !isNil(selectedSubmissionType?.timeLimit)
+            ? selectedSubmissionType?.timeLimit
+            : timeLimit;
+        
+        const mLimit = !isNil(selectedSubmissionType?.memoryLimit)
+            ? selectedSubmissionType?.memoryLimit
+            : memoryLimit;
+
         // eslint-disable-next-line consistent-return
         return (
             <div className={styles.problemParametersWrapper}>
@@ -468,9 +476,9 @@ const ContestSolutionSubmitPage = () => {
                             <span className={styles.title}>Allowed working time:</span>
                             {' '}
                             <span>
-                                {isNil(selectedSubmissionType?.timeLimit)
-                                    ? timeLimit
-                                    : selectedSubmissionType?.timeLimit}
+                                {tLimit
+                                    ? (tLimit / 1000).toFixed(2)
+                                    : 0}
                             </span>
                             {' '}
                             sec
@@ -479,9 +487,9 @@ const ContestSolutionSubmitPage = () => {
                             <span className={styles.title}>Allowed memory:</span>
                             {' '}
                             <span>
-                                {isNil(selectedSubmissionType?.memoryLimit)
-                                    ? memoryLimit
-                                    : selectedSubmissionType?.memoryLimit}
+                                {mLimit
+                                    ? (mLimit / 1024 / 1024).toFixed(2)
+                                    : 0 }
                             </span>
                             {' '}
                             MB

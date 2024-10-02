@@ -79,7 +79,7 @@
                     opt => opt.MapFrom(s => 0))
                 .ForMember(
                     d => d.MemoryLimit,
-                    opt => opt.MapFrom(s => (double?)s.MemoryLimit / 1024 / 1024))
+                    opt => opt.MapFrom(s => (double?)s.MemoryLimit))
                 .ForMember(
                     d => d.OrderBy,
                     opt => opt.MapFrom(s => (int)s.OrderBy))
@@ -88,6 +88,6 @@
                     opt => opt.MapFrom(s => s.Resources.OrderBy(x => x.OrderBy)))
                 .ForMember(
                     d => d.TimeLimit,
-                    opt => opt.MapFrom(s => (double?)s.TimeLimit / 1000));
+                    opt => opt.MapFrom(s => (double?)s.TimeLimit));
     }
 }
