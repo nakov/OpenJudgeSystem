@@ -162,7 +162,8 @@ const PageHeader = () => {
                 <div className={styles.navButtons}>
                     <Link to={getAllContestsPageUrl({})} className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                    <AdministrationMenu buttonType={AdministrationMenuButtonType.text} isUsedInPageHeader />
+                    { user.canAccessAdministration &&
+                        (<AdministrationMenu buttonType={AdministrationMenuButtonType.text} isUsedInPageHeader />)}
                 </div>
             </div>
             <div className={`${styles.authButtons} ${isThemeSwitchVisible

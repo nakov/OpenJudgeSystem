@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { GoGear } from 'react-icons/go';
 import { IoIosArrowDown } from 'react-icons/io';
 import isNilOrEmpty from 'src/utils/check-utils';
@@ -37,7 +37,8 @@ interface IAdministrationMenuItem {
 
 interface IAdministrationMenuProps {
     buttonType: AdministrationMenuButtonType;
-    /* If no value is provided, default full menu items is rendered based on user role */
+    /* If no value is provided, default full menu items is rendered based on user role
+    *  If items is array of arrays, menu items are rendered in sections */
     items?: IAdministrationMenuItem[] | IAdministrationMenuItem[][];
     /* Adds margin to align with header */
     isUsedInPageHeader?: boolean;
@@ -97,79 +98,73 @@ const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: I
         </>
     ), [ onClickNavigate, user ]);
 
-    useEffect(() => {
-        console.log(isMenuVisible);
-    }, [ isMenuVisible ]);
-
-    return user.canAccessAdministration
-        ? (
-            <div
-              className={styles.adminMenuContainer}
-              onMouseOver={handleMouseEnter}
-              onMouseOut={handleMouseLeave}
-              onBlur={() => {}}
-              onFocus={() => {}}
+    return (
+        <div
+          className={styles.adminMenuContainer}
+          onMouseOver={handleMouseEnter}
+          onMouseOut={handleMouseLeave}
+          onBlur={() => {}}
+          onFocus={() => {}}
+        >
+            <Button
+              onClick={() => {
+                  setMenuVisible(false);
+                  navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}`);
+              }}
+              type={ButtonType.plain}
+              internalClassName={styles.menuButton}
             >
-                <Button
-                  onClick={() => {
-                      setMenuVisible(false);
-                      navigateInNewWindow(`/${NEW_ADMINISTRATION_PATH}`);
-                  }}
-                  type={ButtonType.plain}
-                  internalClassName={styles.menuButton}
-                >
-                    {buttonType === AdministrationMenuButtonType.text
-                        ? (
-                            <>
-                                Administration
-                                <IoIosArrowDown />
-                            </>
-                        )
-                        : (<GoGear />)}
-                </Button>
+                {buttonType === AdministrationMenuButtonType.text
+                    ? (
+                        <>
+                            Administration
+                            <IoIosArrowDown />
+                        </>
+                    )
+                    : (<GoGear />)}
+            </Button>
 
-                {/* Transparent spacer to cover the gap */}
-                {isMenuVisible && <div className={styles.spacer} />}
+            {/* Transparent spacer to cover the gap */}
+            {isMenuVisible && <div className={styles.spacer} />}
 
-                {isMenuVisible && (
-                    <div
-                      className={concatClassNames(
-                          styles.dropdownMenu,
-                          isUsedInPageHeader
-                              ? styles.dropdownMenuInHeader
-                              : '',
-                          getColorClassName(themeColors.textColor),
-                          getColorClassName(themeColors.baseColor200),
-                      )}
-                    >
-                        { isNilOrEmpty(items)
-                            ? renderDefaultMenuItems()
-                            : Array.isArray(items?.[0])
-                                // Render sections if items is an array of arrays
-                                ? (items as IAdministrationMenuItem[][]).map((section, sectionIndex) => (
-                                    <div key={sectionIndex} className={styles.menuSection}>
-                                        {section.map((menuItem, itemIndex) => (
-                                            <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
-                                                {menuItem.text}
-                                            </span>
-                                        ))}
-                                    </div>
-                                ))
-                                // Render individual spans if items is a flat array or not provided
-                                : (
-                                    <div key={1} className={styles.menuSection}>
-                                        {(items as IAdministrationMenuItem[] || []).map((menuItem, itemIndex) => (
-                                            <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
-                                                {menuItem.text}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                    </div>
-                )}
+            {isMenuVisible && (
+            <div
+              className={concatClassNames(
+                  styles.dropdownMenu,
+                  isUsedInPageHeader
+                      ? styles.dropdownMenuInHeader
+                      : '',
+                  getColorClassName(themeColors.textColor),
+                  getColorClassName(themeColors.baseColor200),
+              )}
+            >
+                { isNilOrEmpty(items)
+                    ? renderDefaultMenuItems()
+                    : Array.isArray(items?.[0])
+                    // Render sections if items is an array of arrays
+                        ? (items as IAdministrationMenuItem[][]).map((section, sectionIndex) => (
+                            <div key={sectionIndex} className={styles.menuSection}>
+                                {section.map((menuItem, itemIndex) => (
+                                    <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
+                                        {menuItem.text}
+                                    </span>
+                                ))}
+                            </div>
+                        ))
+                    // Render individual spans if items is a flat array or not provided
+                        : (
+                            <div key={1} className={styles.menuSection}>
+                                {(items as IAdministrationMenuItem[] || []).map((menuItem, itemIndex) => (
+                                    <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
+                                        {menuItem.text}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
             </div>
-        )
-        : null;
+            )}
+        </div>
+    );
 };
 
 export default AdministrationMenu;
