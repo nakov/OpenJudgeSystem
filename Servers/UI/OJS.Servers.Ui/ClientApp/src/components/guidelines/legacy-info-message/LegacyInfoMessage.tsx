@@ -1,3 +1,5 @@
+import concatClassNames from 'src/utils/class-names';
+
 import useTheme from '../../../hooks/use-theme';
 import AlertBox, { AlertBoxType } from '../alert-box/AlertBox';
 import { ButtonSize, LinkButton, LinkButtonType } from '../buttons/Button';
@@ -5,7 +7,7 @@ import { ButtonSize, LinkButton, LinkButtonType } from '../buttons/Button';
 import styles from './LegacyInfoMessage.module.scss';
 
 const LegacyInfoMessage = () => {
-    const { getColorClassName, themeColors } = useTheme();
+    const { getColorClassName, themeColors, isDarkMode } = useTheme();
 
     const getLegacySubmissionsInfoMessage = () => (
         <p className={getColorClassName(themeColors.textColor)}>
@@ -24,11 +26,15 @@ const LegacyInfoMessage = () => {
         </p>
     );
 
+    const className = concatClassNames(styles.legacyInfoMessage, isDarkMode
+        ? ''
+        : styles.lightLegacyInfoMessage);
+
     return (
         <AlertBox
           type={AlertBoxType.info}
           isClosable={false}
-          className={styles.legacyInfoMessage}
+          className={className}
           message={getLegacySubmissionsInfoMessage()}
         />
     );

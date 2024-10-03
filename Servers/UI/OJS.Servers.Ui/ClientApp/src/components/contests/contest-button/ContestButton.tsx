@@ -58,7 +58,7 @@ const ContestButton = (props: IContestButtonProps) => {
           size={ButtonSize.small}
           isCompete={isCompete}
           onClick={onButtonClick}
-          className={isUserAdminOrLecturer && isDisabled
+          internalClassName={isUserAdminOrLecturer && isDisabled
               ? isDarkMode
                   ? styles.adminDisabledDark
                   : styles.adminDisabledLight

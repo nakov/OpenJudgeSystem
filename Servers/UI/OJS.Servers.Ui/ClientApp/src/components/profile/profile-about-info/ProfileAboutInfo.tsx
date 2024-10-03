@@ -18,7 +18,7 @@ interface IProfileAboutInfoProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProfileOwner } : IProfileAboutInfoProps) => {
-    const { themeColors, getColorClassName } = useTheme();
+    const { themeColors, getColorClassName, isDarkMode } = useTheme();
 
     const firstNameOrLastNameHaveValue = !isNilOrEmpty(userProfile.firstName) || !isNilOrEmpty(userProfile.lastName);
 
@@ -28,7 +28,13 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProf
     );
 
     return (
-        <div className={styles.profileAbout}>
+        <div className={concatClassNames(
+            styles.profileAbout,
+            isDarkMode
+                ? getColorClassName(themeColors.baseColor200)
+                : [ getColorClassName(themeColors.baseColor100), styles.lightAboutInfo ],
+        )}
+        >
             <div className={aboutInfoClassName}>
                 <div className={styles.profileAboutInfoGroupControl}>
                     <span className={styles.profileAboutInfoLabel}>Username:</span>
