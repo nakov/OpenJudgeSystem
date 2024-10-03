@@ -101,6 +101,8 @@
         public const int ContestQuestionAnswerMaxLength = 100;
         public const int ContestQuestionAnswerMinLength = 1;
 
+        public const int ContestImportedFromUrlMaxLength = 200;
+
         // ExamGroup Constants
         public const int ExamGroupNameMinLength = 2;
         public const int ExamGroupNameMaxLength = 600;

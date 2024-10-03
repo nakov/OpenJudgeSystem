@@ -73,8 +73,10 @@
                     }
                     else
                     {
-                        externalDataResult.ErrorMessage = response.Content.ReadAsStringAsync().Result
-                            ?? ErrorInConnectingToTheRemoteServerMessage;
+                        var errorMessage = response.Content.ReadAsStringAsync().Result;
+                        externalDataResult.ErrorMessage = string.IsNullOrWhiteSpace(errorMessage)
+                            ? ErrorInConnectingToTheRemoteServerMessage
+                            : errorMessage;
                     }
                 }
                 catch(Exception ex)
@@ -114,8 +116,10 @@
                     }
                     else
                     {
-                        externalDataResult.ErrorMessage = await response.Content.ReadAsStringAsync()
-                            ?? ErrorInConnectingToTheRemoteServerMessage;
+                        var errorMessage = await response.Content.ReadAsStringAsync();
+                        externalDataResult.ErrorMessage = string.IsNullOrWhiteSpace(errorMessage)
+                            ? ErrorInConnectingToTheRemoteServerMessage
+                            : errorMessage;
                     }
                 }
                 catch(Exception ex)

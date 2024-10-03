@@ -138,9 +138,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\ContestCategories\ContestCategoriesImportService.cs" />
+    <Compile Include="Business\ContestCategories\IContestCategoriesImportService.cs" />
     <Compile Include="Business\Contests\ContestsBusinessService.cs" />
+    <Compile Include="Business\Contests\ContestsImportService.cs" />
     <Compile Include="Business\Contests\IContestsBusinessService.cs" />
+    <Compile Include="Business\Contests\IContestsImportService.cs" />
     <Compile Include="Business\Contests\Models\BaseContestBusinessModel.cs" />
+    <Compile Include="Business\Contests\Models\ContestImportResult.cs" />
     <Compile Include="Business\Contests\Models\JudgeWorkLoadResults.cs" />
     <Compile Include="Business\Contests\Models\SubmissionRunTimeCalculationModel.cs" />
     <Compile Include="Business\ExamGroups\ExamGroupsBusinessService.cs" />

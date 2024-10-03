@@ -1,0 +1,110 @@
+@model OJS.Web.Areas.Administration.ViewModels.ContestCategory.ImportContestsViewModel
+
+@using Resource = Resources.Areas.Administration.ContestCategories.Views.ContestCategoriesViews;
+
+@{
+    ViewBag.Title = $"{Resource.Import_contests_page_title} {Model.CategoryName}";
+}
+
+<h1>@ViewBag.Title</h1>
+<hr/>
+
+<div id="import-form" class="container">
+    @using (Html.BeginForm("ImportContests", "ContestCategories", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.CategoryId)
+        @Html.HiddenFor(model => model.CategoryName)
+
+        <fieldset>
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.OjsPlatformUrl)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-5">
+                    @Html.EditorFor(m => m.OjsPlatformUrl, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary"
+                          title="The url of the OJS platform from which to import the contests"
+                          data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.OjsPlatformUrl)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.ContestIdsToImport)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-5">
+                    @Html.EditorFor(m => m.ContestIdsToImport, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary"
+                          title="The IDs of the contests to import from the given OJS platform, separated by comma or space"
+                          data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.ContestIdsToImport)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.ApiKey)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-5">
+                    @Html.EditorFor(m => m.ApiKey, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary"
+                          title="The API key for the OJS Platform. You must have the necessary permissions to access the contests."
+                          data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.ApiKey)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-5">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.ReplaceExistingContests)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-3">
+                    @Html.EditorFor(m => m.ReplaceExistingContests, new { htmlAttributes = new { disabled = "disabled" } })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary"
+                          title="If checked and a contest with the same Name already exists in the category, it's data will be replaced with the imported data, otherwise new contests will be created"
+                          data-tooltip="true"></span>
+                </div>
+            </div>
+        </fieldset>
+        <hr />
+        <div class="row">
+            <div class="editor-label col-xs-3">
+                <button type="submit" class="btn btn-primary pull-right" id="import-button">Import</button>
+            </div>
+            <div class="editor-label col-xs-4">
+                <a href="@ViewBag.ReturnUrl" class="btn btn-primary">Back</a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        document.getElementById("import-button").addEventListener("click", function(event) {
+            const confirmation = confirm("Are you sure you want to import the contests?");
+            if (!confirmation) {
+                // Prevent form submission if the user cancels
+                event.preventDefault();
+            }
+        });
+    </script>
+}

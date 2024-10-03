@@ -4,7 +4,7 @@
     using System.Web.Mvc;
     using OJS.Common.Constants;
     using OJS.Services.Cache;
-    using OJS.Web.Areas.Administration.ViewModels.Contest;
+    using OJS.Services.Data.Contests;
     using OJS.Web.Infrastructure.Filters.Attributes;
     using OJS.Web.Infrastructure.Filters.Contracts;
 
@@ -14,10 +14,14 @@
     public class ClearContestFromProblemFilter : IActionFilter<ClearContestFromProblemAttribute>
     {
         private readonly ICacheService cacheService;
+        private readonly IContestsDataService contestsData;
 
-        public ClearContestFromProblemFilter(ICacheService cacheService)
+        public ClearContestFromProblemFilter(
+            ICacheService cacheService,
+            IContestsDataService contestsData)
         {
             this.cacheService = cacheService;
+            this.contestsData = contestsData;
         }
 
         public void OnActionExecuted(ClearContestFromProblemAttribute attribute, ActionExecutedContext filterContext)
@@ -35,6 +39,7 @@
             }
 
             this.cacheService.Remove(string.Format(CacheConstants.ContestView, contestId));
+            this.contestsData.ClearImportMetadata(int.Parse(contestId));
         }
     }
 }

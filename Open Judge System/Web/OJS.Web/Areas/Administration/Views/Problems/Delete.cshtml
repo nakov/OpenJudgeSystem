@@ -33,7 +33,7 @@
             @Model.OrderBy
         </div>
         <br />
-
+        <input type="hidden" name="ContestId" value=@Model.ContestId />
         <input type="submit" class="btn btn-primary" value="@Resource.Delete" />
         @(Html.ActionLink<ProblemsController>(Resource.Back, c => c.Index(Model.ContestId), null, new { @class = "btn btn-primary" }))
     }

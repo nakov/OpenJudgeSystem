@@ -65,7 +65,7 @@
                 throw new HttpException((int)HttpStatusCode.NotFound, Resource.Category_not_found);
             }
 
-            if (id.HasValue && this.contestCategoriesData.HasContestsById(id.Value))
+            if (id.HasValue && (contestCategory.SubCategories.Count() == 0 || this.contestCategoriesData.HasContestsById(id.Value)))
             {
                 page = page ?? 1;
 

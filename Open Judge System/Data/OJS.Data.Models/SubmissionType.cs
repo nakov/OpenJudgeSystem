@@ -51,6 +51,11 @@
         {
             get
             {
+                if (this.AllowedFileExtensions == null)
+                {
+                    return Array.Empty<string>();
+                }
+
                 var list =
                     this.AllowedFileExtensions.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(x => x.Trim());

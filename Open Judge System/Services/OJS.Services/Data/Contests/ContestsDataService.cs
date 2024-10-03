@@ -160,6 +160,13 @@
             this.contests.SaveChanges();
         }
 
+        public void ClearImportMetadata(int id)
+        {
+            var contest = this.contests.GetById(id);
+            contest?.ClearImportMetadata();
+            this.contests.SaveChanges();
+        }
+
         private int GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter) =>
             this.GetByIdQuery(id)
                 .Select(c => c.ProblemGroups

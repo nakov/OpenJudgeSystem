@@ -19,13 +19,24 @@
 
         @if (Model.Id != default(int) && Model.IsUserLecturerInContestCategory && !Model.SubCategories.Any())
         {
-            <div class="col-xs-6 pull-right">
+            <div class="col-xs-2 pull-right">
                 @(Html.ActionLink<ContestsController>(
                     Resource.Create_contest,
                     c => c.Create(Model.Id),
                     null,
                     new { @class = "btn btn-sm btn-primary pull-right top-buffer-lg" }))
             </div>
+
+            if (User.IsAdmin())
+            {
+                <div class="col-xs-2 pull-right no-padding-right">
+                    @(Html.ActionLink<ContestCategoriesController>(
+                        Resource.Import_contests,
+                        c => c.ImportContests(Model.Id),
+                        null,
+                        new { @class = "btn btn-sm btn-primary pull-right top-buffer-lg" }))
+                </div>
+            }
         }
     </div>
 
@@ -38,6 +49,12 @@
                     <tr>
                         <td>
                             <a href="@ContestsHelper.GetUrl(contest.Id, contest.Name)">@contest.Name</a>
+                            @if (User.IsAdmin() && contest.ImportedOn != null)
+                            {
+                                var importDate = contest.ImportedOn.Value.ToString("dd.MM.yyyy HH:mm");
+                                var importFrom = contest.ImportedFromUrl?.Substring(contest.ImportedFromUrl.IndexOf('/') + 2);
+                                <p class="text-muted h6">imported on @importDate from @importFrom</p>
+                            }
                         </td>
                         @if (contest.CanBePracticed && contest.CanBeCompeted && contest.OfficialParticipants > 0)
                         {
@@ -166,8 +183,8 @@
                                 @if (contest.OfficialParticipants > 0 && !contest.CanBeCompeted)
                                 {
                                     <a href="@(Url.Action<ContestsController>(c =>
-                                          c.TransferParticipants(contest.Id, null),
-                                          new {returnUrl = Request.Url?.AbsolutePath, area = GlobalConstants.AdministrationAreaName}))">
+                                                     c.TransferParticipants(contest.Id, null),
+                                                 new {returnUrl = Request.Url?.AbsolutePath, area = GlobalConstants.AdministrationAreaName}))">
 
                                         <span class='glyphicon glyphicon-transfer text-primary' title=@Resource.Transfer></span>
                                     </a>
