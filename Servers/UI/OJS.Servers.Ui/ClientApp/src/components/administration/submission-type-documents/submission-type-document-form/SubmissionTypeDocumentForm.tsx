@@ -5,6 +5,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Autocomplete, FormControl, FormGroup, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import Quill from 'quill';
+import { useAdministrationTheme } from 'src/hooks/use-administration-theme-provider';
 
 import { ThemeMode } from '../../../../common/enums';
 import { ORDER_BY, SUBMISSION_TYPES, TITLE } from '../../../../common/labels';
@@ -26,7 +27,6 @@ import {
     useUpdateSubmissionTypeDocumentMutation,
 } from '../../../../redux/services/admin/submissionTypeDocumentsAdminService';
 import { useGetForDocumentQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import clearSuccessMessages from '../../../../utils/success-messages-utils';
@@ -45,7 +45,8 @@ interface ISubmissionTypeDocumentFormProps {
 const SubmissionTypeDocumentForm = (props: ISubmissionTypeDocumentFormProps) => {
     const navigate = useNavigate();
     const { isEditMode, id } = props;
-    const theme = useAppSelector((x) => x.theme.administrationMode) === ThemeMode.Dark
+    const { themeMode } = useAdministrationTheme();
+    const theme = themeMode === ThemeMode.Dark
         ? 'quill-dark-theme'
         : 'quill-light-theme';
 

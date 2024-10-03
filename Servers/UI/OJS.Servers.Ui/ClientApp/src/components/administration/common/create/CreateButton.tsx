@@ -5,8 +5,7 @@ import { IconButton, Tooltip } from '@mui/material';
 
 import { CREATE_NEW_RECORD } from '../../../../common/labels';
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../../../common/messages';
-import { getColors } from '../../../../hooks/use-administration-theme-provider';
-import { useAppSelector } from '../../../../redux/store';
+import { getColors, useAdministrationTheme } from '../../../../hooks/use-administration-theme-provider';
 
 interface ICreateButtonProps {
     showModal: boolean;
@@ -28,7 +27,7 @@ const CreateButton = (props: ICreateButtonProps) => {
         disabledMessage = ACTION_NOT_ALLOWED_MESSAGE,
     } = props;
 
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     return (
         <Tooltip title={disabled
             ? disabledMessage

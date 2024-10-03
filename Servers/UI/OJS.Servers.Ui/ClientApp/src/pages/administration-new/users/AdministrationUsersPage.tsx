@@ -8,13 +8,12 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationGridDropdown
     from '../../../components/administration/common/administration-grid-dropdown/AdministrationGridDropdown';
-import LecturerActions from '../../../components/administration/common/lecturer-in-category-actions/LecturerActions';
+import LecturerActions from '../../../components/administration/common/lecturer-actions/LecturerActions';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import UserForm from '../../../components/administration/users/form/UserForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import { useGetAllUsersQuery, useLazyExportUsersToExcelQuery } from '../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
@@ -25,7 +24,7 @@ import styles from './AdministrationUsersPage.module.scss';
 
 const AdministrationUsersPage = () => {
     const [ searchParams ] = useSearchParams();
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
 
     const [ queryParams, setQueryParams ] =
         useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(

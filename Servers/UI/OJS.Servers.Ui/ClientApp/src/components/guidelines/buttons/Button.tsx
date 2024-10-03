@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { HTMLAttributeAnchorTarget, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -60,9 +60,10 @@ interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     preventScrollReset?: boolean;
     internalClassName?: string;
     onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+    target?: HTMLAttributeAnchorTarget;
 }
 
-const classNameToButonType = {
+const classNameToButtonType = {
     [ButtonType.primary]: styles.primary,
     [ButtonType.submit]: styles.primary,
     [ButtonType.secondary]: styles.secondary,
@@ -116,7 +117,7 @@ const Button = ({
     validateOnlyChildrenOrText(text, children);
     const { isDarkMode } = useTheme();
 
-    const { [type]: typeClassName } = classNameToButonType;
+    const { [type]: typeClassName } = classNameToButtonType;
 
     const { [size]: sizeClassName } = sizeToClassName;
 
@@ -185,6 +186,7 @@ const LinkButton = ({
     internalClassName = '',
     style,
     onClick,
+    target,
 }: ILinkButtonProps) => {
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
@@ -234,6 +236,7 @@ const LinkButton = ({
           preventScrollReset={preventScrollReset}
           style={style}
           onClick={onClick}
+          target={target}
         >
             {content}
         </Link>
