@@ -19,11 +19,12 @@ import {
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import ViewButton from '../../../components/administration/common/view/ViewButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import {
     useDeleteSubmissionTypeDocumentByIdAndSubmissionTypeIdMutation,
 } from '../../../redux/services/admin/submissionTypeDocumentsAdminService';
 
-const submissionTypeDocumentsFilterableColumns: GridColDef[] = [
+const submissionTypeDocumentsFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'submissionTypeDocumentId',
         headerName: SUBMISSION_TYPE_DOCUMENT_ID,
@@ -72,6 +73,7 @@ export const returnNonFilterableColumns = (onSuccessfulDelete: () => void) => [
         field: 'actions',
         headerName: 'Actions',
         flex: 1,
+        minWidth: 150,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

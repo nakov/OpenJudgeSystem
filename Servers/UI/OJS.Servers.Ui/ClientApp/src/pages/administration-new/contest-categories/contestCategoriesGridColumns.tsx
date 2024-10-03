@@ -5,10 +5,11 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteContestCategoryMutation } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
-const categoriesFilterableColumns: GridColDef[] = [
+const categoriesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -120,7 +121,8 @@ export const returnCategoriesNonFilterableColumns = (onEditClick: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
+        minWidth: 100,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

@@ -6,9 +6,10 @@ import { CREATED_ON, EDIT, MODIFIED_ON } from '../../../common/labels';
 import { NEW_ADMINISTRATION_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
-const usersFilterableColumns: GridColDef[] = [
+const usersFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -118,6 +119,7 @@ export const returnUsersNonFilterableColumns = (
         field: 'actions',
         headerName: 'Actions',
         flex: 1,
+        minWidth: 100,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

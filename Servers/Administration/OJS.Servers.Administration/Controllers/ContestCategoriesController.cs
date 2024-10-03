@@ -9,8 +9,8 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ContestCategories;
 using OJS.Services.Administration.Business.ContestCategories.GridData;
-using OJS.Services.Administration.Business.ContestCategories.Permissions;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
+using OJS.Services.Administration.Business.Users.Permissions;
 using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
@@ -44,6 +44,13 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
             .Where(x => !x.IsDeleted)
             .ToHashSet()
             .MapCollection<ContestCategoriesInContestView>());
+
+    [HttpGet]
+    [ProtectedEntityAction(nameof(userId), typeof(UserIdPermissionService))]
+    public async Task<IActionResult> GetForLecturerInContestCategory(string userId)
+        => await this.contestCategoriesBusinessService
+            .GetForLecturerInContestCategory(userId)
+            .ToOkResult();
 
     [HttpGet]
     [Authorize(Roles = GlobalConstants.Roles.Administrator)]

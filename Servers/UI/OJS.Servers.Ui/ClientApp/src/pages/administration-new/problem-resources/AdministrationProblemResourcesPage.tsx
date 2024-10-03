@@ -4,9 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemResourceForm from '../../../components/administration/problem-resources/problem-resource-form/ProblemResourceForm';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import { useGetAllAdminProblemResourcesQuery, useLazyExportProblemResourcesToExcelQuery } from '../../../redux/services/admin/problemResourcesAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
@@ -15,7 +14,7 @@ import problemResourceFilterableColumns, { returnProblemResourceNonFilterableCol
 
 const AdministrationProblemResourcesPage = () => {
     const [ searchParams ] = useSearchParams();
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemResourceId, setProblemResourceId ] = useState<number>(0);

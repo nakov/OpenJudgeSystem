@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Tree } from 'react-arborist';
 import { Typography } from '@mui/material';
+import { useAdministrationTheme } from 'src/hooks/use-administration-theme-provider';
 
 import { ThemeMode } from '../../../common/enums';
 import { AdjacencyList, IContestCategoryHierarchy, IContestCategoryHierarchyEdit } from '../../../common/types';
@@ -11,7 +12,6 @@ import {
     useEditContestCategoriesHierarchyMutation,
     useGetContestCategoriesHierarchyQuery,
 } from '../../../redux/services/admin/contestCategoriesAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
 import clearSuccessMessages from '../../../utils/success-messages-utils';
@@ -50,7 +50,7 @@ const AdministrationContestCategoriesHierarchy = () => {
     // A collection to store the updated nodes
     const updatedCategoriesAdjacencyList = useRef<AdjacencyList<string, IContestCategoryHierarchy>>({});
 
-    const isDarkTheme = useAppSelector((x) => x.theme.administrationMode) === ThemeMode.Dark;
+    const { themeMode } = useAdministrationTheme();
 
     useSuccessMessageEffect({
         data: [ { message: updateData, shouldGet: isSuccessfullyUpdated } ],
@@ -316,7 +316,7 @@ const AdministrationContestCategoriesHierarchy = () => {
         >
             {({ width, height }) => (
                 <div
-                  className={`${styles.treeContainer} ${isDarkTheme
+                  className={`${styles.treeContainer} ${themeMode === ThemeMode.Dark
                       ? styles.darkTheme
                       : styles.lightTheme}`}
                   style={{

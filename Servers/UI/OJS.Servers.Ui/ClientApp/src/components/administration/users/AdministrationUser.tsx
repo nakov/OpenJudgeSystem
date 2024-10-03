@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { LECTURER } from '../../../common/constants';
 import { IUserAdministrationModel } from '../../../common/types';
@@ -22,6 +23,7 @@ const AdministrationUser = () => {
     const [ , , , userId ] = pathname.split('/');
 
     const [ user, setUser ] = useState<IUserAdministrationModel | undefined>(undefined);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
     const [ tabName, setTabName ] = useState(USER_LISTED_DATA.LECTURER_IN_CONTESTS);
 
@@ -56,7 +58,11 @@ const AdministrationUser = () => {
         userData?.roles.find((x) => x.name === LECTURER)
             ? (
                 <div id={USER_LISTED_DATA.LECTURER_IN_CONTESTS}>
-                    <LecturerInContests key={key} userId={userData!.id} />
+                    <LecturerInContests
+                      key={key}
+                      userId={userData!.id}
+                      setParentSuccessMessage={setSuccessMessage}
+                    />
                 </div>
             )
             : (
@@ -69,7 +75,11 @@ const AdministrationUser = () => {
         userData?.roles.find((x) => x.name === LECTURER)
             ? (
                 <div id={USER_LISTED_DATA.LECTURER_IN_CATEGORIES}>
-                    <LecturerInCategories key={key} userId={userData!.id} />
+                    <LecturerInCategories
+                      key={key}
+                      userId={userData!.id}
+                      setParentSuccessMessage={setSuccessMessage}
+                    />
                 </div>
             )
             : (
@@ -83,23 +93,26 @@ const AdministrationUser = () => {
     }
 
     return (
-        <TabsInView
-          form={renderForm}
-          onTabChange={onTabChange}
-          tabName={tabName}
-          tabs={userData?.roles.find((x) => x.name === LECTURER) && [
-              {
-                  value: USER_LISTED_DATA.LECTURER_IN_CONTESTS,
-                  label: 'Lecturer in Contests',
-                  node: renderProblemsInContestView,
-              },
-              {
-                  value: USER_LISTED_DATA.LECTURER_IN_CATEGORIES,
-                  label: 'Lecturer in Categories',
-                  node: renderParticipantsInContestView,
-              },
-          ]}
-        />
+        <>
+            {renderSuccessfullAlert(successMessage)}
+            <TabsInView
+              form={renderForm}
+              onTabChange={onTabChange}
+              tabName={tabName}
+              tabs={userData?.roles.find((x) => x.name === LECTURER) && [
+                  {
+                      value: USER_LISTED_DATA.LECTURER_IN_CONTESTS,
+                      label: 'Lecturer in Contests',
+                      node: renderProblemsInContestView,
+                  },
+                  {
+                      value: USER_LISTED_DATA.LECTURER_IN_CATEGORIES,
+                      label: 'Lecturer in Categories',
+                      node: renderParticipantsInContestView,
+                  },
+              ]}
+            />
+        </>
     );
 };
 

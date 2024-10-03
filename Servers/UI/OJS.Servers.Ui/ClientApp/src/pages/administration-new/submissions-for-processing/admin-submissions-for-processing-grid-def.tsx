@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { adminFormatDate, adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
 
-const dataColumns: GridColDef[] = [
+const dataColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',

@@ -17,7 +17,8 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
     {
         await this.lecturerInContestsDataService.Add(new LecturerInContest
         {
-            ContestId = model.ContestId!, LecturerId = model.LecturerId!,
+            ContestId = model.ContestId!,
+            LecturerId = model.LecturerId!,
         });
 
         await this.lecturerInContestsDataService.SaveChanges();

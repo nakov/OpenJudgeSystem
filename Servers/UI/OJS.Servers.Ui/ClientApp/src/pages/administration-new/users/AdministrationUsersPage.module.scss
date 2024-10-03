@@ -1,0 +1,14 @@
+@use 'src/styles/colors';
+
+.icon {
+  color: colors.$primary-blue;
+  height: 35px !important;
+  width: 35px !important;
+}
+
+.button {
+  align-items: center !important;
+  display: flex !important;
+  font-size: 25px !important;
+  justify-content: center !important;
+}

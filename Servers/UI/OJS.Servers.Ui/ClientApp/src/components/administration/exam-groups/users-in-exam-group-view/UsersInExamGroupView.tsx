@@ -2,21 +2,21 @@
 import { useState } from 'react';
 import QueueIcon from '@mui/icons-material/Queue';
 import { IconButton, Tooltip } from '@mui/material';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridRenderCellParams } from '@mui/x-data-grid';
 
 import { DISABLED_USER_TO_EXAM_GROUP_BUTTON } from '../../../../common/messages';
 import { IGetAllAdminParams } from '../../../../common/types';
-import { getColors } from '../../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../../hooks/use-administration-theme-provider';
 import {
     applyDefaultFilterToQueryString,
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import { useDeleteUserFromExamGroupMutation } from '../../../../redux/services/admin/examGroupsAdminService';
 import { useGetByExamGroupIdQuery } from '../../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
+import { AdministrationGridColDef } from '../../utils/mui-utils';
 import AddBulkUsersInGroupModal from '../add-bulk-users-in-group-modal/AddBulkUserInGroupModal';
 import AddUserInExamGroupModal from '../add-user-in-group-modal/AddUserInGroupModal';
 import DeleteUserFromGroupButton from '../delete-user-from-group-button/DeleteUserFromGroupButton';
@@ -30,12 +30,12 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
     const { examGroupId, isAllowedToAddUsers } = props;
     // eslint-disable-next-line max-len
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const { refetch, data, error } = useGetByExamGroupIdQuery({ examGroupId: Number(examGroupId), ...queryParams });
     const [ openShowAddUserModal, setOpenShowAddUserModal ] = useState<boolean>(false);
     const [ openShowAddBulkUsersModal, setOpenShowAddBulkUsersModal ] = useState<boolean>(false);
 
-    const dataColumns: GridColDef[] = [
+    const dataColumns: AdministrationGridColDef[] = [
         {
             field: 'id',
             headerName: 'Id',
@@ -89,7 +89,7 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
         },
     ];
 
-    const notFilterableGridColumns: GridColDef[] = [
+    const notFilterableGridColumns: AdministrationGridColDef[] = [
         {
             field: 'actions',
             headerName: 'Actions',

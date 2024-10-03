@@ -4,12 +4,11 @@ import { useSearchParams } from 'react-router-dom';
 import { IGetAllAdminParams } from '../../../common/types';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import useSuccessMessageEffect from '../../../hooks/common/use-success-message-effect';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import { useDownloadFileSubmissionQuery,
     useGetAllSubmissionsQuery,
     useLazyExportSubmissionsToExcelQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
-import { useAppSelector } from '../../../redux/store';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
@@ -22,7 +21,7 @@ const AdministrationSubmissionsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ submissionToDownload, setSubmissionToDownload ] = useState<number | null>(null);
     const [ shouldSkipDownloadOfSubmission, setShouldSkipDownloadOfSubmission ] = useState<boolean>(true);
 

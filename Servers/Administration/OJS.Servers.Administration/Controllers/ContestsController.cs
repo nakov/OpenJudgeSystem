@@ -6,22 +6,25 @@ using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Contests;
 using OJS.Servers.Administration.Attributes;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.Contests.GridData;
 using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Business.Similarity;
+using OJS.Services.Administration.Business.Users.Permissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Excel;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Common.Models.Users;
-using OJS.Services.Administration.Models.Similarity;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Globalization;
+
 
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
@@ -60,7 +63,19 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     [ProtectedEntityAction(false)]
     public async Task<IActionResult> GetAllForProblem(string? searchString)
     {
-        var contests =
+        var contestsById = new List<ContestCopyProblemsValidationServiceModel>();
+        if (int.TryParse(searchString, out var contestId))
+        {
+            // If searchString is number, try to find contest by id and append it first in the result list
+            contestsById = await this.contestsData
+                .GetQueryForUser(
+                    this.User.Map<UserInfoModel>(),
+                    contest => contest.Id == contestId)
+                .MapCollection<ContestCopyProblemsValidationServiceModel>()
+                .ToListAsync();
+        }
+
+        var contestsByName =
             await this.contestsData
                 .GetQueryForUser(
                     this.User.Map<UserInfoModel>(),
@@ -68,8 +83,16 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
                 .MapCollection<ContestCopyProblemsValidationServiceModel>()
                 .Take(20)
                 .ToListAsync();
-        return this.Ok(contests);
+
+        return this.Ok(contestsById.Concat(contestsByName));
     }
+
+    [HttpGet]
+    [ProtectedEntityAction(nameof(userId), typeof(UserIdPermissionService))]
+    public async Task<IActionResult> GetForLecturerInContest(string userId)
+        => await this.contestsBusinessService
+            .GetForLecturerInContest(userId)
+            .ToOkResult();
 
     [HttpPost]
     [ProtectedEntityAction(false)]

@@ -39,7 +39,7 @@ public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplici
             .ForMember(
                 tam => tam.Type,
                 opt => opt.MapFrom(t
-                    => MapTestType(t.IsTrialTest, t.IsOpenTest)))
+                    => TestsMappingUtils.MapTestType(t.IsTrialTest, t.IsOpenTest)))
             .ForMember(t => t.OperationType, opt
                 => opt.Ignore())
             .ForMember(tam => tam.RetestProblem, op => op.Ignore());
@@ -66,11 +66,4 @@ public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplici
             .ForMember(
                 t => t.TestRuns, opt => opt.Ignore());
     }
-
-    private static string? MapTestType(bool isTrialTest, bool isOpenTest) =>
-        isOpenTest
-            ? TestTypeEnum.Open.ToString()
-            : isTrialTest
-                ? TestTypeEnum.Trial.ToString()
-                : TestTypeEnum.Standard.ToString();
 }

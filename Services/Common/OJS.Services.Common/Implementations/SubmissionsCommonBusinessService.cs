@@ -64,18 +64,18 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
 
     public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission, SubmissionForProcessing submissionForProcessing)
     {
-        DateTimeOffset enqueuedAt;
+        var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
+        var enqueuedAt = this.dates.GetUtcNowOffset();
 
         try
         {
-            var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
-            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.Publish(pubSubModel);
         }
         catch (Exception ex)
         {
-            this.logger.LogExceptionSubmittingSolution(submission.Id, ex);
-            throw;
+            // We log the exception and return. The submission will be retried later by the background job for Pending submissions.
+            this.logger.LogExceptionPublishingSubmission(submission.Id, ex);
+            return;
         }
 
         // We detach the entity to ensure we get fresh data from the database.
@@ -88,55 +88,28 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
             return;
         }
 
-        switch (freshSubmissionForProcessing.State)
-        {
-            case SubmissionProcessingState.Processed:
-                // Race condition can occur and the submission can already be marked as processed when we reach this point,
-                // but it is not a problem, as the submission is already picked up and there is no need to touch it anymore.
-                // We just log the event and update the enqueued time. The worker will do the rest.
-                this.logger.LogSubmissionAlreadyProcessed(submission.Id);
-                await this.UpdateEnqueuedTime(freshSubmissionForProcessing, enqueuedAt);
-                break;
-            case SubmissionProcessingState.Processing:
-                // Same as above, but for processing state.
-                this.logger.LogSubmissionAlreadyProcessing(submission.Id);
-                await this.UpdateEnqueuedTime(freshSubmissionForProcessing, enqueuedAt);
-                break;
-            case SubmissionProcessingState.Enqueued:
-            case SubmissionProcessingState.Pending:
-            case SubmissionProcessingState.Invalid:
-            default:
-                // Submission is not yet picked up for processing, so we mark it as enqueued.
-                await this.submissionForProcessingData.MarkEnqueued(freshSubmissionForProcessing, enqueuedAt);
-                break;
-        }
+        await this.submissionForProcessingData
+            .SetProcessingState(freshSubmissionForProcessing, SubmissionProcessingState.Enqueued, enqueuedAt);
     }
 
-    public async Task PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
+    public async Task<int> PublishSubmissionsForProcessing(ICollection<SubmissionServiceModel> submissions)
     {
-        DateTimeOffset enqueuedAt;
+        var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>().ToList();
+        var enqueuedAt = this.dates.GetUtcNowOffset();
 
         try
         {
-            var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>();
-            enqueuedAt = this.dates.GetUtcNowOffset();
             await this.publisher.PublishBatch(pubSubModels);
         }
         catch (Exception ex)
         {
-            this.logger.LogExceptionSubmittingSolutionsBatch(ex);
+            this.logger.LogExceptionPublishingSubmissionsBatch(ex);
             throw;
         }
 
         var submissionsIds = submissions.Select(s => s.Id).ToList();
 
         await this.submissionForProcessingData.MarkMultipleEnqueued(submissionsIds, enqueuedAt);
-    }
-
-    private async Task UpdateEnqueuedTime(SubmissionForProcessing freshSubmissionForProcessing, DateTimeOffset enqueuedAt)
-    {
-        freshSubmissionForProcessing.EnqueuedAt = enqueuedAt;
-        this.submissionForProcessingData.Update(freshSubmissionForProcessing);
-        await this.submissionForProcessingData.SaveChanges();
+        return pubSubModels.Count;
     }
 }

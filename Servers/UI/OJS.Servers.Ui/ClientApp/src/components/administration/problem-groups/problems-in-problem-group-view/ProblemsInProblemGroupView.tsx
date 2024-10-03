@@ -1,9 +1,8 @@
 import { IGetAllAdminParams } from '../../../../common/types';
-import { getColors } from '../../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../../hooks/use-administration-theme-provider';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColumns from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useGetAllAdminProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 
 interface IProblemsInProblemGroupViewProps {
@@ -12,7 +11,7 @@ interface IProblemsInProblemGroupViewProps {
 
 const ProblemsInProblemGroupView = (props: IProblemsInProblemGroupViewProps) => {
     const { problemGroupId } = props;
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const queryParams: IGetAllAdminParams = {
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,

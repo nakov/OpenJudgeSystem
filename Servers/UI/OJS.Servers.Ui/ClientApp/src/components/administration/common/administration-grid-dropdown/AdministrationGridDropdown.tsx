@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { CiSquareMore } from 'react-icons/ci';
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip } from '@mui/material';
 
 interface IAdministrationGridDropdown {
-    sections: Array<{icon: any; label: string; handleClick: Function}>;
+    sections: Array<{ icon: any; label: string; handleClick: Function }>;
     id: number | string;
+    icon?: React.ReactNode;
+    tooltipTitle?: string;
 }
 
 const AdministrationGridDropdown = (props: IAdministrationGridDropdown) => {
-    const { sections, id } = props;
+    const { sections, id, icon, tooltipTitle } = props;
 
     const iconButtonRef = useRef(null);
     const [ showMenu, setShowMenu ] = useState<boolean>(false);
 
     return (
         <>
-            <Tooltip title="More">
+            <Tooltip title={tooltipTitle || 'More'}>
                 <IconButton ref={iconButtonRef} onClick={() => setShowMenu(!showMenu)}>
-                    <CiSquareMore />
+                    {icon || <CiSquareMore />}
                 </IconButton>
             </Tooltip>
             <Menu
@@ -50,4 +52,5 @@ const AdministrationGridDropdown = (props: IAdministrationGridDropdown) => {
         </>
     );
 };
+
 export default AdministrationGridDropdown;

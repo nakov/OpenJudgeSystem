@@ -29,11 +29,12 @@ import AdministrationGridDropdown from '../../../components/administration/commo
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import ExternalLink from '../../../components/guidelines/buttons/ExternalLink';
 import { useDeleteContestMutation } from '../../../redux/services/admin/contestsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
-const contestFilterableColumns: GridColDef[] = [
+const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: `${ID}`,
@@ -56,7 +57,8 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'name',
         headerName: `${NAME}`,
-        flex: 2,
+        flex: 2.5,
+        minWidth: 380,
         headerAlign: 'center',
         type: 'string',
         align: 'center',
@@ -71,13 +73,15 @@ const contestFilterableColumns: GridColDef[] = [
         filterable: false,
         headerAlign: 'center',
         sortable: false,
-        flex: 2,
+        flex: 1.5,
+        minWidth: 200,
     },
     {
         field: 'categoryId',
         headerName: `${CATEGORY_ID}`,
         flex: 0.5,
         align: 'center',
+        headerAlign: 'center',
         type: 'number',
         filterable: false,
         sortable: false,
@@ -87,6 +91,7 @@ const contestFilterableColumns: GridColDef[] = [
         headerName: `${COMPETE_PASSWORD}`,
         flex: 1,
         align: 'center',
+        headerAlign: 'center',
         type: 'string',
         filterable: false,
         sortable: false,
@@ -189,6 +194,7 @@ export const returnContestsNonFilterableColumns = (
         field: 'actions',
         headerName: 'Actions',
         flex: 1.5,
+        minWidth: 200,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

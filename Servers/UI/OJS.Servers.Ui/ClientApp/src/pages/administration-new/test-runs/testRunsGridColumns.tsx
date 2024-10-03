@@ -4,6 +4,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { TestRunResultType } from '../../../common/constants';
 import { IEnumType } from '../../../common/types';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import ErrorIcon from '../../../components/guidelines/icons/ErrorIcon';
 import MemoryIcon from '../../../components/guidelines/icons/MemoryIcon';
@@ -13,7 +14,7 @@ import TimeLimitIcon from '../../../components/guidelines/icons/TimeLimitIcon';
 import WrongAnswerIcon from '../../../components/guidelines/icons/WrongAnswerIcon';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
-const testRunsFilterableColumns: GridColDef[] = [
+const testRunsFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -95,6 +96,7 @@ const testRunsFilterableColumns: GridColDef[] = [
         field: 'submissionId',
         headerName: 'Submission Id',
         flex: 1,
+        minWidth: 150,
         type: 'number',
         filterable: false,
         sortable: false,

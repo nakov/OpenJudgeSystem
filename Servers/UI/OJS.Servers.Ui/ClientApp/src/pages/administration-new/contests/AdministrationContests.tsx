@@ -14,14 +14,13 @@ import ContestEdit from '../../../components/administration/contests/contest-edi
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import useSuccessMessageEffect from '../../../hooks/common/use-success-message-effect';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import {
     useDownloadResultsMutation,
     useGetAllAdminContestsQuery,
     useLazyExportContestsToExcelQuery,
     useTransferParticipantsMutation,
 } from '../../../redux/services/admin/contestsAdminService';
-import { useAppSelector } from '../../../redux/store';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -36,7 +35,7 @@ import formStyles from '../../../components/administration/common/styles/FormSty
 
 const AdministrationContestsPage = () => {
     const [ searchParams ] = useSearchParams();
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ openEditContestModal, setOpenEditContestModal ] = useState(false);
     const [ openShowCreateContestModal, setOpenShowCreateContestModal ] = useState<boolean>(false);
     const [ contestId, setContestId ] = useState<number>();

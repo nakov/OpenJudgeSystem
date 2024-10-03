@@ -2,14 +2,15 @@ import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
-import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
+import { DataGrid, GridPaginationModel } from '@mui/x-data-grid';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
-import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
+import { ACTION_NOT_ALLOWED_MESSAGE, NOT_LOGGED_IN_MESSAGE } from '../../common/messages';
+import { AdjacencyList, ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
 import LegendBox from '../../components/administration/common/legend-box/LegendBox';
+import { AdministrationGridColDef } from '../../components/administration/utils/mui-utils';
 import { isDeletedClassName, isVisibleClassName } from '../../hooks/use-administration-theme-provider';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -27,8 +28,8 @@ import AdministrationFilters, {
 import styles from './AdministrationStyles.module.scss';
 
 interface IAdministrationGridViewProps<T> {
-    filterableGridColumnDef: Array<GridColDef>;
-    notFilterableGridColumnDef: Array<GridColDef>;
+    filterableGridColumnDef: Array<AdministrationGridColDef>;
+    notFilterableGridColumnDef: Array<AdministrationGridColDef>;
     data: IPagedResultType<T> | undefined;
     showFiltersAndSorters?: boolean;
     renderActionButtons?: () => ReactNode;
@@ -48,10 +49,23 @@ interface IVisibleColumns {
     [key: string]: boolean;
 }
 
-// The default visible id columns should match the column's header name
-const defaultVisibleIdColumns: Set<string> = new Set([
-    'Submission Id',
-]);
+// Both collections should use the column's field property as keys.
+const defaultVisibleColumns: AdjacencyList<string, boolean> = { submissionId: true };
+
+const defaultNotVisibleColumns: AdjacencyList<string, boolean> = {
+    isDeleted: false,
+    isVisible: false,
+    createdOn: false,
+    modifiedOn: false,
+    deletedOn: false,
+    processingComment: false,
+    startedExecutionOn: false,
+    completedExecutionOn: false,
+    fileExtension: false,
+    contestPassword: false,
+    limitBetweenSubmissions: false,
+    allowParallelSubmissionsInTasks: false,
+};
 
 const defaultFilterToAdd = 'isdeleted~equals~false';
 const defaultSorterToAdd = 'id=DESC';
@@ -151,10 +165,11 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         }
     };
 
-    const initialColumnVisibilityModel: IVisibleColumns = filterableGridColumnDef.reduce((acc, column) => {
+    const notVisibleIdColumns: IVisibleColumns = filterableGridColumnDef.reduce((acc, column) => {
         const headerName = column.headerName ?? '';
+        const isHidden = column.hidden ?? false;
 
-        if (!defaultVisibleIdColumns.has(headerName) && idColumnPattern.test(headerName)) {
+        if (isHidden || idColumnPattern.test(headerName)) {
             acc[column.field] = false;
         }
 
@@ -164,12 +179,9 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const initialState = {
         columns: {
             columnVisibilityModel: {
-                isDeleted: false,
-                isVisible: false,
-                createdOn: false,
-                modifiedOn: false,
-                deletedOn: false,
-                ...initialColumnVisibilityModel,
+                ...notVisibleIdColumns,
+                ...defaultNotVisibleColumns,
+                ...defaultVisibleColumns,
             },
         },
         pagination: {
@@ -186,7 +198,14 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                 {modals.map((m, i) => m.showModal && m.modal(i))}
                 { renderGridSettings() }
                 { error
-                    ? <div className={styles.errorText}>Error loading data</div>
+                    ? (
+                        <div className={styles.errorText}>
+                            Error loading data.
+                            {Array.isArray(error) && error[0]?.name === NOT_LOGGED_IN_MESSAGE
+                                ? `${error[0]?.message}`
+                                : ''}
+                        </div>
+                    )
                     : (
                         <DataGrid
                           columns={[ ...filterableGridColumnDef, ...notFilterableGridColumnDef ]}

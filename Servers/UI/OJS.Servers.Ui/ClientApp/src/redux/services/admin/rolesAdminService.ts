@@ -21,8 +21,9 @@ const rolesAdminService = createApi({
             keepUnusedDataFor: 5,
         }),
 
-        getRoleById:
-        builder.query<IRoleAdministrationModel, string>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
+        getRoleById: builder.query<IRoleAdministrationModel, string>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
+
+        getIdByName: builder.query<string, string>({ query: (name) => ({ url: `/GetIdByName?roleName=${name}` }) }),
 
         updateRole: builder.mutation<string, IRoleAdministrationModel >({
             query: (role) => ({
@@ -77,6 +78,7 @@ export const {
     useCreateRoleMutation,
     useUpdateRoleMutation,
     useGetRoleByIdQuery,
+    useGetIdByNameQuery,
     useDeleteRolesMutation,
     useAddUserToRoleMutation,
     useRemoveUserFromRoleMutation,

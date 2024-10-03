@@ -2,7 +2,9 @@
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridDeleteIcon, GridRenderCellParams } from '@mui/x-data-grid';
 
-const lecturerInCategoriesFilterableColumns: GridColDef[] = [
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
+
+const lecturerInCategoriesFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'contestCategoryId',
         headerName: 'Contest Category Id',
@@ -33,7 +35,7 @@ export const returnLecturerInCategoriesNonFilterableColumns = (removeFromRoleFun
         field: 'actions',
         headerName: 'Actions',
         flex: 0.5,
-        width: 100,
+        minWidth: 50,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

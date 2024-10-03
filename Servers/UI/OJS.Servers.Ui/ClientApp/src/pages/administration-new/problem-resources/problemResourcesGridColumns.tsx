@@ -11,11 +11,12 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import DownloadIconButton from '../../../components/administration/common/download/DownloadIconButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteProblemResourceMutation, useDownloadResourceQuery } from '../../../redux/services/admin/problemResourcesAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
-const problemResourceFilterableColumns: GridColDef[] = [
+const problemResourceFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -62,7 +63,7 @@ const problemResourceFilterableColumns: GridColDef[] = [
     {
         field: 'link',
         headerName: 'Link',
-        flex: 1,
+        flex: 0.4,
         type: 'string',
         filterable: false,
         sortable: false,
@@ -140,6 +141,7 @@ export const returnProblemResourceNonFilterableColumns = (onEditClick: Function,
         field: 'actions',
         headerName: 'Actions',
         flex: 0.5,
+        minWidth: 200,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

@@ -11,11 +11,12 @@ import { NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH } from '../../../common/ur
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 import { useDeleteProblemGroupMutation } from '../../../redux/services/admin/problemGroupsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
-const filterableColumns: GridColDef[] = [
+const filterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -100,11 +101,16 @@ const filterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnNonFilterableColumns = (onEditClick: Function) => [
+export const returnNonFilterableColumns = (
+    onEditClick: Function,
+    setParentSuccessMessage: Function,
+    onDelete: () => void,
+) => [
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
+        minWidth: 150,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
@@ -120,6 +126,8 @@ export const returnNonFilterableColumns = (onEditClick: Function) => [
                   id={Number(params.row.id)}
                   name={`${PROBLEM_GROUP}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
+                  setParentSuccessMessage={setParentSuccessMessage}
+                  onSuccess={onDelete}
                   mutation={useDeleteProblemGroupMutation}
                 />
             </div>

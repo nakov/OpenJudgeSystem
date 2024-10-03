@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
@@ -22,6 +22,7 @@ import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import concatClassNames from '../../../utils/class-names';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import setLayout from '../../shared/set-layout';
@@ -123,40 +124,64 @@ const ContestDetailsPage = () => {
         </div>
     );
 
+    const renderResultsText = useCallback((isCompete: boolean) => {
+        const participationModeTextColorClassName = isCompete
+            ? styles.greenColor
+            : styles.blueColor;
+
+        return (
+            <div className={styles.resultsTextContainer}>
+                <FaUser className={participationModeTextColorClassName} />
+                <div className={concatClassNames(styles.underlinedBtnText, participationModeTextColorClassName)}>
+                    {isCompete
+                        ? 'Compete'
+                        : 'Practice'}
+                    {' '}
+                    results
+                    {' '}
+                    {isCompete
+                        ? competeParticipantsCount
+                        : practiceParticipantsCount}
+                </div>
+            </div>
+        );
+    }, [ competeParticipantsCount, practiceParticipantsCount ]);
+
+    const renderResultsAsLink = useCallback((isCompete: boolean) => (
+        <Link
+          className={`${isCompete
+              ? styles.greenColor
+              : styles.blueColor}`}
+          to={getContestsResultsPageUrl({
+              contestName: name,
+              contestId: id!,
+              participationType: isCompete
+                  ? ContestParticipationType.Compete
+                  : ContestParticipationType.Practice,
+              isSimple: true,
+          })}
+        >
+            {renderResultsText(isCompete)}
+        </Link>
+    ), [ id, name, renderResultsText ]);
+
     const renderContestActionButton = (isCompete: boolean) => {
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
 
+        const canViewResults = isCompete
+            ? contestDetails?.canViewCompeteResults
+            : contestDetails?.canViewPracticeResults;
+
         return (
             <div className={styles.actionBtnWrapper}>
                 <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id!} name={name ?? ''} />
-                <Link
-                  className={`${isCompete
-                      ? styles.greenColor
-                      : styles.blueColor}`}
-                  to={getContestsResultsPageUrl({
-                      contestName: name,
-                      contestId: id!,
-                      participationType: isCompete
-                          ? ContestParticipationType.Compete
-                          : ContestParticipationType.Practice,
-                      isSimple: true,
-                  })}
-                >
-                    <FaUser />
-                    <div className={`${styles.underlinedBtnText}`}>
-                        { isCompete
-                            ? 'Compete'
-                            : 'Practice'}
-                        {' '}
-                        results
-                        {' '}
-                        {isCompete
-                            ? competeParticipantsCount
-                            : practiceParticipantsCount}
-                    </div>
-                </Link>
+                {
+                    canViewResults
+                        ? renderResultsAsLink(isCompete)
+                        : renderResultsText(isCompete)
+                }
             </div>
         );
     };

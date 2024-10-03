@@ -7,9 +7,8 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemGroupForm from '../../../components/administration/problem-groups/problem-group-form/ProblemGroupForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import { useGetAllAdminProblemGroupsQuery, useLazyExportProblemGroupsToExcelQuery } from '../../../redux/services/admin/problemGroupsAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
@@ -20,7 +19,7 @@ import filterableColumns, { returnNonFilterableColumns } from './problemGroupGri
 
 const AdministrationProblemGroupsPage = () => {
     const [ searchParams ] = useSearchParams();
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
@@ -39,6 +38,10 @@ const AdministrationProblemGroupsPage = () => {
     const onEditClick = (id: number) => {
         setOpenEditModal(true);
         setProblemGroupId(id);
+    };
+
+    const onDelete = () => {
+        retakeGroups();
     };
 
     const onFormModalClose = (isCreate: boolean) => {
@@ -91,7 +94,11 @@ const AdministrationProblemGroupsPage = () => {
             {renderErrorMessagesAlert(errorMessages)}
             <AdministrationGridView
               filterableGridColumnDef={filterableColumns}
-              notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
+              notFilterableGridColumnDef={returnNonFilterableColumns(
+                  onEditClick,
+                  setSuccessMessage,
+                  onDelete,
+              )}
               data={data}
               renderActionButtons={renderGridSettings}
               error={error}

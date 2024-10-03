@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
+import LecturerActions
+    from '../../../components/administration/common/lecturer-actions/LecturerActions';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import RoleForm from '../../../components/administration/roles/form/RoleForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -20,6 +22,10 @@ const AdministrationRolesPage = () => {
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ showEditModal, setShowEditModal ] = useState<boolean>(false);
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
+    const [ showAddLecturerToCategoryModal, setShowAddLecturerToCategoryModal ] = useState<boolean>(false);
+    const [ showRemoveLecturerFromCategoryModal, setShowRemoveLecturerFromCategoryModal ] = useState<boolean>(false);
+    const [ showAddLecturerToContestModal, setShowAddLecturerToContestModal ] = useState<boolean>(false);
+    const [ showRemoveLecturerFromContestModal, setShowRemoveLecturerFromContestModal ] = useState<boolean>(false);
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
@@ -32,6 +38,26 @@ const AdministrationRolesPage = () => {
     const onEditClick = (id: string) => {
         setRoleId(id);
         setShowEditModal(true);
+    };
+
+    const onAddLecturerToCategory = (id: string) => {
+        setRoleId(id);
+        setShowAddLecturerToCategoryModal(true);
+    };
+
+    const onRemoveLecturerFromCategory = (id: string) => {
+        setRoleId(id);
+        setShowRemoveLecturerFromCategoryModal(true);
+    };
+
+    const onAddLecturerToContest = (id: string) => {
+        setRoleId(id);
+        setShowAddLecturerToContestModal(true);
+    };
+
+    const onRemoveLecturerFromContest = (id: string) => {
+        setRoleId(id);
+        setShowRemoveLecturerFromContestModal(true);
     };
 
     if (isLoading) {
@@ -71,6 +97,37 @@ const AdministrationRolesPage = () => {
         </AdministrationModal>
     );
 
+    const renderLecturerActions = (index: number, isRemove: boolean, isContest: boolean) => {
+        const showModal = isContest
+            ? isRemove
+                ? showRemoveLecturerFromContestModal
+                : showAddLecturerToContestModal
+            : isRemove
+                ? showRemoveLecturerFromCategoryModal
+                : showAddLecturerToCategoryModal;
+
+        const setShowModal = isContest
+            ? isRemove
+                ? setShowRemoveLecturerFromContestModal
+                : setShowAddLecturerToContestModal
+            : isRemove
+                ? setShowRemoveLecturerFromCategoryModal
+                : setShowAddLecturerToCategoryModal;
+
+        return (
+            <LecturerActions
+              index={index}
+              roleId={roleId}
+              showModal={showModal}
+              setShowModal={setShowModal}
+              isRemove={isRemove}
+              isContest={isContest}
+              setParentSuccessMessage={setSuccessMessage}
+              onSuccess={() => setShowModal(false)}
+            />
+        );
+    };
+
     const renderGridActions = () => (
         <CreateButton
           showModal={showCreateModal}
@@ -84,7 +141,14 @@ const AdministrationRolesPage = () => {
             {renderSuccessfullAlert(successMessage)}
             <AdministrationGridView
               filterableGridColumnDef={rolesFilterableColumns}
-              notFilterableGridColumnDef={returnRolesNonFilterableColumns(onEditClick, onDeleteSuccess)}
+              notFilterableGridColumnDef={returnRolesNonFilterableColumns(
+                  onEditClick,
+                  onAddLecturerToCategory,
+                  onRemoveLecturerFromCategory,
+                  onAddLecturerToContest,
+                  onRemoveLecturerFromContest,
+                  onDeleteSuccess,
+              )}
               data={data}
               error={error}
               queryParams={queryParams}
@@ -95,6 +159,10 @@ const AdministrationRolesPage = () => {
               modals={[
                   { showModal: showEditModal, modal: (i) => renderRoleModal(i, true) },
                   { showModal: showCreateModal, modal: (i) => renderRoleModal(i, false) },
+                  { showModal: showAddLecturerToCategoryModal, modal: (i) => renderLecturerActions(i, false, false) },
+                  { showModal: showRemoveLecturerFromCategoryModal, modal: (i) => renderLecturerActions(i, true, false) },
+                  { showModal: showAddLecturerToContestModal, modal: (i) => renderLecturerActions(i, false, true) },
+                  { showModal: showRemoveLecturerFromContestModal, modal: (i) => renderLecturerActions(i, true, true) },
               ]}
               excelMutation={useLazyExportRolesToExcelQuery}
             />
