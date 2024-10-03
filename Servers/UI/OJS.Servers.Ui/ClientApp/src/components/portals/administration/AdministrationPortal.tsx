@@ -568,20 +568,11 @@ const AdministrationPortal = () => {
                         <UserActions
                           isDropdown={!open}
                           handleThemeChange={handleThemeChange}
-                          currentThemeMode={currentThemeMode}
+                          themeMode={themeMode}
                           showMenu={showMenu}
                           setShowMenu={setShowMenu}
                           iconButtonRef={iconButtonRef}
                         />
-                        <DrawerHeader className={styles.username}>
-                            {open && (
-                                <>
-                                    <Typography variant="subtitle1">
-                                        {user.userName}
-                                    </Typography>
-                                    <Divider sx={{ color: 'red', width: '90%' }} />
-                                </>
-                            )}
                         <DrawerHeader className={styles.drawerHeader}>
                             <UserActions
                               isDropdown={!open}
@@ -624,16 +615,16 @@ const AdministrationPortal = () => {
                                     >
                                         <ListItemButton
                                           className={isSelected(item.path)
-                                                      ? styles.selectedSection
-                                                      : ''}
+                                              ? styles.selectedSection
+                                              : ''}
                                         >
                                             <ListItemIcon
-                                                      className={isSelected(item.path)
-                                                          ? styles.listItemIcon
-                                                          : ''}
-                                                    >
-                                                        {item.icon}
-                                                    </ListItemIcon>
+                                              className={isSelected(item.path)
+                                                  ? styles.listItemIcon
+                                                  : ''}
+                                            >
+                                                {item.icon}
+                                            </ListItemIcon>
                                             <ListItemText primary={item.name} />
                                         </ListItemButton>
                                     </Link>
