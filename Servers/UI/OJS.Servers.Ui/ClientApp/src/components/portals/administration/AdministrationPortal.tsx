@@ -532,133 +532,131 @@ const AdministrationPortal = () => {
     return (
         <AdministrationThemeProvider mode={currentThemeMode}>
             <CssBaseline />
-            <Box>
-                <Box sx={{
-                    display: 'flex',
-                    overflowY: 'hidden',
-                    '&::-webkit-scrollbar': { display: 'none' },
-                    '-ms-overflow-style': 'none',
-                    'scrollbar-width': 'none',
-                }}
+            <Box sx={{
+                display: 'flex',
+                overflowY: 'hidden',
+                '&::-webkit-scrollbar': { display: 'none' },
+                '-ms-overflow-style': 'none',
+                'scrollbar-width': 'none',
+            }}
+            >
+                <Drawer
+                  variant="permanent"
+                  open={open}
                 >
-                    <Drawer
-                      variant="permanent"
-                      open={open}
-                    >
-                        {!open
-                            ? (
-                                <IconButton
-                                  sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
-                                  className={`${styles.arrowRight} ${styles.arrowCommon}`}
-                                  color="primary"
-                                  onClick={handleDrawerOpen}
-                                >
-                                    <ChevronRightIcon />
-                                </IconButton>
-                            )
-                            : (
-                                <IconButton
-                                  className={`${styles.arrow} ${styles.arrowCommon}`}
-                                  sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
-                                  color="primary"
-                                  onClick={handleDrawerClose}
-                                >
-                                    <ChevronLeftIcon />
-                                </IconButton>
+                    {!open
+                        ? (
+                            <IconButton
+                              sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
+                              className={`${styles.arrowRight} ${styles.arrowCommon}`}
+                              color="primary"
+                              onClick={handleDrawerOpen}
+                            >
+                                <ChevronRightIcon />
+                            </IconButton>
+                        )
+                        : (
+                            <IconButton
+                              className={`${styles.arrow} ${styles.arrowCommon}`}
+                              sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
+                              color="primary"
+                              onClick={handleDrawerClose}
+                            >
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        )}
+                    <DrawerHeader className={styles.drawerHeader}>
+                        <UserActions
+                          isDropdown={!open}
+                          handleThemeChange={handleThemeChange}
+                          currentThemeMode={currentThemeMode}
+                          showMenu={showMenu}
+                          setShowMenu={setShowMenu}
+                          iconButtonRef={iconButtonRef}
+                        />
+                        <DrawerHeader className={styles.username}>
+                            {open && (
+                                <>
+                                    <Typography variant="subtitle1">
+                                        {user.userName}
+                                    </Typography>
+                                    <Divider sx={{ color: 'red', width: '90%' }} />
+                                </>
                             )}
-                        <DrawerHeader className={styles.drawerHeader}>
-                            <UserActions
-                              isDropdown={!open}
-                              handleThemeChange={handleThemeChange}
-                              currentThemeMode={currentThemeMode}
-                              showMenu={showMenu}
-                              setShowMenu={setShowMenu}
-                              iconButtonRef={iconButtonRef}
-                            />
-                            <DrawerHeader className={styles.username}>
-                                {open && (
-                                    <>
-                                        <Typography variant="subtitle1">
-                                            {user.userName}
-                                        </Typography>
-                                        <Divider sx={{ color: 'red', width: '90%' }} />
-                                    </>
-                                )}
-                            </DrawerHeader>
                         </DrawerHeader>
-                        <List className={styles.list}>
-                            <Divider />
-                            {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
-                                <SectionTooltip
-                                  key={item.path}
-                                  title={item.name}
-                                  placement="right"
-                                  arrow
-                                >
-                                    <div>
-                                        <ListItem key={item.name} disablePadding>
-                                            <Link
-                                              to={item.path}
-                                              className={`${isSelected(item.path)
-                                                  ? styles.activeAdminNavLink
-                                                  : ''} ${
-                                                  styles.adminNavLink
-                                              }`}
-                                            >
-                                                <ListItemButton
-                                                  className={isSelected(item.path)
+                    </DrawerHeader>
+                    <List className={styles.list}>
+                        <Divider />
+                        {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
+                        <SectionTooltip
+                          key={item.path}
+                          title={item.name}
+                          placement="right"
+                          arrow
+                        >
+                            <div>
+                                <ListItem key={item.name} disablePadding>
+                                    <Link
+                                      to={item.path}
+                                      className={`${isSelected(item.path)
+                                          ? styles.activeAdminNavLink
+                                          : ''} ${
+                                          styles.adminNavLink
+                                      }`}
+                                    >
+                                        <ListItemButton
+                                          className={isSelected(item.path)
                                                       ? styles.selectedSection
                                                       : ''}
-                                                >
-                                                    <ListItemIcon
+                                        >
+                                            <ListItemIcon
                                                       className={isSelected(item.path)
                                                           ? styles.listItemIcon
                                                           : ''}
                                                     >
                                                         {item.icon}
                                                     </ListItemIcon>
-                                                    <ListItemText primary={item.name} />
-                                                </ListItemButton>
-                                            </Link>
-                                        </ListItem>
-                                        <Divider />
-                                    </div>
-                                </SectionTooltip>
-                            ))}
-                        </List>
-                    </Drawer>
-                    <Box
-                      className={styles.main}
-                      component="main"
-                      sx={{
-                          flexGrow: 1,
-                          overflowY: 'scroll',
-                          '&::-webkit-scrollbar': { display: 'none' },
-                          '-ms-overflow-style': 'none',
-                          'scrollbar-width': 'none',
-                      }}
-                    >
-                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
-                            <Routes>
-                                {adminRoutes.map(({ path, Element, visibleOnlyForAdmin }) => {
-                                    if (user.isAdmin || !visibleOnlyForAdmin) {
-                                        return <Route key={path} path={path} element={<Element />} />;
-                                    }
-                                    return null;
-                                })}
-                                <Route
-                                  path="/"
-                                  element={(
-                                      <Navigate
-                                        to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
-                                        replace
-                                      />
+                                            <ListItemText primary={item.name} />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                                <Divider />
+                            </div>
+                        </SectionTooltip>
+                        ))}
+                    </List>
+                </Drawer>
+                <Box
+                  className={styles.main}
+                  component="main"
+                  sx={{
+                      flexGrow: 1,
+                      overflowY: 'scroll',
+                      '&::-webkit-scrollbar': { display: 'none' },
+                      '-ms-overflow-style': 'none',
+                      'scrollbar-width': 'none',
+                  }}
+                >
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
+                        <Routes>
+                            {adminRoutes.map(({ path, Element, visibleOnlyForAdmin }) => {
+                                if (user.isAdmin || !visibleOnlyForAdmin) {
+                                    return <Route key={path} path={path} element={<Element />} />;
+                                }
+                                return null;
+                            })}
+                            <Route
+                              path="/"
+                              element={(
+                                  <Navigate
+                                    to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
+                                    replace
+                                  />
                                   )}
-                                />
-                                <Route path="*" element={<NotFoundPage />} />
-                            </Routes>
-                        </LocalizationProvider>
-                    </Box>
+                            />
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                    </LocalizationProvider>
                 </Box>
             </Box>
         </AdministrationThemeProvider>
