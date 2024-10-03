@@ -9,6 +9,7 @@
   @extend %font-family-normal;
 
   display: inline-block;
+  min-width: 100px;
   position: relative;
 }
 
@@ -37,9 +38,13 @@
   left: 0;
   padding: 10px;
   position: absolute;
-  top: calc(100% + 25px);
+  top: calc(100%);
   width: 100%;
   z-index: 1000;
+}
+
+.dropdownMenuInHeader {
+  top: calc(100% + 25px);
 }
 
 .spacer {
@@ -52,6 +57,7 @@
 }
 
 .dropdownMenu .menuSection {
+  align-content: start;
   display: flex;
   flex-direction: column;
 }

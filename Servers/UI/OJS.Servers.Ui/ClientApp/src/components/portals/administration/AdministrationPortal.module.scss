@@ -37,8 +37,8 @@
 }
 
 .list {
-    overflow-x: hidden;
-    overflow-y: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .listItemIcon {
@@ -63,8 +63,8 @@
   .username {
     display: flex;
     flex-direction: column;
-    margin-top: -0.5rem;
     font-size: 14px;
+    margin-top: -0.5rem;
   }
 }
 

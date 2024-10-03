@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { IGetAllAdminParams } from '../../../../common/types';
-import { getColors } from '../../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../../hooks/use-administration-theme-provider';
 import {
     applyDefaultFilterToQueryString,
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
@@ -10,7 +10,6 @@ import problemResourceFilterableColumns, {
     returnProblemResourceNonFilterableColumns,
 } from '../../../../pages/administration-new/problem-resources/problemResourcesGridColumns';
 import { useGetResourcesQuery } from '../../../../redux/services/admin/problemsAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -26,7 +25,7 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
     const [ problemResourceId, setProblemResourceId ] = useState<number>(0);
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd));
 

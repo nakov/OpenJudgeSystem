@@ -12,9 +12,8 @@ import LecturerActions from '../../../components/administration/common/lecturer-
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import UserForm from '../../../components/administration/users/form/UserForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
 import { useGetAllUsersQuery, useLazyExportUsersToExcelQuery } from '../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
@@ -25,7 +24,7 @@ import styles from './AdministrationUsersPage.module.scss';
 
 const AdministrationUsersPage = () => {
     const [ searchParams ] = useSearchParams();
-    const themeMode = useAppSelector((x) => x.theme.administrationMode);
+    const { themeMode } = useAdministrationTheme();
 
     const [ queryParams, setQueryParams ] =
         useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(
