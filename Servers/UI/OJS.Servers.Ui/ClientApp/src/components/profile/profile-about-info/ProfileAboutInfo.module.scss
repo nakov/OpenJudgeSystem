@@ -7,9 +7,9 @@
 .profileAbout {
   display: flex;
   justify-content: space-between;
+  margin-bottom: spacings.$sp-24;
+  margin-top: spacings.$sp-24;
   padding: spacings.$sp-24;
-    margin-top: spacings.$sp-24;
-    margin-bottom: spacings.$sp-24;
 }
 
 .profileAboutInfo {
@@ -22,8 +22,8 @@
 }
 
 .lightAboutInfo {
-    background: colors.$light-base-color-100;
-    border-bottom: 1px solid #e6e6e6;
+  background: colors.$light-base-color-100;
+  border-bottom: 1px solid #e6e6e6;
 }
 
 .profileAboutInfoGroupControl {
