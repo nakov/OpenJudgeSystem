@@ -1,3 +1,5 @@
+import useTheme from 'src/hooks/use-theme';
+
 import { getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import useNavigation from '../../../hooks/common/use-routing';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
@@ -24,6 +26,7 @@ const ContestButton = (props: IContestButtonProps) => {
     const dispatch = useAppDispatch();
 
     const { navigateInNewWindow } = useNavigation();
+    const { isDarkMode } = useTheme();
 
     const onButtonClick = async () => {
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: null }));
@@ -55,8 +58,10 @@ const ContestButton = (props: IContestButtonProps) => {
           size={ButtonSize.small}
           isCompete={isCompete}
           onClick={onButtonClick}
-          className={isUserAdminOrLecturer && isDisabled
-              ? styles.adminDisabled
+          internalClassName={isUserAdminOrLecturer && isDisabled
+              ? isDarkMode
+                  ? styles.adminDisabledDark
+                  : styles.adminDisabledLight
               : ''}
         />
     );

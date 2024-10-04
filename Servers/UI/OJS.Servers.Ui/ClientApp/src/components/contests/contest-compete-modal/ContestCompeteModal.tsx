@@ -20,7 +20,7 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
     const { themeColors, getColorClassName } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const modalBodyClassName = concatClassNames(getColorClassName(themeColors.baseColor100), styles.modalBody);
+    const modalBodyClassName = concatClassNames(getColorClassName(themeColors.baseColor200), styles.modalBody);
 
     return (
         <div className={`${styles.modalWrapper} ${textColorClassName}`}>
@@ -60,7 +60,7 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                     <b>Are you sure you want to start the contest now?</b>
                 </div>
                 <div className={styles.buttonsWrapper}>
-                    <ContestButton isCompete isDisabled={false} id={1} onClick={onAccept} name={examName} />
+                    <ContestButton isDisabled={false} id={1} onClick={onAccept} name={examName} isCompete />
                     <Button
                       className={styles.declineBtn}
                       text="cancel"

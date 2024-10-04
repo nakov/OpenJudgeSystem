@@ -11,7 +11,7 @@
 
   align-items: center;
   border-radius: border-radiuses.$br-6;
-  box-shadow: shadows.$dp-shadow-4;
+  box-shadow: shadows.$dp-shadow-1;
   display: flex;
   font-size: variables.$f-size-12;
   justify-content: space-between;
@@ -88,13 +88,13 @@
 
     &.lightTheme {
       .icon {
-        color: colors.$primary-dark-grey-color;
+        color: colors.$light-text-color;
       }
     }
 
     &.darkTheme {
       .icon {
-        color: #bebebe;
+        color: colors.$dark-text-color;
       }
     }
   }
