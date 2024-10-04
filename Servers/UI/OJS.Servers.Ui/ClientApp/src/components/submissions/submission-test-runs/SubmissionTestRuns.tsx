@@ -1,3 +1,5 @@
+import concatClassNames from 'src/utils/class-names';
+
 import { getTestResultColorId } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
@@ -11,9 +13,11 @@ interface ISubmissionTestRunsProps {
 
 const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
     const { testRuns } = props;
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
 
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
+    const backgroundColorClassName = getColorClassName(isDarkMode
+        ? themeColors.baseColor300
+        : themeColors.baseColor100);
 
     const renderTestRunDetails = (testRun: ITestRunType, idx: number) => {
         const { resultType } = testRun;
@@ -31,14 +35,19 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
         return (
             <div
               key={`tr-${testRun.id}`}
-              className={`${styles.submissionTestRun} ${testRun.isTrialTest
-                  ? styles.trialTest
-                  : ''}`}
+              className={concatClassNames(
+                  styles.submissionTestRun,
+                  testRun.isTrialTest
+                      ? styles.trialTest
+                      : '',
+              )}
               style={{ color }}
               onClick={() => onTestRunClick()}
             >
                 <span>
-                    {idx}
+                    {`${testRun.isTrialTest
+                        ? '0.'
+                        : ''}${idx}`}
                     .
                 </span>
                 <TestRunIcon testRun={testRun} />
@@ -52,7 +61,8 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
     return (
         <div className={`${styles.submissionsTestRunsWrapper} ${backgroundColorClassName}`}>
-            {testRuns?.map((testRun, idx) => renderTestRunDetails(testRun, idx + 1))}
+            {testRuns?.filter((tr) => tr.isTrialTest).map((testRun, idx) => renderTestRunDetails(testRun, idx + 1))}
+            {testRuns?.filter((tr) => !tr.isTrialTest).map((testRun, idx) => renderTestRunDetails(testRun, idx + 1))}
         </div>
     );
 };

@@ -10,7 +10,7 @@
   font-size: variables.$f-size-18;
   justify-content: center;
   margin-right: spacings.$sp-24;
-  padding: spacings.$sp-8;
+  padding: spacings.$sp-8 spacings.$sp-12 spacings.$sp-8 spacings.$sp-8;
 
   .submissionTestRun {
     align-items: center;
@@ -25,6 +25,6 @@
   }
 
   .trialTest {
-    border-bottom: 2px solid colors.$grey-color;
+      opacity: 0.5;
   }
 }

@@ -178,6 +178,10 @@ const SubmissionDetailsPage = () => {
 
         const compileTimeErrorClasses = concatClassNames(
             styles.compileTimeErrorWrapper,
+            getColorClassName(isDarkMode
+                ? themeColors.baseColor500
+                : themeColors.baseColor100),
+            textColorClassName,
             textColorClassName,
             isDarkMode
                 ? styles.darkTheme
@@ -329,6 +333,20 @@ const SubmissionDetailsPage = () => {
         workerName,
     ]);
 
+    const renderProcessingComment = useCallback(() => (
+        <div className={concatClassNames(
+            styles.processingErrorWrapper,
+            textColorClassName,
+            isDarkMode
+                ? styles.darkTheme
+                : '',
+        )}
+        >
+            <div>A processing error occurred:</div>
+            <MultiLineTextDisplay text={processingComment} maxVisibleLines={50} />
+        </div>
+    ), [ isDarkMode, processingComment, textColorClassName ]);
+
     if (isLoading || retestIsLoading) {
         return (
             <div style={{ ...flexCenterObjectStyles }}>
@@ -388,19 +406,7 @@ const SubmissionDetailsPage = () => {
                             </div>
                         </div>
                         {renderAdminButtons()}
-                        {processingComment && user.isAdmin && (
-                        <div className={concatClassNames(
-                            styles.processingErrorWrapper,
-                            textColorClassName,
-                            isDarkMode
-                                ? styles.darkTheme
-                                : '',
-                        )}
-                        >
-                            <div>A processing error occurred:</div>
-                            <MultiLineTextDisplay text={processingComment} maxVisibleLines={50} />
-                        </div>
-                        )}
+                        {processingComment && user.isAdmin && renderProcessingComment()}
                         {renderSubmissionExecutionDetails()}
                         {content && (
                             <div className={styles.codeContentWrapper} id="code-content-wrapper">
