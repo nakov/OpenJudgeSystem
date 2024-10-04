@@ -1,7 +1,7 @@
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import { timeToWords } from '../../../utils/dates';
-import Button, { ButtonType } from '../../guidelines/buttons/Button';
+import Button from '../../guidelines/buttons/Button';
 import ContestButton from '../contest-button/ContestButton';
 
 import styles from './ContestCompeteModal.module.scss';

@@ -29,7 +29,7 @@ const ProfilePage = () => {
     const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
 
     const { username } = useParams();
-    const { isDarkMode, themeColors, getColorClassName } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
     const dispatch = useAppDispatch();
 
     // If {username} is present in url, then the the profile should be loaded for this username,
