@@ -170,7 +170,7 @@ const SubmissionDetailsPage = () => {
     const renderSubmissionExecutionDetails = useCallback(() => {
         if (!isProcessed || isRetestingStarted) {
             return (
-                <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
+                <div className={`${styles.submissionInQueueWrapper}`}>
                     The submission is in queue and will be processed shortly. Please wait.
                 </div>
             );
@@ -199,7 +199,7 @@ const SubmissionDetailsPage = () => {
 
         if (isEligibleForRetest) {
             return (
-                <div className={`${styles.retestWrapper} ${textColorClassName}`}>
+                <div className={`${styles.retestWrapper}`}>
                     <div>
                         The input / output data changed. Your (
                         {points}
