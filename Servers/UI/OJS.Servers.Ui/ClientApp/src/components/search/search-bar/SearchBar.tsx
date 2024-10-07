@@ -3,6 +3,7 @@ import { IoIosClose } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Checkbox, TextField } from '@mui/material';
 import debounce from 'lodash/debounce';
+import concatClassNames from 'src/utils/class-names';
 
 import { CheckboxSearchValues } from '../../../common/enums';
 import useTheme from '../../../hooks/use-theme';
@@ -22,14 +23,16 @@ const SearchBar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
     const [ inputValue, setInputValue ] = useState<string>('');
     const initialMount = useRef(true); // Ref to track the first render
 
     const { searchValue, selectedTerms, isVisible } = useAppSelector((state) => state.search);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
+    const backgroundColorClassName = getColorClassName(isDarkMode
+        ? themeColors.baseColor200
+        : themeColors.baseColor100);
 
     const composeSearchString = useCallback(() => {
         const searchStringValue = searchValue
@@ -129,7 +132,7 @@ const SearchBar = () => {
                             <Checkbox
                               sx={{
                                   '&.Mui-checked': {
-                                      color: '#1976d2',
+                                      color: '#44a9f8',
                                       '&:hover': { backgroundColor: 'transparent' },
                                   },
                               }}
@@ -144,7 +147,14 @@ const SearchBar = () => {
                     ))}
                 </div>
             </Form>
-            <IoIosClose size={50} onClick={() => dispatch(setIsVisible(!isVisible))} className={styles.closeIcon} />
+            <IoIosClose
+              size={50}
+              onClick={() => dispatch(setIsVisible(!isVisible))}
+              className={concatClassNames(
+                  styles.closeIcon,
+                  getColorClassName(themeColors.textColor),
+              )}
+            />
         </div>
     );
 };
