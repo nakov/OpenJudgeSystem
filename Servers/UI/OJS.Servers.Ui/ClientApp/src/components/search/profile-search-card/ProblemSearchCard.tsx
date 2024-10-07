@@ -14,10 +14,12 @@ interface IProblemSearchCardProps {
 const ProblemSearchCard = (props: IProblemSearchCardProps) => {
     const { problem } = props;
     const { contest, id, name } = problem;
-    const { getColorClassName, themeColors } = useTheme();
+    const { isDarkMode, getColorClassName, themeColors } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
+    const backgroundColorClassName = getColorClassName(isDarkMode
+        ? themeColors.baseColor200
+        : themeColors.baseColor100);
 
     return (
         <div className={`${styles.problemsSearchCardWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
