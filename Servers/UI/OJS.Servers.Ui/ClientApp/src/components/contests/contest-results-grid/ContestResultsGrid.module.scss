@@ -49,21 +49,21 @@
 }
 
 .lightRow {
-    background: colors.$light-base-color-100;
-    border-bottom: 1px solid colors.$light-base-color-500;
+  background: colors.$light-base-color-100;
+  border-bottom: 1px solid colors.$light-base-color-500;
 }
 
 .darkRow {
-    background: colors.$primary-dark-grey-color;
-    border-bottom: 1px solid colors.$dark-base-color-400;
+  background: colors.$primary-dark-grey-color;
+  border-bottom: 1px solid colors.$dark-base-color-400;
 }
 
 .resultLink {
-    color: inherit;
+  color: inherit;
 
-    &:hover {
-        text-decoration: underline;
-    }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .userRow {

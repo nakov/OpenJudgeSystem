@@ -36,15 +36,15 @@
       }
 
       .timeAndMemoryWrapper {
-        display: flex;
-          gap: 10px;
-          justify-content: end;
-          align-items: center;
+        align-items: center;
         color: colors.$light-text-color;
+        display: flex;
+        gap: 10px;
+        justify-content: end;
 
-          .iconAndTextWrapper {
-              gap: 5px;
-          }
+        .iconAndTextWrapper {
+          gap: 5px;
+        }
 
         span {
           align-items: center;

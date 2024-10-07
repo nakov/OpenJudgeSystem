@@ -248,6 +248,8 @@ const SubmissionDetailsPage = () => {
         isEligibleForRetest,
         textColorClassName,
         isDarkMode,
+        getColorClassName,
+        themeColors,
         compilerComment,
         points,
         maxPoints,
