@@ -32,7 +32,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
         ? themeColors.baseColor200
         : themeColors.baseColor100);
     const modalBackgroundColorClassName = getColorClassName(themeColors.baseColor100);
-    const headersClassname = getColorClassName(themeColors.baseColor500);
+    const headersClassname = getColorClassName(themeColors.baseColor300);
 
     const colorClassName = getColorClassName(themeColors.textColor);
 

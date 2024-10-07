@@ -111,10 +111,12 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                               className={styles.testLink}
                             />
                         )}
-                        <span>
-                            Run #
-                            {testRun.id}
-                        </span>
+                        {shouldRenderAdminData && (
+                            <span>
+                                Run #
+                                {testRun.id}
+                            </span>
+                        )}
                         <span
                           onMouseEnter={(e) => onPopoverOpen('memory', e)}
                           onMouseLeave={() => onPopoverClose('memory')}

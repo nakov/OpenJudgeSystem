@@ -180,7 +180,7 @@ const SubmissionDetailsPage = () => {
             styles.compileTimeErrorWrapper,
             getColorClassName(isDarkMode
                 ? themeColors.baseColor500
-                : themeColors.baseColor100),
+                : themeColors.baseColor200),
             textColorClassName,
             textColorClassName,
             isDarkMode
