@@ -126,7 +126,9 @@ const Button = ({
         : 0);
 
     const stateClassName = state === ButtonState.disabled
-        ? styles.disabled
+        ? concatClassNames(styles.disabled, isDarkMode
+            ? styles.darkDisabled
+            : styles.lightDisabled)
         : '';
 
     const wideClassName = isWide

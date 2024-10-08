@@ -60,11 +60,10 @@
     text-transform: none;
   }
 
-  &.disabled {
+  &.disabled,
+  %disabled {
     background-color: transparent !important;
-    border-color: colors.$color-btn-disabled !important;
     box-shadow: none;
-    color: colors.$color-btn-disabled;
     pointer-events: none;
 
     &:hover {
@@ -148,4 +147,14 @@
 
 .darkSecondary {
   background-color: colors.$primary-dark-grey-color;
+}
+
+.lightDisabled {
+    color: colors.$light-base-color-300;
+    border-color: colors.$light-base-color-300;
+}
+
+.darkDisabled {
+    color: colors.$dark-base-color-100;
+    border-color: colors.$dark-base-color-100;
 }
