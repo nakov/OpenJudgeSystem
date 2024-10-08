@@ -41,7 +41,9 @@ const ContestCard = (props: IContestCardProps) => {
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
 
     const textColorClass = getColorClassName(themeColors.textColor);
-    const backgroundColorClass = getColorClassName(themeColors.baseColor200);
+    const backgroundColorClassName = getColorClassName(isDarkMode
+        ? themeColors.baseColor200
+        : themeColors.baseColor100);
 
     const {
         id,
@@ -191,7 +193,7 @@ const ContestCard = (props: IContestCardProps) => {
     };
 
     return (
-        <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
+        <div className={`${backgroundColorClassName} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
                 <div className={styles.actionsWrapper}>
                     <Link

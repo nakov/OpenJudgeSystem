@@ -7,6 +7,8 @@
 .profileAbout {
   display: flex;
   justify-content: space-between;
+  margin-bottom: spacings.$sp-24;
+  margin-top: spacings.$sp-24;
   padding: spacings.$sp-24;
 }
 
@@ -17,6 +19,11 @@
   gap: spacings.$sp-12 spacings.$sp-32;
   grid-template-columns: auto 1fr;
   margin-top: spacings.$sp-24;
+}
+
+.lightAboutInfo {
+  background: colors.$light-base-color-100;
+  border-bottom: 1px solid #e6e6e6;
 }
 
 .profileAboutInfoGroupControl {

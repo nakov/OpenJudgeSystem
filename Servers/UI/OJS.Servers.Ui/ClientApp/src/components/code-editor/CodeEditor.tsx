@@ -1,5 +1,6 @@
 import React, { lazy, useEffect, useState } from 'react';
 import isNil from 'lodash/isNil';
+import useTheme from 'src/hooks/use-theme';
 
 import { ISubmissionTypeType } from '../../common/types';
 import { fullStrategyNameToStrategyType, strategyTypeToMonacoLanguage } from '../../utils/strategy-type-utils';
@@ -32,6 +33,7 @@ const CodeEditor = ({
     customEditorStyles = {},
 }: ICodeEditorProps) => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
+    const { isDarkMode } = useTheme();
 
     useEffect(
         () => {
@@ -51,7 +53,9 @@ const CodeEditor = ({
         <div className={styles.editor} style={{ ...customEditorStyles }}>
             <Editor
               language={getMonacoLanguage(selectedSubmissionTypeName) ?? 'javascript'}
-              theme="vs-dark"
+              theme={isDarkMode
+                  ? 'vs-dark'
+                  : 'vs-light'}
               value={code}
               className={styles.editor}
               defaultValue=""
@@ -62,7 +66,11 @@ const CodeEditor = ({
                   automaticLayout: true,
                   hideCursorInOverviewRuler: true,
                   lineHeight: 20,
-                  scrollbar: { vertical: 'hidden' },
+                  scrollbar: {
+                      vertical: 'hidden',
+                      alwaysConsumeMouseWheel: false,
+                  },
+                  scrollBeyondLastLine: false,
               }}
               onChange={onCodeChange}
               keepCurrentModel={false}

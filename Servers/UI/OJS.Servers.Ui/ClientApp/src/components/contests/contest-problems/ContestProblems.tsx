@@ -23,14 +23,17 @@ const ContestProblems = (props: IContestProblemsProps) => {
 
     const { hash } = useLocation();
     const dispatch = useAppDispatch();
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);
 
     const [ excludedFromHomeworkAnchorElement, setExcludedFromHomeworkAnchorElement ] = useState<HTMLElement | null>(null);
 
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
+    const backgroundColorClassName = getColorClassName(isDarkMode
+        ? themeColors.baseColor200
+        : themeColors.baseColor100);
     const modalBackgroundColorClassName = getColorClassName(themeColors.baseColor100);
-    const darkBackgroundClassName = getColorClassName(themeColors.baseColor500);
+    const headersClassname = getColorClassName(themeColors.baseColor500);
+
     const colorClassName = getColorClassName(themeColors.textColor);
 
     const isExcludedFromHomeworkModalOpen = Boolean(excludedFromHomeworkAnchorElement);
@@ -56,7 +59,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
 
     return (
         <div>
-            <div className={`${styles.problemsHeader} ${darkBackgroundClassName}`}>
+            <div className={`${styles.problemsHeader} ${headersClassname}`}>
                 <div>Tasks</div>
                 <div>Points</div>
             </div>
@@ -77,7 +80,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                               style={{
                                   borderBottom: `${isLast
                                       ? 0
-                                      : 1}px solid ${themeColors.textColor}`,
+                                      : 1}px solid ${themeColors.baseColor300}`,
                               }}
                               onClick={() => onProblemClick(problem)}
                             >
@@ -124,7 +127,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                     })}
                 </div>
             </div>
-            <div className={`${styles.problemsInfoSection} ${darkBackgroundClassName}`}>
+            <div className={`${styles.problemsInfoSection} ${headersClassname}`}>
                 <div className={styles.participantsInfo}>
                     Total participants:
                     {' '}

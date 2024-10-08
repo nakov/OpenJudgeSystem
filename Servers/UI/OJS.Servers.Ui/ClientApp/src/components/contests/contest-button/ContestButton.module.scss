@@ -1,8 +1,20 @@
-﻿@use 'src/styles/colors.scss';
+@use 'src/styles/colors.scss';
 
-.adminDisabled {
+%adminDisabled {
   background-color: transparent !important;
-  border-color: colors.$color-btn-disabled !important;
   box-shadow: none;
-  color: colors.$color-btn-disabled;
+}
+
+.adminDisabledLight {
+  @extend %adminDisabled;
+
+  border-color: colors.$light-base-color-300 !important;
+  color: colors.$light-base-color-300;
+}
+
+.adminDisabledDark {
+  @extend %adminDisabled;
+
+  border-color: colors.$dark-base-color-100 !important;
+  color: colors.$dark-base-color-100;
 }
