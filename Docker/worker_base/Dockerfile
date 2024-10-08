@@ -98,7 +98,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       git \
       libpq-dev && \
     rm -rf /var/lib/apt/lists/*
-    
+
 ENV PYENV_ROOT /root/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN curl https://pyenv.run | bash && \
@@ -118,6 +118,14 @@ RUN mvn dependency:go-offline
 # Needed 2 versions of this package, one in the strategy pom.xml, other one is istalled here
 # Otherwise maven resolves only 1 dependency
 # TODO: Fix this
+RUN mvn dependency:get -DgroupId=org.codehaus.plexus -DartifactId=plexus-utils -Dversion=3.0.10
+RUN mvn clean install
+
+WORKDIR /judge-resources/java/java-21-spring-and-hibernate
+COPY ./java-21-spring-and-hibernate .
+RUN mvn dependency:go-offline
+# Needed 2 versions of this package, one in the strategy pom.xml, other one is installed here
+# Otherwise maven resolves only 1 dependency
 RUN mvn dependency:get -DgroupId=org.codehaus.plexus -DartifactId=plexus-utils -Dversion=3.0.10
 RUN mvn clean install
 
