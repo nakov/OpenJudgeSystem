@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { GoGear } from 'react-icons/go';
 import { IoIosArrowDown } from 'react-icons/io';
 import isNilOrEmpty from 'src/utils/check-utils';
