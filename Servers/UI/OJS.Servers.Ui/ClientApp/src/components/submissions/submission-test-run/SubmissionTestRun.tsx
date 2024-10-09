@@ -175,7 +175,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                               disableRestoreFocus
                             >
                                 <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
-                                    Time required
+                                    Time used
                                 </div>
                             </Popover>
                         </span>
