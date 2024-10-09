@@ -35,11 +35,10 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
         return (
             <div
               key={`tr-${testRun.id}`}
-              className={concatClassNames(
-                  styles.submissionTestRun,
-                  testRun.isTrialTest
-                      ? styles.trialTest
-                      : '',
+              className={concatClassNames(styles.submissionTestRun,
+                  // testRun.isTrialTest
+                  //     ? styles.trialTest
+                  //     : '',
               )}
               style={{ color }}
               onClick={() => onTestRunClick()}
