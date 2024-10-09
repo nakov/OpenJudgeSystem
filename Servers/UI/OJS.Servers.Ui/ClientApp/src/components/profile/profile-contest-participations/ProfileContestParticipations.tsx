@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
-import Heading, { HeadingType } from 'src/components/guidelines/headings/Heading';
 
 import { SortType, SortTypeDirection } from '../../../common/contest-types';
 import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../../common/types';
