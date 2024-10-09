@@ -8,7 +8,7 @@ public class TestResultResponseModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public string? ResultType { get; set; }
+    public int ResultType { get; set; }
 
     public string? ExecutionComment { get; set; }
 
@@ -23,9 +23,6 @@ public class TestResultResponseModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<TestResultServiceModel, TestResultResponseModel>()
-            .ForMember(
-                m => m.ResultType,
-                opt => opt.MapFrom(src => src.ResultType.ToString()))
             .ForMember(
                 m => m.Output,
                 opt => opt.MapFrom(src => src.CheckerDetails != null ? src.CheckerDetails.UserOutputFragment : null));
