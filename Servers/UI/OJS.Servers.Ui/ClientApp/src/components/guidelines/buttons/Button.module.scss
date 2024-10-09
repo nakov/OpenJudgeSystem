@@ -141,11 +141,11 @@
 }
 
 .lightDisabled {
-    color: colors.$light-base-color-500;
-    border-color: colors.$light-base-color-500 !important;
+  border-color: colors.$light-base-color-500 !important;
+  color: colors.$light-base-color-500;
 }
 
 .darkDisabled {
-    color: colors.$dark-base-color-100;
-    border-color: colors.$dark-base-color-100 !important;
+  border-color: colors.$dark-base-color-100 !important;
+  color: colors.$dark-base-color-100;
 }

@@ -63,14 +63,13 @@
 }
 
 .dropdownMenu .darkMenuSection:not(:last-child) {
-    border-bottom: 1px solid deeppink;
-    margin-bottom: spacings.$sp-16;
+  border-bottom: 1px solid colors.$dark-base-color-100;
+  margin-bottom: spacings.$sp-16;
 }
 
-
 .dropdownMenu .lightMenuSection:not(:last-child) {
-    border-bottom: 1px solid colors.$light-base-color-500;
-    margin-bottom: spacings.$sp-16;
+  border-bottom: 1px solid colors.$light-base-color-200;
+  margin-bottom: spacings.$sp-16;
 }
 
 .dropdownMenu span {
