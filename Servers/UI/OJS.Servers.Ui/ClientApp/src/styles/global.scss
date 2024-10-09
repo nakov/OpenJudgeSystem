@@ -62,23 +62,69 @@ a:link {
 
 /* stylelint-enable */
 
-/* width */
-::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
+///* width */
+//::-webkit-scrollbar {
+//  height: 10px;
+//  width: 10px;
+//}
+//
+///* Track */
+//::-webkit-scrollbar-track {
+//  background: colors.$primary-dark-grey-color;
+//}
+//
+///* Handle */
+//::-webkit-scrollbar-thumb {
+//  background: colors.$color-btn-disabled;
+//}
+//
+///* Handle on hover */
+//::-webkit-scrollbar-thumb:hover {
+//  background: colors.$primary-blue;
+//}
+
+.lightScrollbar {
+    /* Scrollbar width */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* Scrollbar Track */
+    ::-webkit-scrollbar-track {
+        background: colors.$light-base-color-200  // Light theme track color
+    }
+
+    /* Scrollbar Handle */
+    ::-webkit-scrollbar-thumb {
+        background: colors.$light-base-color-500;  // Light theme handle color
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: colors.$primary-blue;
+    }
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: colors.$primary-dark-grey-color;
-}
+.darkScrollbar {
+    /* Scrollbar width */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: colors.$color-btn-disabled;
-}
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: colors.$primary-dark-grey-color;
+    }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: colors.$primary-blue;
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: colors.$color-btn-disabled;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: colors.$primary-blue;
+    }
 }
