@@ -57,7 +57,7 @@
   // categories with no children that are links and load the contests
   .categoryItem {
     align-items: center;
-    border-bottom: 1px solid colors.$light-base-color-500;
+    border-bottom: 1px solid colors.$light-text-color;
     border-radius: 0;
     color: colors.$light-text-color;
     cursor: pointer;
@@ -69,7 +69,7 @@
     transition: background-color 0.2s ease-in-out;
 
     &.darkCategoryItem {
-      border-color: colors.$dark-base-color-300;
+      border-color: colors.$dark-text-color;
       color: colors.$dark-text-color;
     }
 
