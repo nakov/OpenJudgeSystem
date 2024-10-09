@@ -142,10 +142,10 @@
 
 .lightDisabled {
     color: colors.$light-base-color-500;
-    border-color: colors.$light-base-color-500;
+    border-color: colors.$light-base-color-500 !important;
 }
 
 .darkDisabled {
     color: colors.$dark-base-color-100;
-    border-color: colors.$dark-base-color-100;
+    border-color: colors.$dark-base-color-100 !important;
 }
