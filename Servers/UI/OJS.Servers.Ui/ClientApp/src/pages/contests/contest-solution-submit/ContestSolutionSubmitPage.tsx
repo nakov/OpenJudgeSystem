@@ -415,9 +415,9 @@ const ContestSolutionSubmitPage = () => {
             />
             <AdministrationLink
               text="Tests"
-              to={`/tests?filter=problemid~equals~${
+              to={`/problems/${
                   selectedContestDetailsProblem!.id
-              }`}
+              }#tab-tests`}
             />
             {user.isAdmin && (
             <AdministrationLink
