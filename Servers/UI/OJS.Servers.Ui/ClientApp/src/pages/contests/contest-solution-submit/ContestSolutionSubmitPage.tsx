@@ -9,6 +9,9 @@ import { Tooltip } from '@mui/material';
 import Popover from '@mui/material/Popover';
 import isNil from 'lodash/isNil';
 import moment from 'moment';
+import { SUBMISSION_SENT } from 'src/common/messages';
+import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
+import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
@@ -59,6 +62,7 @@ const ContestSolutionSubmitPage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType, slug } = useParams();
 
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
@@ -90,12 +94,14 @@ const ContestSolutionSubmitPage = () => {
 
     const [ submitSolution, {
         error: submitSolutionError,
+        isSuccess: submitSolutionSuccess,
         isError: submitSolutionHasError,
         isLoading: submitSolutionIsLoading,
     } ] = useSubmitContestSolutionMutation();
 
     const [ submitSolutionFile, {
         error: submitSolutionFileError,
+        isSuccess: submitSolutionFileSuccess,
         isError: submitSolutionFileHasError,
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
@@ -165,6 +171,15 @@ const ContestSolutionSubmitPage = () => {
             isOfficial: isCompete,
         });
     };
+
+    useSuccessMessageEffect({
+        data: [
+            { message: SUBMISSION_SENT, shouldGet: submitSolutionSuccess },
+            { message: SUBMISSION_SENT, shouldGet: submitSolutionFileSuccess },
+        ],
+        setSuccessMessage,
+        clearFlags: [ submitSolutionIsLoading, submitSolutionFileIsLoading ],
+    });
 
     useEffect(() => {
         if (submissionsData?.items && problems && submissionsData.items.length > 0) {
@@ -693,6 +708,7 @@ const ContestSolutionSubmitPage = () => {
 
     return (
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
+            {renderSuccessfullAlert(successMessage)}
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
                 <div className={styles.contestNameAndAdminButtons}>
