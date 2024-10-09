@@ -96,7 +96,7 @@ public class SubmissionsController : BaseApiController
         [FromQuery] bool isOfficial,
         [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetUserSubmissionsByProblem<FullDetailsPublicSubmissionsResponseModel>(problemId, isOfficial, page)
+            .GetUserSubmissionsByProblem<FullDetailsPublicSubmissionsServiceModel>(problemId, isOfficial, page)
             .Map<PagedResultResponse<FullDetailsPublicSubmissionsServiceModel>>()
             .ToOkResult();
 
