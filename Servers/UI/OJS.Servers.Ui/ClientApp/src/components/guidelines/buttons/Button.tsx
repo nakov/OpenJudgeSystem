@@ -90,7 +90,7 @@ const sizeToClassName = {
 };
 
 const themingButtonsClassNames:{ [key in ButtonType]?: string[] } =
-    { [ButtonType.secondary]: [ styles.lightSecondary, styles.darkSecondary ] };
+    { [ButtonType.secondary]: [ ] };
 
 const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | null) => {
     if (!isNil(text) && !isNil(children)) {

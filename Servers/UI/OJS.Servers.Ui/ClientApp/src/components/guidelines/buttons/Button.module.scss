@@ -140,18 +140,9 @@
   }
 }
 
-.lightSecondary {
-  // TODO: Fix this color
-  background-color: colors.$horizontal-line-gray;
-}
-
-.darkSecondary {
-  background-color: colors.$primary-dark-grey-color;
-}
-
 .lightDisabled {
-    color: colors.$light-base-color-300;
-    border-color: colors.$light-base-color-300;
+    color: colors.$light-base-color-500;
+    border-color: colors.$light-base-color-500;
 }
 
 .darkDisabled {
