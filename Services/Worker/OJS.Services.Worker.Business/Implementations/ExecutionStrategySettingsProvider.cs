@@ -217,8 +217,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     GetBaseMemoryUsed(submission, this.settings.GPlusPlusBaseMemoryUsedInBytes))
 
                 as TSettings,
-            ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy or
-            ExecutionStrategyType.Java21SpringAndHibernateProjectExecution => new
+            ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy => new
                 JavaSpringAndHibernateProjectExecutionStrategySettings(
                     GetBaseTimeUsed(submission, this.settings.JavaBaseTimeUsedInMilliseconds),
                     GetBaseMemoryUsed(submission, this.settings.JavaBaseMemoryUsedInBytes),
@@ -227,6 +226,17 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
                     this.settings.MavenPath,
                     this.settings.JavaSpringAndHibernateStrategyPomFilePath)
+
+            as TSettings,
+            ExecutionStrategyType.Java21SpringAndHibernateProjectExecution => new
+                JavaSpringAndHibernateProjectExecutionStrategySettings(
+                    GetBaseTimeUsed(submission, this.settings.JavaBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.JavaBaseMemoryUsedInBytes),
+                    this.GetJavaExecutablePath(executionStrategyType),
+                    this.GetJavaLibsPath(executionStrategyType),
+                    this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
+                    this.settings.MavenPath,
+                    this.settings.Java21SpringAndHibernateStrategyPomFilePath)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectExecutionStrategy => new
