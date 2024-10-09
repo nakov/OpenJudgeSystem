@@ -178,9 +178,7 @@ const SubmissionDetailsPage = () => {
 
         const compileTimeErrorClasses = concatClassNames(
             styles.compileTimeErrorWrapper,
-            getColorClassName(isDarkMode
-                ? themeColors.baseColor500
-                : themeColors.baseColor200),
+            getColorClassName(themeColors.baseColor200),
             textColorClassName,
             textColorClassName,
             isDarkMode
