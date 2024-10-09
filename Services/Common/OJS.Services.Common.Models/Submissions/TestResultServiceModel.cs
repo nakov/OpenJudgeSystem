@@ -4,12 +4,13 @@ using AutoMapper;
 using OJS.Workers.Common;
 using OJS.Workers.ExecutionStrategies.Models;
 using OJS.Services.Infrastructure.Models.Mapping;
+using OJS.Workers.Common.Models;
 
 public class TestResultServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public int ResultType { get; set; }
+    public TestRunResultType ResultType { get; set; }
 
     public string ExecutionComment { get; set; } = string.Empty;
 

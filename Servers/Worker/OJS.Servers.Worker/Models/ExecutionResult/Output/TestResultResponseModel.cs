@@ -3,12 +3,13 @@
 using AutoMapper;
 using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Services.Common.Models.Submissions;
+using OJS.Workers.Common.Models;
 
 public class TestResultResponseModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public int ResultType { get; set; }
+    public TestRunResultType ResultType { get; set; }
 
     public string? ExecutionComment { get; set; }
 

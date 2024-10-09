@@ -2,6 +2,7 @@ namespace OJS.Data.Models.Tests;
 
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Common;
+using OJS.Workers.Common.Models;
 
 public class TestRun : Entity<int>
 {
@@ -17,7 +18,7 @@ public class TestRun : Entity<int>
 
     public long MemoryUsed { get; set; }
 
-    public int ResultType { get; set; }
+    public TestRunResultType ResultType { get; set; }
 
     public bool IsTrialTest { get; set; }
 

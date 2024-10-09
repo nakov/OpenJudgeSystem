@@ -3,6 +3,7 @@
 using AutoMapper;
 using OJS.Data.Models.Tests;
 using OJS.Services.Infrastructure.Models.Mapping;
+using OJS.Workers.Common.Models;
 
 public class TestRunDetailsServiceModel : IMapExplicitly
 {
@@ -18,7 +19,7 @@ public class TestRunDetailsServiceModel : IMapExplicitly
 
     public string? CheckerComment { get; set; }
 
-    public int ResultType { get; set; }
+    public TestRunResultType ResultType { get; set; }
 
     public string? ExpectedOutputFragment { get; set; }
 
