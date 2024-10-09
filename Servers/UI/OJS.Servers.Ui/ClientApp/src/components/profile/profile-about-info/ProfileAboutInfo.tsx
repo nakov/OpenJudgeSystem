@@ -88,7 +88,7 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProf
             </div>
 
             <div className={styles.imageAndLogoutButtonContainer}>
-                <img height={180} width={180} src={MyProfileSvg} alt="my-profile" />
+                <img height={150} width={150} src={MyProfileSvg} alt="my-profile" />
                 {
                         isUserProfileOwner && (
                             <Link

@@ -49,7 +49,17 @@ const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: I
     const { navigateInNewWindow } = useNavigation();
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
+    const backgroundColorClassname = getColorClassName(isDarkMode
+        ? themeColors.baseColor200
+        : themeColors.baseColor100);
+
+    const menuSectionClassName = concatClassNames(
+        styles.menuSection,
+        isDarkMode
+            ? styles.darkMenuSection
+            : styles.lightMenuSection,
+    );
 
     const handleMouseEnter = () => {
         setMenuVisible(true);
@@ -66,7 +76,7 @@ const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: I
 
     const renderDefaultMenuItems = useCallback(() => (
         <>
-            <div className={styles.menuSection}>
+            <div className={menuSectionClassName}>
                 <span onClick={() => onClickNavigate(CONTESTS_PATH)}>Contests</span>
                 <span onClick={() => onClickNavigate(EXAM_GROUPS_PATH)}>Exam Groups</span>
                 <span onClick={() => onClickNavigate(SUBMISSIONS_PATH)}>Submissions</span>
@@ -77,26 +87,26 @@ const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: I
             </div>
             {user.isAdmin && (
                 <>
-                    <div className={styles.menuSection}>
+                    <div className={menuSectionClassName}>
                         <span onClick={() => onClickNavigate(PROBLEMS_PATH)}>Problems</span>
                         <span onClick={() => onClickNavigate(PROBLEM_GROUPS_PATH)}>Problem Groups</span>
                         <span onClick={() => onClickNavigate(TESTS_PATH)}>Tests</span>
                         <span onClick={() => onClickNavigate(SUBMISSION_TYPES_PATH)}>Submission Types</span>
                     </div>
-                    <div className={styles.menuSection}>
+                    <div className={menuSectionClassName}>
                         <span onClick={() => onClickNavigate(USERS_PATH)}>Users</span>
                         <span onClick={() => onClickNavigate(ROLES_PATH)}>Roles</span>
                         {/* TODO */}
                         {/* <span onClick={() => onClickNavigate(TESTS_PATH)}>
                                 Lecturers in contests and categories</span> */}
                     </div>
-                    <div className={styles.menuSection}>
+                    <div className={menuSectionClassName}>
                         <span onClick={() => onClickNavigate('')}>All Administrations</span>
                     </div>
                 </>
             )}
         </>
-    ), [ onClickNavigate, user ]);
+    ), [ menuSectionClassName, onClickNavigate, user ]);
 
     return (
         <div
@@ -135,7 +145,7 @@ const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: I
                       ? styles.dropdownMenuInHeader
                       : '',
                   getColorClassName(themeColors.textColor),
-                  getColorClassName(themeColors.baseColor200),
+                  backgroundColorClassname,
               )}
             >
                 { isNilOrEmpty(items)
@@ -143,7 +153,7 @@ const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: I
                     : Array.isArray(items?.[0])
                     // Render sections if items is an array of arrays
                         ? (items as IAdministrationMenuItem[][]).map((section, sectionIndex) => (
-                            <div key={sectionIndex} className={styles.menuSection}>
+                            <div key={sectionIndex} className={menuSectionClassName}>
                                 {section.map((menuItem, itemIndex) => (
                                     <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
                                         {menuItem.text}
@@ -153,7 +163,7 @@ const AdministrationMenu = ({ buttonType, items, isUsedInPageHeader = false }: I
                         ))
                     // Render individual spans if items is a flat array or not provided
                         : (
-                            <div key={1} className={styles.menuSection}>
+                            <div key={1} className={menuSectionClassName}>
                                 {(items as IAdministrationMenuItem[] || []).map((menuItem, itemIndex) => (
                                     <span key={itemIndex} onClick={() => onClickNavigate(menuItem.link)}>
                                         {menuItem.text}

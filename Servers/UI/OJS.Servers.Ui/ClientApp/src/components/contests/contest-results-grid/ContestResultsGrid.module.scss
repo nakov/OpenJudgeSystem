@@ -31,12 +31,13 @@
   }
 
   .lightContestResultsGridHeader {
-    background: colors.$wrappers-border-color;
+    background: colors.$primary-blue;
     box-shadow: shadows.$dp-shadow-1;
+    color: colors.$light-base-color-100 !important;
   }
 
   .darkContestResultsGridHeader {
-    background: #1c1c17;
+    background: colors.$dark-base-color-500;
     box-shadow: shadows.$dp-shadow-4;
   }
 }
@@ -48,40 +49,24 @@
 }
 
 .lightRow {
-  // TODO: Fix this color
-  background: colors.$horizontal-line-gray;
-  border-bottom: 1px solid colors.$wrappers-border-color;
+  background: colors.$light-base-color-100;
+  border-bottom: 1px solid colors.$light-base-color-200;
 }
 
 .darkRow {
   background: colors.$primary-dark-grey-color;
+  border-bottom: 1px solid colors.$dark-base-color-400;
 }
 
-.underlinedPointsResultLight {
-  color: colors.$black-color;
+.resultLink {
+  color: inherit;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-.underlinedPointsResultDark {
-  color: colors.$white-color;
-}
-
-.notUnderlinedPointsResultLight {
-  color: colors.$black-color;
-}
-
-.notUnderlinedPointsResultDark {
-  color: colors.$white-color;
-}
-
-.underlinedPointsResultLight:hover,
-.underlinedPointsResultDark:hover {
-  text-decoration: underline;
-}
-
-.userRowDark {
-  background: colors.$light-blue-color;
-}
-
-.userRowLight {
-  background: colors.$text-light-gray-color;
+.userRow {
+  background: colors.$primary-blue;
+  color: colors.$light-base-color-100 !important;
 }

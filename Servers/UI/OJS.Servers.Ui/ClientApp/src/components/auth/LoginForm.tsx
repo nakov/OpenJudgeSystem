@@ -178,8 +178,8 @@ const LoginForm = () => {
     const formClassName = concatClassNames(
         styles.loginForm,
         isDarkMode
-            ? styles.darkLoginForm
-            : '',
+            ? getColorClassName(themeColors.baseColor200)
+            : getColorClassName(themeColors.baseColor100),
         getColorClassName(themeColors.textColor),
     );
 

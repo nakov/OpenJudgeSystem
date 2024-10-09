@@ -28,17 +28,23 @@
       display: flex;
       gap: spacings.$sp-12;
 
-      .testRunIdWrapper {
+      .testLink {
         color: colors.$secondary-green;
         cursor: pointer;
         font-size: variables.$f-size-14;
-        margin-left: spacings.$sp-12;
         text-decoration: underline;
       }
 
       .timeAndMemoryWrapper {
+        align-items: center;
+        color: colors.$light-text-color;
         display: flex;
-        width: 300px;
+        gap: 10px;
+        justify-content: end;
+
+        .iconAndTextWrapper {
+          gap: 5px;
+        }
 
         span {
           align-items: center;
@@ -49,10 +55,6 @@
             align-items: center;
             display: flex;
           }
-        }
-
-        svg:first-child {
-          margin: 0 spacings.$sp-8;
         }
       }
     }

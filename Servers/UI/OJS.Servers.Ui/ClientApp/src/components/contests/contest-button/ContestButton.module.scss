@@ -8,8 +8,8 @@
 .adminDisabledLight {
   @extend %adminDisabled;
 
-  border-color: colors.$light-base-color-300 !important;
-  color: colors.$light-base-color-300;
+  border-color: colors.$light-base-color-500 !important;
+  color: colors.$light-base-color-500;
 }
 
 .adminDisabledDark {

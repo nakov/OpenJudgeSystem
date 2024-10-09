@@ -61,7 +61,7 @@
     }
 
     @mixin error-wrapper-styles {
-      background-color: colors.$light-base-color-200;
+      background-color: colors.$light-base-color-100;
       border-radius: border-radiuses.$br-6;
       padding: spacings.$sp-24 spacings.$sp-32;
 
@@ -92,8 +92,8 @@
       align-items: center;
       background-color: colors.$warning-color;
       border-radius: border-radiuses.$br-6;
+      color: colors.$white-color;
       display: flex;
-      font-weight: font-weights.$font-weight-semi-bold;
       justify-content: space-between;
       margin-top: spacings.$sp-24;
       padding: spacings.$sp-24 spacings.$sp-32;
@@ -106,7 +106,7 @@
     .submissionInQueueWrapper {
       background-color: colors.$primary-blue;
       border-radius: border-radiuses.$br-6;
-      font-weight: font-weights.$font-weight-semi-bold;
+      color: colors.$white-color;
       margin-top: spacings.$sp-24;
       padding: spacings.$sp-24 spacings.$sp-32;
     }

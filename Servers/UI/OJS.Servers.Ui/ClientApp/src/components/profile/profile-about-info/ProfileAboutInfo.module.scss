@@ -16,7 +16,7 @@
   align-self: flex-start;
   display: grid;
   font-size: variables.$f-size-20;
-  gap: spacings.$sp-12 spacings.$sp-32;
+  gap: spacings.$sp-4 spacings.$sp-32;
   grid-template-columns: auto 1fr;
   margin-top: spacings.$sp-24;
 }

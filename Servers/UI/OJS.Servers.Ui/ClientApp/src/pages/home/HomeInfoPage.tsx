@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+import concatClassNames from 'src/utils/class-names';
 
 import MetaTags from '../../components/common/MetaTags';
 import IconSize from '../../components/guidelines/icons/common/icon-sizes';
@@ -23,7 +24,7 @@ interface IHomePageStatistic {
 const HomePageStatistic = (props: IHomePageStatistic) => {
     const { title, iconType, count } = props;
 
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     return (
@@ -31,7 +32,9 @@ const HomePageStatistic = (props: IHomePageStatistic) => {
             <Icon
               size={IconSize.ExtraLarge}
               Component={iconType}
-              color={themeColors.baseColor100}
+              color={isDarkMode
+                  ? themeColors.baseColor100
+                  : themeColors.baseColor500}
             />
             <div className={styles.homePageStatisticTextWrapper}>
                 <div style={{ color: '#44a9f8' }}>{title}</div>
@@ -80,7 +83,7 @@ const HomePage = () => {
 
         return (
             <div className={styles.gridWrapper}>
-                <div className={styles.homeStatistics}>
+                <div className={concatClassNames(styles.homeStatistics)}>
                     {HOME_STATISTICS.map((el, idx) => {
                         const { iconType, title, dataKey } = el;
                         // eslint-disable-next-line prefer-destructuring
