@@ -80,7 +80,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                               style={{
                                   borderBottom: `${isLast
                                       ? 0
-                                      : 1}px solid ${themeColors.baseColor300}`,
+                                      : 1}px solid ${themeColors.textColor}`,
                               }}
                               onClick={() => onProblemClick(problem)}
                             >
