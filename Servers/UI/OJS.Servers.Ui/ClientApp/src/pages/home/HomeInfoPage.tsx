@@ -34,7 +34,7 @@ const HomePageStatistic = (props: IHomePageStatistic) => {
               Component={iconType}
               color={isDarkMode
                   ? themeColors.baseColor100
-                  : themeColors.baseColor500}
+                  : textColorClassName}
             />
             <div className={styles.homePageStatisticTextWrapper}>
                 <div style={{ color: '#44a9f8' }}>{title}</div>
