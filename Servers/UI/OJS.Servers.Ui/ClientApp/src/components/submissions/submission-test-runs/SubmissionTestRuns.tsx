@@ -1,5 +1,3 @@
-import concatClassNames from 'src/utils/class-names';
-
 import { getTestResultColorId } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
@@ -35,11 +33,7 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
         return (
             <div
               key={`tr-${testRun.id}`}
-              className={concatClassNames(styles.submissionTestRun,
-                  // testRun.isTrialTest
-                  //     ? styles.trialTest
-                  //     : '',
-              )}
+              className={styles.submissionTestRun}
               style={{ color }}
               onClick={() => onTestRunClick()}
             >
