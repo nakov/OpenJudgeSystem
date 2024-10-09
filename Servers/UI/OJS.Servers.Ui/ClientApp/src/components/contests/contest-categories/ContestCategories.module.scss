@@ -47,11 +47,11 @@
   }
 
   .lightCategoryListItem {
-    border-bottom: 1px solid colors.$light-base-color-500;
+    border-bottom: 1px solid colors.$light-text-color;
   }
 
   .darkCategoryListItem {
-    border-bottom: 1px solid colors.$dark-base-color-300;
+    border-bottom: 1px solid colors.$dark-text-color;
   }
 
   // categories with no children that are links and load the contests
