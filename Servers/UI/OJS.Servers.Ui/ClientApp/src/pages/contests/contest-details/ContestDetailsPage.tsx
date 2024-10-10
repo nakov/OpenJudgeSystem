@@ -63,7 +63,7 @@ const ContestDetailsPage = () => {
         <span key={`contest-sub-strategy-btn-${allowedSubmissionType.id}`}>
             <Link
               className={styles.allowedLanguageLink}
-              to={getAllContestsPageUrl({ categoryId: selectedCategory?.id, strategyId: allowedSubmissionType.id })}
+              to={getAllContestsPageUrl({ strategyId: allowedSubmissionType.id })}
             >
                 {allowedSubmissionType.name}
             </Link>
