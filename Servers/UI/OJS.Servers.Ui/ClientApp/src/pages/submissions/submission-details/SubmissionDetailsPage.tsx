@@ -153,7 +153,9 @@ const SubmissionDetailsPage = () => {
                         />
                         <AdministrationLink
                           text="Tests"
-                          to={`/tests?filter=problemid~equals~${problem!.id}`}
+                          to={`/problems/${
+                                problem!.id
+                          }#tab-tests`}
                         />
                         <Button
                           text="Retest"
