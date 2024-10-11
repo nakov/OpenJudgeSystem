@@ -1,6 +1,5 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
-@use 'src/styles/components';
 @use 'src/styles/shadows';
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
@@ -57,11 +56,6 @@
   cursor: pointer;
   font-size: variables.$f-size-18;
   margin-right: spacings.$sp-8;
-}
-
-.themeSwitchWrapper {
-  margin-right: spacings.$sp-24;
-  max-height: 33px;
 }
 
 .searchWrapper {

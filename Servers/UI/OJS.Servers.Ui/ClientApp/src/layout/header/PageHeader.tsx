@@ -2,16 +2,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { BsFillMoonFill } from 'react-icons/bs';
 import { FaBars, FaSearch } from 'react-icons/fa';
-import { RiSunLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import ThemeToggle from 'src/layout/header/ThemeToggle';
 
 import MyProfileSvg from '../../assets/my-profile.svg';
 import { NEW_ADMINISTRATION_PATH } from '../../common/urls/administration-urls';
 import { getAllContestsPageUrl } from '../../common/urls/compose-client-urls';
-import useTheme from '../../hooks/use-theme';
 import {
     resetInInternalUser,
     setInternalUser,
@@ -29,11 +26,9 @@ import styles from './PageHeader.module.scss';
 const PageHeader = () => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const { toggleSelectedTheme } = useTheme();
 
     const shouldRenderPageHeader = !pathname.includes('administration');
 
-    const { mode } = useAppSelector((state) => state.theme);
     const { isVisible } = useAppSelector((state) => state.search);
 
     const [ areBurgerItemsOpened, setAreBurgerItemsOpened ] = useState<boolean>(false);
@@ -86,45 +81,6 @@ const PageHeader = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ pathname ]);
-
-    const toggleButtonsStylesDark = {
-        '&.Mui-selected': {
-            backgroundColor: '#687487',
-            // hover effect when selected
-            '&:hover': { backgroundColor: '#687487', color: '#FFF' },
-        },
-        // hover effect when unselected
-        '&:hover': { backgroundColor: '#FFF', color: '#687487' },
-    };
-
-    const toggleButtonsStylesLight = {
-        '&.Mui-selected': {
-            backgroundColor: '#687487',
-            // hover effect when selected
-            '&:hover': { backgroundColor: '#687487', color: '#FFF' },
-        },
-        // hover effect when unselected
-        '&:hover': { backgroundColor: '#FFF', color: '#687487' },
-    };
-
-    const renderThemeSwitcher = () => (
-        <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
-            <ToggleButton
-              value="light"
-              onClick={toggleSelectedTheme}
-              sx={toggleButtonsStylesLight}
-            >
-                <RiSunLine />
-            </ToggleButton>
-            <ToggleButton
-              value="dark"
-              onClick={toggleSelectedTheme}
-              sx={toggleButtonsStylesDark}
-            >
-                <BsFillMoonFill />
-            </ToggleButton>
-        </ToggleButtonGroup>
-    );
 
     const renderBurgerMenuItems = useCallback(
         () => {
@@ -189,7 +145,7 @@ const PageHeader = () => {
                 </div>
             </div>
             <div className={styles.authButtons}>
-                {isThemeSwitchVisible && renderThemeSwitcher()}
+                {isThemeSwitchVisible && (<ThemeToggle />)}
                 <div className={styles.searchWrapper} onClick={() => dispatch(setIsVisible(!isVisible))}>
                     <FaSearch className={styles.searchIcon} />
                     <span>Search</span>

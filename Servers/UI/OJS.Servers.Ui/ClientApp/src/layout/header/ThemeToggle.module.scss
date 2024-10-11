@@ -1,0 +1,6 @@
+@use 'src/styles/spacings';
+
+.themeSwitchWrapper {
+    margin-right: spacings.$sp-24;
+    max-height: 33px;
+}
