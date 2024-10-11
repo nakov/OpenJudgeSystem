@@ -146,6 +146,7 @@ const SubmissionGridRow = ({
                       target="_blank"
                       text="Details"
                       type={LinkButtonType.secondary}
+                      size={ButtonSize.small}
                     />
                 );
             }
