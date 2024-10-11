@@ -7,7 +7,7 @@ import {
     IGetAllAdminParams,
     IPagedResultType,
     IParticipantAdministrationModel,
-    IParticipantInListModel
+    IParticipantInListModel,
 } from '../../../common/types';
 import { IGetByContestId } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
@@ -62,14 +62,14 @@ const participantsAdminService = createApi({
         }),
         changeParticipationTimeForMultipleParticipants: builder.mutation<string, IChangeParticipationTimeForMultipleParticipants>({
             query: (model) => ({
-                url: `/ChangeParticipationTimeForMultipleParticipants`,
+                url: '/ChangeParticipationTimeForMultipleParticipants',
                 method: 'POST',
                 body: model,
             }),
         }),
         changeParticipationTimeForSingleParticipant: builder.mutation<string, IChangeParticipationTimeForSingleParticipant>({
             query: (model) => ({
-                url: `/ChangeParticipationTimeForSingleParticipant`,
+                url: '/ChangeParticipationTimeForSingleParticipant',
                 method: 'POST',
                 body: model,
             }),

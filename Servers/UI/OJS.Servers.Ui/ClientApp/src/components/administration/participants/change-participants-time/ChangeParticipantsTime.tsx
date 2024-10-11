@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useMemo, useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import {
