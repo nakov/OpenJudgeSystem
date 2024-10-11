@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MdOutlineManageHistory } from 'react-icons/all';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ChangeParticipantsTime
     from 'src/components/administration/participants/change-participants-time/ChangeParticipantsTime';
+import ConfirmDialog from 'src/components/guidelines/dialog/ConfirmDialog';
 
 import { IContestAdministration, IGetAllAdminParams } from '../../../../common/types';
 import {
@@ -56,7 +57,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
             <CreateButton
               showModal={openChangeTimeModal}
               showModalFunc={setOpenChangeTimeModal}
-              tooltipLabel="Change Participants Time"
+              tooltipLabel="Change Participation Time"
               Icon={MdOutlineManageHistory}
               styles={{ width: '40px', height: '40px' }}
             />

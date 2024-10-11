@@ -25,13 +25,18 @@ import TabsInView from 'src/components/administration/common/tabs/TabsInView';
 import FormActionButton from 'src/components/administration/form-action-button/FormActionButton';
 import { handleDateTimePickerChange } from 'src/components/administration/utils/mui-utils';
 import ExternalLink from 'src/components/guidelines/buttons/ExternalLink';
+import ConfirmDialog from 'src/components/guidelines/dialog/ConfirmDialog';
 import useDelayedSuccessEffect from 'src/hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
 import {
     useChangeParticipationTimeForMultipleParticipantsMutation, useChangeParticipationTimeForSingleParticipantMutation,
 } from 'src/redux/services/admin/participantsAdminService';
 import { useGetUsersAutocompleteQuery } from 'src/redux/services/admin/usersAdminService';
-import { convertToUtc, getDateAsLocal } from 'src/utils/administration/administration-dates';
+import {
+    adminFormatDate,
+    convertToUtc,
+    getDateAsLocal,
+} from 'src/utils/administration/administration-dates';
 import concatClassNames from 'src/utils/class-names';
 import { getAndSetExceptionMessage } from 'src/utils/messages-utils';
 import { renderErrorMessagesAlert } from 'src/utils/render-utils';
@@ -52,6 +57,7 @@ enum CHANGE_PARTICIPANTS_TIME_LISTED_DATA {
     SINGLE_PARTICIPANT = 'singleparticipant',
 }
 
+const dateFormat = 'MM/DD/YYYY HH:mm';
 const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } : IChangeParticipantsTimeProps) => {
     const durationInMinutes = useMemo(() => {
         const [ hours, minutes, seconds ] = (contest?.duration ?? '00:00:00').split(':').map(Number);
@@ -89,6 +95,8 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
+    const [ openConfirmForMultiple, setOpenConfirmForMultiple ] = useState<boolean>(false);
+    const [ openConfirmForSingle, setOpenConfirmForSingle ] = useState<boolean>(false);
     const [ tabName, setTabName ] = useState(CHANGE_PARTICIPANTS_TIME_LISTED_DATA.MULTIPLE_PARTICIPANTS);
     const [ usersAutocomplete, setUsersAutocomplete ] = useState<Array<IUserAutocompleteData>>([]);
     const [ usersSearchString, setUsersSearchString ] = useState<string>('');
@@ -212,6 +220,38 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
 
     const renderSingleParticipant = () => (
         <FormControl fullWidth>
+            {openConfirmForSingle && (
+                <ConfirmDialog
+                  title="Logout"
+                  text={(
+                      <>
+                          Are you sure you want to
+                          {' '}
+                          {changeParticipationTimeForSingleParticipant.timeInMinutes < 0
+                              ? 'remove'
+                              : 'add'}
+                          {' '}
+                          <b>{Math.abs(changeParticipationTimeForSingleParticipant.timeInMinutes)}</b>
+                          {' '}
+                          minutes
+                          {' '}
+                          {changeParticipationTimeForSingleParticipant.timeInMinutes < 0
+                              ? 'from'
+                              : 'to'}
+                          {' '}
+                          the contest duration of the participant with username
+                          {' '}
+                          <b>{changeParticipationTimeForSingleParticipant.username}</b>
+                          {' '}
+                          ?
+                      </>
+                    )}
+                  confirmButtonText="Change"
+                  declineButtonText="Cancel"
+                  onClose={() => setOpenConfirmForSingle(false)}
+                  confirmFunction={() => changeTimeForSingleParticipant(changeParticipationTimeForSingleParticipant)}
+                />
+            )}
             <div className={styles.durationWrapper}>
                 <TextField
                   className={styles.duration}
@@ -259,7 +299,7 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
             <FormActionButton
               className={formStyles.buttonsWrapper}
               buttonClassName={formStyles.button}
-              onClick={() => changeTimeForSingleParticipant(changeParticipationTimeForSingleParticipant)}
+              onClick={() => setOpenConfirmForSingle(true)}
               name="Change Time"
             />
         </FormControl>
@@ -267,6 +307,51 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
 
     const renderMultipleParticipants = () => (
         <Box>
+            {openConfirmForMultiple && (
+                <ConfirmDialog
+                  title="Logout"
+                  text={(
+                      <>
+                          Are you sure you want to
+                          {' '}
+                          {changeParticipationTimeForMultipleParticipants.timeInMinutes < 0
+                              ? 'remove'
+                              : 'add'}
+                          {' '}
+                          <b>{Math.abs(changeParticipationTimeForMultipleParticipants.timeInMinutes)}</b>
+                          {' '}
+                          minutes
+                          {' '}
+                          {changeParticipationTimeForMultipleParticipants.timeInMinutes < 0
+                              ? 'from'
+                              : 'to'}
+                          {' '}
+                          the contest duration of all participants created in the time interval between
+                          {' '}
+                          <b>
+                              {adminFormatDate(
+                                  changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeStart,
+                                  dateFormat,
+                              )}
+                          </b>
+                          {' '}
+                          and
+                          {' '}
+                          <b>
+                              {adminFormatDate(
+                                  changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeEnd,
+                                  dateFormat,
+                              )}
+                          </b>
+                          ?
+                      </>
+                    )}
+                  confirmButtonText="Change"
+                  declineButtonText="Cancel"
+                  onClose={() => setOpenConfirmForMultiple(false)}
+                  confirmFunction={() => changeTimeForMultipleParticipants(changeParticipationTimeForMultipleParticipants)}
+                />
+            )}
             <div className={styles.durationWrapper}>
                 <TextField
                   className={styles.duration}
@@ -326,7 +411,7 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
                 <FormActionButton
                   className={formStyles.buttonsWrapper}
                   buttonClassName={formStyles.button}
-                  onClick={() => changeTimeForMultipleParticipants(changeParticipationTimeForMultipleParticipants)}
+                  onClick={() => setOpenConfirmForMultiple(true)}
                   name="Change Time"
                 />
             </Box>

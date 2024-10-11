@@ -112,7 +112,8 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
         await this.participantsData.SaveChanges();
 
         var action = model.TimeInMinutes < 0 ? "removed" : "added";
-        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes to the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}";
+        var preposition = model.TimeInMinutes < 0 ? "from" : "to";
+        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}";
     }
 
     public async Task<string> UpdateParticipationTimeForSingleParticipant(
@@ -151,6 +152,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
         await this.participantsData.SaveChanges();
 
         var action = model.TimeInMinutes < 0 ? "removed" : "added";
-        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes to the time of the participant with username: {model.Username}, in the contest: {model.ContestName}";
+        var preposition = model.TimeInMinutes < 0 ? "from" : "to";
+        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the time of the participant with username: {model.Username}, in the contest: {model.ContestName}";
     }
 }
