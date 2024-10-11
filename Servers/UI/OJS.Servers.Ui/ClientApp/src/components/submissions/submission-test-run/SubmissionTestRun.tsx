@@ -96,9 +96,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                           text={testShowInput
                               ? 'HIDE INPUT'
                               : 'SHOW INPUT'}
-                          type={isDarkMode
-                              ? ButtonType.lightNeutral
-                              : ButtonType.darkNeutral}
+                          type={ButtonType.neutral}
                           size={ButtonSize.small}
                         />
                     )}
