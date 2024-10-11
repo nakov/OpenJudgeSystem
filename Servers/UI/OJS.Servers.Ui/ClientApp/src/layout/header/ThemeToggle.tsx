@@ -1,5 +1,5 @@
 import React from 'react';
-import { BsMoon } from 'react-icons/all';
+import { BsMoon } from 'react-icons/bs';
 import { RiSunLine } from 'react-icons/ri';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import useTheme from 'src/hooks/use-theme';

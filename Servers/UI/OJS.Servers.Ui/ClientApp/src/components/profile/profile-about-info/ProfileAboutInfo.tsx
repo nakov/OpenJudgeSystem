@@ -1,7 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { ButtonSize, LinkButton, LinkButtonType } from 'src/components/guidelines/buttons/Button';
-import { getSubmissionDetailsRedirectionUrl } from 'src/utils/urls';
 
 import MyProfileSvg from '../../../assets/my-profile.svg';
 import { IUserProfileType } from '../../../common/types';
