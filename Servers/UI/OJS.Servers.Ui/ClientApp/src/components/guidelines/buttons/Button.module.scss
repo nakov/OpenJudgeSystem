@@ -36,7 +36,6 @@
     background: none;
     border: 2px solid colors.$primary-blue;
     border-radius: border-radiuses.$br-6;
-
     color: colors.$primary-blue;
 
     &:hover {
@@ -58,11 +57,9 @@
   &.disabled,
   %disabled {
     background-color: transparent !important;
-
     pointer-events: none;
 
     &:hover {
-
       cursor: not-allowed;
     }
   }

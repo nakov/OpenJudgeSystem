@@ -93,6 +93,8 @@
       background-color: colors.$warning-color;
       border-radius: border-radiuses.$br-6;
       color: colors.$white-color;
+      font-weight: font-weights.$font-weight-regular;
+      font-size: variables.$f-size-16;
       display: flex;
       justify-content: space-between;
       margin-top: spacings.$sp-24;
@@ -155,6 +157,8 @@
 .succesfulRetestWrapper {
   align-self: center;
   background-color: colors.$primary-green;
+  color: colors.$white-color;
+  font-size: variables.$f-size-16;
   border-radius: border-radiuses.$br-6;
   margin: spacings.$sp-24 0;
   padding: spacings.$sp-24 spacings.$sp-32;

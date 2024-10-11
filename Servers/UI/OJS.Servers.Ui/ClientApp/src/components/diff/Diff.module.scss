@@ -42,7 +42,7 @@ pre[class*='content-text'] {
 
   // Expected output
   td[class*='gutter'][class*='removed'],
-  td[class*='empty-gutter']{
+  td[class*='empty-gutter'] {
     background: #cdffd8;
   }
 

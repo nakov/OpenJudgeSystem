@@ -29,7 +29,7 @@ import styles from './PageHeader.module.scss';
 const PageHeader = () => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const { isDarkMode, toggleSelectedTheme } = useTheme();
+    const { toggleSelectedTheme } = useTheme();
 
     const shouldRenderPageHeader = !pathname.includes('administration');
 

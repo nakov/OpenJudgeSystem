@@ -61,25 +61,25 @@
 
 .themeSwitchWrapper {
   margin-right: spacings.$sp-24;
-    max-height: 33px;
+  max-height: 33px;
 }
 
 .searchWrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: spacings.$sp-24;
-    padding: 11px;
-    height: 12px;
-    background: white;
-    color: colors.$primary-blue;
-    border-radius: border-radiuses.$br-4;
-    text-transform: uppercase;
-    font-weight: font-weights.$font-weight-regular;
+  align-items: center;
+  background: white;
+  border-radius: border-radiuses.$br-4;
+  color: colors.$primary-blue;
+  display: flex;
+  flex-direction: row;
+  font-weight: font-weights.$font-weight-regular;
+  height: 12px;
+  margin-right: spacings.$sp-24;
+  padding: 11px;
+  text-transform: uppercase;
 
-    &:hover {
-        cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .profileNavButton {
