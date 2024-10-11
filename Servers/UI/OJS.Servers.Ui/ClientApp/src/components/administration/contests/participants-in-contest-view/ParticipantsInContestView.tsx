@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { MdOutlineManageHistory } from 'react-icons/all';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
+import ChangeParticipantsTime
+    from 'src/components/administration/participants/change-participants-time/ChangeParticipantsTime';
 
-import { IGetAllAdminParams } from '../../../../common/types';
+import { IContestAdministration, IGetAllAdminParams } from '../../../../common/types';
 import {
     applyDefaultFilterToQueryString,
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
@@ -18,13 +23,18 @@ import styles from '../../../../pages/administration-new/AdministrationStyles.mo
 interface IParticipantsInContestView {
     contestId: number;
     contestName: string;
+    contest: IContestAdministration;
 }
 
 const ParticipantsInContestView = (props: IParticipantsInContestView) => {
-    const { contestId, contestName } = props;
+    const { contestId, contestName, contest } = props;
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const navigate = useNavigate();
 
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
+    const [ openChangeTimeModal, setOpenChangeTimeModal ] = useState<boolean>(false);
 
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd));
 
@@ -36,11 +46,20 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
     };
 
     const renderActions = () => (
-        <CreateButton
-          showModal={openCreateModal}
-          showModalFunc={setOpenCreateModal}
-          styles={{ width: '40px', height: '40px' }}
-        />
+        <>
+            <CreateButton
+              showModal={openCreateModal}
+              showModalFunc={setOpenCreateModal}
+              styles={{ width: '40px', height: '40px' }}
+            />
+            <CreateButton
+              showModal={openChangeTimeModal}
+              showModalFunc={setOpenChangeTimeModal}
+              tooltipLabel="Change Participants Time"
+              Icon={MdOutlineManageHistory}
+              styles={{ width: '40px', height: '40px' }}
+            />
+        </>
     );
 
     const renderParticipantModal = (index: number) => (
@@ -59,6 +78,20 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
         </AdministrationModal>
     );
 
+    const renderChangeParticipantsTimeModal = (index: number) => (
+        <AdministrationModal index={index} open onClose={() => setOpenChangeTimeModal(false)}>
+            <ChangeParticipantsTime contest={contest} />
+        </AdministrationModal>
+    );
+
+    useEffect(() => {
+        if (params.get('openChangeParticipantsTime') === 'true') {
+            setOpenChangeTimeModal(true);
+            params.delete('openChangeParticipantsTime');
+            navigate(`${location.pathname}?${params.toString()}#tab-participants`, { replace: true });
+        }
+    }, [ location.pathname, navigate, params ]);
+
     return (
         <>
             {renderSuccessfullAlert(successMessage)}
@@ -72,6 +105,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
                   renderActionButtons={renderActions}
                   modals={[
                       { showModal: openCreateModal, modal: (i) => renderParticipantModal(i) },
+                      { showModal: openChangeTimeModal, modal: (i) => renderChangeParticipantsTimeModal(i) },
                   ]}
                   setQueryParams={setQueryParams}
                   withSearchParams={false}

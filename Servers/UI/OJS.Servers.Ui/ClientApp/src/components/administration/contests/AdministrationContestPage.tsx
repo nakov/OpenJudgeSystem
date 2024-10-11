@@ -65,7 +65,7 @@ const AdministrationContestPage = () => {
 
     const renderParticipantsInContestView = (key: string) => (
         <div key={key} id={CONTEST_LISTED_DATA.PARTICIPANTS}>
-            <ParticipantsInContestView key={key} contestId={Number(contestId)} contestName={data!.name} />
+            <ParticipantsInContestView key={key} contestId={Number(contestId)} contestName={data!.name} contest={data!} />
         </div>
     );
 
