@@ -733,17 +733,20 @@ interface IContestCategoryHierarchyEdit {
     parentId?: number;
 }
 
-interface IChangeParticipationTimeForMultipleParticipants {
+interface IChangeParicipationTime {
     contestId: number;
+    contestName: string;
     timeInMinutes: number;
+}
+
+interface IChangeParticipationTimeForMultipleParticipants extends IChangeParicipationTime{
     changeParticipationTimeRangeStart: Dayjs | null;
     changeParticipationTimeRangeEnd: Dayjs | null;
 }
 
-interface IChangeParticipationTimeForSingleParticipant {
-    contestId: number;
-    timeInMinutes: number;
+interface IChangeParticipationTimeForSingleParticipant extends IChangeParicipationTime {
     userId: string;
+    username: string;
 }
 
 // eslint-disable-next-line import/prefer-default-export

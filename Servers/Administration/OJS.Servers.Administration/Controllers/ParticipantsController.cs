@@ -51,7 +51,7 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, P
     }
 
     [HttpPost]
-    [ProtectedEntityAction("model", typeof(ChangeParticipationTimeForMultipleParticipantsPermissionsService))]
+    [ProtectedEntityAction(nameof(model), typeof(ChangeParticipationTimeForMultipleParticipantsPermissionsService))]
     public async Task<IActionResult> ChangeParticipationTimeForMultipleParticipants(
         ChangeParticipationTimeForMultipleParticipantsModel model)
     {
@@ -70,7 +70,7 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, P
     }
 
     [HttpPost]
-    [ProtectedEntityAction("model", typeof(ChangeParticipationTimeForSingleParticipantPermissionsService))]
+    [ProtectedEntityAction(nameof(model), typeof(ChangeParticipationTimeForSingleParticipantPermissionsService))]
     public async Task<IActionResult> ChangeParticipationTimeForSingleParticipant(
         ChangeParticipationTimeForSingleParticipantModel model)
     {

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/ban-types */
+import { useEffect, useMemo, useState } from 'react';
 import { MdOutlineManageHistory } from 'react-icons/all';
 import { useLocation, useNavigate } from 'react-router-dom';
-import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 import ChangeParticipantsTime
     from 'src/components/administration/participants/change-participants-time/ChangeParticipantsTime';
 
@@ -24,12 +24,13 @@ interface IParticipantsInContestView {
     contestId: number;
     contestName: string;
     contest: IContestAdministration;
+    setParentSuccessMessage: Function;
 }
 
 const ParticipantsInContestView = (props: IParticipantsInContestView) => {
-    const { contestId, contestName, contest } = props;
+    const { contestId, contestName, contest, setParentSuccessMessage } = props;
     const location = useLocation();
-    const params = new URLSearchParams(location.search);
+    const params = useMemo(() => new URLSearchParams(location.search), [ location.search ]);
     const navigate = useNavigate();
 
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
@@ -80,7 +81,11 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
 
     const renderChangeParticipantsTimeModal = (index: number) => (
         <AdministrationModal index={index} open onClose={() => setOpenChangeTimeModal(false)}>
-            <ChangeParticipantsTime contest={contest} />
+            <ChangeParticipantsTime
+              contest={contest}
+              setParentSuccessMessage={setParentSuccessMessage}
+              onSuccess={() => setOpenChangeTimeModal(false)}
+            />
         </AdministrationModal>
     );
 

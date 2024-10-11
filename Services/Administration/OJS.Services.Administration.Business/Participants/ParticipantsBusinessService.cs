@@ -7,6 +7,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -70,7 +71,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
     public IQueryable<Participant> GetByContest(int contestId)
         => this.participantsData.GetAllByContest(contestId);
 
-    public async Task UpdateParticipationTimeForMultipleParticipants(
+    public async Task<string> UpdateParticipationTimeForMultipleParticipants(
         ChangeParticipationTimeForMultipleParticipantsModel model)
     {
         if (!model.ChangeParticipationTimeRangeStart.HasValue)
@@ -109,9 +110,12 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
         }
 
         await this.participantsData.SaveChanges();
+
+        var action = model.TimeInMinutes < 0 ? "removed" : "added";
+        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes to the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}";
     }
 
-    public async Task UpdateParticipationTimeForSingleParticipant(
+    public async Task<string> UpdateParticipationTimeForSingleParticipant(
         ChangeParticipationTimeForSingleParticipantModel model)
     {
         if (string.IsNullOrWhiteSpace(model.UserId))
@@ -145,5 +149,8 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
         participant.ParticipationEndTime = newEndTime;
 
         await this.participantsData.SaveChanges();
+
+        var action = model.TimeInMinutes < 0 ? "removed" : "added";
+        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes to the time of the participant with username: {model.Username}, in the contest: {model.ContestName}";
     }
 }

@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+﻿/* eslint-disable @typescript-eslint/ban-types */
+import React, { useEffect, useMemo, useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import {
     Autocomplete,
@@ -24,6 +25,8 @@ import TabsInView from 'src/components/administration/common/tabs/TabsInView';
 import FormActionButton from 'src/components/administration/form-action-button/FormActionButton';
 import { handleDateTimePickerChange } from 'src/components/administration/utils/mui-utils';
 import ExternalLink from 'src/components/guidelines/buttons/ExternalLink';
+import useDelayedSuccessEffect from 'src/hooks/common/use-delayed-success-effect';
+import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
 import { useAdministrationTheme } from 'src/hooks/use-administration-theme-provider';
 import {
     useChangeParticipationTimeForMultipleParticipantsMutation, useChangeParticipationTimeForSingleParticipantMutation,
@@ -31,13 +34,19 @@ import {
 import { useGetUsersAutocompleteQuery } from 'src/redux/services/admin/usersAdminService';
 import { convertToUtc, getDateAsLocal } from 'src/utils/administration/administration-dates';
 import concatClassNames from 'src/utils/class-names';
+import { getAndSetExceptionMessage } from 'src/utils/messages-utils';
+import { renderErrorMessagesAlert } from 'src/utils/render-utils';
+import clearSuccessMessages from 'src/utils/success-messages-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 import styles from './ChangeParticipantsTime.module.scss';
 
 interface IChangeParticipantsTimeProps {
+    // TODO: Provide only the needed props from contest
     contest: IContestAdministration;
+    setParentSuccessMessage: Function;
+    onSuccess: Function;
 }
 
 enum CHANGE_PARTICIPANTS_TIME_LISTED_DATA {
@@ -45,7 +54,7 @@ enum CHANGE_PARTICIPANTS_TIME_LISTED_DATA {
     SINGLE_PARTICIPANT = 'singleparticipant',
 }
 
-const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
+const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } : IChangeParticipantsTimeProps) => {
     const { themeMode } = useAdministrationTheme();
 
     const durationInMinutes = useMemo(() => {
@@ -65,7 +74,8 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
         changeParticipationTimeForMultipleParticipants,
         setChangeParticipationTimeForMultipleParticipants,
     ] = useState<IChangeParticipationTimeForMultipleParticipants>({
-        contestId: contest.id ?? 0,
+        contestId: contest?.id ?? 0,
+        contestName: contest?.name ?? '',
         timeInMinutes: 0,
         changeParticipationTimeRangeStart: getDefaultDate(durationInMinutes),
         changeParticipationTimeRangeEnd: getDefaultDate(0),
@@ -75,11 +85,14 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
         changeParticipationTimeForSingleParticipant,
         setChangeParticipationTimeForSingleParticipant,
     ] = useState<IChangeParticipationTimeForSingleParticipant>({
-        contestId: contest.id ?? 0,
+        contestId: contest?.id ?? 0,
+        contestName: contest?.name ?? '',
         timeInMinutes: 0,
         userId: '',
+        username: '',
     });
 
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ tabName, setTabName ] = useState(CHANGE_PARTICIPANTS_TIME_LISTED_DATA.MULTIPLE_PARTICIPANTS);
     const [ usersAutocomplete, setUsersAutocomplete ] = useState<Array<IUserAutocompleteData>>([]);
     const [ usersSearchString, setUsersSearchString ] = useState<string>('');
@@ -87,11 +100,56 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
 
     const [
         changeTimeForMultipleParticipants,
+        {
+            data: changeForMultipleData,
+            isLoading: isChangingForMultiple,
+            isSuccess: isSuccessfullyChangedForMultiple,
+            error: changeForMultipleError,
+            reset: resetForMultiple,
+        },
     ] = useChangeParticipationTimeForMultipleParticipantsMutation();
 
     const [
         changeTimeForSingleParticipant,
+        {
+            data: changeForSingleData,
+            isLoading: isChangingForSingle,
+            isSuccess: isSuccessfullyChangedForSingle,
+            error: changeForSingleError,
+            reset: resetForSingle,
+        },
     ] = useChangeParticipationTimeForSingleParticipantMutation();
+
+    const handleSuccess = () => {
+        onSuccess();
+
+        if (isSuccessfullyChangedForMultiple) {
+            resetForMultiple();
+        }
+
+        if (isSuccessfullyChangedForSingle) {
+            resetForSingle();
+        }
+    };
+
+    useDelayedSuccessEffect({
+        isSuccess: isSuccessfullyChangedForMultiple || isSuccessfullyChangedForSingle,
+        onSuccess: handleSuccess,
+    });
+
+    useSuccessMessageEffect({
+        data: [
+            { message: changeForMultipleData, shouldGet: isSuccessfullyChangedForMultiple },
+            { message: changeForSingleData, shouldGet: isSuccessfullyChangedForSingle },
+        ],
+        setParentSuccessMessage,
+        clearFlags: [ isChangingForMultiple, isChangingForSingle ],
+    });
+
+    useEffect(() => {
+        getAndSetExceptionMessage([ changeForMultipleError, changeForSingleError ], setErrorMessages);
+        clearSuccessMessages({ setParentSuccessMessage });
+    }, [ changeForMultipleError, changeForSingleError, setParentSuccessMessage ]);
 
     const onChangeForMultipleParticipants = (e: any) => {
         const name = e.target.name;
@@ -128,49 +186,6 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
         setTabName(newValue);
     };
 
-    const renderSingleParticipant = () => (
-        <FormControl fullWidth margin="normal">
-            <div className={styles.durationWrapper}>
-                <TextField
-                  className={styles.duration}
-                  type="number"
-                  label="Change duration with (in minutes)"
-                  variant="standard"
-                  value={changeParticipationTimeForSingleParticipant.timeInMinutes}
-                  onChange={(e) => onChangeForSingleParticipant(e)}
-                  InputLabelProps={{ shrink: true }}
-                  name="timeInMinutes"
-                />
-            </div>
-            <Autocomplete
-              sx={{ width: '100%' }}
-              className={formStyles.centralize}
-              options={usersAutocomplete}
-              renderInput={(params) => <TextField {...params} label="Select User" />}
-              onChange={(e, newValue) => onChangeForSingleParticipant({
-                  target: {
-                      name: 'userId',
-                      value: newValue?.id || null,
-                  },
-              })}
-              onInputChange={(e, value: string) => setUsersSearchString(value)}
-              getOptionLabel={(option) => option?.userName || ''}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              renderOption={(properties, option) => (
-                  <MenuItem {...properties} key={option.id}>
-                      {option.userName}
-                  </MenuItem>
-              )}
-            />
-            <FormActionButton
-              className={formStyles.buttonsWrapper}
-              buttonClassName={formStyles.button}
-              onClick={() => changeTimeForSingleParticipant(changeParticipationTimeForSingleParticipant)}
-              name="Change Time"
-            />
-        </FormControl>
-    );
-
     const SectionTooltip = styled(({ className, ...props }: TooltipProps) => (
         <Tooltip {...props} classes={{ popper: className }} />
     ))(({ theme }) => ({
@@ -198,6 +213,57 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
             },
         },
     }));
+
+    const renderSingleParticipant = () => (
+        <FormControl fullWidth margin="normal">
+            <div className={styles.durationWrapper}>
+                <TextField
+                  className={styles.duration}
+                  type="number"
+                  label="Change duration with (in minutes)"
+                  variant="standard"
+                  value={changeParticipationTimeForSingleParticipant.timeInMinutes}
+                  onChange={(e) => onChangeForSingleParticipant(e)}
+                  InputLabelProps={{ shrink: true }}
+                  name="timeInMinutes"
+                />
+            </div>
+            <Autocomplete
+              sx={{ width: '100%' }}
+              className={formStyles.centralize}
+              options={usersAutocomplete}
+              renderInput={(params) => <TextField {...params} label="Select User" />}
+              onChange={(e, newValue) => {
+                  onChangeForSingleParticipant({
+                      target: {
+                          name: 'userId',
+                          value: newValue?.id || null,
+                      },
+                  });
+                  onChangeForSingleParticipant({
+                      target: {
+                          name: 'username',
+                          value: newValue?.userName || null,
+                      },
+                  });
+              }}
+              onInputChange={(e, value: string) => setUsersSearchString(value)}
+              getOptionLabel={(option) => option?.userName || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderOption={(properties, option) => (
+                  <MenuItem {...properties} key={option.id}>
+                      {option.userName}
+                  </MenuItem>
+              )}
+            />
+            <FormActionButton
+              className={formStyles.buttonsWrapper}
+              buttonClassName={formStyles.button}
+              onClick={() => changeTimeForSingleParticipant(changeParticipationTimeForSingleParticipant)}
+              name="Change Time"
+            />
+        </FormControl>
+    );
 
     const renderMultipleParticipants = () => (
         <Box>
@@ -275,52 +341,55 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
     }, [ usersAutocompleteData ]);
 
     return (
-        <form className={concatClassNames(formStyles.form, themeMode === ThemeMode.Light
-            ? styles.lightTheme
-            : styles.darkTheme)}
-        >
-            <div className={styles.title}>
-                <div>
-                    <Typography variant="h5" className={formStyles.centralize}>
-                        Change contest duration for participants
-                    </Typography>
-                    <Typography className={concatClassNames(formStyles.centralize, styles.link)} variant="h5">
-                        {(contest.name && (
-                            <ExternalLink
-                              to={getContestsDetailsPageUrl({
-                                  contestId: contest.id,
-                                  contestName: contest.name,
-                              })}
-                              text={contest.name}
-                            />
-                        )) || 'Contest form'}
+        <>
+            {renderErrorMessagesAlert(errorMessages)}
+            <form className={concatClassNames(formStyles.form, themeMode === ThemeMode.Light
+                ? styles.lightTheme
+                : styles.darkTheme)}
+            >
+                <div className={styles.title}>
+                    <div>
+                        <Typography variant="h5" className={formStyles.centralize}>
+                            Change contest duration for participants
+                        </Typography>
+                        <Typography className={concatClassNames(formStyles.centralize, styles.link)} variant="h5">
+                            {(contest.name && (
+                                <ExternalLink
+                                  to={getContestsDetailsPageUrl({
+                                      contestId: contest.id,
+                                      contestName: contest.name,
+                                  })}
+                                  text={contest.name}
+                                />
+                            )) || 'Contest form'}
+                        </Typography>
+                    </div>
+                    <Typography variant="subtitle1" className={formStyles.centralize}>
+                        Changes the contest duration only
+                        for participants who started competing in a specified time interval in this contest or for
+                        a specific user. Does not affect the total duration of the
+                        contest nor its start or end time.
                     </Typography>
                 </div>
-                <Typography variant="subtitle1" className={formStyles.centralize}>
-                    Changes the contest duration only
-                    for participants who started competing in a specified time interval in this contest or for
-                    a specific user. Does not affect the total duration of the
-                    contest nor its start or end time.
-                </Typography>
-            </div>
-            <TabsInView
-              onTabChange={onTabChange}
-              tabName={tabName}
-              tabs={[
-                  {
-                      value:
-                      CHANGE_PARTICIPANTS_TIME_LISTED_DATA.MULTIPLE_PARTICIPANTS,
-                      label: 'Multiple Participants',
-                      node: renderMultipleParticipants,
-                  },
-                  {
-                      value: CHANGE_PARTICIPANTS_TIME_LISTED_DATA.SINGLE_PARTICIPANT,
-                      label: 'Single Participant',
-                      node: renderSingleParticipant,
-                  },
-              ]}
-            />
-        </form>
+                <TabsInView
+                  onTabChange={onTabChange}
+                  tabName={tabName}
+                  tabs={[
+                      {
+                          value:
+                            CHANGE_PARTICIPANTS_TIME_LISTED_DATA.MULTIPLE_PARTICIPANTS,
+                          label: 'Multiple Participants',
+                          node: renderMultipleParticipants,
+                      },
+                      {
+                          value: CHANGE_PARTICIPANTS_TIME_LISTED_DATA.SINGLE_PARTICIPANT,
+                          label: 'Single Participant',
+                          node: renderSingleParticipant,
+                      },
+                  ]}
+                />
+            </form>
+        </>
     );
 };
 
