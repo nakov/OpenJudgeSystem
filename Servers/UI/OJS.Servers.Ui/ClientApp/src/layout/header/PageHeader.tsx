@@ -44,8 +44,6 @@ const PageHeader = () => {
         isFetching: isUserDataFetching,
     } = useGetUserinfoQuery(null);
 
-    const isThemeSwitchVisible = `${import.meta.env.VITE_IS_THEME_SWITCH_VISIBLE}` === 'true';
-
     useEffect(() => {
         if (!isUserDataFetching) {
             if (isSuccessfulRequest && userData) {
@@ -145,7 +143,7 @@ const PageHeader = () => {
                 </div>
             </div>
             <div className={styles.authButtons}>
-                {isThemeSwitchVisible && (<ThemeToggle />)}
+                <ThemeToggle />
                 <div className={styles.searchWrapper} onClick={() => dispatch(setIsVisible(!isVisible))}>
                     <FaSearch className={styles.searchIcon} />
                     <span>Search</span>
