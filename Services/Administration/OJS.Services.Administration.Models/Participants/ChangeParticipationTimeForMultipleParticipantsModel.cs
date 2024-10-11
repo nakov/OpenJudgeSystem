@@ -4,7 +4,7 @@ using System;
 
 public class ChangeParticipationTimeForMultipleParticipantsModel : ChangeParticipationTimeModel
 {
-    public DateTime ChangeParticipationTimeRangeStart { get; set; }
+    public DateTime? ChangeParticipationTimeRangeStart { get; set; }
 
-    public DateTime ChangeParticipationTimeRangeEnd { get; set; }
+    public DateTime? ChangeParticipationTimeRangeEnd { get; set; }
 }

@@ -73,6 +73,16 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
     public async Task UpdateParticipationTimeForMultipleParticipants(
         ChangeParticipationTimeForMultipleParticipantsModel model)
     {
+        if (!model.ChangeParticipationTimeRangeStart.HasValue)
+        {
+            throw new BusinessServiceException("Invalid date for \"Created After\" has been provided!");
+        }
+
+        if (!model.ChangeParticipationTimeRangeEnd.HasValue)
+        {
+            throw new BusinessServiceException("Invalid date for \"Created Before\" has been provided!");
+        }
+
         if (model.ChangeParticipationTimeRangeEnd < model.ChangeParticipationTimeRangeStart)
         {
             throw new BusinessServiceException("Participants \"Created After\" must be earlier than participants \"Created Before\".");
