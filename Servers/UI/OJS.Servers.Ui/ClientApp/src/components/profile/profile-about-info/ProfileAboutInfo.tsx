@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ButtonSize, LinkButton, LinkButtonType } from 'src/components/guidelines/buttons/Button';
+import { getSubmissionDetailsRedirectionUrl } from 'src/utils/urls';
 
 import MyProfileSvg from '../../../assets/my-profile.svg';
 import { IUserProfileType } from '../../../common/types';
@@ -91,12 +93,12 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProf
                 <img height={150} width={150} src={MyProfileSvg} alt="my-profile" />
                 {
                         isUserProfileOwner && (
-                            <Link
+                            <LinkButton
                               to="/logout"
-                              className={concatClassNames(styles.logoutButton, getColorClassName(themeColors.textColor))}
-                            >
-                                LOG OUT
-                            </Link>
+                              text="LOG OUT"
+                              type={LinkButtonType.secondary}
+                              size={ButtonSize.small}
+                            />
                         )
                     }
             </div>
