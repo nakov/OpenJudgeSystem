@@ -60,8 +60,8 @@
 }
 
 .themeSwitchWrapper {
-  box-shadow: shadows.$dp-shadow-1;
   margin-right: spacings.$sp-24;
+    max-height: 33px;
 }
 
 .searchWrapper {
@@ -69,22 +69,16 @@
     flex-direction: row;
     align-items: center;
     margin-right: spacings.$sp-24;
-    padding: 10px;
+    padding: 11px;
+    height: 12px;
     background: white;
     color: colors.$primary-blue;
-    box-shadow: shadows.$dp-shadow-1;
     border-radius: border-radiuses.$br-4;
     text-transform: uppercase;
     font-weight: font-weights.$font-weight-regular;
 
     &:hover {
         cursor: pointer;
-    }
-
-    &:hover .searchIcon,
-    &:hover .searchText {
-        transform: scale(1.05);
-        transition: transform 0.1s ease-in-out;
     }
 }
 

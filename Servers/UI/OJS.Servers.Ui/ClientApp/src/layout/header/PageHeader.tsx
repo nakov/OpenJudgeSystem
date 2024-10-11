@@ -89,20 +89,22 @@ const PageHeader = () => {
 
     const toggleButtonsStylesDark = {
         '&.Mui-selected': {
+            backgroundColor: '#687487',
             // hover effect when selected
             '&:hover': { backgroundColor: '#687487' },
         },
         // hover effect when unselected
-        '&:hover': { backgroundColor: '#687487', color: '#FFF' },
+        '&:hover': { backgroundColor: '#FFF', color: '#687487' },
     };
 
     const toggleButtonsStylesLight = {
         '&.Mui-selected': {
+            backgroundColor: '#687487',
             // hover effect when selected
-            '&:hover': { backgroundColor: '#F7F7F7', color: '#687487' },
+            '&:hover': { backgroundColor: '#687487', color: '#FFF' },
         },
         // hover effect when unselected
-        '&:hover': { backgroundColor: '#F7F7F7', color: '#687487' },
+        '&:hover': { backgroundColor: '#FFF', color: '#687487' },
     };
 
     const renderThemeSwitcher = () => (
@@ -190,7 +192,7 @@ const PageHeader = () => {
                 {isThemeSwitchVisible && renderThemeSwitcher()}
                 <div className={styles.searchWrapper} onClick={() => dispatch(setIsVisible(!isVisible))}>
                     <FaSearch className={styles.searchIcon} />
-                    <span className={styles.searchText}>Search</span>
+                    <span>Search</span>
                 </div>
                 {isLoggedIn
                     ? (
