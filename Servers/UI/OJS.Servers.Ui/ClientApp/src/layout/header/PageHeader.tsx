@@ -91,7 +91,7 @@ const PageHeader = () => {
         '&.Mui-selected': {
             backgroundColor: '#687487',
             // hover effect when selected
-            '&:hover': { backgroundColor: '#687487' },
+            '&:hover': { backgroundColor: '#687487', color: '#FFF' },
         },
         // hover effect when unselected
         '&:hover': { backgroundColor: '#FFF', color: '#687487' },
