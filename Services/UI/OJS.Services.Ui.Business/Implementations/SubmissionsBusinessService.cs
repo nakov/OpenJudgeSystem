@@ -280,7 +280,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     s.Id,
                     s.ParticipantId,
                     CorrectTestRuns = s.TestRuns.Count(t =>
-                        t.ResultType == (int)TestRunResultType.CorrectAnswer &&
+                        t.ResultType == TestRunResultType.CorrectAnswer &&
                         !t.Test.IsTrialTest),
                     AllTestRuns = s.TestRuns.Count(t => !t.Test.IsTrialTest),
                     MaxPoints = s.Problem!.MaximumPoints,
