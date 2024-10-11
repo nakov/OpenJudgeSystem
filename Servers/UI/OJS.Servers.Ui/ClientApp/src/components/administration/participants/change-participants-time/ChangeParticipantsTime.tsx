@@ -156,7 +156,7 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
         let value = e.target.value;
 
         if (name?.includes('Time')) {
-            value = convertToUtc(e.target.value);
+            value = convertToUtc(value);
         }
 
         if (name in changeParticipationTimeForMultipleParticipants) {

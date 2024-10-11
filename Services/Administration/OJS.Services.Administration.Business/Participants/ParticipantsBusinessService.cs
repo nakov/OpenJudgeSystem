@@ -95,7 +95,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         var participantsInTimeRange = await this.participantsData
             .All(p => p.ParticipationStartTime >= model.ChangeParticipationTimeRangeStart &&
-                               p.ParticipationEndTime <= model.ChangeParticipationTimeRangeEnd &&
+                               p.ParticipationStartTime <= model.ChangeParticipationTimeRangeEnd &&
                                p.Contest.Type == ContestType.OnlinePracticalExam);
 
         var participantsToUpdate = participantsInTimeRange

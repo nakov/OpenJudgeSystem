@@ -80,7 +80,11 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
     );
 
     const renderChangeParticipantsTimeModal = (index: number) => (
-        <AdministrationModal index={index} open onClose={() => setOpenChangeTimeModal(false)}>
+        <AdministrationModal
+          index={index}
+          open={openChangeTimeModal}
+          onClose={() => setOpenChangeTimeModal(false)}
+        >
             <ChangeParticipantsTime
               contest={contest}
               setParentSuccessMessage={setParentSuccessMessage}
