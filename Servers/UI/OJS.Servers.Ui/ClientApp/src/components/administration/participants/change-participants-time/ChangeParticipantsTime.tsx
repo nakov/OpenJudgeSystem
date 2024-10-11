@@ -27,7 +27,6 @@ import { handleDateTimePickerChange } from 'src/components/administration/utils/
 import ExternalLink from 'src/components/guidelines/buttons/ExternalLink';
 import useDelayedSuccessEffect from 'src/hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
-import { useAdministrationTheme } from 'src/hooks/use-administration-theme-provider';
 import {
     useChangeParticipationTimeForMultipleParticipantsMutation, useChangeParticipationTimeForSingleParticipantMutation,
 } from 'src/redux/services/admin/participantsAdminService';
@@ -43,7 +42,6 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 import styles from './ChangeParticipantsTime.module.scss';
 
 interface IChangeParticipantsTimeProps {
-    // TODO: Provide only the needed props from contest
     contest: IContestAdministration;
     setParentSuccessMessage: Function;
     onSuccess: Function;
@@ -55,8 +53,6 @@ enum CHANGE_PARTICIPANTS_TIME_LISTED_DATA {
 }
 
 const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } : IChangeParticipantsTimeProps) => {
-    const { themeMode } = useAdministrationTheme();
-
     const durationInMinutes = useMemo(() => {
         const [ hours, minutes, seconds ] = (contest?.duration ?? '00:00:00').split(':').map(Number);
         return hours * 60 + minutes + seconds / 60;
@@ -215,7 +211,7 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
     }));
 
     const renderSingleParticipant = () => (
-        <FormControl fullWidth margin="normal">
+        <FormControl fullWidth>
             <div className={styles.durationWrapper}>
                 <TextField
                   className={styles.duration}
@@ -228,8 +224,12 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
                   name="timeInMinutes"
                 />
             </div>
+            <Typography variant="subtitle1" className={styles.datesTitle}>
+                Change the contest duration for the participant with the given username
+            </Typography>
+            <div className={styles.divider} />
             <Autocomplete
-              sx={{ width: '100%' }}
+              sx={{ width: '50%' }}
               className={formStyles.centralize}
               options={usersAutocomplete}
               renderInput={(params) => <TextField {...params} label="Select User" />}
@@ -297,8 +297,7 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
                     />
                     <SectionTooltip
                       title="Users who started competing after this time will be affected (The default value
-                        is calculated by the following formula: [the current time] - [the participant full contest duration] -
-                        [thirty minutes as buffer time])"
+                        is calculated by the following formula: [the current time] - [the participant full contest duration])"
                       arrow
                     >
                         <InfoIcon sx={{ width: '30px', height: '30px', marginRight: '3rem' }} />
@@ -343,13 +342,10 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
     return (
         <>
             {renderErrorMessagesAlert(errorMessages)}
-            <form className={concatClassNames(formStyles.form, themeMode === ThemeMode.Light
-                ? styles.lightTheme
-                : styles.darkTheme)}
-            >
+            <form className={formStyles.form}>
                 <div className={styles.title}>
                     <div>
-                        <Typography variant="h5" className={formStyles.centralize}>
+                        <Typography variant="h5" className={concatClassNames(formStyles.centralize, styles.datesTitle)}>
                             Change contest duration for participants
                         </Typography>
                         <Typography className={concatClassNames(formStyles.centralize, styles.link)} variant="h5">
