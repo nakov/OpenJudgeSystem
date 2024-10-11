@@ -82,16 +82,10 @@
     color: colors.$light-blue-color;
   }
 
-  &.lightNeutral {
+  &.neutral {
     background-color: transparent;
-    border: 1px solid colors.$white-color;
-    color: colors.$white-color;
-  }
-
-  &.darkNeutral {
-    background-color: transparent;
-    border: 1px solid colors.$dark-base-color-500;
-    color: colors.$dark-base-color-500;
+    border: 1px solid colors.$primary-blue;
+    color: colors.$primary-blue;
   }
 
   &.small {
