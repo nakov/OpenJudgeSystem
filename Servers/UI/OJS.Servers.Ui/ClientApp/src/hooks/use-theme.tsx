@@ -43,7 +43,7 @@ const useTheme = () => {
             baseColor200: '#E6E6E6',
             baseColor300: '#E6E6E6',
             // Pages background
-            baseColor400: '#F7F7F7',
+            baseColor400: '#f8f8f8',
             baseColor500: '#D9D9D9',
         },
         dark: {
