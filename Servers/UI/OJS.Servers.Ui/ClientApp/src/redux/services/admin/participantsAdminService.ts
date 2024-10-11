@@ -1,7 +1,14 @@
 /* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IFileModel, IGetAllAdminParams, IPagedResultType, IParticipantAdministrationModel, IParticipantInListModel } from '../../../common/types';
+import {
+    IChangeParticipationTimeForMultipleParticipants, IChangeParticipationTimeForSingleParticipant,
+    IFileModel,
+    IGetAllAdminParams,
+    IPagedResultType,
+    IParticipantAdministrationModel,
+    IParticipantInListModel
+} from '../../../common/types';
 import { IGetByContestId } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -53,6 +60,20 @@ const participantsAdminService = createApi({
             }),
             keepUnusedDataFor: 0,
         }),
+        changeParticipationTimeForMultipleParticipants: builder.mutation<string, IChangeParticipationTimeForMultipleParticipants>({
+            query: (model) => ({
+                url: `/ChangeParticipationTimeForMultipleParticipants`,
+                method: 'POST',
+                body: model,
+            }),
+        }),
+        changeParticipationTimeForSingleParticipant: builder.mutation<string, IChangeParticipationTimeForSingleParticipant>({
+            query: (model) => ({
+                url: `/ChangeParticipationTimeForSingleParticipant`,
+                method: 'POST',
+                body: model,
+            }),
+        }),
     }),
 });
 
@@ -62,6 +83,8 @@ export const {
     useDeleteParticipantMutation,
     useGetAllParticipantsQuery,
     useLazyExportParticipantsToExcelQuery,
+    useChangeParticipationTimeForMultipleParticipantsMutation,
+    useChangeParticipationTimeForSingleParticipantMutation,
 } = participantsAdminService;
 
 export default participantsAdminService;

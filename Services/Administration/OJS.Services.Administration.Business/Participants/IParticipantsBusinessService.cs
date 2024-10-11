@@ -23,4 +23,8 @@ public interface IParticipantsBusinessService : IAdministrationOperationService<
     /// </summary>
     /// <param name="contestId">The id of the contest.</param>
     IQueryable<Participant> GetByContest(int contestId);
+
+    Task UpdateParticipationTimeForMultipleParticipants(ChangeParticipationTimeForMultipleParticipantsModel model);
+
+    Task UpdateParticipationTimeForSingleParticipant(ChangeParticipationTimeForSingleParticipantModel model);
 }
