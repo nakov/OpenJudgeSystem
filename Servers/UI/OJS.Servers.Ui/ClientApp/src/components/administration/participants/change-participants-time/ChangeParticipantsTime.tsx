@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import {
     Autocomplete,
@@ -12,6 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import moment from 'moment';
 import { ThemeMode } from 'src/common/enums';
 import {
     IChangeParticipationTimeForMultipleParticipants, IChangeParticipationTimeForSingleParticipant,
@@ -47,14 +48,27 @@ enum CHANGE_PARTICIPANTS_TIME_LISTED_DATA {
 const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
     const { themeMode } = useAdministrationTheme();
 
+    const durationInMinutes = useMemo(() => {
+        const [ hours, minutes, seconds ] = (contest?.duration ?? '00:00:00').split(':').map(Number);
+        return hours * 60 + minutes + seconds / 60;
+    }, [ contest?.duration ]);
+
+    const getDefaultDate = (duration: number) => {
+        const date = moment().subtract(duration, 'minutes');
+
+        return date.isValid()
+            ? getDateAsLocal(date.toDate())
+            : getDateAsLocal(new Date());
+    };
+
     const [
         changeParticipationTimeForMultipleParticipants,
         setChangeParticipationTimeForMultipleParticipants,
     ] = useState<IChangeParticipationTimeForMultipleParticipants>({
         contestId: contest.id ?? 0,
         timeInMinutes: 0,
-        changeParticipationTimeRangeStart: convertToUtc(contest.startTime),
-        changeParticipationTimeRangeEnd: convertToUtc(contest.endTime),
+        changeParticipationTimeRangeStart: getDefaultDate(durationInMinutes),
+        changeParticipationTimeRangeEnd: getDefaultDate(0),
     });
 
     const [
@@ -65,7 +79,6 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
         timeInMinutes: 0,
         userId: '',
     });
-    console.log(changeParticipationTimeForMultipleParticipants);
 
     const [ tabName, setTabName ] = useState(CHANGE_PARTICIPANTS_TIME_LISTED_DATA.MULTIPLE_PARTICIPANTS);
     const [ usersAutocomplete, setUsersAutocomplete ] = useState<Array<IUserAutocompleteData>>([]);
@@ -261,8 +274,6 @@ const ChangeParticipantsTime = ({ contest } : IChangeParticipantsTimeProps) => {
         }
     }, [ usersAutocompleteData ]);
 
-    // TODO: The first date is DateTimeNow - 5 hours ( contest duration? )
-    // TODO: The second date is DateTimeNow
     return (
         <form className={concatClassNames(formStyles.form, themeMode === ThemeMode.Light
             ? styles.lightTheme

@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
@@ -14,7 +14,7 @@ const convertToUtc = (date?: Date | null | undefined) => {
     return new Date(dayjs.utc(date).toISOString());
 };
 
-const getDateAsLocal = (date?: string | number | Date | null | undefined) => {
+const getDateAsLocal = (date?: string | number | Date | null | undefined | Dayjs) => {
     if (!date) {
         return null;
     }

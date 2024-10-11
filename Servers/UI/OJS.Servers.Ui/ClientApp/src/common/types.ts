@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 import { ITestRun } from '../hooks/submissions/types';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
@@ -734,8 +736,8 @@ interface IContestCategoryHierarchyEdit {
 interface IChangeParticipationTimeForMultipleParticipants {
     contestId: number;
     timeInMinutes: number;
-    changeParticipationTimeRangeStart: Date | null;
-    changeParticipationTimeRangeEnd: Date | null;
+    changeParticipationTimeRangeStart: Dayjs | null;
+    changeParticipationTimeRangeEnd: Dayjs | null;
 }
 
 interface IChangeParticipationTimeForSingleParticipant {
