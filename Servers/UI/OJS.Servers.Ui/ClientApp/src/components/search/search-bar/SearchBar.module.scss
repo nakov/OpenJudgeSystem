@@ -12,12 +12,12 @@
   box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
   display: flex;
   justify-content: space-between;
-  right: 64px;
-  margin-left: spacings.$sp-16;
   margin-top: 78px;
   padding: 0 spacings.$sp-12;
   position: absolute;
+  width: 90%;
   top: -100%;
+    left: 60px;
   transition: top 0.3s ease-in-out;
   z-index: 2;
 }
