@@ -731,6 +731,19 @@ interface IContestCategoryHierarchyEdit {
     parentId?: number;
 }
 
+interface IChangeParticipationTimeForMultipleParticipants {
+    contestId: number;
+    timeInMinutes: number;
+    changeParticipationTimeRangeStart: Date | null;
+    changeParticipationTimeRangeEnd: Date | null;
+}
+
+interface IChangeParticipationTimeForSingleParticipant {
+    contestId: number;
+    timeInMinutes: number;
+    userId: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -805,4 +818,6 @@ export type {
     IMappingEntityId,
     AdjacencyList,
     IContestCategoryHierarchyEdit,
+    IChangeParticipationTimeForMultipleParticipants,
+    IChangeParticipationTimeForSingleParticipant,
 };
