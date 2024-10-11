@@ -5,6 +5,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
 @use 'src/styles/font-weights';
+@use 'src/styles/border-radiuses';
 
 .header {
   @extend %font-family-normal;
@@ -44,10 +45,6 @@
     align-items: center;
     display: flex;
     margin-right: spacings.$sp-64;
-
-    &.themeSwitchVisible {
-      margin-right: spacings.$sp-192;
-    }
   }
 }
 
@@ -57,24 +54,38 @@
 
 .searchIcon {
   align-self: center;
-  background-color: colors.$primary-blue;
-  color: colors.$white-color;
   cursor: pointer;
   font-size: variables.$f-size-18;
-  margin-right: spacings.$sp-12;
-  transition: all 0.1s ease-in-out;
-
-  &:hover {
-    transform: scale(1.1);
-  }
+  margin-right: spacings.$sp-8;
 }
 
 .themeSwitchWrapper {
-  box-shadow: shadows.$dp-shadow-4;
-  height: 40px;
-  position: absolute;
-  right: 20px;
-  top: 17px;
+  box-shadow: shadows.$dp-shadow-1;
+  margin-right: spacings.$sp-24;
+}
+
+.searchWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: spacings.$sp-24;
+    padding: 10px;
+    background: white;
+    color: colors.$primary-blue;
+    box-shadow: shadows.$dp-shadow-1;
+    border-radius: border-radiuses.$br-4;
+    text-transform: uppercase;
+    font-weight: font-weights.$font-weight-regular;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:hover .searchIcon,
+    &:hover .searchText {
+        transform: scale(1.05);
+        transition: transform 0.1s ease-in-out;
+    }
 }
 
 .profileNavButton {

@@ -29,7 +29,7 @@ import styles from './PageHeader.module.scss';
 const PageHeader = () => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const { toggleSelectedTheme } = useTheme();
+    const { isDarkMode, toggleSelectedTheme } = useTheme();
 
     const shouldRenderPageHeader = !pathname.includes('administration');
 
@@ -87,17 +87,37 @@ const PageHeader = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ pathname ]);
 
+    const toggleButtonsStylesDark = {
+        '&.Mui-selected': {
+            // hover effect when selected
+            '&:hover': { backgroundColor: '#687487' },
+        },
+        // hover effect when unselected
+        '&:hover': { backgroundColor: '#687487', color: '#FFF' },
+    };
+
+    const toggleButtonsStylesLight = {
+        '&.Mui-selected': {
+            // hover effect when selected
+            '&:hover': { backgroundColor: '#F7F7F7', color: '#687487' },
+        },
+        // hover effect when unselected
+        '&:hover': { backgroundColor: '#F7F7F7', color: '#687487' },
+    };
+
     const renderThemeSwitcher = () => (
         <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
             <ToggleButton
               value="light"
               onClick={toggleSelectedTheme}
+              sx={toggleButtonsStylesLight}
             >
                 <RiSunLine />
             </ToggleButton>
             <ToggleButton
               value="dark"
               onClick={toggleSelectedTheme}
+              sx={toggleButtonsStylesDark}
             >
                 <BsFillMoonFill />
             </ToggleButton>
@@ -166,11 +186,12 @@ const PageHeader = () => {
                         (<AdministrationMenu buttonType={AdministrationMenuButtonType.text} isUsedInPageHeader />)}
                 </div>
             </div>
-            <div className={`${styles.authButtons} ${isThemeSwitchVisible
-                ? styles.themeSwitchVisible
-                : ''}`}
-            >
-                <FaSearch className={styles.searchIcon} onClick={() => dispatch(setIsVisible(!isVisible))} />
+            <div className={styles.authButtons}>
+                {isThemeSwitchVisible && renderThemeSwitcher()}
+                <div className={styles.searchWrapper} onClick={() => dispatch(setIsVisible(!isVisible))}>
+                    <FaSearch className={styles.searchIcon} />
+                    <span className={styles.searchText}>Search</span>
+                </div>
                 {isLoggedIn
                     ? (
                         <div className={`${styles.navButtons} ${styles.profileNavButton}`}>
@@ -196,7 +217,6 @@ const PageHeader = () => {
                 </div>
             </div>
             {renderBurgerMenuItems()}
-            {isThemeSwitchVisible && renderThemeSwitcher()}
         </header>
     );
 };
