@@ -1,7 +1,7 @@
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import { timeToWords } from '../../../utils/dates';
-import Button from '../../guidelines/buttons/Button';
+import Button, { ButtonType } from '../../guidelines/buttons/Button';
 import ContestButton from '../contest-button/ContestButton';
 
 import styles from './ContestCompeteModal.module.scss';
@@ -17,13 +17,18 @@ interface IContestCompeteModalProps {
 const ContestCompeteModal = (props: IContestCompeteModalProps) => {
     const { examName, time, problemsCount, onAccept, onDecline } = props;
 
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const modalBodyClassName = concatClassNames(getColorClassName(themeColors.baseColor200), styles.modalBody);
+    const modalBodyClassName = concatClassNames(
+        getColorClassName(isDarkMode
+            ? themeColors.baseColor200
+            : themeColors.baseColor100),
+        styles.modalBody,
+    );
 
     return (
-        <div className={`${styles.modalWrapper} ${textColorClassName}`}>
+        <div className={concatClassNames(styles.modalWrapper, textColorClassName)}>
             <div className={styles.modalTitle}>
                 Starting now
                 <b>
@@ -60,9 +65,16 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                     <b>Are you sure you want to start the contest now?</b>
                 </div>
                 <div className={styles.buttonsWrapper}>
-                    <ContestButton isDisabled={false} id={1} onClick={onAccept} name={examName} isCompete />
+                    <ContestButton
+                      className={styles.contestButton}
+                      isDisabled={false}
+                      id={1}
+                      onClick={onAccept}
+                      name={examName}
+                      isCompete
+                    />
                     <Button
-                      className={styles.declineBtn}
+                      type={ButtonType.neutral}
                       text="cancel"
                       onClick={onDecline}
                     />

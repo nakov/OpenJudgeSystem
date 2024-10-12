@@ -27,11 +27,6 @@
 
   &.primary {
     background-color: colors.$background-color-btn-primary;
-    box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 20%);
-
-    &:hover {
-      box-shadow: 6px 8px 15px 1px rgb(27 139 249 / 20%);
-    }
   }
 
   &.secondary,
@@ -41,7 +36,6 @@
     background: none;
     border: 2px solid colors.$primary-blue;
     border-radius: border-radiuses.$br-6;
-    box-shadow: none;
     color: colors.$primary-blue;
 
     &:hover {
@@ -63,11 +57,9 @@
   &.disabled,
   %disabled {
     background-color: transparent !important;
-    box-shadow: none;
     pointer-events: none;
 
     &:hover {
-      box-shadow: none;
       cursor: not-allowed;
     }
   }
@@ -82,16 +74,10 @@
     color: colors.$light-blue-color;
   }
 
-  &.lightNeutral {
+  &.neutral {
     background-color: transparent;
-    border: 1px solid colors.$white-color;
-    color: colors.$white-color;
-  }
-
-  &.darkNeutral {
-    background-color: transparent;
-    border: 1px solid colors.$dark-base-color-500;
-    color: colors.$dark-base-color-500;
+    border: 2px solid colors.$primary-blue;
+    color: colors.$primary-blue;
   }
 
   &.small {
@@ -123,10 +109,6 @@
   &.competeClassName {
     background-color: colors.$secondary-green;
     border-color: colors.$secondary-green;
-
-    &:hover {
-      box-shadow: 6px 8px 15px 1px rgb(45 189 39 / 20%);
-    }
   }
 
   &.image {

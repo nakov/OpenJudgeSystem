@@ -3,7 +3,6 @@ import { MdAttachFile } from 'react-icons/md';
 import isNil from 'lodash/isNil';
 
 import { FileValidationError } from '../../common/constants';
-import useTheme from '../../hooks/use-theme';
 import { IErrorDataType } from '../../utils/http-utils';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
@@ -18,7 +17,6 @@ interface IFileUploaderProps {
 }
 
 const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension, onFileUpload }: IFileUploaderProps) => {
-    const { isDarkMode } = useTheme();
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
 
     const [ internalFile, setInternalFile ] = useState<File | null>(null);
@@ -106,9 +104,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             <div className={styles.fileUploadContainer}>
                 <Button
                   onClick={handleClick}
-                  type={isDarkMode
-                      ? ButtonType.lightNeutral
-                      : ButtonType.darkNeutral}
+                  type={ButtonType.neutral}
                   size={ButtonSize.medium}
                 >
                     {isDragOver

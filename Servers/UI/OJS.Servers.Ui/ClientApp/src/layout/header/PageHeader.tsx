@@ -2,16 +2,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { BsFillMoonFill } from 'react-icons/bs';
 import { FaBars, FaSearch } from 'react-icons/fa';
-import { RiSunLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import ThemeToggle from 'src/layout/header/ThemeToggle';
 
 import MyProfileSvg from '../../assets/my-profile.svg';
 import { NEW_ADMINISTRATION_PATH } from '../../common/urls/administration-urls';
 import { getAllContestsPageUrl } from '../../common/urls/compose-client-urls';
-import useTheme from '../../hooks/use-theme';
 import {
     resetInInternalUser,
     setInternalUser,
@@ -29,11 +26,9 @@ import styles from './PageHeader.module.scss';
 const PageHeader = () => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const { toggleSelectedTheme } = useTheme();
 
     const shouldRenderPageHeader = !pathname.includes('administration');
 
-    const { mode } = useAppSelector((state) => state.theme);
     const { isVisible } = useAppSelector((state) => state.search);
 
     const [ areBurgerItemsOpened, setAreBurgerItemsOpened ] = useState<boolean>(false);
@@ -48,8 +43,6 @@ const PageHeader = () => {
         isSuccess: isSuccessfulRequest,
         isFetching: isUserDataFetching,
     } = useGetUserinfoQuery(null);
-
-    const isThemeSwitchVisible = `${import.meta.env.VITE_IS_THEME_SWITCH_VISIBLE}` === 'true';
 
     useEffect(() => {
         if (!isUserDataFetching) {
@@ -86,23 +79,6 @@ const PageHeader = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ pathname ]);
-
-    const renderThemeSwitcher = () => (
-        <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
-            <ToggleButton
-              value="light"
-              onClick={toggleSelectedTheme}
-            >
-                <RiSunLine />
-            </ToggleButton>
-            <ToggleButton
-              value="dark"
-              onClick={toggleSelectedTheme}
-            >
-                <BsFillMoonFill />
-            </ToggleButton>
-        </ToggleButtonGroup>
-    );
 
     const renderBurgerMenuItems = useCallback(
         () => {
@@ -166,11 +142,12 @@ const PageHeader = () => {
                         (<AdministrationMenu buttonType={AdministrationMenuButtonType.text} isUsedInPageHeader />)}
                 </div>
             </div>
-            <div className={`${styles.authButtons} ${isThemeSwitchVisible
-                ? styles.themeSwitchVisible
-                : ''}`}
-            >
-                <FaSearch className={styles.searchIcon} onClick={() => dispatch(setIsVisible(!isVisible))} />
+            <div className={styles.authButtons}>
+                <ThemeToggle />
+                <div className={styles.searchWrapper} onClick={() => dispatch(setIsVisible(!isVisible))}>
+                    <FaSearch className={styles.searchIcon} />
+                    <span>Search</span>
+                </div>
                 {isLoggedIn
                     ? (
                         <div className={`${styles.navButtons} ${styles.profileNavButton}`}>
@@ -196,7 +173,6 @@ const PageHeader = () => {
                 </div>
             </div>
             {renderBurgerMenuItems()}
-            {isThemeSwitchVisible && renderThemeSwitcher()}
         </header>
     );
 };

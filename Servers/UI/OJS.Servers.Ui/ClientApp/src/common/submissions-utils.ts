@@ -10,7 +10,7 @@ const getTestResultColorId = (resultType: string) => {
     case TestRunResultType.TimeLimit.toLowerCase():
     case TestRunResultType.MemoryLimit.toLowerCase():
         // warning
-        return '#fec112';
+        return '#F2A000';
     default:
         // primary-red
         return '#fc4c50';

@@ -41,7 +41,8 @@ pre[class*='content-text'] {
   }
 
   // Expected output
-  td[class*='gutter'][class*='removed'] {
+  td[class*='gutter'][class*='removed'],
+  td[class*='empty-gutter'] {
     background: #cdffd8;
   }
 
@@ -86,8 +87,7 @@ pre[class*='content-text'] {
   }
 
   // User output
-  td[class*='gutter'][class*='added'],
-  td[class*='empty-gutter'] {
+  td[class*='gutter'][class*='added'] {
     background: #632b30;
   }
 
