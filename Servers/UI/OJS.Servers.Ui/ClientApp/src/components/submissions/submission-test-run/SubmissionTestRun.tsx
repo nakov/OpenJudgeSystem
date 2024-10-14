@@ -72,7 +72,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
         setTestShowInput(!testShowInput);
     };
 
-    const isCorrectAnswer = resultType.toLowerCase() === TestRunResultType.CorrectAnswer.toLowerCase();
+    const isCorrectAnswer = resultType === TestRunResultType.CorrectAnswer;
 
     return (
         <div
@@ -203,7 +203,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                 </div>
             )}
             {
-                testRun.resultType.toLowerCase() === TestRunResultType.RunTimeError.toLowerCase() && testRun.executionComment && (
+                testRun.resultType === TestRunResultType.RunTimeError && testRun.executionComment && (
                     <MultiLineTextDisplay
                       text={testRun.executionComment}
                       maxVisibleLines={5}
