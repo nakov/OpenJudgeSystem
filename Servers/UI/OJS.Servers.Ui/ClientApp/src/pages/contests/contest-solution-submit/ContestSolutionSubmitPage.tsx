@@ -43,6 +43,7 @@ import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/servic
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
+    defaultRemainingTimeFormat,
     transformDaysHoursMinutesTextToMinutes,
     transformSecondsToTimeSpan,
 } from '../../../utils/dates';
@@ -262,7 +263,7 @@ const ContestSolutionSubmitPage = () => {
                 const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
                 setRemainingTimeForCompete(formattedTime);
             } else {
-                setRemainingTimeForCompete(null);
+                setRemainingTimeForCompete(defaultRemainingTimeFormat);
                 clearInterval(intervalId);
             }
         }, 1000);
