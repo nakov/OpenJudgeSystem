@@ -1,11 +1,13 @@
 ﻿namespace OJS.Services.Administration.Business.Participants.Validators;
 
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Common.Validation;
+using System.Threading;
 using System.Threading.Tasks;
 
 public class ChangeParticipationTimeValidator : BaseValidator<ChangeParticipationTimeModel>
@@ -17,48 +19,59 @@ public class ChangeParticipationTimeValidator : BaseValidator<ChangeParticipatio
     {
         this.contestsDataService = contestsDataService;
 
-        this.RuleFor(model => model.ContestId)
-            .Must((model, _) => ContestIdMustBeValid(model.ContestId))
-            .WithMessage("Invalid contest id.");
-
-        this.RuleFor(model => model.ContestId)
-            .MustAsync(async (contestId, _) => await this.ContestMustExist(contestId))
-            .WithMessage("The contest was not found.");
-
-        this.RuleFor(model => model.ContestId)
-            .MustAsync(async (contestId, _) => await this.ContestMustBeActive(contestId))
-            .WithMessage("The contest must be active.");
-
-        this.RuleFor(model => model.ContestId)
-            .MustAsync(async (contestId, _) => await this.ContestMustBeAnOnlineExam(contestId))
-            .WithMessage("The contest must be an online exam.");
-
-        this.RuleFor(model => model.ContestId)
-            .MustAsync(async (contestId, _) => await this.ContestDurationMustBeSet(contestId))
-            .WithMessage("The contest's duration has not been set.");
+        this.RuleFor(model => model)
+            .CustomAsync(this.MustHaveValidContest);
     }
 
-    private static bool ContestIdMustBeValid(int contestId)
-        => contestId > 0;
-
-    private async Task<bool> ContestMustExist(int contestId)
-        => await this.contestsDataService.GetByIdQuery(contestId).FirstOrDefaultAsync() != null;
-
-    private async Task<bool> ContestMustBeActive(int contestId)
-        => await this.contestsDataService.IsActiveById(contestId);
-
-    private async Task<bool> ContestMustBeAnOnlineExam(int contestId)
+    private async Task MustHaveValidContest(
+        ChangeParticipationTimeModel model,
+        ValidationContext<ChangeParticipationTimeModel> context,
+        CancellationToken cancellationToken)
     {
-        var contest = await this.contestsDataService.GetByIdQuery(contestId).FirstOrDefaultAsync();
+        var contestId = model.ContestId;
 
-        return contest!.Type == ContestType.OnlinePracticalExam;
+        if (contestId <= 0)
+        {
+            context.AddFailure(
+                new ValidationFailure(
+                    nameof(model.ContestId),
+                    "Invalid contest id."));
+        }
+
+        var contest = await this.contestsDataService
+            .GetByIdQuery(contestId)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+        if (contest == null)
+        {
+            context.AddFailure(
+                new ValidationFailure(
+                    nameof(model.ContestId),
+                    "The contest was not found."));
+        }
+
+        if (!await this.contestsDataService.IsActiveById(contestId))
+        {
+            context.AddFailure(
+                new ValidationFailure(
+                    nameof(model.ContestId),
+                    "The contest must be active."));
+        }
+
+        if (contest!.Type != ContestType.OnlinePracticalExam)
+        {
+            context.AddFailure(
+                new ValidationFailure(
+                    nameof(model.ContestId),
+                    "The contest must be an online exam."));
+        }
+
+        if (!contest.Duration.HasValue)
+        {
+            context.AddFailure(
+                new ValidationFailure(
+                    nameof(model.ContestId),
+                    "The contest's duration has not been set."));
+        }
     }
-
-    private async Task<bool> ContestDurationMustBeSet(int contestId)
-    {
-        var contest = await this.contestsDataService.GetByIdQuery(contestId).FirstOrDefaultAsync();
-
-        return contest!.Duration.HasValue;
-    }
-
 }
