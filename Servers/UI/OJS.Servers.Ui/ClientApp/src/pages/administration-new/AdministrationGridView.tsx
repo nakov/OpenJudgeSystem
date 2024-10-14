@@ -33,12 +33,12 @@ interface IAdministrationGridViewProps<T> {
     data: IPagedResultType<T> | undefined;
     showFiltersAndSorters?: boolean;
     renderActionButtons?: () => ReactNode;
-    modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
+    modals?: Array<{ showModal: boolean; modal: (index: number) => ReactNode }>;
     error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
     queryParams?: IGetAllAdminParams;
     setQueryParams?: Dispatch<SetStateAction<IGetAllAdminParams>>;
     withSearchParams?: boolean;
-    legendProps?: Array<{color: string; message:string}>;
+    legendProps?: Array<{ color: string; message: string }>;
     specificRowIdName?: string[] | null;
     excelMutation?: any;
     defaultFilter?: string;
@@ -69,7 +69,8 @@ const defaultNotVisibleColumns: AdjacencyList<string, boolean> = {
 
 const defaultFilterToAdd = 'isdeleted~equals~false';
 const defaultSorterToAdd = 'id=DESC';
-const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
+
+const AdministrationGridView = <T extends object>(props: IAdministrationGridViewProps<T>) => {
     const idColumnPattern = /\b(id|(?:\S+\s+id))\b/i;
     const {
         filterableGridColumnDef,
@@ -137,22 +138,22 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
 
         return (
             <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-                { renderActions() }
+                {renderActions()}
                 {showFiltersAndSorters && (
-                <div style={{ ...flexCenterObjectStyles, width: '100%', gap: '20px' }}>
-                    <AdministrationFilters
-                      searchParams={searchParams}
-                      setSearchParams={setSearchParams}
-                      withSearchParams={withSearchParams}
-                      setSelectedFilters={setSelectedFilters}
-                      setQueryParams={setQueryParams}
-                      selectedFilters={selectedFilters}
-                      filterColumns={filtersColumns}
-                      sortingColumns={sortingColumns}
-                      selectedSorters={selectedSorters}
-                      setSelectedSorters={setSelectedSorters}
-                    />
-                </div>
+                    <div style={{ ...flexCenterObjectStyles, width: '100%', gap: '20px' }}>
+                        <AdministrationFilters
+                          searchParams={searchParams}
+                          setSearchParams={setSearchParams}
+                          withSearchParams={withSearchParams}
+                          setSelectedFilters={setSelectedFilters}
+                          setQueryParams={setQueryParams}
+                          selectedFilters={selectedFilters}
+                          filterColumns={filtersColumns}
+                          sortingColumns={sortingColumns}
+                          selectedSorters={selectedSorters}
+                          setSelectedSorters={setSelectedSorters}
+                        />
+                    </div>
                 )}
                 <LegendBox renders={legendProps ?? []} />
             </div>
@@ -195,9 +196,15 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div>
-                {modals.map((m, i) => m.showModal && m.modal(i))}
-                { renderGridSettings() }
-                { error
+                {modals.map((m, i) => m.showModal
+                    ? (
+                        <div key={i}>
+                            {m.modal(i)}
+                        </div>
+                    )
+                    : null)}
+                {renderGridSettings()}
+                {error
                     ? (
                         <div className={styles.errorText}>
                             Error loading data.
@@ -228,9 +235,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     );
 };
 
-export {
-    defaultFilterToAdd,
-    defaultSorterToAdd,
-};
+export { defaultFilterToAdd, defaultSorterToAdd };
 
 export default AdministrationGridView;
