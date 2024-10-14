@@ -70,6 +70,13 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
             .WithMessage("Cannot delete active contest")
             .NotNull()
             .When(model => model.OperationType is CrudOperationType.Delete);
+
+        this.RuleFor(model => model.Duration)
+            .NotNull()
+            .Must((model, _) => model.Duration!.Value != TimeSpan.Zero)
+            .WithMessage("The duration's value must be set when the contest is of type Online Exam.")
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update &&
+                           model.Type == ContestType.OnlinePracticalExam.ToString());
     }
 
     private static bool BeAValidContestType(string? type)
