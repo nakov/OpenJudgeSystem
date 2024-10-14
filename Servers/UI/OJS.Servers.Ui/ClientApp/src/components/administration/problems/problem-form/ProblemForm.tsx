@@ -332,6 +332,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     if (isGettingData) {
         return <SpinningLoader />;
     }
+
     return (
         <Box className={`${styles.flex}`}>
             {renderErrorMessagesAlert(errorMessages)}

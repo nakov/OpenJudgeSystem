@@ -535,8 +535,8 @@ const AdministrationPortal = () => {
                 display: 'flex',
                 overflowY: 'hidden',
                 '&::-webkit-scrollbar': { display: 'none' },
-                '-ms-overflow-style': 'none',
-                'scrollbar-width': 'none',
+                msOverflowStyle: 'none',
+                scrollbarWidth: 'none',
             }}
             >
                 <Drawer
@@ -597,41 +597,41 @@ const AdministrationPortal = () => {
                     <List className={styles.list}>
                         <Divider />
                         {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
-                        <SectionTooltip
-                          key={item.path}
-                          title={item.name}
-                          placement="right"
-                          arrow
-                        >
-                            <div>
-                                <ListItem key={item.name} disablePadding>
-                                    <Link
-                                      to={item.path}
-                                      className={`${isSelected(item.path)
-                                          ? styles.activeAdminNavLink
-                                          : ''} ${
-                                          styles.adminNavLink
-                                      }`}
-                                    >
-                                        <ListItemButton
-                                          className={isSelected(item.path)
-                                              ? styles.selectedSection
-                                              : ''}
+                            <SectionTooltip
+                              key={item.path}
+                              title={item.name}
+                              placement="right"
+                              arrow
+                            >
+                                <div>
+                                    <ListItem key={item.name} disablePadding>
+                                        <Link
+                                          to={item.path}
+                                          className={`${isSelected(item.path)
+                                              ? styles.activeAdminNavLink
+                                              : ''} ${
+                                              styles.adminNavLink
+                                          }`}
                                         >
-                                            <ListItemIcon
+                                            <ListItemButton
                                               className={isSelected(item.path)
-                                                  ? styles.listItemIcon
+                                                  ? styles.selectedSection
                                                   : ''}
                                             >
-                                                {item.icon}
-                                            </ListItemIcon>
-                                            <ListItemText primary={item.name} />
-                                        </ListItemButton>
-                                    </Link>
-                                </ListItem>
-                                <Divider />
-                            </div>
-                        </SectionTooltip>
+                                                <ListItemIcon
+                                                  className={isSelected(item.path)
+                                                      ? styles.listItemIcon
+                                                      : ''}
+                                                >
+                                                    {item.icon}
+                                                </ListItemIcon>
+                                                <ListItemText primary={item.name} />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <Divider />
+                                </div>
+                            </SectionTooltip>
                         ))}
                     </List>
                 </Drawer>
@@ -642,8 +642,8 @@ const AdministrationPortal = () => {
                       flexGrow: 1,
                       overflowY: 'scroll',
                       '&::-webkit-scrollbar': { display: 'none' },
-                      '-ms-overflow-style': 'none',
-                      'scrollbar-width': 'none',
+                      msOverflowStyle: 'none',
+                      scrollbarWidth: 'none',
                   }}
                 >
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
@@ -661,7 +661,7 @@ const AdministrationPortal = () => {
                                     to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
                                     replace
                                   />
-                                  )}
+                                )}
                             />
                             <Route path="*" element={<NotFoundPage />} />
                         </Routes>
