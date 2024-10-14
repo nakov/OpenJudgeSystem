@@ -22,7 +22,9 @@
 
         public string Name { get; set; } = null!;
 
-        public int OrderBy { get; set; }
+        public double OrderBy { get; set; }
+
+        public double ProblemGroupOrderBy { get; set; }
 
         public short MaximumPoints { get; set; }
 
@@ -80,9 +82,6 @@
                 .ForMember(
                     d => d.MemoryLimit,
                     opt => opt.MapFrom(s => (double?)s.MemoryLimit))
-                .ForMember(
-                    d => d.OrderBy,
-                    opt => opt.MapFrom(s => (int)s.OrderBy))
                 .ForMember(
                     d => d.Resources,
                     opt => opt.MapFrom(s => s.Resources.OrderBy(x => x.OrderBy)))
