@@ -2,12 +2,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import Breadcrumbs, { IPageBreadcrumbsItem } from 'src/components/guidelines/breadcrumb/Breadcrumbs';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
 import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
-import useTheme from '../../../hooks/use-theme';
 import {
     clearContestCategoryBreadcrumbItems,
     setContestCategories,
@@ -16,10 +16,7 @@ import {
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import trimBreadcrumbItems from '../../../utils/breadcrumb-utils';
-import concatClassNames from '../../../utils/class-names';
 import { findContestCategoryByIdRecursive, findParentNames } from '../contest-categories/ContestCategories';
-
-import styles from './ContestBreadcrumbs.module.scss';
 
 interface IContestBreadcrumbsProps {
     isHidden?: boolean;
@@ -28,12 +25,8 @@ interface IContestBreadcrumbsProps {
 const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     const dispatch = useAppDispatch();
     const { categoryId } = useParams();
-    const { themeColors, getColorClassName } = useTheme();
     const { breadcrumbItems, contestCategories, contestDetails } = useAppSelector((state) => state.contests);
     const { data, isLoading, refetch } = useGetContestCategoriesQuery();
-
-    const textColorClassName = getColorClassName(themeColors.textColor);
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor300);
 
     // fetch contests data, if it's not present beforehand
     useEffect(() => {
@@ -66,54 +59,23 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
         }
     }, [ contestCategories, contestDetails, categoryId, dispatch ]);
 
-    const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean) => (
-        <Link
-          key={`contest-breadcrumb-item-${breadcrumbItem.id}`}
-          to={getAllContestsPageUrl({ categoryId: breadcrumbItem.id, categoryName: breadcrumbItem.name })}
-        >
-            <div
-              className={`${styles.item} ${isLast
-                  ? textColorClassName
-                  : ''}`}
-            >
-                <div>
-                    {breadcrumbItem.name}
-                    {' '}
-                    {!isLast && '/'}
-                </div>
-            </div>
-        </Link>
-    );
-
-    const className = concatClassNames(
-        styles.breadcrumbsWrapper,
-        textColorClassName,
-        backgroundColorClassName,
-        isHidden
-            ? styles.nonVisible
-            : '',
-    );
-
-    if (isLoading) {
-        return <div className={className}>Loading breadcrumbs...</div>;
-    }
+    const contestBreadCrumbsItems = useMemo(() => [
+            { text: 'Contests', to: '/contests' } as IPageBreadcrumbsItem,
+    ].concat(trimBreadcrumbItems(breadcrumbItems)?.map((item: ContestBreadcrumb) => ({
+        text: item.name,
+        to: getAllContestsPageUrl({
+            categoryId: item.id,
+            categoryName: item.name,
+        }),
+    } as IPageBreadcrumbsItem))), [ breadcrumbItems ]);
 
     return (
-        <div className={className}>
-            <Link to="/" className={`${styles.item} ${styles.staticItem}`}>Home</Link>
-            {' / '}
-            <Link
-              to={getAllContestsPageUrl({})}
-              className={`${styles.item} ${styles.staticItem} ${breadcrumbItems.length === 0
-                  ? textColorClassName
-                  : ''}`}
-            >
-                Contests
-            </Link>
-            {breadcrumbItems?.length > 0 && ' / '}
-            {/* eslint-disable-next-line max-len */}
-            {trimBreadcrumbItems(breadcrumbItems)?.map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1))}
-        </div>
+        <Breadcrumbs
+          keyPrefix="contest"
+          items={contestBreadCrumbsItems}
+          isHidden={isHidden}
+          isLoading={isLoading}
+        />
     );
 };
 

@@ -1,8 +1,7 @@
-@use 'src/styles/fonts';
-@use 'src/styles/variables';
-@use 'src/styles/spacings';
-@use 'src/styles/shadows';
 @use 'src/styles/colors';
+@use 'src/styles/spacings';
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
 
 .breadcrumbsWrapper {
   @extend %font-family-normal;
@@ -17,6 +16,9 @@
   width: 99%;
 
   .item {
+    display: flex;
+    flex-direction: row;
+    gap: spacings.$sp-4;
     color: colors.$primary-blue;
     margin-left: spacings.$sp-4;
 
@@ -25,11 +27,7 @@
     }
   }
 
-  &.nonVisible {
-    visibility: hidden;
-  }
-}
-
-.staticItem {
-  margin-right: spacings.$sp-4;
+    &.nonVisible {
+        visibility: hidden;
+    }
 }
