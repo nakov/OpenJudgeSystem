@@ -140,7 +140,7 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
             .Select(pg => pg.Id)
             .ToListAsync();
 
-        return new HashSet<int>(problemGroups).Contains(model.ContestId);
+        return new HashSet<int>(problemGroups).Contains(model.ProblemGroupId);
     }
 
     private async Task<bool> IsOnline(int contestId)
