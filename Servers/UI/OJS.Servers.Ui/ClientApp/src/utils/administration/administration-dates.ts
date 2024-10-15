@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
@@ -14,7 +14,7 @@ const convertToUtc = (date?: Date | null | undefined) => {
     return new Date(dayjs.utc(date).toISOString());
 };
 
-const getDateAsLocal = (date?: string | number | Date | null | undefined) => {
+const getDateAsLocal = (date?: string | number | Date | null | undefined | Dayjs) => {
     if (!date) {
         return null;
     }
@@ -22,7 +22,7 @@ const getDateAsLocal = (date?: string | number | Date | null | undefined) => {
     return dayjs.utc(date).local();
 };
 
-const adminFormatDate = (date?: Date | null | undefined, format?: string | null | undefined) => {
+const adminFormatDate = (date?: Date | null | undefined | Dayjs, format?: string | null | undefined) => {
     if (!date) {
         return null;
     }
@@ -30,7 +30,7 @@ const adminFormatDate = (date?: Date | null | undefined, format?: string | null 
     return getDateAsLocal(date)!.format(format || ADMIN_DEFAULT_DATE_AND_TIME_FORMAT);
 };
 
-const adminPreciseFormatDate = (date?: Date | null | undefined) => adminFormatDate(date, ADMIN_PRECISE_DATE_AND_TIME_FORMAT);
+const adminPreciseFormatDate = (date?: Date | null | undefined | Dayjs) => adminFormatDate(date, ADMIN_PRECISE_DATE_AND_TIME_FORMAT);
 
 export {
     convertToUtc,
