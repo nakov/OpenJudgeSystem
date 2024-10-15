@@ -10,7 +10,7 @@ const submissionsGridTimeFormat = 'HH:mm:ss';
 const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
 
 const calculatedTimeFormatted =
-    (duration: Duration) => `${Math.floor(duration.asDays())} d, ${duration.hours()} h, ${duration.minutes()} m`;
+    (duration: Duration) => `${Math.floor(duration.asDays())} d, ${duration.hours()} h, ${duration.minutes()} m, ${duration.seconds()} s`;
 
 const isCurrentTimeAfterOrEqualTo = (date: Date):
     boolean => moment().local().isSameOrAfter(moment(date).utc(true).local());

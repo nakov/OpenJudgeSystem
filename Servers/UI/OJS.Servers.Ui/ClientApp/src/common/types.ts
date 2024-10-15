@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 import { ITestRun } from '../hooks/submissions/types';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
@@ -70,6 +72,7 @@ interface IPublicSubmission {
     maxMemoryUsed: number;
     maxTimeUsed: number;
     testRuns: ITestRun[];
+    testRunsCache?: string;
     processed: boolean;
 }
 
@@ -80,7 +83,7 @@ interface ITestRunInListModel {
     submissionId: number;
     executionComment: string;
     checkerComment: string;
-    resultType: string;
+    resultType: number;
 }
 
 interface IGetAllAdminParams {
@@ -731,6 +734,22 @@ interface IContestCategoryHierarchyEdit {
     parentId?: number;
 }
 
+interface IChangeParicipationTime {
+    contestId: number;
+    contestName: string;
+    timeInMinutes: number;
+}
+
+interface IChangeParticipationTimeForMultipleParticipants extends IChangeParicipationTime{
+    changeParticipationTimeRangeStart: Dayjs | null;
+    changeParticipationTimeRangeEnd: Dayjs | null;
+}
+
+interface IChangeParticipationTimeForSingleParticipant extends IChangeParicipationTime {
+    userId: string;
+    username: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -805,4 +824,6 @@ export type {
     IMappingEntityId,
     AdjacencyList,
     IContestCategoryHierarchyEdit,
+    IChangeParticipationTimeForMultipleParticipants,
+    IChangeParticipationTimeForSingleParticipant,
 };
