@@ -19,7 +19,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientApp\src\components\guidelines\breadcrumbs\" />
-  </ItemGroup>
 </Project>

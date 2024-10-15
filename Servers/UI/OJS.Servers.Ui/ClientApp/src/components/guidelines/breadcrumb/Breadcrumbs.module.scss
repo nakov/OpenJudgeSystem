@@ -16,10 +16,10 @@
   width: 99%;
 
   .item {
+    color: colors.$primary-blue;
     display: flex;
     flex-direction: row;
     gap: spacings.$sp-4;
-    color: colors.$primary-blue;
     margin-left: spacings.$sp-4;
 
     p {
@@ -27,7 +27,7 @@
     }
   }
 
-    &.nonVisible {
-        visibility: hidden;
-    }
+  &.nonVisible {
+    visibility: hidden;
+  }
 }
