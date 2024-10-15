@@ -9,8 +9,6 @@ const submissionsGridTimeFormat = 'HH:mm:ss';
 
 const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
 
-const defaultRemainingTimeFormat = '0 d, 0 h, 0 m, 0 s';
-
 const calculatedTimeFormatted =
     (duration: Duration) => `${Math.floor(duration.asDays())} d, ${duration.hours()} h, ${duration.minutes()} m, ${duration.seconds()} s`;
 
@@ -91,7 +89,6 @@ export {
     dateTimeFormatWithSpacing,
     submissionsGridDateFormat,
     submissionsGridTimeFormat,
-    defaultRemainingTimeFormat,
     formatDate,
     preciseFormatDate,
     isCurrentTimeAfterOrEqualTo,
