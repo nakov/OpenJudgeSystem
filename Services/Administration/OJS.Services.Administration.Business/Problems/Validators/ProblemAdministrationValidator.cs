@@ -10,6 +10,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,56 +22,68 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
     private readonly IProblemsDataService problemsDataService;
     private readonly IContestsActivityService contestsActivityService;
     private readonly ISubmissionTypesDataService submissionTypesDataService;
+    private readonly IProblemGroupsDataService problemGroupsDataService;
+    private readonly IContestsDataService contestsDataService;
 
     public ProblemAdministrationValidator(
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
-        ISubmissionTypesDataService submissionTypesDataService)
+        ISubmissionTypesDataService submissionTypesDataService,
+        IProblemGroupsDataService problemGroupsDataService,
+        IContestsDataService contestsDataService)
         : base(problemsDataService)
-        {
-            this.problemsDataService = problemsDataService;
-            this.contestsActivityService = contestsActivityService;
-            this.submissionTypesDataService = submissionTypesDataService;
+    {
+        this.problemsDataService = problemsDataService;
+        this.contestsActivityService = contestsActivityService;
+        this.submissionTypesDataService = submissionTypesDataService;
+        this.problemGroupsDataService = problemGroupsDataService;
+        this.contestsDataService = contestsDataService;
 
-            this.RuleFor(model => model.Name)
+        this.RuleFor(model => model.Name)
                 .Length(1, ConstraintConstants.Problem.NameMaxLength)
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.SourceCodeSizeLimit)
+        this.RuleFor(model => model.SourceCodeSizeLimit)
                 .GreaterThanOrEqualTo(0)
                 .WithMessage("Source code size limit cannot be zero or less.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.MaximumPoints)
+        this.RuleFor(model => model.MaximumPoints)
                 .GreaterThanOrEqualTo((short)0)
                 .WithMessage("Maximum points cannot be zero or less.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.SubmissionTypes.Count)
+        this.RuleFor(model => model.SubmissionTypes.Count)
                 .GreaterThanOrEqualTo(1)
                 .WithMessage("There must be at least one submission type.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.ContestId)
+        this.RuleFor(model => model.ContestId)
                 .GreaterThanOrEqualTo(0)
                 .WithMessage("Must select valid contest.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.CheckerId)
+        this.RuleFor(model => model.CheckerId)
                 .NotNull()
                 .WithMessage("Checker cannot be null")
                 .GreaterThanOrEqualTo(1)
                 .WithMessage("Checker must be valid type")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.Id)
+        this.RuleFor(model => model.Id)
                 .MustAsync(async (id, _) => await this.ContestMustNotBeActive(id))
                 .When(x => x.OperationType is CrudOperationType.Delete);
 
-            this.RuleFor(model => model)
+        this.RuleFor(model => model)
                 .CustomAsync(this.MustHaveValidTimeAndMemoryLimits)
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
-        }
+
+        this.RuleFor(model => model)
+            .MustAsync(async (model, _) => await this.MustHaveValidProblemGroupId(model))
+            .WithMessage("Invalid value for \"Problem Group Order By\" has been provided.")
+            .WhenAsync(async (x, _) => x.OperationType is CrudOperationType.Create or CrudOperationType.Update &&
+                                      await this.IsOnline(x.ContestId));
+    }
 
     private async Task<bool> ContestMustNotBeActive(int problemId)
     {
@@ -119,4 +132,17 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
             }
         }
     }
+
+    private async Task<bool> MustHaveValidProblemGroupId(ProblemAdministrationModel model)
+    {
+        var problemGroups = await this.problemGroupsDataService
+            .GetAllByContest(model.ContestId)
+            .Select(pg => pg.Id)
+            .ToListAsync();
+
+        return new HashSet<int>(problemGroups).Contains(model.ProblemGroupId);
+    }
+
+    private async Task<bool> IsOnline(int contestId)
+        => await this.contestsDataService.IsOnlineById(contestId);
 }

@@ -25,7 +25,7 @@ public static class TaskResultServiceModelExtensions
         {
             var correctAnswersCount = testResults
                 .Count(x =>
-                    Enum.Parse<TestRunResultType>(x.ResultType) == TestRunResultType.CorrectAnswer);
+                    x.ResultType == TestRunResultType.CorrectAnswer);
 
             var coefficient = (double)correctAnswersCount / testResults.Count;
 

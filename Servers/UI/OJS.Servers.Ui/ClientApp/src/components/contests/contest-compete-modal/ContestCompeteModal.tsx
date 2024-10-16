@@ -1,7 +1,7 @@
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import { timeToWords } from '../../../utils/dates';
-import Button from '../../guidelines/buttons/Button';
+import Button, { ButtonType } from '../../guidelines/buttons/Button';
 import ContestButton from '../contest-button/ContestButton';
 
 import styles from './ContestCompeteModal.module.scss';
@@ -17,13 +17,18 @@ interface IContestCompeteModalProps {
 const ContestCompeteModal = (props: IContestCompeteModalProps) => {
     const { examName, time, problemsCount, onAccept, onDecline } = props;
 
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const modalBodyClassName = concatClassNames(getColorClassName(themeColors.baseColor200), styles.modalBody);
+    const modalBodyClassName = concatClassNames(
+        getColorClassName(isDarkMode
+            ? themeColors.baseColor200
+            : themeColors.baseColor100),
+        styles.modalBody,
+    );
 
     return (
-        <div className={`${styles.modalWrapper} ${textColorClassName}`}>
+        <div className={concatClassNames(styles.modalWrapper, textColorClassName)}>
             <div className={styles.modalTitle}>
                 Starting now
                 <b>
@@ -35,10 +40,20 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                 </b>
                 to complete the contest
                 {' '}
-                {examName}
+                <b>
+                    {examName}
+                </b>
             </div>
             <div className={modalBodyClassName}>
-                <div>Your time will start counting down when you press the &apos;Compete&apos; button.</div>
+                <div>
+                    Your time will start counting down when you press the
+                    {' '}
+                    &apos;
+                    <b className={styles.competeText}>Compete</b>
+                    &apos;
+                    {' '}
+                    button.
+                </div>
                 <div>
                     In the case of unexpected problems (turning off your computer, exiting the page/system, internet connection failure),
                     {' '}
@@ -46,7 +61,13 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                     When time runs out, you will not be able to compete in this competition again.
                 </div>
                 <div>
-                    When you click the &apos;Compete&apos; button,
+                    When you click the
+                    {' '}
+                    &apos;
+                    <b className={styles.competeText}>Compete</b>
+                    &apos;
+                    {' '}
+                    button,
                     <b>
                         {' '}
                         {problemsCount}
@@ -60,9 +81,16 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                     <b>Are you sure you want to start the contest now?</b>
                 </div>
                 <div className={styles.buttonsWrapper}>
-                    <ContestButton isDisabled={false} id={1} onClick={onAccept} name={examName} isCompete />
+                    <ContestButton
+                      className={styles.contestButton}
+                      isDisabled={false}
+                      id={1}
+                      onClick={onAccept}
+                      name={examName}
+                      isCompete
+                    />
                     <Button
-                      className={styles.declineBtn}
+                      type={ButtonType.neutral}
                       text="cancel"
                       onClick={onDecline}
                     />

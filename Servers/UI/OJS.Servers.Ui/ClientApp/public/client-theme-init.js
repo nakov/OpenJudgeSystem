@@ -1,6 +1,6 @@
 ﻿(function() {
     const darkBackgroundColor = "#212328";
-    const lightBackgroundColor = "#f7f7f7";
+    const lightBackgroundColor = "#f8f8f8";
     try {
         const persistRoot = localStorage.getItem("persist:root");
         if (!persistRoot) {

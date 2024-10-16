@@ -2,8 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { FaFlagCheckered } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Popover } from '@mui/material';
 import isNil from 'lodash/isNil';
+import { ITestRunIcon } from 'src/hooks/submissions/types';
 
 import { IPublicSubmission } from '../../../common/types';
 import { getContestsDetailsPageUrl } from '../../../common/urls/compose-client-urls';
@@ -12,7 +15,12 @@ import { IAuthorizationReduxState } from '../../../redux/features/authorizationS
 import { setProfile } from '../../../redux/features/usersSlice';
 import { useAppDispatch } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
-import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
+import {
+    defaultDateTimeFormatReverse,
+    formatDate,
+    preciseFormatDate,
+    submissionsGridDateFormat, submissionsGridTimeFormat,
+} from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import {
     encodeAsUrlParam,
@@ -59,6 +67,7 @@ const SubmissionGridRow = ({
         maxTimeUsed,
         processed,
         testRuns,
+        testRunsCache,
     } = submission;
 
     const { internalUser } =
@@ -90,6 +99,24 @@ const SubmissionGridRow = ({
             : styles.lightRow,
         getColorClassName(themeColors.textColor),
     );
+
+    const getTestRuns = useCallback(() => {
+        if (testRunsCache) {
+            const trialTestsCount = Number.parseInt(testRunsCache[0], 10);
+
+            const cachedTestRuns: ITestRunIcon[] = Array.from(testRunsCache)
+                .slice(1)
+                .map((resultType, index) => ({
+                    resultType: Number.parseInt(resultType, 10),
+                    id: index + 1,
+                    isTrialTest: index < trialTestsCount,
+                }));
+
+            return cachedTestRuns;
+        }
+
+        return testRuns;
+    }, [ testRuns, testRunsCache ]);
 
     const renderUsername = useCallback(
         () => (
@@ -146,6 +173,7 @@ const SubmissionGridRow = ({
                       target="_blank"
                       text="Details"
                       type={LinkButtonType.secondary}
+                      size={ButtonSize.small}
                     />
                 );
             }
@@ -185,9 +213,24 @@ const SubmissionGridRow = ({
                 }
             </td>
             <td>
-                <div>
-                    {formatDate(createdOn, defaultDateTimeFormatReverse)}
-                </div>
+                {internalUser.isAdmin
+                    ? (
+                        <div className={styles.fromDate}>
+                            <span className={styles.fromDateRow}>
+                                <CalendarMonthIcon className={styles.icon} />
+                                {preciseFormatDate(createdOn, submissionsGridDateFormat)}
+                            </span>
+                            <span className={styles.fromDateRow}>
+                                <AccessAlarmIcon className={styles.icon} />
+                                {preciseFormatDate(createdOn, submissionsGridTimeFormat)}
+                            </span>
+                        </div>
+                    )
+                    : (
+                        <div>
+                            {formatDate(createdOn, defaultDateTimeFormatReverse)}
+                        </div>
+                    )}
                 {
                     options.showParticipantUsername
                         ? (
@@ -269,7 +312,7 @@ const SubmissionGridRow = ({
                     <ExecutionResult
                       points={points}
                       maxPoints={maxPoints}
-                      testRuns={testRuns}
+                      testRuns={getTestRuns()}
                       isCompiledSuccessfully={isCompiledSuccessfully}
                       isProcessed={processed}
                       showDetailedResults={options.showDetailedResults}

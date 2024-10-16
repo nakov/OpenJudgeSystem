@@ -4,10 +4,13 @@ const defaultDateTimeFormat = 'HH:MM, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
+const submissionsGridDateFormat = 'DD.MM.YYYY';
+const submissionsGridTimeFormat = 'HH:mm:ss';
+
 const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
 
 const calculatedTimeFormatted =
-    (duration: Duration) => `${Math.floor(duration.asDays())} d, ${duration.hours()} h, ${duration.minutes()} m`;
+    (duration: Duration) => `${Math.floor(duration.asDays())} d, ${duration.hours()} h, ${duration.minutes()} m, ${duration.seconds()} s`;
 
 const isCurrentTimeAfterOrEqualTo = (date: Date):
     boolean => moment().local().isSameOrAfter(moment(date).utc(true).local());
@@ -84,6 +87,8 @@ const transformSecondsToTimeSpan = (seconds: number) => {
 export {
     defaultDateTimeFormatReverse,
     dateTimeFormatWithSpacing,
+    submissionsGridDateFormat,
+    submissionsGridTimeFormat,
     formatDate,
     preciseFormatDate,
     isCurrentTimeAfterOrEqualTo,

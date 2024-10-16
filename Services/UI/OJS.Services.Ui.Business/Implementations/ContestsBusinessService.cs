@@ -351,7 +351,9 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ProblemsForParticipants
                     .Select(x => x.Problem)
                     .MapCollection<ContestProblemServiceModel>()
-                    .OrderBy(p => p.OrderBy)
+                    .OrderBy(p => p.ProblemGroupOrderBy)
+                    .ThenBy(p => p.OrderBy)
+                    .ThenBy(p => p.Name)
                     .ToList();
             }
 

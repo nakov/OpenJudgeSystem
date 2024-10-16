@@ -256,16 +256,16 @@ const ContestSolutionSubmitPage = () => {
 
         const intervalId = setInterval(() => {
             const currentTime = moment();
-            const remainingCompeteTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
+            const remainingCompeteTime = moment.utc(endDateTimeForParticipantOrContest).diff(moment.utc(currentTime));
 
             if (remainingCompeteTime > 0) {
                 const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
                 setRemainingTimeForCompete(formattedTime);
             } else {
-                setRemainingTimeForCompete(null);
-                setRemainingTimeForCompete(null);
+                setRemainingTimeForCompete(calculatedTimeFormatted(moment.duration(0, 'milliseconds')));
+                clearInterval(intervalId);
             }
-        });
+        }, 1000);
 
         return () => {
             clearInterval(intervalId);
