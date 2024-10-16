@@ -18,6 +18,7 @@ const handleDateTimePickerChange = (name: string, newValue: any, onChange: Funct
                 : null,
         },
     };
+
     onChange(event);
 };
 

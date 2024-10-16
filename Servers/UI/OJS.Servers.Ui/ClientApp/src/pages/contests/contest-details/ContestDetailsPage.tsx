@@ -121,6 +121,12 @@ const ContestDetailsPage = () => {
             )}
             {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
                 (<AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />)}
+            {canBeCompeted && type === ContestVariation.OnlinePracticalExam && (
+            <AdministrationLink
+              to={`/${CONTESTS_PATH}/${contestId}?openChangeParticipantsTime=true#tab-participants`}
+              text="Change Time"
+            />
+            )}
         </div>
     );
 
