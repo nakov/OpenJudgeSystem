@@ -5,7 +5,8 @@
 @use 'src/styles/shadows';
 @use 'src/styles/font-weights';
 
-.problemsHeader {
+.problemsHeader,
+%problemsHeader {
   align-items: center;
   display: flex;
   font-size: variables.$f-size-18;
@@ -15,14 +16,14 @@
 
 .problemsWrapper {
   font-size: variables.$f-size-18;
-  height: 582px;
+  height: 400px;
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 0.5s ease-in-out;
   width: 397px;
 
   .problemsInnerWrapper {
-    padding: 0 spacings.$sp-24;
+    padding: 0 spacings.$sp-12;
   }
 
   .problem {
@@ -54,7 +55,6 @@
 
 .problemsInfoSection {
   align-items: center;
-  box-shadow: shadows.$dp-shadow-4;
   display: flex;
   font-weight: font-weights.$font-weight-semi-bold;
   justify-content: space-between;

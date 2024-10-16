@@ -88,8 +88,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
+            var activityServiceModel = contestDetailsServiceModel!.Map<ContestForActivityServiceModel>();
+
             var contestActivityEntity = await this.activityService
-                .GetContestActivity(contestDetailsServiceModel!.Map<ContestForActivityServiceModel>());
+                .GetContestActivity(activityServiceModel);
 
             var userParticipants = await this.participantsData
                 .GetWithProblemsForParticipantsByContestAndUser(id, user.Id)
@@ -136,6 +138,8 @@ namespace OJS.Services.Ui.Business.Implementations
             contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
 
             contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
+
+            contestDetailsServiceModel.IsActive = await this.activityService.IsContestActive(activityServiceModel);
 
             return contestDetailsServiceModel;
         }
@@ -349,7 +353,9 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ProblemsForParticipants
                     .Select(x => x.Problem)
                     .MapCollection<ContestProblemServiceModel>()
-                    .OrderBy(p => p.OrderBy)
+                    .OrderBy(p => p.ProblemGroupOrderBy)
+                    .ThenBy(p => p.OrderBy)
+                    .ThenBy(p => p.Name)
                     .ToList();
             }
 

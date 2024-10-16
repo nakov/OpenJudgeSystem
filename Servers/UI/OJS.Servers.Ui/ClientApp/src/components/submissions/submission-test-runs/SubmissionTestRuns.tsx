@@ -11,9 +11,11 @@ interface ISubmissionTestRunsProps {
 
 const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
     const { testRuns } = props;
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
 
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
+    const backgroundColorClassName = getColorClassName(isDarkMode
+        ? themeColors.baseColor300
+        : themeColors.baseColor100);
 
     const renderTestRunDetails = (testRun: ITestRunType, idx: number) => {
         const { resultType } = testRun;
@@ -31,14 +33,14 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
         return (
             <div
               key={`tr-${testRun.id}`}
-              className={`${styles.submissionTestRun} ${testRun.isTrialTest
-                  ? styles.trialTest
-                  : ''}`}
+              className={styles.submissionTestRun}
               style={{ color }}
               onClick={() => onTestRunClick()}
             >
                 <span>
-                    {idx}
+                    {`${testRun.isTrialTest
+                        ? '0.'
+                        : ''}${idx}`}
                     .
                 </span>
                 <TestRunIcon testRun={testRun} />
@@ -52,7 +54,8 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
     return (
         <div className={`${styles.submissionsTestRunsWrapper} ${backgroundColorClassName}`}>
-            {testRuns?.map((testRun, idx) => renderTestRunDetails(testRun, idx + 1))}
+            {testRuns?.filter((tr) => tr.isTrialTest).map((testRun, idx) => renderTestRunDetails(testRun, idx + 1))}
+            {testRuns?.filter((tr) => !tr.isTrialTest).map((testRun, idx) => renderTestRunDetails(testRun, idx + 1))}
         </div>
     );
 };

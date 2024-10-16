@@ -23,8 +23,7 @@ enum ButtonType {
     submit = 5,
     toggled = 6,
     untoggled = 7,
-    darkNeutral = 8,
-    lightNeutral = 9,
+    neutral = 8,
 }
 enum LinkButtonType {
     primary = 1,
@@ -71,8 +70,7 @@ const classNameToButtonType = {
     [ButtonType.image]: styles.image,
     [ButtonType.toggled]: styles.toggled,
     [ButtonType.untoggled]: styles.untoggled,
-    [ButtonType.darkNeutral]: styles.darkNeutral,
-    [ButtonType.lightNeutral]: styles.lightNeutral,
+    [ButtonType.neutral]: styles.neutral,
 };
 
 const classNameToLinkButonType = {
@@ -90,7 +88,7 @@ const sizeToClassName = {
 };
 
 const themingButtonsClassNames:{ [key in ButtonType]?: string[] } =
-    { [ButtonType.secondary]: [ styles.lightSecondary, styles.darkSecondary ] };
+    { [ButtonType.secondary]: [ ] };
 
 const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | null) => {
     if (!isNil(text) && !isNil(children)) {
@@ -126,7 +124,9 @@ const Button = ({
         : 0);
 
     const stateClassName = state === ButtonState.disabled
-        ? styles.disabled
+        ? concatClassNames(styles.disabled, isDarkMode
+            ? styles.darkDisabled
+            : styles.lightDisabled)
         : '';
 
     const wideClassName = isWide

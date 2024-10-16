@@ -6,14 +6,27 @@ import styles from './ConfirmDialog.module.scss';
 interface IConfirmDialogProps {
     title?: string;
     text: string | ReactElement;
-    confirmFunction? : () => void;
-    declineFunction? : () => void;
-    onClose? : () => void;
+    confirmFunction?: () => void;
+    declineFunction?: () => void;
+    onClose?: () => void;
     confirmButtonText?: string;
     declineButtonText?: string;
+    confirmButtonColor?: string;
+    declineButtonColor?: string;
 }
+
 const ConfirmDialog = (props: IConfirmDialogProps) => {
-    const { title, text, confirmFunction, declineFunction, onClose, confirmButtonText, declineButtonText } = props;
+    const {
+        title,
+        text,
+        confirmFunction,
+        declineFunction,
+        onClose,
+        confirmButtonText,
+        declineButtonText,
+        confirmButtonColor,
+        declineButtonColor,
+    } = props;
 
     const handleClose = () => {
         if (onClose) {
@@ -27,12 +40,14 @@ const ConfirmDialog = (props: IConfirmDialogProps) => {
         }
         handleClose();
     };
+
     const handleDecline = () => {
         if (declineFunction) {
             declineFunction();
         }
         handleClose();
     };
+
     return (
         <div className={styles.position}>
             <Dialog
@@ -41,9 +56,9 @@ const ConfirmDialog = (props: IConfirmDialogProps) => {
               aria-labelledby="responsive-dialog-title"
             >
                 {title && (
-                <DialogTitle id="responsive-dialog-title">
-                    {title}
-                </DialogTitle>
+                    <DialogTitle id="responsive-dialog-title">
+                        {title}
+                    </DialogTitle>
                 )}
                 <DialogContent>
                     <DialogContentText>
@@ -52,18 +67,27 @@ const ConfirmDialog = (props: IConfirmDialogProps) => {
                 </DialogContent>
                 <DialogActions>
                     {declineButtonText && (
-                    <Button autoFocus onClick={handleDecline}>
-                        {declineButtonText}
-                    </Button>
+                        <Button
+                          autoFocus
+                          onClick={handleDecline}
+                          className={declineButtonColor ?? styles.confirm}
+                        >
+                            {declineButtonText}
+                        </Button>
                     )}
                     {confirmButtonText && (
-                    <Button color="error" onClick={handleConfirmation} autoFocus>
-                        {confirmButtonText}
-                    </Button>
+                        <Button
+                          autoFocus
+                          onClick={handleConfirmation}
+                          className={confirmButtonColor ?? styles.decline}
+                        >
+                            {confirmButtonText}
+                        </Button>
                     )}
                 </DialogActions>
             </Dialog>
         </div>
     );
 };
+
 export default ConfirmDialog;

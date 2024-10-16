@@ -1,3 +1,7 @@
+import { IHaveOptionalClassName } from 'src/components/common/Props';
+import useTheme from 'src/hooks/use-theme';
+import concatClassNames from 'src/utils/class-names';
+
 import { getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import useNavigation from '../../../hooks/common/use-routing';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
@@ -6,7 +10,7 @@ import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button
 
 import styles from './ContestButton.module.scss';
 
-interface IContestButtonProps {
+interface IContestButtonProps extends IHaveOptionalClassName {
     isCompete: boolean;
     isDisabled: boolean;
     id: number;
@@ -19,11 +23,21 @@ const COMPETE_STRING = 'COMPETE';
 const PRACTICE_STRING = 'PRACTICE';
 
 const ContestButton = (props: IContestButtonProps) => {
-    const { isCompete, isDisabled, id, problemId, onClick, name } = props;
+    const {
+        isCompete,
+        isDisabled,
+        id,
+        problemId,
+        onClick,
+        name,
+        className,
+    } = props;
+
     const { internalUser } = useAppSelector((reduxState) => reduxState.authorization);
     const dispatch = useAppDispatch();
 
     const { navigateInNewWindow } = useNavigation();
+    const { isDarkMode } = useTheme();
 
     const onButtonClick = async () => {
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: null }));
@@ -55,9 +69,14 @@ const ContestButton = (props: IContestButtonProps) => {
           size={ButtonSize.small}
           isCompete={isCompete}
           onClick={onButtonClick}
-          className={isUserAdminOrLecturer && isDisabled
-              ? styles.adminDisabled
-              : ''}
+          className={concatClassNames(
+              className,
+              isUserAdminOrLecturer && isDisabled
+                  ? isDarkMode
+                      ? styles.adminDisabledDark
+                      : styles.adminDisabledLight
+                  : '',
+          )}
         />
     );
 };

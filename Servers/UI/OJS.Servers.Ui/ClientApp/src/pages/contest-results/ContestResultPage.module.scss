@@ -3,8 +3,8 @@
 @use 'src/styles/colors';
 
 .contestResultsHeading {
-  margin-bottom: 40px;
-  margin-top: 40px;
+  margin-bottom: spacings.$sp-24;
+  margin-top: spacings.$sp-24;
   text-align: center;
 }
 

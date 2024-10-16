@@ -40,12 +40,6 @@ const ContestsPage = () => {
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
-    useEffect(() => {
-        if (!categoryId && breadcrumbItems.length > 0) {
-            dispatch(clearContestCategoryBreadcrumbItems());
-        }
-    });
-
     const selectedPage = useMemo(() => {
         if (!searchParams.get('page')) {
             return 1;
@@ -58,9 +52,11 @@ const ContestsPage = () => {
             sortType: SortType.OrderBy,
             page: selectedPage,
         };
+
         if (selectedCategory) {
             params.category = selectedCategory.id;
         }
+
         if (selectedStrategy) {
             params.strategy = selectedStrategy.id;
         }
@@ -74,6 +70,12 @@ const ContestsPage = () => {
         error: allContestsError,
         isFetching: areContestsFetching,
     } = useGetAllContestsQuery({ ...contestParams });
+
+    useEffect(() => {
+        if (!categoryId && breadcrumbItems.length > 0) {
+            dispatch(clearContestCategoryBreadcrumbItems());
+        }
+    });
 
     useEffect(() => {
         if (contestsCacheIsReset) {

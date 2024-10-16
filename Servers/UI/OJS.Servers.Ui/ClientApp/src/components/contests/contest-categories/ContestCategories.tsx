@@ -107,6 +107,9 @@ const ContestCategories = (props: IContestCategoriesProps) => {
 
         const categoryListItemClassNames = concatClassNames(
             styles.categoryListItem,
+            isDarkMode
+                ? styles.darkCategoryListItem
+                : styles.lightCategoryListItem,
             isChildElement
                 ? styles.isChild
                 : '',

@@ -56,14 +56,19 @@
   width: 100%;
 }
 
-.dropdownMenu .menuSection {
+.menuSection {
   align-content: start;
   display: flex;
   flex-direction: column;
 }
 
-.dropdownMenu .menuSection:not(:last-child) {
+.dropdownMenu .darkMenuSection:not(:last-child) {
   border-bottom: 1px solid colors.$dark-base-color-100;
+  margin-bottom: spacings.$sp-16;
+}
+
+.dropdownMenu .lightMenuSection:not(:last-child) {
+  border-bottom: 1px solid colors.$light-base-color-200;
   margin-bottom: spacings.$sp-16;
 }
 

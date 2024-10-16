@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
 import { Popover } from '@mui/material';
+import concatClassNames from 'src/utils/class-names';
 
 import { TestRunResultType } from '../../../common/constants';
 import { getResultTypeText, getTestResultColorId } from '../../../common/submissions-utils';
@@ -32,7 +33,9 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
     const [ timeAnchorEl, setTimeAnchorEl ] = useState<HTMLElement | null>(null);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
+    const backgroundColorClassName = getColorClassName(isDarkMode
+        ? themeColors.baseColor200
+        : themeColors.baseColor100);
 
     const isMemoryModalOpen = Boolean(memoryAnchorEl);
     const isTimeModalOpen = Boolean(timeAnchorEl);
@@ -69,7 +72,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
         setTestShowInput(!testShowInput);
     };
 
-    const isCorrectAnswer = resultType.toLowerCase() === TestRunResultType.CorrectAnswer.toLowerCase();
+    const isCorrectAnswer = resultType === TestRunResultType.CorrectAnswer;
 
     return (
         <div
@@ -93,30 +96,31 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                           text={testShowInput
                               ? 'HIDE INPUT'
                               : 'SHOW INPUT'}
-                          type={isDarkMode
-                              ? ButtonType.lightNeutral
-                              : ButtonType.darkNeutral}
+                          type={ButtonType.neutral}
                           size={ButtonSize.small}
                         />
                     )}
-                    {shouldRenderAdminData && (
-                        <AdministrationLink
-                          text={`Test #${testId}`}
-                          to={`/tests/${testId}`}
-                          type={LinkButtonType.plain}
-                          className={styles.testRunIdWrapper}
-                        />
-                    )}
                     <div className={styles.timeAndMemoryWrapper}>
-                        <span style={{ color: themeColors.baseColor100 }}>
-                            Run #
-                            {testRun.id}
-                        </span>
+                        {shouldRenderAdminData && (
+                            <AdministrationLink
+                              text={`Test #${testId}`}
+                              to={`/tests/${testId}`}
+                              type={LinkButtonType.plain}
+                              className={styles.testLink}
+                            />
+                        )}
+                        {shouldRenderAdminData && (
+                            <span>
+                                Run #
+                                {testRun.id}
+                            </span>
+                        )}
                         <span
                           onMouseEnter={(e) => onPopoverOpen('memory', e)}
                           onMouseLeave={() => onPopoverClose('memory')}
+                          className={styles.iconAndTextWrapper}
                         >
-                            <BiMemoryCard size={20} color={themeColors.baseColor100} />
+                            <BiMemoryCard size={20} />
                             <span>
                                 {(memoryUsed / 1000000).toFixed(2)}
                                 {' '}
@@ -145,8 +149,9 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                         <span
                           onMouseEnter={(e) => onPopoverOpen('time', e)}
                           onMouseLeave={() => onPopoverClose('time')}
+                          className={styles.iconAndTextWrapper}
                         >
-                            <FaRegClock size={20} color={themeColors.baseColor100} />
+                            <FaRegClock size={20} />
                             <span>
                                 {timeUsed / 1000}
                                 {' '}
@@ -168,7 +173,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                               disableRestoreFocus
                             >
                                 <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
-                                    Time required
+                                    Time used
                                 </div>
                             </Popover>
                         </span>
@@ -179,7 +184,9 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
             { isTrialTest && (
                 <div
                   style={{ color: themeColors.baseColor100 }}
-                  className={styles.zeroTestsInfoMessage}
+                  className={concatClassNames(styles.zeroTestsInfoMessage, !isDarkMode
+                      ? getColorClassName(themeColors.textColor)
+                      : '')}
                 >
                     The zero tests are not included in the final result
                 </div>
@@ -196,7 +203,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                 </div>
             )}
             {
-                testRun.resultType.toLowerCase() === TestRunResultType.RunTimeError.toLowerCase() && testRun.executionComment && (
+                testRun.resultType === TestRunResultType.RunTimeError && testRun.executionComment && (
                     <MultiLineTextDisplay
                       text={testRun.executionComment}
                       maxVisibleLines={5}

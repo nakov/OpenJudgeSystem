@@ -1,6 +1,7 @@
 @use 'src/styles/spacings';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/font-weights';
 
 .noParticipationsText {
   @extend %font-family-normal;
@@ -15,4 +16,6 @@
   @extend %font-family-normal;
 
   font-size: variables.$f-size-24;
+  font-weight: font-weights.$font-weight-regular;
+  padding: spacings.$sp-16 0 !important;
 }

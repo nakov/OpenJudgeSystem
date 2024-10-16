@@ -13,13 +13,13 @@
 
 .lightRow {
   // TODO: Fix this color
-  background: colors.$horizontal-line-gray;
-  border-bottom: 1px solid colors.$wrappers-border-color;
+  background: colors.$light-base-color-100;
+  border-bottom: 1px solid colors.$light-base-color-200;
 }
 
 .darkRow {
   background: colors.$primary-dark-grey-color;
-  border-bottom: 1px solid #212328;
+  border-bottom: 1px solid colors.$dark-base-color-400;
 }
 
 .redirectButton {
@@ -99,4 +99,22 @@
   span {
     margin-left: spacings.$sp-12;
   }
+}
+
+.fromDate {
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+
+    .fromDateRow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+
+        .icon {
+            font-size: 17px !important;
+        }
+    }
 }

@@ -124,11 +124,18 @@ const SubmissionDetailsPage = () => {
             {' '}
             for problem
             {' '}
-            <Link to={getContestsSolutionSubmitPageUrl({ isCompete: isOfficial, contestId, contestName, problemId: problem?.id })}>
+            <Link to={getContestsSolutionSubmitPageUrl({
+                isCompete: isOfficial,
+                contestId,
+                contestName,
+                problemId: problem?.id,
+                orderBy: problem?.orderBy,
+            })}
+            >
                 {problem?.name}
             </Link>
         </div>
-    ), [ solutionId, contestUser?.userName, contestName, contestId, isOfficial, problem?.id, problem?.name ]);
+    ), [ solutionId, contestUser?.userName, contestName, contestId, isOfficial, problem?.id, problem?.name, problem?.orderBy ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
@@ -153,7 +160,9 @@ const SubmissionDetailsPage = () => {
                         />
                         <AdministrationLink
                           text="Tests"
-                          to={`/tests?filter=problemid~equals~${problem!.id}`}
+                          to={`/problems/${
+                                problem!.id
+                          }#tab-tests`}
                         />
                         <Button
                           text="Retest"
@@ -170,7 +179,7 @@ const SubmissionDetailsPage = () => {
     const renderSubmissionExecutionDetails = useCallback(() => {
         if (!isProcessed || isRetestingStarted) {
             return (
-                <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
+                <div className={`${styles.submissionInQueueWrapper}`}>
                     The submission is in queue and will be processed shortly. Please wait.
                 </div>
             );
@@ -178,6 +187,8 @@ const SubmissionDetailsPage = () => {
 
         const compileTimeErrorClasses = concatClassNames(
             styles.compileTimeErrorWrapper,
+            getColorClassName(themeColors.baseColor200),
+            textColorClassName,
             textColorClassName,
             isDarkMode
                 ? styles.darkTheme
@@ -195,7 +206,7 @@ const SubmissionDetailsPage = () => {
 
         if (isEligibleForRetest) {
             return (
-                <div className={`${styles.retestWrapper} ${textColorClassName}`}>
+                <div className={`${styles.retestWrapper}`}>
                     <div>
                         The input / output data changed. Your (
                         {points}
@@ -244,6 +255,8 @@ const SubmissionDetailsPage = () => {
         isEligibleForRetest,
         textColorClassName,
         isDarkMode,
+        getColorClassName,
+        themeColors,
         compilerComment,
         points,
         maxPoints,
@@ -329,6 +342,20 @@ const SubmissionDetailsPage = () => {
         workerName,
     ]);
 
+    const renderProcessingComment = useCallback(() => (
+        <div className={concatClassNames(
+            styles.processingErrorWrapper,
+            textColorClassName,
+            isDarkMode
+                ? styles.darkTheme
+                : '',
+        )}
+        >
+            <div>A processing error occurred:</div>
+            <MultiLineTextDisplay text={processingComment} maxVisibleLines={50} />
+        </div>
+    ), [ isDarkMode, processingComment, textColorClassName ]);
+
     if (isLoading || retestIsLoading) {
         return (
             <div style={{ ...flexCenterObjectStyles }}>
@@ -388,19 +415,7 @@ const SubmissionDetailsPage = () => {
                             </div>
                         </div>
                         {renderAdminButtons()}
-                        {processingComment && user.isAdmin && (
-                        <div className={concatClassNames(
-                            styles.processingErrorWrapper,
-                            textColorClassName,
-                            isDarkMode
-                                ? styles.darkTheme
-                                : '',
-                        )}
-                        >
-                            <div>A processing error occurred:</div>
-                            <MultiLineTextDisplay text={processingComment} maxVisibleLines={50} />
-                        </div>
-                        )}
+                        {processingComment && user.isAdmin && renderProcessingComment()}
                         {renderSubmissionExecutionDetails()}
                         {content && (
                             <div className={styles.codeContentWrapper} id="code-content-wrapper">

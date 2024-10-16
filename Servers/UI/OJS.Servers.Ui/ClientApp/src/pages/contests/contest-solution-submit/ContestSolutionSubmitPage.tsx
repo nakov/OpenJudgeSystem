@@ -9,6 +9,9 @@ import { Tooltip } from '@mui/material';
 import Popover from '@mui/material/Popover';
 import isNil from 'lodash/isNil';
 import moment from 'moment';
+import { SUBMISSION_SENT } from 'src/common/messages';
+import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
+import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
@@ -59,6 +62,7 @@ const ContestSolutionSubmitPage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType, slug } = useParams();
 
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
@@ -90,12 +94,14 @@ const ContestSolutionSubmitPage = () => {
 
     const [ submitSolution, {
         error: submitSolutionError,
+        isSuccess: submitSolutionSuccess,
         isError: submitSolutionHasError,
         isLoading: submitSolutionIsLoading,
     } ] = useSubmitContestSolutionMutation();
 
     const [ submitSolutionFile, {
         error: submitSolutionFileError,
+        isSuccess: submitSolutionFileSuccess,
         isError: submitSolutionFileHasError,
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
@@ -165,6 +171,15 @@ const ContestSolutionSubmitPage = () => {
             isOfficial: isCompete,
         });
     };
+
+    useSuccessMessageEffect({
+        data: [
+            { message: SUBMISSION_SENT, shouldGet: submitSolutionSuccess },
+            { message: SUBMISSION_SENT, shouldGet: submitSolutionFileSuccess },
+        ],
+        setSuccessMessage,
+        clearFlags: [ submitSolutionIsLoading, submitSolutionFileIsLoading ],
+    });
 
     useEffect(() => {
         if (submissionsData?.items && problems && submissionsData.items.length > 0) {
@@ -241,16 +256,16 @@ const ContestSolutionSubmitPage = () => {
 
         const intervalId = setInterval(() => {
             const currentTime = moment();
-            const remainingCompeteTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
+            const remainingCompeteTime = moment.utc(endDateTimeForParticipantOrContest).diff(moment.utc(currentTime));
 
             if (remainingCompeteTime > 0) {
                 const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
                 setRemainingTimeForCompete(formattedTime);
             } else {
-                setRemainingTimeForCompete(null);
-                setRemainingTimeForCompete(null);
+                setRemainingTimeForCompete(calculatedTimeFormatted(moment.duration(0, 'milliseconds')));
+                clearInterval(intervalId);
             }
-        });
+        }, 1000);
 
         return () => {
             clearInterval(intervalId);
@@ -400,9 +415,9 @@ const ContestSolutionSubmitPage = () => {
             />
             <AdministrationLink
               text="Tests"
-              to={`/tests?filter=problemid~equals~${
+              to={`/problems/${
                   selectedContestDetailsProblem!.id
-              }`}
+              }#tab-tests`}
             />
             {user.isAdmin && (
             <AdministrationLink
@@ -693,14 +708,39 @@ const ContestSolutionSubmitPage = () => {
 
     return (
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
+            {renderSuccessfullAlert(successMessage)}
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <Link
-                  to={getContestsDetailsPageUrl({ contestId: contest?.id, contestName: contest?.name })}
-                  className={`${styles.title} ${textColorClassName}`}
-                >
-                    {contest?.name}
-                </Link>
+                <div className={styles.contestNameAndAdminButtons}>
+                    <Link
+                      to={getContestsDetailsPageUrl({ contestId: contest?.id, contestName: contest?.name })}
+                      className={`${styles.title} ${textColorClassName}`}
+                    >
+                        {contest?.name}
+                    </Link>
+                    { user.canAccessAdministration && (
+                        <div className={styles.adminButtonsContainer}>
+                            <AdministrationLink
+                              text="Contest"
+                              to={`/contests/${contestId}`}
+                            />
+                            {user.isAdmin && (
+                                <AdministrationLink
+                                  text="View docs"
+                                  to={`/submission-type-documents-view?submissionTypeIds=${problems
+                                      ?.flatMap((p) => p.allowedSubmissionTypes)
+                                      ?.reduce((acc, st) => {
+                                          if (!acc.includes(st.id)) {
+                                              acc.push(st.id);
+                                          }
+                                          return acc;
+                                      }, [] as number[])
+                                      ?.join(',') ?? ''}`}
+                                />
+                            )}
+                        </div>
+                    ) }
+                </div>
                 <div
                   className={styles.allResultsLink}
                   onClick={() => navigate(getContestsResultsPageUrl({
@@ -713,28 +753,6 @@ const ContestSolutionSubmitPage = () => {
                     Show all results
                 </div>
             </div>
-            { user.canAccessAdministration && (
-                <div className={styles.administrationButtonWrapper}>
-                    <AdministrationLink
-                      text="Contest"
-                      to={`/contests/${contestId}`}
-                    />
-                    {user.isAdmin && (
-                    <AdministrationLink
-                      text="View docs"
-                      to={`/submission-type-documents-view?submissionTypeIds=${problems
-                          ?.flatMap((p) => p.allowedSubmissionTypes)
-                          ?.reduce((acc, st) => {
-                              if (!acc.includes(st.id)) {
-                                  acc.push(st.id);
-                              }
-                              return acc;
-                          }, [] as number[])
-                          ?.join(',') ?? ''}`}
-                    />
-                    )}
-                </div>
-            ) }
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
                   problems={updatedProblems || problems || []}
@@ -749,14 +767,12 @@ const ContestSolutionSubmitPage = () => {
                             {selectedContestDetailsProblem?.name}
                             {selectedContestDetailsProblem?.isExcludedFromHomework && (
                                 <span className={textColorClassName}>(not included in final score)</span>)}
+                            {renderProblemAdminButtons()}
                         </div>
                         {renderRemainingTimeForContest()}
                     </div>
                     <div className={styles.problemDetailsWrapper}>
-                        <div>
-                            {renderProblemAdminButtons()}
-                            {renderProblemResources()}
-                        </div>
+                        {renderProblemResources()}
                         {renderProblemResourcesAndParameters()}
                     </div>
                     {renderSubmissionsInput()}

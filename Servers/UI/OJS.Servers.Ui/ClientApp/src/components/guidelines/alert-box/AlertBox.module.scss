@@ -1,10 +1,11 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/border-radiuses';
 
 .alertBox {
   @extend %font-family-normal;
 
-  border-radius: 10px;
+  border-radius: border-radiuses.$br-6;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;

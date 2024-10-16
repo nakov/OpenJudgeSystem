@@ -29,28 +29,37 @@ const useTheme = () => {
         dispatch(toggleTheme());
     };
 
+    // 100: Very light; used for backgrounds and highlights.
+    // 200: Light; for subtle accents or secondary backgrounds.
+    // 300: Medium-light; for hover states and less prominent elements.
+    // 400: Mid-tone; for borders, secondary buttons, and emphasized text.
+    // 500: Main color; for primary actions and key elements.
     const themeColors: ITheme = {
         light: {
-            textColor: '#14181c',
-            baseColor100: '#6c6c6c',
-            baseColor200: '#9a9a9a',
-            baseColor300: '#adadad',
-            baseColor400: '#d7d7d7',
-            baseColor500: '#fdfdfd',
+            // Using rgb() to avoid dictionary key collision
+            // with dark.baseColor100 in colorClassName below
+            textColor: 'rgb(104, 116, 135)', // #687487
+            baseColor100: '#FFFFFF',
+            baseColor200: '#E6E6E6',
+            baseColor300: '#E6E6E6',
+            // Pages background
+            baseColor400: '#f8f8f8',
+            baseColor500: '#D9D9D9',
         },
         dark: {
             textColor: '#f3f1f1',
             baseColor100: '#687487',
             baseColor200: '#374151',
             baseColor300: '#2C2F37',
+            // Pages background
             baseColor400: '#212328',
-            baseColor500: '#2F2F2F',
+            baseColor500: '#1c1c17',
         },
     };
 
     const colorClassName: IThemeClassName = {
         // text color class names
-        [themeColors.light.textColor]: styles.blackColorClassName,
+        [themeColors.light.textColor]: styles.darkGrayClassName,
         [themeColors.dark.textColor]: styles.whiteColorClassName,
         // dark color class names
         [themeColors.dark.baseColor100]: styles.darkBaseColor100ClassName,

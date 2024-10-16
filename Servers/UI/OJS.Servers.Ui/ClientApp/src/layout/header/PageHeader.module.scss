@@ -1,10 +1,10 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
-@use 'src/styles/components';
 @use 'src/styles/shadows';
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
 @use 'src/styles/font-weights';
+@use 'src/styles/border-radiuses';
 
 .header {
   @extend %font-family-normal;
@@ -44,10 +44,6 @@
     align-items: center;
     display: flex;
     margin-right: spacings.$sp-64;
-
-    &.themeSwitchVisible {
-      margin-right: spacings.$sp-192;
-    }
   }
 }
 
@@ -57,24 +53,27 @@
 
 .searchIcon {
   align-self: center;
-  background-color: colors.$primary-blue;
-  color: colors.$white-color;
   cursor: pointer;
   font-size: variables.$f-size-18;
-  margin-right: spacings.$sp-12;
-  transition: all 0.1s ease-in-out;
-
-  &:hover {
-    transform: scale(1.1);
-  }
+  margin-right: spacings.$sp-8;
 }
 
-.themeSwitchWrapper {
-  box-shadow: shadows.$dp-shadow-4;
-  height: 40px;
-  position: absolute;
-  right: 20px;
-  top: 17px;
+.searchWrapper {
+  align-items: center;
+  background: colors.$white-color;
+  border-radius: border-radiuses.$br-4;
+  color: colors.$primary-blue;
+  display: flex;
+  flex-direction: row;
+  font-weight: font-weights.$font-weight-regular;
+  height: 12px;
+  margin-right: spacings.$sp-24;
+  padding: 11px;
+  text-transform: uppercase;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .profileNavButton {

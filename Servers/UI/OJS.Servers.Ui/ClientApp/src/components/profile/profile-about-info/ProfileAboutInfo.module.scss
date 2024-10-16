@@ -7,6 +7,8 @@
 .profileAbout {
   display: flex;
   justify-content: space-between;
+  margin-bottom: spacings.$sp-24;
+  margin-top: spacings.$sp-24;
   padding: spacings.$sp-24;
 }
 
@@ -14,9 +16,14 @@
   align-self: flex-start;
   display: grid;
   font-size: variables.$f-size-20;
-  gap: spacings.$sp-12 spacings.$sp-32;
+  gap: spacings.$sp-4 spacings.$sp-32;
   grid-template-columns: auto 1fr;
   margin-top: spacings.$sp-24;
+}
+
+.lightAboutInfo {
+  background: colors.$light-base-color-100;
+  border-bottom: 1px solid #e6e6e6;
 }
 
 .profileAboutInfoGroupControl {
@@ -42,10 +49,4 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-}
-
-.logoutButton {
-  font-size: variables.$f-size-18;
-  font-weight: font-weights.$font-weight-regular;
-  text-decoration: none;
 }

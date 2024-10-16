@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { ButtonSize, LinkButton, LinkButtonType } from 'src/components/guidelines/buttons/Button';
 
 import MyProfileSvg from '../../../assets/my-profile.svg';
 import { IUserProfileType } from '../../../common/types';
@@ -18,7 +18,7 @@ interface IProfileAboutInfoProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProfileOwner } : IProfileAboutInfoProps) => {
-    const { themeColors, getColorClassName } = useTheme();
+    const { themeColors, getColorClassName, isDarkMode } = useTheme();
 
     const firstNameOrLastNameHaveValue = !isNilOrEmpty(userProfile.firstName) || !isNilOrEmpty(userProfile.lastName);
 
@@ -28,7 +28,13 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProf
     );
 
     return (
-        <div className={styles.profileAbout}>
+        <div className={concatClassNames(
+            styles.profileAbout,
+            isDarkMode
+                ? getColorClassName(themeColors.baseColor200)
+                : [ getColorClassName(themeColors.baseColor100), styles.lightAboutInfo ],
+        )}
+        >
             <div className={aboutInfoClassName}>
                 <div className={styles.profileAboutInfoGroupControl}>
                     <span className={styles.profileAboutInfoLabel}>Username:</span>
@@ -82,15 +88,15 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProf
             </div>
 
             <div className={styles.imageAndLogoutButtonContainer}>
-                <img height={180} width={180} src={MyProfileSvg} alt="my-profile" />
+                <img height={150} width={150} src={MyProfileSvg} alt="my-profile" />
                 {
                         isUserProfileOwner && (
-                            <Link
+                            <LinkButton
                               to="/logout"
-                              className={concatClassNames(styles.logoutButton, getColorClassName(themeColors.textColor))}
-                            >
-                                LOG OUT
-                            </Link>
+                              text="LOG OUT"
+                              type={LinkButtonType.secondary}
+                              size={ButtonSize.small}
+                            />
                         )
                     }
             </div>

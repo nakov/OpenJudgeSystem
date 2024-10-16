@@ -7,10 +7,9 @@ export const DELETE_CONFIRMATION_MESSAGE = 'Are you sure that you want to delete
 export const CLEAR_SELECTION = 'Clear selection';
 export const UNAUTHORIZED_MESSAGE = 'You do not have a permission to perform this action.';
 export const NOT_LOGGED_IN_MESSAGE = 'You are not logged in.';
-
 export const DISABLED_USER_TO_EXAM_GROUP_BUTTON = 'You cannot add users to exam group which has no contest attached to it.';
-
 export const ACTION_NOT_ALLOWED_MESSAGE = 'Action not allowed';
+export const SUBMISSION_SENT = 'Submission sent!';
 
 // Contensts
 export const CONTEST_NAME_VALIDATION = 'Contest name length must be between 4 and 100 characters long';

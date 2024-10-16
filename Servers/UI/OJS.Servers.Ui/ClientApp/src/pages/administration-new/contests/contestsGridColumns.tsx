@@ -20,6 +20,8 @@ import {
     LIMIT_BETWEEN_SUBMISSIONS,
     MODIFIED_ON,
     NAME,
+    PRACTICE_END_TIME,
+    PRACTICE_START_TIME,
     VISIBLE_FROM,
 } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
@@ -57,7 +59,7 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'name',
         headerName: `${NAME}`,
-        flex: 2.5,
+        flex: 3,
         minWidth: 380,
         headerAlign: 'center',
         type: 'string',
@@ -73,7 +75,7 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
         filterable: false,
         headerAlign: 'center',
         sortable: false,
-        flex: 1.5,
+        flex: 2,
         minWidth: 200,
     },
     {
@@ -99,7 +101,7 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'startTime',
         headerName: `${COMPETE_START_TIME}`,
-        flex: 1.5,
+        flex: 1,
         align: 'center',
         type: 'date',
         headerAlign: 'center',
@@ -110,12 +112,35 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'endTime',
         headerName: `${COMPETE_END_TIME}`,
-        flex: 1.5,
+        flex: 1,
         align: 'center',
         type: 'date',
         headerAlign: 'center',
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'practiceStartTime',
+        headerName: `${PRACTICE_START_TIME}`,
+        flex: 1,
+        align: 'center',
+        type: 'date',
+        headerAlign: 'center',
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'practiceEndTime',
+        headerName: `${PRACTICE_END_TIME}`,
+        flex: 1,
+        align: 'center',
+        type: 'date',
+        headerAlign: 'center',
+        filterable: false,
+        sortable: false,
+        hidden: true,
         valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
@@ -154,12 +179,13 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'visibleFrom',
         headerName: `${VISIBLE_FROM}`,
-        flex: 1.5,
+        flex: 1,
         align: 'center',
         type: 'date',
         headerAlign: 'center',
         filterable: false,
         sortable: false,
+        hidden: true,
         valueFormatter: (params) => adminFormatDate(params.value),
     },
     {

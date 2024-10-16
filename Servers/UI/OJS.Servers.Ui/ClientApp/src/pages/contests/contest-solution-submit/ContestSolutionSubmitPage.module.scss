@@ -19,7 +19,14 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
+    margin-bottom: spacings.$sp-32;
     margin-top: spacings.$sp-32;
+
+    .contestNameAndAdminButtons {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+    }
 
     .allResultsLink {
       color: colors.$secondary-green;
@@ -30,7 +37,7 @@
 
   .problemsAndEditorWrapper {
     display: flex;
-    margin-top: spacings.$sp-64;
+    margin-top: spacings.$sp-18;
   }
 
   .submissionsWrapper {
@@ -74,18 +81,17 @@
 .problemDetailsWrapper {
   display: flex;
   justify-content: space-between;
-  margin: spacings.$sp-24 0;
+  margin: spacings.$sp-8 0;
 }
 
 .adminButtonsContainer {
   display: flex;
   gap: spacings.$sp-12;
-  margin-right: spacings.$sp-12;
+  margin-left: spacings.$sp-12;
 }
 
 .problemResources {
   display: flex;
-  margin-top: spacings.$sp-12;
 }
 
 .selectedProblemWrapper {
@@ -188,12 +194,6 @@
   font-weight: font-weights.$font-weight-semi-bold;
   margin-top: spacings.$sp-18;
   text-align: end;
-}
-
-.administrationButtonWrapper {
-  display: flex;
-  gap: spacings.$sp-12;
-  margin-top: spacings.$sp-32 !important;
 }
 
 .errorText {

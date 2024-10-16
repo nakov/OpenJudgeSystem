@@ -54,19 +54,11 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
 
         const bestSubmission = problemResult?.bestSubmission;
 
-        const underlinedPointsResultStyle = isDarkMode
-            ? styles.underlinedPointsResultDark
-            : styles.underlinedPointsResultLight;
-
-        const notUnderlinedPointsResultStyle = isDarkMode
-            ? styles.notUnderlinedPointsResultDark
-            : styles.notUnderlinedPointsResultLight;
-
         return (items!.userIsInRoleForContest || participantResult.participantUsername === internalUser.userName) && !isNil(bestSubmission)
             ? (
                 <td key={`p-r-i-${problemId}`}>
                     <LinkButton
-                      className={underlinedPointsResultStyle}
+                      className={styles.resultLink}
                       type={LinkButtonType.plain}
                       size={ButtonSize.small}
                       text={`${bestSubmission.points}`}
@@ -77,12 +69,11 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
             : (
                 <td
                   key={`p-r-i-${problemId}`}
-                  className={notUnderlinedPointsResultStyle}
                 >
                     {bestSubmission?.points || '-'}
                 </td>
             );
-    }, [ items, internalUser.userName, isDarkMode ]);
+    }, [ items, internalUser.userName ]);
 
     return (
         <div className={styles.tableContainer}>
@@ -114,26 +105,24 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                           className={concatClassNames(
                               rowClassName,
                               participantResult.participantUsername === internalUser.userName
-                                  ? isDarkMode
-                                      ? styles.userRowDark
-                                      : styles.userRowLight
+                                  ? styles.userRow
                                   : '',
                           )}
                         >
                             <td>{(items.pagedResults.itemsPerPage * (items.pagedResults.pageNumber - 1)) + index + 1}</td>
                             <td>{participantResult.participantUsername}</td>
                             {
-                                items?.problems
-                                    .map((p) => renderParticipantResult(participantResult, p.id))
-                            }
+                                    items?.problems
+                                        .map((p) => renderParticipantResult(participantResult, p.id))
+                                }
                             {
-                                isNilOrEmpty(participantResult.problemResults)
-                                    ? <td>0</td>
-                                    : <td>{participantResult.total}</td>
-                            }
+                                    isNilOrEmpty(participantResult.problemResults)
+                                        ? <td>0</td>
+                                        : <td>{participantResult.total}</td>
+                                }
                         </tr>
                     ))
-                }
+                    }
                 </tbody>
             </table>
         </div>
