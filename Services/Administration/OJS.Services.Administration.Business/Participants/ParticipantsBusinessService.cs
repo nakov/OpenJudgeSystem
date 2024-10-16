@@ -94,28 +94,24 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         var contestDurationInMinutes = contest!.Duration!.Value.Minutes;
 
-        var invalidParticipantsUsernames = await this.participantsData
-            .GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
-                model.ContestId,
-                (DateTime)model.ChangeParticipationTimeRangeStart,
-                (DateTime)model.ChangeParticipationTimeRangeEnd)
-            .Where(p => p.ParticipationEndTime.HasValue && p.ParticipationStartTime.HasValue &&
-                        p.ParticipationEndTime.Value.AddMinutes(model.TimeInMinutes) <
-                        p.ParticipationStartTime.Value.AddMinutes(contestDurationInMinutes))
-            .Select(p => p.User.UserName)
-            .ToListAsync();
-
         var participantsInTimeRange = this.participantsData
             .GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
                 model.ContestId,
                 (DateTime)model.ChangeParticipationTimeRangeStart,
                 (DateTime)model.ChangeParticipationTimeRangeEnd);
 
-        var participantsToUpdate = participantsInTimeRange
+        var invalidParticipantsUsernames = await participantsInTimeRange
+            .Where(p => p.ParticipationEndTime.HasValue && p.ParticipationStartTime.HasValue &&
+                        p.ParticipationEndTime.Value.AddMinutes(model.TimeInMinutes) <
+                        p.ParticipationStartTime.Value.AddMinutes(contestDurationInMinutes))
+            .Select(p => p.User.UserName)
+            .ToListAsync();
+
+        var participantsToUpdate = await participantsInTimeRange
             .Where(p => p.ParticipationEndTime.HasValue && p.ParticipationStartTime.HasValue &&
                         p.ParticipationEndTime.Value.AddMinutes(model.TimeInMinutes) >=
                         p.ParticipationStartTime.Value.AddMinutes(contestDurationInMinutes))
-            .ToList();
+            .ToListAsync();
 
         foreach (var participant in participantsToUpdate)
         {
@@ -128,7 +124,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         var action = model.TimeInMinutes < 0 ? "subtracted" : "added";
         var preposition = model.TimeInMinutes < 0 ? "from" : "to";
-        var successMessage = $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}";
+        var successMessage = $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}.";
         sb.AppendLine(successMessage);
 
         if (invalidParticipantsUsernames.Count > 0)
@@ -177,6 +173,6 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         var action = model.TimeInMinutes < 0 ? "subtracted" : "added";
         var preposition = model.TimeInMinutes < 0 ? "from" : "to";
-        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the time of the participant with username: {model.Username}, in the contest: {model.ContestName}";
+        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the time of the participant with username: {model.Username}, in the contest: {model.ContestName}.";
     }
 }
