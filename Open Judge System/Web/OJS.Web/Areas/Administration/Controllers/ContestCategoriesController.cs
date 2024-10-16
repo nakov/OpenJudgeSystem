@@ -5,15 +5,18 @@
     using System.Linq;
     using System.Web;
     using System.Web.Mvc;
+    using EntityFramework.Extensions;
     using Kendo.Mvc.Extensions;
     using Kendo.Mvc.UI;
     using OJS.Common;
     using OJS.Common.Extensions;
     using OJS.Common.Models;
     using OJS.Data;
+    using OJS.Data.Models;
     using OJS.Services.Business.ContestCategories;
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.HttpRequester;
+    using OJS.Services.Data.Contests;
     using OJS.Web.Areas.Administration.Controllers.Common;
     using OJS.Web.Areas.Administration.ViewModels.ContestCategory;
     using OJS.Web.Common.Extensions;
@@ -26,15 +29,18 @@
     {
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IHttpRequesterService httpRequester;
+        private readonly IContestsDataService contestsData;
 
         public ContestCategoriesController(
             IOjsData data,
             IHangfireBackgroundJobService backgroundJobs,
-            IHttpRequesterService httpRequester)
+            IHttpRequesterService httpRequester,
+            IContestsDataService contestsData)
             : base(data)
         {
             this.backgroundJobs = backgroundJobs;
             this.httpRequester = httpRequester;
+            this.contestsData = contestsData;
         }
 
         public override IEnumerable GetData()
@@ -116,9 +122,13 @@
         }
 
         [HttpGet]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         public ActionResult EditAllContests(int categoryId)
         {
+            if (!this.CheckIfUserHasContestCategoryPermissions(categoryId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
             var category = this.Data.ContestCategories.GetById(categoryId) ?? throw new HttpException(404, "Category not found");
 
             var model = new EditAllContestsAdministrationViewModel
@@ -135,9 +145,13 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         public ActionResult EditAllContests(EditAllContestsAdministrationViewModel model, string returnUrl)
         {
+            if (!this.CheckIfUserHasContestCategoryPermissions(model.CategoryId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
             this.ViewBag.ReturnUrl = returnUrl;
 
             if (!this.ModelState.IsValid)
@@ -148,7 +162,19 @@
 
             var category = this.Data.ContestCategories.GetById(model.CategoryId) ?? throw new HttpException(404, "Category not found");
 
-            return this.View(model);
+            this.contestsData.GetAllNotDeletedByCategory(category.Id, true)
+                .Update(c => new Contest
+                {
+                    Type = model.Type != null ? (ContestType)model.Type : c.Type,
+                    StartTime = model.StartTime,
+                    EndTime = model.EndTime,
+                    PracticeStartTime = model.PracticeStartTime,
+                    PracticeEndTime = model.PracticeEndTime,
+                });
+
+            this.TempData.AddInfoMessage($"All contests in category {category.Name} are edited successfully.");
+
+            return this.Redirect(returnUrl);
         }
 
         [HttpGet]

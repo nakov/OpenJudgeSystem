@@ -100,34 +100,6 @@
             </div>
         </fieldset>
 
-        <fieldset>
-            <legend>@SharedResource.Options</legend>
-            <div class="row">
-                <div class="editor-label col-xs-3">
-                    <div class="pull-right">
-                        @Html.LabelFor(m => m.AllowedIps)
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @(Html.Kendo().AutoCompleteFor(x => Model.AllowedIps)
-                        .DataTextField("Value")
-                        .Placeholder("Add allowed IPs (separated by ',')")
-                        .Filter(FilterType.Contains)
-                        .Separator(", ")
-                        .DataSource(dataSource => dataSource
-                            .ServerFiltering(true)
-                            .Read(read => read.Action("ReadIpsContaining", "Contests").Data("onContestIpData")))
-                            .HtmlAttributes(new { style = "width: 100%" })
-                    )
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Add allowed IPs for the competition (separated by ',')" data-tooltip="true"></span>
-                    @Html.ValidationMessageFor(m => m.AllowedIps)
-                </div>
-            </div>
-            <br />
-        </fieldset>
-
         <hr />
         <div class="row">
             <div class="editor-label col-xs-3">
@@ -149,12 +121,5 @@
                 event.preventDefault();
             }
         });
-
-        function onContestIpData() {
-            var ips = $('#AllowedIps').val().split(', ');
-            return {
-                value: ips.length ? ips[ips.length - 1] : ''
-            };
-        }
     </script>
 }
