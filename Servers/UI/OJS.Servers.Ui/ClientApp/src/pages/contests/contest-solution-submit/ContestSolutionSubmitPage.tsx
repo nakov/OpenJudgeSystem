@@ -226,16 +226,14 @@ const ContestSolutionSubmitPage = () => {
             const newRemainingTime = userSubmissionsTimeLimit - elapsedTimeInSeconds;
 
             if (newRemainingTime <= 0) {
-                setTimeout(() => {
-                    setIsSubmitButtonDisabled(false);
-                }, 1000);
+                setIsSubmitButtonDisabled(false);
                 setRemainingTime(0);
                 clearInterval(intervalId);
             } else {
                 setRemainingTime(newRemainingTime);
                 setIsSubmitButtonDisabled(true);
             }
-        });
+        }, 1000);
 
         return () => {
             clearInterval(intervalId);
