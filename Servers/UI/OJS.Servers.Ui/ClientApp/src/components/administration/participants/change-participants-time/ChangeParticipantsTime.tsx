@@ -71,7 +71,7 @@ enum ChangeTimeMode {
     MULTIPLE = 'multiple',
 }
 
-const dateFormat = 'MM/DD/YYYY HH:mm';
+const dateFormat = 'DD/MM/YYYY HH:mm';
 const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } : IChangeParticipantsTimeProps) => {
     const durationInMinutes = useMemo(() => {
         const [ hours, minutes, seconds ] = (contest?.duration ?? '00:00:00').split(':').map(Number);
