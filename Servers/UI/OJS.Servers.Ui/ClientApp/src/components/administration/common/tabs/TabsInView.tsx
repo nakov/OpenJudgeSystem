@@ -10,7 +10,7 @@ interface IAdministrationTabModel {
 }
 
 interface ITabsInViewProps {
-    form: () => ReactNode;
+    form?: () => ReactNode;
     tabs? : Array<IAdministrationTabModel>;
     tabName?: string;
     onTabChange?: (event: React.SyntheticEvent, newValue: any) => void;
@@ -22,7 +22,7 @@ const TabsInView = (props: ITabsInViewProps) => {
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={300}>
             <Box>
-                {form()}
+                {form && form()}
                 <Box sx={{ padding: '2rem' }}>
                     <Tabs
                       sx={{ minWidth: '100%', display: 'flex', justifyContent: 'space-around' }}

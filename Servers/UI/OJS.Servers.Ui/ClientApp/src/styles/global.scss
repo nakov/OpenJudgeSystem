@@ -105,3 +105,27 @@ a:link {
       background: colors.$primary-blue;
     }
 }
+
+/* Light Theme Autofill */
+.lightAutofill {
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+        background-color: colors.$light-base-color-100;
+        -webkit-box-shadow: 0 0 0px 1000px colors.$light-base-color-100 inset;
+        -webkit-text-fill-color: colors.$light-text-color;
+        border: 1px solid colors.$dark-base-color-200;
+    }
+}
+
+/* Light Theme Autofill */
+.darkAutofill {
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+        background-color: colors.$dark-base-color-200;
+        -webkit-box-shadow: 0 0 0px 1000px colors.$dark-base-color-200 inset;
+        -webkit-text-fill-color: colors.$dark-text-color;
+        border: 1px solid colors.$light-base-color-100;
+    }
+}

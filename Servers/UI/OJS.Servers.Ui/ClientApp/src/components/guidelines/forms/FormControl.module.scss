@@ -19,16 +19,6 @@ button:focus {
   outline: none;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  outline: none;
-  // box-shadow: 0 0 0 30px inset !important;
-  transition-delay: 9999s;
-  transition-property: background-color, color;
-}
-
 .formControlContainer {
   margin-top: 10px;
   position: relative;
