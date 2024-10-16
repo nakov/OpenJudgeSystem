@@ -196,6 +196,7 @@ interface IContestDetailsResponseType {
     problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
+    isActive: boolean;
     canBeCompeted: boolean;
     canBePracticed: boolean;
     isAdminOrLecturerInContest: boolean;

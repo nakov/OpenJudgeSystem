@@ -18,6 +18,8 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public bool IsVisible { get; set; }
 
+    public bool IsActive { get; set; }
+
     public DateTime? VisibleFrom { get; set; }
 
     public bool IsDeleted { get; set; }
