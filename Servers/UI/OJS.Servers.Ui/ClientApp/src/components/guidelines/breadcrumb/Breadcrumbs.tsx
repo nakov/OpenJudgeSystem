@@ -83,9 +83,7 @@ const Breadcrumbs = ({
 
     if (isLoading) {
         return (
-            <div className={isHidden
-                ? styles.nonVisible
-                : ''}
+            <div className={internalClassName}
             >
                 Loading breadcrumbs...
             </div>
