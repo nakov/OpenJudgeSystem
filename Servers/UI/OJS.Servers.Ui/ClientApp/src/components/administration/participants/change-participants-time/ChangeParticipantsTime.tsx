@@ -52,12 +52,26 @@ interface IChangeParticipantsTimeProps {
     onSuccess: Function;
 }
 
+interface IChangeTimeProps {
+    action: string;
+    preposition: string;
+    buttonText: string;
+    dialogColor: string;
+    isDisabled: boolean;
+    formColor: string;
+}
+
 enum CHANGE_PARTICIPANTS_TIME_LISTED_DATA {
     MULTIPLE_PARTICIPANTS = 'multipleparticipants',
     SINGLE_PARTICIPANT = 'singleparticipant',
 }
 
-const dateFormat = 'MM/DD/YYYY HH:mm';
+enum ChangeTimeMode {
+    SINGLE = 'single',
+    MULTIPLE = 'multiple',
+}
+
+const dateFormat = 'DD/MM/YYYY HH:mm';
 const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } : IChangeParticipantsTimeProps) => {
     const durationInMinutes = useMemo(() => {
         const [ hours, minutes, seconds ] = (contest?.duration ?? '00:00:00').split(':').map(Number);
@@ -190,6 +204,57 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
         setTabName(newValue);
     };
 
+    const getChangeTimeProperties = (
+        timeInMinutes: number,
+        mode: ChangeTimeMode,
+        additionalConditions?: {
+            userId?: string;
+            timeRangeValid?: boolean;
+        },
+    ): IChangeTimeProps => {
+        const isSubtracting = timeInMinutes < 0;
+        const action = `${isSubtracting
+            ? 'subtract'
+            : 'add'} ${Math.abs(timeInMinutes)}`;
+
+        const preposition = isSubtracting
+            ? 'from'
+            : 'to';
+
+        const buttonText = isSubtracting
+            ? 'Subtract'
+            : 'Add';
+
+        const dialogColor = isSubtracting
+            ? styles.dialogSubtract
+            : styles.dialogAdd;
+
+        let isDisabled = false;
+
+        if (mode === ChangeTimeMode.SINGLE) {
+            isDisabled = !additionalConditions?.userId?.trim();
+        } else if (mode === ChangeTimeMode.MULTIPLE) {
+            isDisabled = !additionalConditions?.timeRangeValid;
+        }
+
+        const formColor = isSubtracting
+            ? isDisabled
+                ? styles.formSubtractDisabled
+                : styles.formSubtract
+            : isDisabled
+                ? styles.formAddDisabled
+                : styles.formAdd;
+
+        return {
+            action,
+            preposition,
+            buttonText,
+            dialogColor,
+            isDisabled,
+            formColor,
+        };
+    };
+
     const SectionTooltip = styled(({ className, ...props }: TooltipProps) => (
         <Tooltip {...props} classes={{ popper: className }} />
     ))(({ theme }) => ({
@@ -218,205 +283,227 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
         },
     }));
 
-    const renderSingleParticipant = () => (
-        <FormControl fullWidth>
-            {openConfirmForSingle && (
-                <ConfirmDialog
-                  title="Logout"
-                  text={(
-                      <>
-                          Are you sure you want to
-                          {' '}
-                          {changeParticipationTimeForSingleParticipant.timeInMinutes < 0
-                              ? 'remove'
-                              : 'add'}
-                          {' '}
-                          <b>{Math.abs(changeParticipationTimeForSingleParticipant.timeInMinutes)}</b>
-                          {' '}
-                          minutes
-                          {' '}
-                          {changeParticipationTimeForSingleParticipant.timeInMinutes < 0
-                              ? 'from'
-                              : 'to'}
-                          {' '}
-                          the contest duration of the participant with username
-                          {' '}
-                          <b>{changeParticipationTimeForSingleParticipant.username}</b>
-                          {' '}
-                          ?
-                      </>
-                    )}
-                  confirmButtonText="Change"
-                  declineButtonText="Cancel"
-                  onClose={() => setOpenConfirmForSingle(false)}
-                  confirmFunction={() => changeTimeForSingleParticipant(changeParticipationTimeForSingleParticipant)}
-                />
-            )}
-            <div className={styles.durationWrapper}>
-                <TextField
-                  className={styles.duration}
-                  type="number"
-                  label="Change duration with (in minutes)"
-                  variant="standard"
-                  value={changeParticipationTimeForSingleParticipant.timeInMinutes}
-                  onChange={(e) => onChangeForSingleParticipant(e)}
-                  InputLabelProps={{ shrink: true }}
-                  name="timeInMinutes"
-                />
-            </div>
-            <Typography variant="subtitle1" className={styles.datesTitle}>
-                Change the contest duration for the participant with the given username
-            </Typography>
-            <div className={styles.divider} />
-            <Autocomplete
-              sx={{ width: '50%' }}
-              className={formStyles.centralize}
-              options={usersAutocomplete}
-              renderInput={(params) => <TextField {...params} label="Select User" />}
-              onChange={(e, newValue) => {
-                  onChangeForSingleParticipant({
-                      target: {
-                          name: 'userId',
-                          value: newValue?.id || null,
-                      },
-                  });
-                  onChangeForSingleParticipant({
-                      target: {
-                          name: 'username',
-                          value: newValue?.userName || null,
-                      },
-                  });
-              }}
-              onInputChange={(e, value: string) => setUsersSearchString(value)}
-              getOptionLabel={(option) => option?.userName || ''}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              renderOption={(properties, option) => (
-                  <MenuItem {...properties} key={option.id}>
-                      {option.userName}
-                  </MenuItem>
-              )}
-            />
-            <FormActionButton
-              className={formStyles.buttonsWrapper}
-              buttonClassName={formStyles.button}
-              onClick={() => setOpenConfirmForSingle(true)}
-              name="Change Time"
-            />
-        </FormControl>
-    );
+    const renderSingleParticipant = () => {
+        const { action, preposition, buttonText, dialogColor, isDisabled, formColor } = getChangeTimeProperties(
+            changeParticipationTimeForSingleParticipant.timeInMinutes,
+            ChangeTimeMode.SINGLE,
+            { userId: changeParticipationTimeForSingleParticipant.userId },
+        );
 
-    const renderMultipleParticipants = () => (
-        <Box>
-            {openConfirmForMultiple && (
-                <ConfirmDialog
-                  title="Logout"
-                  text={(
-                      <>
-                          Are you sure you want to
-                          {' '}
-                          {changeParticipationTimeForMultipleParticipants.timeInMinutes < 0
-                              ? 'remove'
-                              : 'add'}
-                          {' '}
-                          <b>{Math.abs(changeParticipationTimeForMultipleParticipants.timeInMinutes)}</b>
-                          {' '}
-                          minutes
-                          {' '}
-                          {changeParticipationTimeForMultipleParticipants.timeInMinutes < 0
-                              ? 'from'
-                              : 'to'}
-                          {' '}
-                          the contest duration of all participants created in the time interval between
-                          {' '}
-                          <b>
-                              {adminFormatDate(
-                                  changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeStart,
-                                  dateFormat,
-                              )}
-                          </b>
-                          {' '}
-                          and
-                          {' '}
-                          <b>
-                              {adminFormatDate(
-                                  changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeEnd,
-                                  dateFormat,
-                              )}
-                          </b>
-                          ?
-                      </>
-                    )}
-                  confirmButtonText="Change"
-                  declineButtonText="Cancel"
-                  onClose={() => setOpenConfirmForMultiple(false)}
-                  confirmFunction={() => changeTimeForMultipleParticipants(changeParticipationTimeForMultipleParticipants)}
-                />
-            )}
-            <div className={styles.durationWrapper}>
-                <TextField
-                  className={styles.duration}
-                  type="number"
-                  label="Change duration with (in minutes)"
-                  variant="standard"
-                  value={changeParticipationTimeForMultipleParticipants.timeInMinutes}
-                  onChange={(e) => onChangeForMultipleParticipants(e)}
-                  InputLabelProps={{ shrink: true }}
-                  name="timeInMinutes"
-                />
-            </div>
-            <Typography variant="subtitle1" className={styles.datesTitle}>
-                Change the contest duration for participants created in the following interval
-            </Typography>
-            <div className={styles.divider} />
-            <Box className={styles.dates}>
-                <div className={styles.date}>
-                    <DateTimePicker
-                      name="changeParticipationTimeRangeStart"
-                      label="Created After"
-                      value={getDateAsLocal(changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeStart)}
-                      onChange={(newValue) => handleDateTimePickerChange(
-                          'changeParticipationTimeRangeStart',
-                          newValue,
-                          onChangeForMultipleParticipants,
-                      )}
+        return (
+            <FormControl fullWidth>
+                {openConfirmForSingle && (
+                    <ConfirmDialog
+                      title="Change Time"
+                      text={(
+                          <>
+                              Are you sure you want to
+                              {' '}
+                              <b className={dialogColor}>
+                                  {action}
+                                  {' '}
+                                  minutes
+                              </b>
+                              {' '}
+                              {preposition}
+                              {' '}
+                              the contest duration of the participant with username
+                              {' '}
+                              <b className={dialogColor}>{changeParticipationTimeForSingleParticipant.username}</b>
+                              {' '}
+                              ?
+                          </>
+                        )}
+                      confirmButtonText={buttonText}
+                      declineButtonText="Cancel"
+                      onClose={() => setOpenConfirmForSingle(false)}
+                      confirmFunction={() => changeTimeForSingleParticipant(changeParticipationTimeForSingleParticipant)}
+                      declineButtonColor={styles.neutral}
+                      confirmButtonColor={dialogColor}
                     />
-                    <SectionTooltip
-                      title="Users who started competing after this time will be affected (The default value
-                        is calculated by the following formula: [the current time] - [the participant full contest duration])"
-                      arrow
-                    >
-                        <InfoIcon sx={{ width: '30px', height: '30px', marginRight: '3rem' }} />
-                    </SectionTooltip>
+                )}
+                <div className={styles.durationWrapper}>
+                    <TextField
+                      className={styles.duration}
+                      type="number"
+                      label="Change duration with (in minutes)"
+                      variant="standard"
+                      value={changeParticipationTimeForSingleParticipant.timeInMinutes}
+                      onChange={(e) => onChangeForSingleParticipant(e)}
+                      InputLabelProps={{ shrink: true }}
+                      name="timeInMinutes"
+                    />
                 </div>
-                <div className={styles.date}>
-                    <DateTimePicker
-                      name="changeParticipationTimeRangeEnd"
-                      label="Created Before"
-                      value={getDateAsLocal(changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeEnd)}
-                      onChange={(newValue) => handleDateTimePickerChange(
-                          'changeParticipationTimeRangeEnd',
-                          newValue,
-                          onChangeForMultipleParticipants,
-                      )}
+                <Typography variant="subtitle1" className={styles.datesTitle}>
+                    Change the contest duration for the participant with the given username
+                </Typography>
+                <div className={styles.divider} />
+                <Autocomplete
+                  sx={{ width: '50%' }}
+                  className={formStyles.centralize}
+                  options={usersAutocomplete}
+                  renderInput={(params) => <TextField {...params} label="Select User" />}
+                  onChange={(e, newValue) => {
+                      onChangeForSingleParticipant({
+                          target: {
+                              name: 'userId',
+                              value: newValue?.id || null,
+                          },
+                      });
+                      onChangeForSingleParticipant({
+                          target: {
+                              name: 'username',
+                              value: newValue?.userName || null,
+                          },
+                      });
+                  }}
+                  onInputChange={(e, value: string) => setUsersSearchString(value)}
+                  getOptionLabel={(option) => option?.userName || ''}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  renderOption={(properties, option) => (
+                      <MenuItem {...properties} key={option.id}>
+                          {option.userName}
+                      </MenuItem>
+                  )}
+                />
+                <FormActionButton
+                  disabled={isDisabled}
+                  className={formStyles.buttonsWrapper}
+                  buttonClassName={concatClassNames(formStyles.button, formColor)}
+                  onClick={() => setOpenConfirmForSingle(true)}
+                  name={buttonText}
+                />
+            </FormControl>
+        );
+    };
+
+    const renderMultipleParticipants = () => {
+        const isTimeRangeInvalid =
+                !changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeStart &&
+            !changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeEnd;
+
+        const { action, preposition, buttonText, dialogColor, isDisabled, formColor } = getChangeTimeProperties(
+            changeParticipationTimeForMultipleParticipants.timeInMinutes,
+            ChangeTimeMode.MULTIPLE,
+            { timeRangeValid: !isTimeRangeInvalid },
+        );
+
+        const timeRangeStart = adminFormatDate(
+            changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeStart,
+            dateFormat,
+        );
+
+        const timeRangeEnd = adminFormatDate(
+            changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeEnd,
+            dateFormat,
+        );
+
+        return (
+            <Box>
+                {openConfirmForMultiple && (
+                    <ConfirmDialog
+                      title="Change Time"
+                      text={(
+                          <>
+                              Are you sure you want to
+                              {' '}
+                              <b className={dialogColor}>
+                                  {action}
+                                  {' '}
+                                  minutes
+                              </b>
+                              {' '}
+                              {preposition}
+                              {' '}
+                              the contest duration of all participants created in the time interval between
+                              {' '}
+                              <b className={dialogColor}>
+                                  {timeRangeStart}
+                              </b>
+                              {' '}
+                              and
+                              {' '}
+                              <b className={dialogColor}>
+                                  {timeRangeEnd}
+                              </b>
+                              ?
+                          </>
+                        )}
+                      confirmButtonText={buttonText}
+                      declineButtonText="Cancel"
+                      onClose={() => setOpenConfirmForMultiple(false)}
+                      confirmFunction={() => changeTimeForMultipleParticipants(changeParticipationTimeForMultipleParticipants)}
+                      declineButtonColor={styles.neutral}
+                      confirmButtonColor={dialogColor}
                     />
-                    <SectionTooltip
-                      title="Users who started competing
+                )}
+                <div className={styles.durationWrapper}>
+                    <TextField
+                      className={styles.duration}
+                      type="number"
+                      label="Change duration with (in minutes)"
+                      variant="standard"
+                      value={changeParticipationTimeForMultipleParticipants.timeInMinutes}
+                      onChange={(e) => onChangeForMultipleParticipants(e)}
+                      InputLabelProps={{ shrink: true }}
+                      name="timeInMinutes"
+                    />
+                </div>
+                <Typography variant="subtitle1" className={styles.datesTitle}>
+                    Change the contest duration for participants created in the following interval
+                </Typography>
+                <div className={styles.divider} />
+                <Box className={styles.dates}>
+                    <div className={styles.date}>
+                        <DateTimePicker
+                          name="changeParticipationTimeRangeStart"
+                          label="Created After"
+                          value={getDateAsLocal(changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeStart)}
+                          onChange={(newValue) => handleDateTimePickerChange(
+                              'changeParticipationTimeRangeStart',
+                              newValue,
+                              onChangeForMultipleParticipants,
+                          )}
+                        />
+                        <SectionTooltip
+                          title="Users who started competing after this time will be affected (The default value
+                        is calculated by the following formula: [the current time] - [the participant full contest duration])"
+                          arrow
+                        >
+                            <InfoIcon sx={{ width: '30px', height: '30px', marginRight: '3rem' }} />
+                        </SectionTooltip>
+                    </div>
+                    <div className={styles.date}>
+                        <DateTimePicker
+                          name="changeParticipationTimeRangeEnd"
+                          label="Created Before"
+                          value={getDateAsLocal(changeParticipationTimeForMultipleParticipants.changeParticipationTimeRangeEnd)}
+                          onChange={(newValue) => handleDateTimePickerChange(
+                              'changeParticipationTimeRangeEnd',
+                              newValue,
+                              onChangeForMultipleParticipants,
+                          )}
+                        />
+                        <SectionTooltip
+                          title="Users who started competing
                         before this time will be affected (The default value is
                         set to the [current time])"
-                      arrow
-                    >
-                        <InfoIcon sx={{ width: '30px', height: '30px', marginRight: '3rem' }} />
-                    </SectionTooltip>
-                </div>
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => setOpenConfirmForMultiple(true)}
-                  name="Change Time"
-                />
+                          arrow
+                        >
+                            <InfoIcon sx={{ width: '30px', height: '30px', marginRight: '3rem' }} />
+                        </SectionTooltip>
+                    </div>
+                    <FormActionButton
+                      disabled={isDisabled}
+                      className={formStyles.buttonsWrapper}
+                      buttonClassName={concatClassNames(formStyles.button, formColor)}
+                      onClick={() => setOpenConfirmForMultiple(true)}
+                      name={buttonText}
+                    />
+                </Box>
             </Box>
-        </Box>
-    );
+        );
+    };
 
     useEffect(() => {
         if (usersAutocompleteData) {
