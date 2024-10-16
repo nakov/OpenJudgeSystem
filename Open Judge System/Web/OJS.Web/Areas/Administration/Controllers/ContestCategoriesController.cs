@@ -170,6 +170,7 @@
                     EndTime = model.EndTime,
                     PracticeStartTime = model.PracticeStartTime,
                     PracticeEndTime = model.PracticeEndTime,
+                    LimitBetweenSubmissions = model.LimitBetweenSubmissions ?? c.LimitBetweenSubmissions,
                 });
 
             this.TempData.AddInfoMessage($"All contests in category {category.Name} are edited successfully.");

@@ -30,5 +30,9 @@ namespace OJS.Web.Areas.Administration.ViewModels.ContestCategory
         [Display(Name = nameof(Resource.Practice_end_time), ResourceType = typeof(Resource))]
         [UIHint(KendoDateAndTimePicker)]
         public DateTime? PracticeEndTime { get; set; }
+
+        [Display(Name = nameof(Resource.Submissions_limit), ResourceType = typeof(Resource))]
+        [UIHint(KendoPositiveInteger)]
+        public int? LimitBetweenSubmissions { get; set; }
     }
 }
