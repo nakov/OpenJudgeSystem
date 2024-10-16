@@ -88,8 +88,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
+            var activityServiceModel = contestDetailsServiceModel!.Map<ContestForActivityServiceModel>();
+
             var contestActivityEntity = await this.activityService
-                .GetContestActivity(contestDetailsServiceModel!.Map<ContestForActivityServiceModel>());
+                .GetContestActivity(activityServiceModel);
 
             var userParticipants = await this.participantsData
                 .GetWithProblemsForParticipantsByContestAndUser(id, user.Id)
@@ -137,7 +139,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
 
-            contestDetailsServiceModel.IsActive = await this.IsActiveById(id);
+            contestDetailsServiceModel.IsActive = await this.activityService.IsContestActive(activityServiceModel);
 
             return contestDetailsServiceModel;
         }
@@ -550,18 +552,6 @@ namespace OJS.Services.Ui.Business.Implementations
             });
 
             return pagedContests;
-        }
-
-        private async Task<bool> IsActiveById(int id)
-        {
-            var contest = await this.contestsData.OneById(id);
-
-            if (contest == null)
-            {
-                return false;
-            }
-
-            return await this.activityService.IsContestActive(contest.Map<ContestForActivityServiceModel>());
         }
 
         private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
