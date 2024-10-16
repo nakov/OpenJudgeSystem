@@ -126,7 +126,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         var sb = new StringBuilder();
 
-        var action = model.TimeInMinutes < 0 ? "removed" : "added";
+        var action = model.TimeInMinutes < 0 ? "subtracted" : "added";
         var preposition = model.TimeInMinutes < 0 ? "from" : "to";
         var successMessage = $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}";
         sb.AppendLine(successMessage);
@@ -175,7 +175,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         await this.participantsData.SaveChanges();
 
-        var action = model.TimeInMinutes < 0 ? "removed" : "added";
+        var action = model.TimeInMinutes < 0 ? "subtracted" : "added";
         var preposition = model.TimeInMinutes < 0 ? "from" : "to";
         return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the time of the participant with username: {model.Username}, in the contest: {model.ContestName}";
     }

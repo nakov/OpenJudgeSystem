@@ -735,18 +735,18 @@ interface IContestCategoryHierarchyEdit {
     parentId?: number;
 }
 
-interface IChangeParicipationTime {
+interface IChangeParticipationTime {
     contestId: number;
     contestName: string;
     timeInMinutes: number;
 }
 
-interface IChangeParticipationTimeForMultipleParticipants extends IChangeParicipationTime{
+interface IChangeParticipationTimeForMultipleParticipants extends IChangeParticipationTime{
     changeParticipationTimeRangeStart: Dayjs | null;
     changeParticipationTimeRangeEnd: Dayjs | null;
 }
 
-interface IChangeParticipationTimeForSingleParticipant extends IChangeParicipationTime {
+interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipationTime {
     userId: string;
     username: string;
 }
