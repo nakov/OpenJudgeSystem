@@ -116,6 +116,39 @@
 
         [HttpGet]
         [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        public ActionResult EditAllContests(int categoryId)
+        {
+            var category = this.Data.ContestCategories.GetById(categoryId) ?? throw new HttpException(404, "Category not found");
+
+            var model = new EditAllContestsAdministrationViewModel
+            {
+                CategoryId = category.Id,
+                CategoryName = category.Name,
+            };
+
+            this.ViewBag.ReturnUrl = GetReturnUrlToCategory(model.CategoryId, model.CategoryName);
+            return this.View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        public ActionResult EditAllContests(EditAllContestsAdministrationViewModel model, string returnUrl)
+        {
+            this.ViewBag.ReturnUrl = returnUrl;
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(model);
+            }
+
+            var category = this.Data.ContestCategories.GetById(model.CategoryId) ?? throw new HttpException(404, "Category not found");
+
+            return this.View(model);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         public ActionResult ImportContests(int categoryId)
         {
             var category = this.Data.ContestCategories.GetById(categoryId) ?? throw new HttpException(404, "Category not found");
@@ -126,7 +159,7 @@
                 CategoryName = category.Name,
             };
 
-            this.ViewBag.ReturnUrl = $"/Contests/#!/List/ByCategory/{model.CategoryId}/{model.CategoryName.ToUrl()}";
+            this.ViewBag.ReturnUrl = GetReturnUrlToCategory(model.CategoryId, model.CategoryName);
             return this.View(model);
         }
 
@@ -192,6 +225,9 @@
 
             return this.Redirect(returnUrl);
         }
+
+        private static string GetReturnUrlToCategory(int categoryId, string categoryName) =>
+            $"/Contests/#!/List/ByCategory/{categoryId}/{categoryName.ToUrl()}";
 
         private void CascadeDeleteCategories(DatabaseModelType contest)
         {
