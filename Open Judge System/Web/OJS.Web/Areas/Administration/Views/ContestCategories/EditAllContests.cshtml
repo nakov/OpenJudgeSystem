@@ -1,6 +1,7 @@
 @model OJS.Web.Areas.Administration.ViewModels.ContestCategory.EditAllContestsAdministrationViewModel
 
 @using Resource = Resources.Areas.Administration.ContestCategories.Views.ContestCategoriesViews
+@using SharedResource = Resources.Areas.Administration.Contests.Views.Partials.ContestEditor
 
 @{
     ViewBag.Title = $"{Resource.Edit_all_contests_page_title} {Model.CategoryName}";
@@ -9,7 +10,7 @@
 <h1>@ViewBag.Title</h1>
 <hr/>
 
-<div id="import-form" class="container">
+<div id="edit-all-contests-form" class="container">
     @using (Html.BeginForm("EditAllContests", "ContestCategories", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
     {
         @Html.AntiForgeryToken()
@@ -17,6 +18,115 @@
         @Html.HiddenFor(model => model.CategoryId)
         @Html.HiddenFor(model => model.CategoryName)
 
+        <fieldset>
+            <legend>@SharedResource.General_info</legend>
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.Type)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-4">
+                    @Html.EditorFor(m => m.Type)
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="@Resource.Edit_all_contests_type_tooltip" data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.Type)
+                </div>
+            </div>
+            <br/>
+        </fieldset>
+
+        <fieldset>
+            <legend>@SharedResource.Duration_info</legend>
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.StartTime)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-4">
+                    @Html.EditorFor(m => m.StartTime, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Contest_start" data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.StartTime)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.EndTime)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-4">
+                    @Html.EditorFor(m => m.EndTime, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Contest_end" data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.EndTime)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.PracticeStartTime)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-4">
+                    @Html.EditorFor(m => m.PracticeStartTime, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Practice_start" data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.PracticeStartTime)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.PracticeEndTime)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-4">
+                    @Html.EditorFor(m => m.PracticeEndTime, new { @class = "form-control pull-left full-editor" })
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Practice_end" data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.PracticeEndTime)
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>@SharedResource.Options</legend>
+            <div class="row">
+                <div class="editor-label col-xs-3">
+                    <div class="pull-right">
+                        @Html.LabelFor(m => m.AllowedIps)
+                    </div>
+                </div>
+                <div class="editor-field col-xs-4">
+                    @(Html.Kendo().AutoCompleteFor(x => Model.AllowedIps)
+                        .DataTextField("Value")
+                        .Placeholder("Add allowed IPs (separated by ',')")
+                        .Filter(FilterType.Contains)
+                        .Separator(", ")
+                        .DataSource(dataSource => dataSource
+                            .ServerFiltering(true)
+                            .Read(read => read.Action("ReadIpsContaining", "Contests").Data("onContestIpData")))
+                            .HtmlAttributes(new { style = "width: 100%" })
+                    )
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Add allowed IPs for the competition (separated by ',')" data-tooltip="true"></span>
+                    @Html.ValidationMessageFor(m => m.AllowedIps)
+                </div>
+            </div>
+            <br />
+        </fieldset>
 
         <hr />
         <div class="row">
@@ -39,5 +149,12 @@
                 event.preventDefault();
             }
         });
+
+        function onContestIpData() {
+            var ips = $('#AllowedIps').val().split(', ');
+            return {
+                value: ips.length ? ips[ips.length - 1] : ''
+            };
+        }
     </script>
 }

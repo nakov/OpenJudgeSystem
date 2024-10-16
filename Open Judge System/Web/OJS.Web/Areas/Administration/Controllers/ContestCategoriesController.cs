@@ -9,6 +9,7 @@
     using Kendo.Mvc.UI;
     using OJS.Common;
     using OJS.Common.Extensions;
+    using OJS.Common.Models;
     using OJS.Data;
     using OJS.Services.Business.ContestCategories;
     using OJS.Services.Common.BackgroundJobs;
@@ -17,7 +18,7 @@
     using OJS.Web.Areas.Administration.ViewModels.ContestCategory;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Infrastructure.Filters.Attributes;
-
+    using OJS.Web.ViewModels.Common;
     using DatabaseModelType = OJS.Data.Models.ContestCategory;
     using ViewModelType = OJS.Web.Areas.Administration.ViewModels.ContestCategory.ContestCategoryAdministrationViewModel;
 
@@ -126,6 +127,8 @@
                 CategoryName = category.Name,
             };
 
+            this.PrepareEditContestsViewBagData();
+
             this.ViewBag.ReturnUrl = GetReturnUrlToCategory(model.CategoryId, model.CategoryName);
             return this.View(model);
         }
@@ -139,6 +142,7 @@
 
             if (!this.ModelState.IsValid)
             {
+                this.PrepareEditContestsViewBagData();
                 return this.View(model);
             }
 
@@ -228,6 +232,12 @@
 
         private static string GetReturnUrlToCategory(int categoryId, string categoryName) =>
             $"/Contests/#!/List/ByCategory/{categoryId}/{categoryName.ToUrl()}";
+
+        private void PrepareEditContestsViewBagData()
+        {
+            this.ViewBag.TypeData = new[] { new DropdownViewModel { Name = string.Empty } }
+                .Concat(DropdownViewModel.GetEnumValues<ContestType>());
+        }
 
         private void CascadeDeleteCategories(DatabaseModelType contest)
         {
