@@ -9,6 +9,7 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 public class ParticipantsBusinessService : AdministrationOperationService<Participant, int, ParticipantAdministrationModel>, IParticipantsBusinessService
@@ -93,10 +94,22 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         var contestDurationInMinutes = contest!.Duration!.Value.Minutes;
 
-        var participantsInTimeRange = await this.participantsData
-            .All(p => p.ParticipationStartTime >= model.ChangeParticipationTimeRangeStart &&
-                               p.ParticipationStartTime <= model.ChangeParticipationTimeRangeEnd &&
-                               p.Contest.Type == ContestType.OnlinePracticalExam);
+        var invalidParticipantsUsernames = await this.participantsData
+            .GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
+                model.ContestId,
+                (DateTime)model.ChangeParticipationTimeRangeStart,
+                (DateTime)model.ChangeParticipationTimeRangeEnd)
+            .Where(p => p.ParticipationEndTime.HasValue && p.ParticipationStartTime.HasValue &&
+                        p.ParticipationEndTime.Value.AddMinutes(model.TimeInMinutes) <
+                        p.ParticipationStartTime.Value.AddMinutes(contestDurationInMinutes))
+            .Select(p => p.User.UserName)
+            .ToListAsync();
+
+        var participantsInTimeRange = this.participantsData
+            .GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
+                model.ContestId,
+                (DateTime)model.ChangeParticipationTimeRangeStart,
+                (DateTime)model.ChangeParticipationTimeRangeEnd);
 
         var participantsToUpdate = participantsInTimeRange
             .Where(p => p.ParticipationEndTime.HasValue && p.ParticipationStartTime.HasValue &&
@@ -111,9 +124,20 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         await this.participantsData.SaveChanges();
 
+        var sb = new StringBuilder();
+
         var action = model.TimeInMinutes < 0 ? "removed" : "added";
         var preposition = model.TimeInMinutes < 0 ? "from" : "to";
-        return $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}";
+        var successMessage = $"Successfully {action} {Math.Abs(model.TimeInMinutes)} minutes {preposition} the times of all selected active participants ({participantsToUpdate.Count}) in the contest: {model.ContestName}";
+        sb.AppendLine(successMessage);
+
+        if (invalidParticipantsUsernames.Count > 0)
+        {
+            var unsuccessfulMessage = $"WARNING: The following users' contest duration was not updated because their contest duration would have been reduced below the base contest duration: {string.Join(", ", invalidParticipantsUsernames)}";
+            sb.AppendLine(unsuccessfulMessage);
+        }
+
+        return sb.ToString();
     }
 
     public async Task<string> UpdateParticipationTimeForSingleParticipant(
