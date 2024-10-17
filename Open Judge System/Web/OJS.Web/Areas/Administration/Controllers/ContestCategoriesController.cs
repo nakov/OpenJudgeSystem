@@ -22,6 +22,7 @@
     using OJS.Web.Common.Extensions;
     using OJS.Web.Infrastructure.Filters.Attributes;
     using OJS.Web.ViewModels.Common;
+    using ContestsResource = Resources.Areas.Administration.Contests.ContestsControllers;
     using DatabaseModelType = OJS.Data.Models.ContestCategory;
     using ViewModelType = OJS.Web.Areas.Administration.ViewModels.ContestCategory.ContestCategoryAdministrationViewModel;
 
@@ -154,6 +155,16 @@
 
             this.ViewBag.ReturnUrl = returnUrl;
 
+            if (model.StartTime >= model.EndTime)
+            {
+                this.ModelState.AddModelError(GlobalConstants.DateTimeError, ContestsResource.Contest_start_date_before_end);
+            }
+
+            if (model.PracticeStartTime >= model.PracticeEndTime)
+            {
+                this.ModelState.AddModelError(GlobalConstants.DateTimeError, ContestsResource.Practice_start_date_before_end);
+            }
+
             if (!this.ModelState.IsValid)
             {
                 this.PrepareEditContestsViewBagData();
@@ -165,12 +176,15 @@
             this.contestsData.GetAllNotDeletedByCategory(category.Id, true)
                 .Update(c => new Contest
                 {
-                    Type = model.Type != null ? (ContestType)model.Type : c.Type,
+                    // Preserve the original values if a new value is not selected.
+                    Type = model.Type == null || model.Type == 0 ? c.Type : (ContestType)model.Type,
+                    LimitBetweenSubmissions = model.LimitBetweenSubmissions ?? c.LimitBetweenSubmissions,
+
+                    // Overwrite the original values with the new ones, even when they are null, as they are optional for a contest.
                     StartTime = model.StartTime,
                     EndTime = model.EndTime,
                     PracticeStartTime = model.PracticeStartTime,
                     PracticeEndTime = model.PracticeEndTime,
-                    LimitBetweenSubmissions = model.LimitBetweenSubmissions ?? c.LimitBetweenSubmissions,
                 });
 
             this.TempData.AddInfoMessage($"All contests in category {category.Name} are edited successfully.");
