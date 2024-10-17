@@ -10,6 +10,7 @@ import styles from 'src/components/guidelines/breadcrumb/Breadcrumbs.module.scss
 
 interface IPageBreadcrumbsItem {
     text: string;
+    /* If left as null, breadcrumb item is not rendered as link */
     to?: string;
 }
 

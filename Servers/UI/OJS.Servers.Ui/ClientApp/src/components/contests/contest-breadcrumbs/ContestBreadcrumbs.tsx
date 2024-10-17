@@ -69,12 +69,13 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     }, [ contestCategories, contestDetails, categoryId, dispatch ]);
 
     const contestBreadCrumbsItems = useMemo(() => {
-        let initialValue = [
-                { text: 'Contests', to: '/contests' } as IPageBreadcrumbsItem,
+        let items = [
+            // Initial value
+            { text: 'Contests', to: '/contests' } as IPageBreadcrumbsItem,
         ];
 
         // Concat categories tree
-        initialValue = initialValue
+        items = items
             .concat(trimBreadcrumbItems(breadcrumbItems)?.map((item: ContestBreadcrumb) => ({
                 text: item.name,
                 to: getAllContestsPageUrl({
@@ -87,7 +88,9 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
             location.pathname.toLowerCase().includes('/results');
 
         if (contestDetails && !isResultsPage()) {
-            initialValue = initialValue.concat({ text: contestDetails.name } as IPageBreadcrumbsItem);
+            // For pages that populate contestDetails (submit/contest details/submission details),
+            // the contest name is appended as last element and its not an active link
+            items = items.concat({ text: contestDetails.name } as IPageBreadcrumbsItem);
         }
 
         if (contestDetails && isResultsPage()) {
@@ -95,7 +98,8 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
                 .toLowerCase()
                 .includes(`/${ContestParticipationType.Compete.toLowerCase()}`);
 
-            initialValue = initialValue.concat([
+            // Results page appends contest name as link
+            items = items.concat([
                 {
                     text: contestDetails.name,
                     to: getContestsSolutionSubmitPageUrl({
@@ -104,11 +108,12 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
                         contestName: contestDetails!.name,
                     } as IContestsSolutionSubmitPageUrlParams),
                 },
+                // Results page appends 'Results' in the end
                 { text: 'Results' },
             ] as IPageBreadcrumbsItem[]);
         }
 
-        return initialValue;
+        return items;
     }, [ breadcrumbItems, contestDetails, location.pathname ]);
 
     return (
