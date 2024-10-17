@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 import { IHaveOptionalClassName } from 'src/components/common/Props';
 import useTheme from 'src/hooks/use-theme';
+import isNilOrEmpty from 'src/utils/check-utils';
 import concatClassNames from 'src/utils/class-names';
 
 import styles from 'src/components/guidelines/breadcrumb/Breadcrumbs.module.scss';
 
 interface IPageBreadcrumbsItem {
     text: string;
-    to: string;
+    to?: string;
 }
 
 interface IBreadcrumbProps extends IHaveOptionalClassName {
@@ -42,30 +43,36 @@ const Breadcrumbs = ({
                 return null;
             }
 
+            const renderItemContent = (item: IPageBreadcrumbsItem, isLast: boolean) => (
+                <div
+                  className={concatClassNames(
+                      styles.item,
+                      isLast
+                          ? textColorClassName
+                          : '',
+                  )}
+                >
+                    <p>
+                        {item.text}
+                    </p>
+                    <p className={textColorClassName}>{!isLast && '/'}</p>
+                </div>
+            );
+
             return itemsList
                 .map((item: IPageBreadcrumbsItem, idx: number) => {
                     const isLast = idx === itemsList.length - 1;
 
-                    return (
-                        <Link
-                          key={`${keyPrefix}-breadcrumb-item-${idx}`}
-                          to={item.to}
-                        >
-                            <div
-                              className={concatClassNames(
-                                  styles.item,
-                                  isLast
-                                      ? textColorClassName
-                                      : '',
-                              )}
+                    return isNilOrEmpty(item.to) || isLast
+                        ? renderItemContent(item, isLast)
+                        : (
+                            <Link
+                              key={`${keyPrefix}-breadcrumb-item-${idx}`}
+                              to={item.to!}
                             >
-                                <p>
-                                    {item.text}
-                                </p>
-                                <p className={textColorClassName}>{!isLast && '/'}</p>
-                            </div>
-                        </Link>
-                    );
+                                {renderItemContent(item, isLast)}
+                            </Link>
+                        );
                 });
         },
         [ items, itemsList, keyPrefix, textColorClassName ],
@@ -83,8 +90,7 @@ const Breadcrumbs = ({
 
     if (isLoading) {
         return (
-            <div className={internalClassName}
-            >
+            <div className={internalClassName}>
                 Loading breadcrumbs...
             </div>
         );

@@ -3,11 +3,14 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { IContestsSolutionSubmitPageUrlParams } from 'src/common/app-url-types';
+import { ContestParticipationType } from 'src/common/constants';
+import { CONTESTS_PATH } from 'src/common/urls/client-urls';
 import Breadcrumbs, { IPageBreadcrumbsItem } from 'src/components/guidelines/breadcrumb/Breadcrumbs';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
-import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
+import { getAllContestsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import {
     clearContestCategoryBreadcrumbItems,
     setContestCategories,
@@ -24,8 +27,14 @@ interface IContestBreadcrumbsProps {
 
 const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     const dispatch = useAppDispatch();
+    const location = useLocation();
     const { categoryId } = useParams();
-    const { breadcrumbItems, contestCategories, contestDetails } = useAppSelector((state) => state.contests);
+    const {
+        breadcrumbItems,
+        contestCategories,
+        contestDetails,
+    } = useAppSelector((state) => state.contests);
+
     const { data, isLoading, refetch } = useGetContestCategoriesQuery();
 
     // fetch contests data, if it's not present beforehand
@@ -59,15 +68,48 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
         }
     }, [ contestCategories, contestDetails, categoryId, dispatch ]);
 
-    const contestBreadCrumbsItems = useMemo(() => [
-            { text: 'Contests', to: '/contests' } as IPageBreadcrumbsItem,
-    ].concat(trimBreadcrumbItems(breadcrumbItems)?.map((item: ContestBreadcrumb) => ({
-        text: item.name,
-        to: getAllContestsPageUrl({
-            categoryId: item.id,
-            categoryName: item.name,
-        }),
-    } as IPageBreadcrumbsItem))), [ breadcrumbItems ]);
+    const contestBreadCrumbsItems = useMemo(() => {
+        let initialValue = [
+                { text: 'Contests', to: '/contests' } as IPageBreadcrumbsItem,
+        ];
+
+        // Concat categories tree
+        initialValue = initialValue
+            .concat(trimBreadcrumbItems(breadcrumbItems)?.map((item: ContestBreadcrumb) => ({
+                text: item.name,
+                to: getAllContestsPageUrl({
+                    categoryId: item.id,
+                    categoryName: item.name,
+                }),
+            } as IPageBreadcrumbsItem)));
+
+        const isResultsPage = () => location.pathname.toLowerCase().includes(`/${CONTESTS_PATH.toLowerCase()}`) &&
+            location.pathname.toLowerCase().includes('/results');
+
+        if (contestDetails && !isResultsPage()) {
+            initialValue = initialValue.concat({ text: contestDetails.name } as IPageBreadcrumbsItem);
+        }
+
+        if (contestDetails && isResultsPage()) {
+            const isCompete = location.pathname
+                .toLowerCase()
+                .includes(`/${ContestParticipationType.Compete.toLowerCase()}`);
+
+            initialValue = initialValue.concat([
+                {
+                    text: contestDetails.name,
+                    to: getContestsSolutionSubmitPageUrl({
+                        isCompete,
+                        contestId: contestDetails!.id,
+                        contestName: contestDetails!.name,
+                    } as IContestsSolutionSubmitPageUrlParams),
+                },
+                { text: 'Results' },
+            ] as IPageBreadcrumbsItem[]);
+        }
+
+        return initialValue;
+    }, [ breadcrumbItems, contestDetails, location.pathname ]);
 
     return (
         <Breadcrumbs

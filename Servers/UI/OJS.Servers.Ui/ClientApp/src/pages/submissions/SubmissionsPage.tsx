@@ -17,10 +17,7 @@ const SubmissionsPage = () => (
         <Breadcrumbs
           keyPrefix="submissions"
           items={[
-               {
-                   text: 'Submissions',
-                   to: '/submissions',
-               } as IPageBreadcrumbsItem,
+               { text: 'Submissions' } as IPageBreadcrumbsItem,
           ]}
         />
         <RecentSubmissions />

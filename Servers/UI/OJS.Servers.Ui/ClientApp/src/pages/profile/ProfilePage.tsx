@@ -115,7 +115,6 @@ const ProfilePage = () => {
                                     text: `${currentUserIsProfileOwner
                                         ? 'My'
                                         : ''} Profile`,
-                                    to: '/profile',
                                 } as IPageBreadcrumbsItem,
                               ]}
                             />
