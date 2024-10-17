@@ -62,7 +62,7 @@ export const contestSlice = createSlice({
         clearContestCategoryBreadcrumbItems: (state) => {
             state.breadcrumbItems = [];
         },
-        setContestDetailsIdAndCategoryId: (state, action: PayloadAction<{ id: number; name: string, categoryId: number}>) => {
+        setContestDetailsIdAndCategoryId: (state, action: PayloadAction<{ id: number; name: string; categoryId: number}>) => {
             const { id, name, categoryId } = action.payload;
             state.contestDetails = { id, name, categoryId };
         },
