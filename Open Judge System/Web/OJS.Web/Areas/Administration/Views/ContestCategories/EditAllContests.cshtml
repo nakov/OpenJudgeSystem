@@ -14,7 +14,6 @@
     @using (Html.BeginForm("EditAllContests", "ContestCategories", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-        @Html.ValidationMessage(GlobalConstants.DateTimeError)
 
         @Html.HiddenFor(model => model.CategoryId)
         @Html.HiddenFor(model => model.CategoryName)

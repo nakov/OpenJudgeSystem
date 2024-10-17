@@ -157,12 +157,12 @@
 
             if (model.StartTime >= model.EndTime)
             {
-                this.ModelState.AddModelError(GlobalConstants.DateTimeError, ContestsResource.Contest_start_date_before_end);
+                this.ModelState.AddModelError(nameof(EditAllContestsAdministrationViewModel.StartTime), ContestsResource.Contest_start_date_before_end);
             }
 
             if (model.PracticeStartTime >= model.PracticeEndTime)
             {
-                this.ModelState.AddModelError(GlobalConstants.DateTimeError, ContestsResource.Practice_start_date_before_end);
+                this.ModelState.AddModelError(nameof(EditAllContestsAdministrationViewModel.PracticeStartTime), ContestsResource.Practice_start_date_before_end);
             }
 
             if (!this.ModelState.IsValid)
