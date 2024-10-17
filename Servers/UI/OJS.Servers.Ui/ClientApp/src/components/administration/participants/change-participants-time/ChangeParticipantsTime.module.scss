@@ -45,3 +45,45 @@
   margin-bottom: 2rem;
   width: 100%;
 }
+
+.dialogAdd {
+    color: #388e3c !important;
+
+    &:hover {
+        background-color: rgba(56 142 60 / 10%) !important;
+    }
+}
+
+.dialogSubtract {
+    color: #d32f2f !important;
+
+    &:hover {
+        background-color: rgba(211 47 47 / 10%) !important;
+    }
+}
+
+.formAdd {
+    background-color: #388e3c !important;
+    color: #fff !important;
+}
+
+.formSubtract {
+    background-color: #d32f2f !important;
+    color: #fff !important;
+}
+
+.formAddDisabled {
+    background-color: rgba(56 142 60 / 10%) !important;
+}
+
+.formSubtractDisabled {
+    background-color: rgba(211 47 47 / 10%) !important;
+}
+
+.neutral {
+    color: #b2b2b2 !important;
+
+    &:hover {
+        background-color: rgba(178 178 178 / 10%) !important;
+    }
+}
