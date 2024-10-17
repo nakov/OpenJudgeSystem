@@ -8,6 +8,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using X.PagedList;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
+    using Newtonsoft.Json;
     using OJS.Common;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
@@ -142,6 +143,73 @@ namespace OJS.Services.Ui.Business.Implementations
             contestDetailsServiceModel.IsActive = await this.activityService.IsContestActive(activityServiceModel);
 
             return contestDetailsServiceModel;
+        }
+
+        public async Task<string> Export(int id)
+        {
+            var contest = await this.contestsData
+                .GetByIdQuery(id)
+                .Where(c => !c.IsDeleted)
+                .Include(c => c.ProblemGroups)
+                    .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Tests)
+                .Include(c => c.ProblemGroups)
+                    .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Checker)
+                .Include(c => c.ProblemGroups)
+                    .ThenInclude(pg => pg.Problems)
+                        .ThenInclude(p => p.SubmissionTypesInProblems)
+                            .ThenInclude(sp => sp.SubmissionType)
+                .Include(c => c.ProblemGroups)
+                    .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Resources)
+                .FirstOrDefaultAsync();
+
+            if (contest == null)
+            {
+                throw new BusinessServiceException($"Contest with Id:{id} not found.");
+            }
+
+            contest.Description = null;
+
+            RemoveCircularReferences(contest);
+
+            var jsonSettings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+
+            return await Task.FromResult(JsonConvert.SerializeObject(contest, jsonSettings));
+        }
+
+        private static void RemoveCircularReferences(Contest contest)
+        {
+            foreach (var problemGroup in contest.ProblemGroups)
+            {
+                problemGroup.Contest = null;
+
+                foreach (var problem in problemGroup.Problems)
+                {
+                    problem.ProblemGroup = null;
+
+                    foreach (var test in problem.Tests)
+                    {
+                        test.Problem = null;
+                    }
+
+                    foreach (var resource in problem.Resources)
+                    {
+                        resource.Problem = null;
+                        resource.File = null;
+                    }
+
+                    foreach (var submissionTypeInProblem in problem.SubmissionTypesInProblems)
+                    {
+                        submissionTypeInProblem.Problem = null;
+                    }
+                }
+            }
         }
 
         public async Task<ContestRegistrationDetailsServiceModel> GetContestRegistrationDetails(int id, bool isOfficial)

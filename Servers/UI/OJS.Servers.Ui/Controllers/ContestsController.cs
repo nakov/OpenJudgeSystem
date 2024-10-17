@@ -32,6 +32,18 @@ public class ContestsController : BaseApiController
             .GetContestDetails(id)
             .ToOkResult();
 
+    // /// <summary>
+    // /// Gets details of the current contest.
+    // /// </summary>
+    // /// <param name="id">ID of the contest.</param>
+    // /// <returns>Model containing information about the name, description and problems of the contest.</returns>
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(ContestDetailsServiceModel), Status200OK)]
+    public async Task<IActionResult> Export(int id)
+        => await this.contestsBusinessService
+            .Export(id)
+            .ToOkResult();
+
     /// <summary>
     /// Gets the contest that the problem is part of.
     /// </summary>
