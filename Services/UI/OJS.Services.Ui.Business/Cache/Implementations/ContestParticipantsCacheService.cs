@@ -98,9 +98,7 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
     private async Task<ContestServiceModel?> GetContestServiceModel(
         StartContestParticipationServiceModel model)
     {
-        var contest = await this.contestsData.GetById<ContestServiceModel>(model.ContestId);
-
-        var contestServiceModel = contest?.Map<ContestServiceModel?>();
+        var contestServiceModel = await this.contestsData.GetById<ContestServiceModel>(model.ContestId);
 
         return contestServiceModel;
     }

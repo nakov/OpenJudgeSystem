@@ -284,13 +284,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
 
-            var participant = await this.participantsData
-                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
-                    model.ContestId,
-                    user.Id,
-                    model.IsOfficial);
-
-            if (participant == null)
+            if (!await this.participantsData.ExistsByContestByUserAndIsOfficial(model.ContestId, user.Id, model.IsOfficial))
             {
                 // Participant must be registered in previous steps
                 return new ContestParticipationServiceModel
@@ -298,6 +292,12 @@ namespace OJS.Services.Ui.Business.Implementations
                     IsActiveParticipant = false, IsRegisteredParticipant = false, Contest = null,
                 };
             }
+
+            var participant = await this.participantsData
+                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
+                    model.ContestId,
+                    user.Id,
+                    model.IsOfficial);
 
             var contest =
                 await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, model);
