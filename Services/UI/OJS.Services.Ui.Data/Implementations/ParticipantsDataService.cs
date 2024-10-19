@@ -37,6 +37,8 @@ namespace OJS.Services.Ui.Data.Implementations
                                 .ThenInclude(p => p.SubmissionTypesInProblems)
                                     .ThenInclude(sp => sp.SubmissionType)
                 .Include(p => p.ProblemsForParticipants)
+                    .ThenInclude(pfp => pfp.Problem)
+                    .ThenInclude(p => p.Resources)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Participant> GetWithProblemsForParticipantsByContestAndUser(int contestId,
