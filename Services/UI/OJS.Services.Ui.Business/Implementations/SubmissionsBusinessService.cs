@@ -7,7 +7,6 @@ using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
 using OJS.Data;
-using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -28,7 +27,6 @@ using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Models;
-using OJS.Services.Ui.Business.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +61,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ITransactionsProvider transactionsProvider;
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
+    private readonly ISubmissionTypesDataService submissionTypesData;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -86,7 +85,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IDatesService dates,
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
-        IContestsDataService contestsData)
+        IContestsDataService contestsData,
+        ISubmissionTypesDataService submissionTypesData)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -110,6 +110,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
         this.contestsData = contestsData;
+        this.submissionTypesData = submissionTypesData;
     }
 
     public async Task Retest(int id)
@@ -437,30 +438,26 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
-        var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
+        var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId)
+            ?? throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
 
-        if (problem == null)
-        {
-            throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
-        }
+        var submissionType = await this.cache.Get(
+            string.Format(CacheConstants.SubmissionTypeById, model.SubmissionTypeId),
+            async () => await this.submissionTypesData.OneById(model.SubmissionTypeId),
+            CacheConstants.FiveMinutesInSeconds);
 
         var currentUser = this.userProviderService.GetCurrentUser();
+
         var participant = await this.participantsDataService
-            .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
+            .GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(
                 problem.ProblemGroup.ContestId,
                 currentUser.Id!,
                 model.Official);
 
-        participant!.Contest = await this.contestsData.GetByIdQuery(problem.ProblemGroup.ContestId)
-            .Include(c => c.Category)
-            .Include(c => c.ProblemGroups)
-            .ThenInclude(pg => pg.Problems)
-            .ThenInclude(p => p.SubmissionTypesInProblems)
-            .ThenInclude(sp => sp.SubmissionType)
-            .FirstAsync();
+        var contest = await this.contestsData.OneById(problem.ProblemGroup.ContestId);
 
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
-            (problem, participant, model));
+            (problem, participant, model, contest, submissionType));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -481,19 +478,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         newSubmission.ParticipantId = participant!.Id;
         newSubmission.IpAddress = "model.UserHostAddress";
-        newSubmission.IsPublic = ((participant.IsOfficial && participant.Contest.ContestPassword == null) ||
-                                  (!participant.IsOfficial && participant.Contest.PracticePassword == null)) &&
-                                 (participant.Contest.IsVisible || participant.Contest.VisibleFrom <= this.dates.GetUtcNow()) &&
-                                 !participant.Contest.IsDeleted &&
+        newSubmission.IsPublic = ((participant.IsOfficial && contest!.ContestPassword == null) ||
+                                  (!participant.IsOfficial && contest!.PracticePassword == null)) &&
+                                 (contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow()) &&
+                                 !contest.IsDeleted &&
                                  problem.ShowResults;
-
-        var submissionType = problem.SubmissionTypesInProblems
-            .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
-            .SubmissionType;
 
         SubmissionServiceModel submissionServiceModel;
         var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
+        if (submissionType!.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
             // Submission is just uploaded and should not be processed
             await this.AddNewDefaultProcessedSubmission(participant, newSubmission);
