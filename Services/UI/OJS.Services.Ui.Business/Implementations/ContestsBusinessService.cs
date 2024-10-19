@@ -349,13 +349,13 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (!userIsAdminOrLecturerInContest && isOfficialOnlineContest)
             {
-                participationModel.Contest.Problems = participant
+                var participantProblems = participant
                     .ProblemsForParticipants
-                    .Select(x => x.Problem)
-                    .MapCollection<ContestProblemServiceModel>()
-                    .OrderBy(p => p.ProblemGroupOrderBy)
-                    .ThenBy(p => p.OrderBy)
-                    .ThenBy(p => p.Name)
+                    .Select(x => x.Problem.Id)
+                    .ToList();
+
+                participationModel.Contest.Problems = participationModel.Contest.Problems
+                    .Where(x => participantProblems.Contains(x.Id))
                     .ToList();
             }
 
