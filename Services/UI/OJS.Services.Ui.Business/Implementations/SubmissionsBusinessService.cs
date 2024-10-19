@@ -7,6 +7,7 @@ using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
 using OJS.Data;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -27,6 +28,7 @@ using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Models;
+using OJS.Services.Ui.Business.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +62,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IDatesService dates;
     private readonly ITransactionsProvider transactionsProvider;
     private readonly ICacheService cache;
+    private readonly IContestsDataService contestsData;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -82,7 +85,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionsHelper submissionsHelper,
         IDatesService dates,
         ITransactionsProvider transactionsProvider,
-        ICacheService cache)
+        ICacheService cache,
+        IContestsDataService contestsData)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -105,6 +109,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.dates = dates;
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
+        this.contestsData = contestsData;
     }
 
     public async Task Retest(int id)
@@ -445,6 +450,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 problem.ProblemGroup.ContestId,
                 currentUser.Id!,
                 model.Official);
+
+        participant!.Contest = await this.contestsData.GetByIdQuery(problem.ProblemGroup.ContestId)
+            .Include(c => c.Category)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.SubmissionTypesInProblems)
+            .ThenInclude(sp => sp.SubmissionType)
+            .FirstAsync();
 
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model));

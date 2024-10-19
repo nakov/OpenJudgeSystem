@@ -26,30 +26,11 @@ namespace OJS.Services.Ui.Data.Implementations
                 .GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
-        public async Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
-        {
-            var participant = await this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
+        public Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
+            => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .Include(p => p.User)
                 .Include(p => p.ProblemsForParticipants)
                 .FirstOrDefaultAsync();
-
-            var contest = await this.db.Contests.Where(c => contestId == c.Id)
-                .Include(c => c.Category)
-                .Include(c => c.ProblemGroups)
-                    .ThenInclude(pg => pg.Problems)
-                    .ThenInclude(p => p.SubmissionTypesInProblems)
-                    .ThenInclude(sp => sp.SubmissionType)
-                .FirstOrDefaultAsync();
-
-            if (participant == null || contest == null)
-            {
-                return null;
-            }
-
-            participant.ContestId = contestId;
-            participant.Contest = contest;
-            return participant;
-        }
 
         public IQueryable<Participant> GetWithProblemsForParticipantsByContestAndUser(int contestId,
             string userId)

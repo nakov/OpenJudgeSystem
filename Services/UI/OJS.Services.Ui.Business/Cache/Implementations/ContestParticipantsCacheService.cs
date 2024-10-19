@@ -4,13 +4,9 @@ using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Cache;
-using OJS.Services.Infrastructure.Extensions;
-using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Cache;
-using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
-using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Models.Contests;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,11 +54,10 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
 
     public async Task<ContestServiceModel?> GetContestServiceModelForContest(
         int contestId,
-        StartContestParticipationServiceModel model,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
         => await this.cache.Get(
             string.Format(CacheConstants.ContestDetailsForSubmit, contestId),
-            async () => (await this.GetContestServiceModel(model)),
+            async () => (await this.GetContestServiceModel(contestId)),
             cacheSeconds);
 
     /// <summary>
@@ -95,10 +90,9 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
     /// </summary>
     /// <param name="model">The model containing the contest participation start details, including the contest id and whether it is official.</param>
     /// <returns>A ContestServiceModel containing detailed information about the contest.</returns>
-    private async Task<ContestServiceModel?> GetContestServiceModel(
-        StartContestParticipationServiceModel model)
+    private async Task<ContestServiceModel?> GetContestServiceModel(int contestId)
     {
-        var contestServiceModel = await this.contestsData.GetById<ContestServiceModel>(model.ContestId);
+        var contestServiceModel = await this.contestsData.GetById<ContestServiceModel>(contestId);
 
         return contestServiceModel;
     }
