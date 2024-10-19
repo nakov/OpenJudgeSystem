@@ -330,10 +330,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Max();
             participationModel.LastSubmissionTime = lastSubmissionTime;
 
-            participationModel.Contest!.AllowedSubmissionTypes = participationModel
-                .Contest
-                .AllowedSubmissionTypes
-                .DistinctBy(st => st.Id);
+            participationModel.Contest!.AllowedSubmissionTypes = participationModel.Contest.Problems
+                .SelectMany(p => p.AllowedSubmissionTypes)
+                .DistinctBy(st => st.Id)
+                .ToList();
 
             participationModel.ParticipantId = participant.Id;
             participationModel.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;

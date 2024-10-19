@@ -38,11 +38,7 @@ public class ContestServiceModel : IMapExplicitly
         configuration.CreateMap<Contest, ContestServiceModel>()
             .ForMember(
                 d => d.AllowedSubmissionTypes,
-                opt =>
-                    opt.MapFrom(s => s.ProblemGroups
-                        .SelectMany(pg => pg.Problems
-                            .SelectMany(p => p.SubmissionTypesInProblems)
-                            .Select(st => st.SubmissionType))))
+                opt => opt.Ignore())
             .ForMember(
                 d => d.Problems,
                 opt => opt.MapFrom(s =>
