@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
@@ -9,6 +10,7 @@ using OJS.Servers.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -37,12 +39,20 @@ public class ContestsController : BaseApiController
     // /// </summary>
     // /// <param name="id">ID of the contest.</param>
     // /// <returns>Model containing information about the name, description and problems of the contest.</returns>
-    [HttpGet("{id:int}")]
+    [HttpPost("{id:int}")]
     [ProducesResponseType(typeof(ContestDetailsServiceModel), Status200OK)]
     public async Task<IActionResult> Export(int id)
         => await this.contestsBusinessService
             .Export(id)
             .ToOkResult();
+
+    [HttpPost]
+    public async Task<IActionResult> GetExistingIds(ContestsGetExistingIdsRequestModel requestModel)
+    {
+        var existingContestIds = await this.contestsBusinessService.GetExistingIds(requestModel.Ids);
+
+        return this.Content(JsonConvert.SerializeObject(existingContestIds));
+    }
 
     /// <summary>
     /// Gets the contest that the problem is part of.

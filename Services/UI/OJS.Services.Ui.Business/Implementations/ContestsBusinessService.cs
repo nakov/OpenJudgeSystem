@@ -145,7 +145,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return contestDetailsServiceModel;
         }
 
-        public async Task<string> Export(int id)
+        public async Task<ContestLegacyExportServiceModel> Export(int id)
         {
             var contest = await this.contestsData
                 .GetByIdQuery(id)
@@ -174,14 +174,15 @@ namespace OJS.Services.Ui.Business.Implementations
 
             RemoveCircularReferences(contest);
 
-            var jsonSettings = new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                NullValueHandling = NullValueHandling.Ignore,
-            };
-
-            return await Task.FromResult(JsonConvert.SerializeObject(contest, jsonSettings));
+            return contest.Map<ContestLegacyExportServiceModel>();
         }
+
+        public async Task<IEnumerable<int>> GetExistingIds(IEnumerable<int> ids)
+            => await this.contestsData
+                .GetQuery()
+                .Where(c => !c.IsDeleted && ids.Contains(c.Id))
+                .Select(c => c.Id)
+                .ToListAsync();
 
         private static void RemoveCircularReferences(Contest contest)
         {
