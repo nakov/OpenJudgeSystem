@@ -28,8 +28,6 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
-                .AsNoTracking()
-                .AsSplitQuery()
                 .Include(p => p.User)
                 .Include(p => p.Contest)
                     .ThenInclude(c => c.Category)
