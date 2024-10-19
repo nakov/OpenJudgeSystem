@@ -356,6 +356,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
                 participationModel.Contest.Problems = participationModel.Contest.Problems
                     .Where(x => participantProblems.Contains(x.Id))
+                    .OrderBy(p => p.ProblemGroupOrderBy)
+                    .ThenBy(p => p.OrderBy)
                     .ToList();
             }
 
