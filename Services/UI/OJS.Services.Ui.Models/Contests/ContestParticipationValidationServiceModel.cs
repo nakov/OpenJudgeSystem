@@ -18,8 +18,6 @@ public class ContestParticipationValidationServiceModel
 
     public int? CategoryId { get; set; }
 
-    public ContestCategoryServiceModel? Category { get; set; }
-
     public bool IsVisible { get; set; }
 
     public bool IsDeleted { get; set; }

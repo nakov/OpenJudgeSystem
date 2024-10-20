@@ -13,27 +13,24 @@ public class ContestParticipationValidationService : IContestParticipationValida
 {
     private readonly IDatesService datesService;
     private readonly IContestsActivityService activityService;
-    private readonly IContestCategoriesBusinessService categoriesService;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly IContestsDataService contestsData;
 
     public ContestParticipationValidationService(
         IDatesService datesService,
         IContestsActivityService activityService,
-        IContestCategoriesBusinessService categoriesService,
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
         IContestsDataService contestsData)
     {
         this.datesService = datesService;
         this.activityService = activityService;
-        this.categoriesService = categoriesService;
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
         this.contestsData = contestsData;
     }
 
-    public ValidationResult GetValidationResult((ContestParticipationValidationServiceModel?, UserInfoModel?, bool) item)
+    public ValidationResult GetValidationResult((ContestParticipationValidationServiceModel?, ContestCategoryServiceModel?, UserInfoModel?, bool) item)
     {
-        var (contest, user, official) = item;
+        var (contest, contestCategory, user, official) = item;
 
         // TODO: Fix so it uses lecturers in contests business service
         var userIsAdminOrLecturerInContest = user != null && (user.IsAdmin || this.lecturersInContestsBusiness
@@ -45,7 +42,7 @@ public class ContestParticipationValidationService : IContestParticipationValida
 
         if (contest == null ||
             user == null ||
-            ((!contestIsVisible || contest.Category == null || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
+            ((!contestIsVisible || contestCategory is not { IsVisible: true }) &&
             !userIsAdminOrLecturerInContest))
         {
             return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);

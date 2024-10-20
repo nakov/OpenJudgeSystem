@@ -17,8 +17,6 @@ public class ContestServiceModel : IMapExplicitly
 
     public int? CategoryId { get; set; }
 
-    public ContestCategoryServiceModel? Category { get; set; }
-
     public int LimitBetweenSubmissions { get; set; }
 
     public bool IsDeleted { get; set; }

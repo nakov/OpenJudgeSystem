@@ -75,11 +75,13 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
         {
             var user = this.userProviderService.GetCurrentUser();
-            var contestDetailsServiceModel = await this.contestsCacheService.GetContestDetailsServiceModel(id);
-            var isLecturerInContestOrAdmin = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contestDetailsServiceModel?.Id);
+            var contest = await this.contestsCacheService.GetContestDetailsServiceModel(id);
+            var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
+            var isLecturerInContestOrAdmin = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
-                contestDetailsServiceModel,
+                contest,
+                category,
                 isLecturerInContestOrAdmin));
 
             if (!validationResult.IsValid)
@@ -87,7 +89,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var activityServiceModel = contestDetailsServiceModel!.Map<ContestForActivityServiceModel>();
+            var activityServiceModel = contest!.Map<ContestForActivityServiceModel>();
 
             var contestActivityEntity = await this.activityService
                 .GetContestActivity(activityServiceModel);
@@ -106,50 +108,52 @@ namespace OJS.Services.Ui.Business.Implementations
             if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted)
             {
                 var problemsForParticipant = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.Problem);
-                contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
+                contest.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInCompete = (!contestDetailsServiceModel!.HasContestPassword && !contestDetailsServiceModel!.IsOnlineExam && contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null) || isLecturerInContestOrAdmin;
-            var canShowProblemsInPractice = (!contestDetailsServiceModel.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerInContestOrAdmin;
+            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest!.IsOnlineExam && contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null) || isLecturerInContestOrAdmin;
+            var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerInContestOrAdmin;
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
             if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
-                contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
+                contest.Problems = new List<ContestProblemServiceModel>();
             }
 
             if (isLecturerInContestOrAdmin || competeParticipant != null)
             {
-                contestDetailsServiceModel.CanViewCompeteResults = true;
+                contest.CanViewCompeteResults = true;
             }
 
             if (isLecturerInContestOrAdmin || contestActivityEntity.CanBeCompeted || contestActivityEntity.CanBePracticed)
             {
-                contestDetailsServiceModel.CanViewPracticeResults = true;
+                contest.CanViewPracticeResults = true;
             }
 
             var participantsCount = await this.contestParticipantsCacheService.GetParticipantsCountForContest(id);
 
-            contestDetailsServiceModel.CompeteParticipantsCount = participantsCount.Official;
-            contestDetailsServiceModel.PracticeParticipantsCount = participantsCount.Practice;
+            contest.CompeteParticipantsCount = participantsCount.Official;
+            contest.PracticeParticipantsCount = participantsCount.Practice;
 
-            contestDetailsServiceModel!.CanBeCompeted = contestActivityEntity.CanBeCompeted;
-            contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
+            contest!.CanBeCompeted = contestActivityEntity.CanBeCompeted;
+            contest.CanBePracticed = contestActivityEntity.CanBePracticed;
 
-            contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
+            contest.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
 
-            contestDetailsServiceModel.IsActive = await this.activityService.IsContestActive(activityServiceModel);
+            contest.IsActive = await this.activityService.IsContestActive(activityServiceModel);
 
-            return contestDetailsServiceModel;
+            return contest;
         }
 
         public async Task<ContestRegistrationDetailsServiceModel> GetContestRegistrationDetails(int id, bool isOfficial)
         {
             var contest = await this.contestsData.OneByIdTo<ContestRegistrationDetailsServiceModel>(id);
             var user = this.userProviderService.GetCurrentUser();
+            var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
+                category,
                 user,
                 isOfficial));
 
@@ -180,11 +184,13 @@ namespace OJS.Services.Ui.Business.Implementations
             bool? hasConfirmedParticipation,
             bool isOfficial)
         {
-            var contest = await this.contestsData.OneByIdTo<ContestRegistrationDetailsServiceModel>(id);
             var user = this.userProviderService.GetCurrentUser();
+            var contest = await this.contestsData.OneByIdTo<ContestRegistrationDetailsServiceModel>(id);
+            var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
+                category,
                 user,
                 isOfficial));
 
@@ -288,9 +294,11 @@ namespace OJS.Services.Ui.Business.Implementations
                     model.IsOfficial);
 
             var contest = await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant?.ContestId ?? 0);
+            var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
+                category,
                 user,
                 model.IsOfficial));
 
