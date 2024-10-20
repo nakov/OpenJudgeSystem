@@ -1,15 +1,13 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
-using OJS.Data.Models.Contests;
 using OJS.Services.Common;
-using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure;
-using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
+using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Contests;
 
 public class ContestParticipationValidationService : IContestParticipationValidationService
 {
@@ -33,9 +31,9 @@ public class ContestParticipationValidationService : IContestParticipationValida
         this.contestsData = contestsData;
     }
 
-    public ValidationResult GetValidationResult((Contest?, int?, UserInfoModel?, bool) item)
+    public ValidationResult GetValidationResult((ContestParticipationValidationServiceModel?, UserInfoModel?, bool) item)
     {
-        var (contest, contestId, user, official) = item;
+        var (contest, user, official) = item;
 
         // TODO: Fix so it uses lecturers in contests business service
         var userIsAdminOrLecturerInContest = user != null && (user.IsAdmin || this.lecturersInContestsBusiness
@@ -47,7 +45,6 @@ public class ContestParticipationValidationService : IContestParticipationValida
 
         if (contest == null ||
             user == null ||
-            contest.IsDeleted ||
             ((!contestIsVisible || contest.Category == null || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !userIsAdminOrLecturerInContest))
         {

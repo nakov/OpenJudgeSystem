@@ -9,7 +9,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
-    using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
     using OJS.Services.Common.Models.Contests;
@@ -146,20 +145,13 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<ContestRegistrationDetailsServiceModel> GetContestRegistrationDetails(int id, bool isOfficial)
         {
-            var contest = this.contestsData
-                .GetByIdQuery(id)
-                .Include(c => c.Category)
-                .Include(c => c.ProblemGroups)
-                    .ThenInclude(pg => pg.Problems)
-                .FirstOrDefault();
-
+            var contest = await this.contestsData.OneByIdTo<ContestRegistrationDetailsServiceModel>(id);
             var user = this.userProviderService.GetCurrentUser();
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest,
-                id,
+                contest?.Map<ContestParticipationValidationServiceModel>(),
                 user,
-                isOfficial)!);
+                isOfficial));
 
             if (!validationResult.IsValid)
             {
@@ -174,13 +166,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
-            var registerModel = contest!.Map<ContestRegistrationDetailsServiceModel>();
-            registerModel.RequirePassword = ShouldRequirePassword(contest!.HasContestPassword, contest!.HasPracticePassword, participant!, isOfficial);
-            registerModel.ParticipantId = participant?.Id;
-            registerModel.IsRegisteredSuccessfully = participant != null && !participant.IsInvalidated;
-            registerModel.ShouldConfirmParticipation = ShouldConfirmParticipation(participant, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
+            contest!.RequirePassword = ShouldRequirePassword(contest.HasContestPassword, contest.HasPracticePassword, participant!, isOfficial);
+            contest.ParticipantId = participant?.Id;
+            contest.IsRegisteredSuccessfully = participant != null && !participant.IsInvalidated;
+            contest.ShouldConfirmParticipation = ShouldConfirmParticipation(participant, isOfficial, contest.IsOnlineExam, userIsAdminOrLecturerInContest);
 
-            return registerModel;
+            return contest;
         }
 
         public async Task<bool> RegisterUserForContest(
@@ -189,20 +180,13 @@ namespace OJS.Services.Ui.Business.Implementations
             bool? hasConfirmedParticipation,
             bool isOfficial)
         {
-            var contest = this.contestsData
-                .GetByIdQuery(id)
-                .Include(c => c.Category)
-                .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-                .FirstOrDefault();
-
+            var contest = await this.contestsData.OneByIdTo<ContestRegistrationDetailsServiceModel>(id);
             var user = this.userProviderService.GetCurrentUser();
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest,
-                id,
+                contest?.Map<ContestParticipationValidationServiceModel>(),
                 user,
-                isOfficial)!);
+                isOfficial));
 
             if (!validationResult.IsValid)
             {
@@ -225,7 +209,9 @@ namespace OJS.Services.Ui.Business.Implementations
             // Validate password if present
             if (password != null && !password.IsNullOrEmpty() && shouldRequirePassword)
             {
-                var isPasswordValid = GetIsPasswordValid(contest, password, isOfficial);
+                var isPasswordValid = isOfficial
+                    ? contest.ContestPassword == password
+                    : contest.PracticePassword == password;
 
                 if (!isPasswordValid)
                 {
@@ -289,7 +275,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 // Participant must be registered in previous steps
                 return new ContestParticipationServiceModel
                 {
-                    IsActiveParticipant = false, IsRegisteredParticipant = false, Contest = null,
+                    IsActiveParticipant = false,
+                    IsRegisteredParticipant = false,
+                    Contest = null,
                 };
             }
 
@@ -299,14 +287,12 @@ namespace OJS.Services.Ui.Business.Implementations
                     user.Id,
                     model.IsOfficial);
 
-            var contest =
-                await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId);
+            var contest = await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant?.ContestId ?? 0);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest?.Map<Contest>(),
-                model.ContestId,
+                contest?.Map<ContestParticipationValidationServiceModel>(),
                 user,
-                model.IsOfficial)!);
+                model.IsOfficial));
 
             if (!validationResult.IsValid)
             {
@@ -587,16 +573,6 @@ namespace OJS.Services.Ui.Business.Implementations
                (participant == null || participant.IsInvalidated) &&
                !userIsAdminOrLecturerInContest;
 
-        private static bool GetIsPasswordValid(Contest contest, string? password, bool isOfficial)
-        {
-            if (isOfficial)
-            {
-                return contest.ContestPassword == password;
-            }
-
-            return contest.PracticePassword == password;
-        }
-
         private async Task<ContestFiltersServiceModel> GetNestedFilterCategoriesIfAny(ContestFiltersServiceModel? model)
         {
             model ??= new ContestFiltersServiceModel();
@@ -619,7 +595,7 @@ namespace OJS.Services.Ui.Business.Implementations
         }
 
         private async Task<Participant?> AddNewParticipantToContestIfNotExistsOrResetExistingToValid(
-            Contest contest,
+            ContestRegistrationDetailsServiceModel contest,
             bool official,
             string userId,
             bool isUserAdminOrLecturerInContest)
