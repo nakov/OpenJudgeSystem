@@ -288,12 +288,11 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var participant = await this.participantsData
-                .GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(
-                    model.ContestId,
-                    user.Id,
-                    model.IsOfficial);
+                .GetQuery(p => p.ContestId == model.ContestId && p.UserId == user.Id && p.IsOfficial == model.IsOfficial)
+                .MapCollection<ContestParticipationServiceModel>()
+                .FirstOrDefaultAsync() ?? throw new BusinessServiceException("Participant not found");
 
-            var contest = await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant?.ContestId ?? 0);
+            var contest = await this.contestParticipantsCacheService.GetContestServiceModelForContest(model.ContestId);
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
@@ -308,54 +307,49 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-            var participationModel = participant.Map<ContestParticipationServiceModel>();
-            participationModel.Contest = contest;
-            participationModel.IsRegisteredParticipant = true;
-            participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
+
+            participant.Contest = contest;
+            participant.IsRegisteredParticipant = true;
+            participant.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
             var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
-            participationModel.EndDateTimeForParticipantOrContest = participantActivity.ParticipationEndTime;
-            participationModel.IsActiveParticipant = participantActivity.IsActive || userIsAdminOrLecturerInContest;
+            participant.EndDateTimeForParticipantOrContest = participantActivity.ParticipationEndTime;
+            participant.IsActiveParticipant = participantActivity.IsActive || userIsAdminOrLecturerInContest;
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
                 .GetAllForUserByContest(contest!.Id, user.Id)
                 .Select(x => (DateTime?)x.CreatedOn)
                 .Max();
-            participationModel.LastSubmissionTime = lastSubmissionTime;
+            participant.LastSubmissionTime = lastSubmissionTime;
 
-            participationModel.Contest!.AllowedSubmissionTypes = participationModel.Contest.Problems
+            participant.Contest!.AllowedSubmissionTypes = participant.Contest.Problems
                 .SelectMany(p => p.AllowedSubmissionTypes)
                 .DistinctBy(st => st.Id)
                 .ToList();
 
-            participationModel.ParticipantId = participant.Id;
-            participationModel.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;
+            participant.ParticipantId = participant.Id;
+            participant.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;
 
             var participantsList = new List<int> { participant.Id, };
 
             var maxParticipationScores = await this.participantScoresData
                 .GetMaxByProblemIdsAndParticipation(
-                    participationModel.Contest.Problems.Select(x => x.Id),
+                    participant.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
             var isOfficialOnlineContest = model.IsOfficial && contest.IsOnlineExam;
 
             if (!userIsAdminOrLecturerInContest && isOfficialOnlineContest)
             {
-                var participantProblems = participant
-                    .ProblemsForParticipants
-                    .Select(x => x.Problem.Id)
-                    .ToList();
-
-                participationModel.Contest.Problems = participationModel.Contest.Problems
-                    .Where(x => participantProblems.Contains(x.Id))
+                participant.Contest.Problems = [.. participant.Contest.Problems
+                    .Where(x => participant.ProblemsForParticipantIds.Contains(x.Id))
                     .OrderBy(p => p.ProblemGroupOrderBy)
                     .ThenBy(p => p.OrderBy)
-                    .ToList();
+                    .ThenBy(p => p.Name)];
             }
 
-            await participationModel.Contest.Problems.ForEachAsync(problem =>
+            await participant.Contest.Problems.ForEachAsync(problem =>
             {
                 problem.Points = maxParticipationScores
                     .Where(ps => ps.ProblemId == problem.Id)
@@ -366,11 +360,11 @@ namespace OJS.Services.Ui.Business.Implementations
             var participantsCount =
                 await this.contestParticipantsCacheService.GetParticipantsCountForContest(model.ContestId);
 
-            participationModel.ParticipantsCount = model.IsOfficial
+            participant.ParticipantsCount = model.IsOfficial
                 ? participantsCount.Official
                 : participantsCount.Practice;
 
-            return participationModel;
+            return participant;
         }
 
         public async Task<ContestSearchServiceResultModel> GetSearchContestsByName(
