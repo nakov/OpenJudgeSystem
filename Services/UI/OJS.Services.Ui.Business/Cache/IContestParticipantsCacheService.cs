@@ -3,10 +3,7 @@
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Ui.Models.Cache;
-using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Models.Contests;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Participants;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -49,6 +46,5 @@ public interface IContestParticipantsCacheService : IService
     /// <returns>A ContestServiceModel containing detailed information about the contest.</returns>
     Task<ContestServiceModel?> GetContestServiceModelForContest(
         int contestId,
-        StartContestParticipationServiceModel model,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds);
 }

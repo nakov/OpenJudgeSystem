@@ -12,7 +12,7 @@ namespace OJS.Services.Ui.Data
     {
         Task<Participant?> GetByContestByUserAndByIsOfficial(int contestId, string userId, bool isOfficial);
 
-        Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
+        Task<Participant?> GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
         IQueryable<Participant> GetWithProblemsForParticipantsByContestAndUser(int contestId, string userI);
 

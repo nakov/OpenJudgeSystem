@@ -22,5 +22,6 @@
         public const string LatestPublicSubmissions = "PublicSubmissions";
 
         public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
+        public const string SubmissionTypeById = "SubmissionTypesById:{0}";
     }
 }

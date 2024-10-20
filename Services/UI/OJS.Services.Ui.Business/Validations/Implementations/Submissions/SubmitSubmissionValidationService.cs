@@ -1,9 +1,11 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
+using OJS.Data.Models.Contests;
 using System.Linq;
 using System.Text;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
+using OJS.Data.Models.Submissions;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
@@ -28,9 +30,9 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         this.submissionsData = submissionsData;
     }
 
-    public ValidationResult GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel) validationInput)
+    public ValidationResult GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel, Contest?, SubmissionType?) item)
     {
-        var (problem, participant, submitSubmissionServiceModel) = validationInput;
+        var (problem, participant, submitSubmissionServiceModel, contest, submissionType) = item;
 
         if (problem == null)
         {
@@ -42,8 +44,13 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
         }
 
+        if (contest == null)
+        {
+            return ValidationResult.Invalid("Contest not found");
+        }
+
         var isAdminOrLecturer = this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(participant.Contest.Id)
+            .IsCurrentUserAdminOrLecturerInContest(contest.Id)
             .GetAwaiter()
             .GetResult();
 
@@ -70,7 +77,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, participant.UserId);
 
         var userHasUnprocessedSubmissionForContest =
-            this.submissionsData.HasUserNotProcessedSubmissionForContest(participant.ContestId, participant.UserId);
+            this.submissionsData.HasUserNotProcessedSubmissionForContest(contest.Id, participant.UserId);
 
         if (userHasUnprocessedSubmissionForProblem)
         {
@@ -79,7 +86,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 problemIdToString);
         }
 
-        if (!participant.Contest.AllowParallelSubmissionsInTasks && userHasUnprocessedSubmissionForContest)
+        if (!contest.AllowParallelSubmissionsInTasks && userHasUnprocessedSubmissionForContest)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
@@ -93,15 +100,12 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         if (submitSubmissionServiceModel.Official &&
-            participant.Contest.IsOnlineExam &&
+            contest.IsOnlineExam &&
             !isAdminOrLecturer &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemIdToString);
         }
-
-        var submissionType = problem.SubmissionTypesInProblems.FirstOrDefault(st =>
-                st.SubmissionTypeId == submitSubmissionServiceModel.SubmissionTypeId);
 
         if (submissionType == null)
         {
@@ -110,17 +114,17 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         var isFileUpload = submitSubmissionServiceModel.StringContent == null || submitSubmissionServiceModel.ByteContent != null;
 
-        if (isFileUpload && !submissionType.SubmissionType.AllowedFileExtensions!.Contains(submitSubmissionServiceModel.FileExtension!))
+        if (isFileUpload && !submissionType.AllowedFileExtensions!.Contains(submitSubmissionServiceModel.FileExtension!))
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.InvalidExtension, problemIdToString);
         }
 
-        if (isFileUpload && !submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (isFileUpload && !submissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed, problemIdToString);
         }
 
-        if (!isFileUpload && submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (!isFileUpload && submissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed, problemIdToString);
         }
@@ -142,7 +146,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemIdToString);
         }
 
-        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(participant.Id, participant.Contest.LimitBetweenSubmissions);
+        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(participant.Id, contest.LimitBetweenSubmissions);
 
         if (userSubmissionTimeLimit != 0)
         {

@@ -56,6 +56,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     public async Task<TServiceModel?> GetById<TServiceModel>(int id)
         => await this.GetByIdQuery(id)
+            .AsSplitQuery()
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
 
