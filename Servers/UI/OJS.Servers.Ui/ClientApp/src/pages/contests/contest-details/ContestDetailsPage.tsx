@@ -45,6 +45,8 @@ const ContestDetailsPage = () => {
         name,
         type,
         allowedSubmissionTypes,
+        isOnlineExam,
+        isActive,
         description,
         problems,
         competeParticipantsCount,
@@ -121,6 +123,12 @@ const ContestDetailsPage = () => {
             )}
             {!canBeCompeted && (competeParticipantsCount ?? 0) > 0 &&
                 (<AdministrationLink text="Transfer" to={`/${CONTESTS_PATH}/${id}?openTransfer=true`} />)}
+            {user.isAdmin && isActive && isOnlineExam && (
+            <AdministrationLink
+              to={`/${CONTESTS_PATH}/${contestId}?openChangeParticipantsTime=true#tab-participants`}
+              text="Change Time"
+            />
+            )}
         </div>
     );
 

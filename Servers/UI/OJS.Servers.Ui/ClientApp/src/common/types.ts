@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 import { ITestRun } from '../hooks/submissions/types';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
@@ -195,6 +197,7 @@ interface IContestDetailsResponseType {
     problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
+    isActive: boolean;
     canBeCompeted: boolean;
     canBePracticed: boolean;
     isAdminOrLecturerInContest: boolean;
@@ -732,6 +735,22 @@ interface IContestCategoryHierarchyEdit {
     parentId?: number;
 }
 
+interface IChangeParticipationTime {
+    contestId: number;
+    contestName: string;
+    timeInMinutes: number;
+}
+
+interface IChangeParticipationTimeForMultipleParticipants extends IChangeParticipationTime{
+    changeParticipationTimeRangeStart: Dayjs | null;
+    changeParticipationTimeRangeEnd: Dayjs | null;
+}
+
+interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipationTime {
+    userId: string;
+    username: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -806,4 +825,6 @@ export type {
     IMappingEntityId,
     AdjacencyList,
     IContestCategoryHierarchyEdit,
+    IChangeParticipationTimeForMultipleParticipants,
+    IChangeParticipationTimeForSingleParticipant,
 };

@@ -18,6 +18,8 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public bool IsVisible { get; set; }
 
+    public bool IsActive { get; set; }
+
     public DateTime? VisibleFrom { get; set; }
 
     public bool IsDeleted { get; set; }
@@ -80,5 +82,6 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
             .ForMember(d => d.CompeteParticipantsCount, opt => opt.Ignore())
             .ForMember(d => d.PracticeParticipantsCount, opt => opt.Ignore())
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
-            .ForMember(d => d.CanBePracticed, opt => opt.Ignore());
+            .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
+            .ForMember(d => d.IsActive, opt => opt.Ignore());
 }
