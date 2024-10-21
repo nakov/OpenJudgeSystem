@@ -74,8 +74,9 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
                 opt => opt.Ignore())
             .AfterMap((src, dest) =>
             {
-                dest.MaxTimeUsed = GetMaxMemoryAndTimeUsed(src.TestRunsCache).MaxTimeUsed;
-                dest.MaxMemoryUsed = GetMaxMemoryAndTimeUsed(src.TestRunsCache).MaxMemoryUsed;
+                var timeAndMemory = GetMaxMemoryAndTimeUsed(src.TestRunsCache);
+                dest.MaxTimeUsed = timeAndMemory.MaxTimeUsed;
+                dest.MaxMemoryUsed = timeAndMemory.MaxMemoryUsed;
             });
 
     private static (long? MaxMemoryUsed, int? MaxTimeUsed) GetMaxMemoryAndTimeUsed(string? testRunsCache)
