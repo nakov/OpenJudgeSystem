@@ -63,13 +63,20 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
                 x => x.IsOfficial,
                 opt => opt.MapFrom(
                     y => y.Participant!.IsOfficial))
-            .ForMember(x => x.MaxMemoryUsed, opt => opt.MapFrom(
-                s => GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxMemoryUsed))
-            .ForMember(x => x.MaxTimeUsed, opt => opt.MapFrom(
-                s => GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxTimeUsed))
             .ForMember(
                 x => x.PageNumber,
-                opt => opt.Ignore());
+                opt => opt.Ignore())
+            .ForMember(
+                x => x.MaxTimeUsed,
+                opt => opt.Ignore())
+            .ForMember(
+                x => x.MaxMemoryUsed,
+                opt => opt.Ignore())
+            .AfterMap((src, dest) =>
+            {
+                dest.MaxTimeUsed = GetMaxMemoryAndTimeUsed(src.TestRunsCache).MaxTimeUsed;
+                dest.MaxMemoryUsed = GetMaxMemoryAndTimeUsed(src.TestRunsCache).MaxMemoryUsed;
+            });
 
     private static (long? MaxMemoryUsed, int? MaxTimeUsed) GetMaxMemoryAndTimeUsed(string? testRunsCache)
     {
