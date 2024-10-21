@@ -297,7 +297,6 @@ const ContestSolutionSubmitPage = () => {
                 return;
             }
 
-            console.log(data.contest);
             dispatch(setContestDetailsIdAndCategoryId({
                 id: data!.contest!.id,
                 name: data.contest.name,

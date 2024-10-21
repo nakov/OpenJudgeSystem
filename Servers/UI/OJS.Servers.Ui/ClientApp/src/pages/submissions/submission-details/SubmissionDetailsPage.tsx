@@ -63,7 +63,6 @@ const SubmissionDetailsPage = () => {
             return;
         }
 
-        console.log(data);
         if (!contestDetails || contestDetails?.id !== data?.contestId) {
             dispatch(setContestDetailsIdAndCategoryId({
                 id: data.contestId,
