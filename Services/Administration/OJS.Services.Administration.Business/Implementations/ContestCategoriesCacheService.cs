@@ -8,7 +8,6 @@ using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Contests;
 
@@ -26,10 +25,9 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
     }
 
     public async Task ClearMainContestCategoriesCache()
-    {
-        await this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
-        await this.cache.Remove(CacheConstants.ContestCategoriesTree);
-    }
+        => await this.RemoveCaches([
+            CacheConstants.MainContestCategoriesDropDown,
+            CacheConstants.ContestCategoriesTree ]);
 
     public async Task ClearContestCategoryParentsAndChildren(int categoryId)
     {
@@ -43,7 +41,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         }
 
         var allCategoryIds = new HashSet<int>();
-        var currentCategory = contestCategory;
 
         // Retrieve the IDs of all children
         await this.BreadthFirstSearch(
@@ -51,16 +48,16 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             childCategory => allCategoryIds.Add(childCategory.Id));
 
         // Traverse upwards and retrieve the IDs of all parents
-        while (currentCategory is { ParentId: not null })
+        while (contestCategory is { ParentId: not null })
         {
-            allCategoryIds.Add(currentCategory.ParentId.Value);
-            currentCategory = await this.contestCategoriesData
-                .GetByIdQuery(currentCategory.ParentId.Value)
+            allCategoryIds.Add(contestCategory.ParentId.Value);
+            contestCategory = await this.contestCategoriesData
+                .GetByIdQuery(contestCategory.ParentId.Value)
                 .FirstOrDefaultAsync();
         }
 
         // Remove cache for all collected category IDs
-        await allCategoryIds.ToList().ForEachAsync(this.RemoveCacheFromCategory);
+        await allCategoryIds.ForEachAsync(this.RemoveCacheFromCategory);
     }
 
     public async Task ClearIsCategoryChildOfInvisibleParent(int categoryId)
@@ -117,7 +114,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         }
     }
 
-
     private async Task RemoveCacheFromCategory(int contestCategoryId)
     {
         var categoryNameCacheId = string.Format(
@@ -137,9 +133,14 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             CacheConstants.IsCategoryChildOfInvisibleParentFormat,
             contestCategoryId);
 
-        await this.cache.Remove(categoryNameCacheId);
-        await this.cache.Remove(subCategoriesCacheId);
-        await this.cache.Remove(parentCategoriesCacheId);
-        await this.cache.Remove(isCategoryChildOfInvisibleParentCacheId);
+        await this.RemoveCaches([
+            categoryNameCacheId,
+            subCategoriesCacheId,
+            parentCategoriesCacheId,
+            isCategoryChildOfInvisibleParentCacheId
+        ]);
     }
+
+    private async Task RemoveCaches(IEnumerable<string> keys)
+        => await keys.ForEachAsync(this.cache.Remove);
 }
