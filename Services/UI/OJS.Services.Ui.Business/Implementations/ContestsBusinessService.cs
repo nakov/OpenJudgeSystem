@@ -170,8 +170,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException($"Contest with Id:{id} not found.");
             }
 
-            // contest.Description = null;
-
             RemoveCircularReferences(contest);
 
             return contest.Map<ContestLegacyExportServiceModel>();
@@ -202,7 +200,6 @@ namespace OJS.Services.Ui.Business.Implementations
                     foreach (var resource in problem.Resources)
                     {
                         resource.Problem = null;
-                        // resource.File = null;
                     }
 
                     foreach (var submissionTypeInProblem in problem.SubmissionTypesInProblems)
