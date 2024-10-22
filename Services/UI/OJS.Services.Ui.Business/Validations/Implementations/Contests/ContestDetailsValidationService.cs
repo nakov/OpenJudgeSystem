@@ -1,23 +1,25 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
+using System.Threading.Tasks;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
+using OJS.Services.Ui.Business.Cache;
 
 public class ContestDetailsValidationService : IContestDetailsValidationService
 {
-    private readonly IContestCategoriesBusinessService categoriesService;
+    private readonly IContestCategoriesCacheService categoriesCacheService;
     private readonly IDatesService dates;
 
     public ContestDetailsValidationService(
-        IContestCategoriesBusinessService categoriesService,
-        IDatesService dates)
+        IDatesService dates,
+        IContestCategoriesCacheService categoriesCacheService)
     {
-        this.categoriesService = categoriesService;
         this.dates = dates;
+        this.categoriesCacheService = categoriesCacheService;
     }
 
-    public ValidationResult GetValidationResult((ContestDetailsServiceModel?, bool) item)
+    public async Task<ValidationResult> GetValidationResult((ContestDetailsServiceModel?, bool) item)
     {
         var (contest, isUserAdminOrLecturerInContest) = item;
 
@@ -27,7 +29,7 @@ public class ContestDetailsValidationService : IContestDetailsValidationService
             contest.IsDeleted ||
             ((contest.Category == null || !contest.Category!.IsVisible || contest.Category!.IsDeleted ||
               !contestIsVisible ||
-              this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) && !isUserAdminOrLecturerInContest))
+              await this.categoriesCacheService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) && !isUserAdminOrLecturerInContest))
         {
             return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);
         }

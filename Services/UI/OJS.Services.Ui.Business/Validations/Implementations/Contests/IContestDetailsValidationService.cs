@@ -5,6 +5,6 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Common.Validation;
 
-public interface IContestDetailsValidationService : IValidationService<(ContestDetailsServiceModel?, bool)>
+public interface IContestDetailsValidationService : IValidationServiceAsync<(ContestDetailsServiceModel?, bool)>
 {
 }

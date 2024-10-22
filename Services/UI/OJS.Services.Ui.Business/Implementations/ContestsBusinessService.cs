@@ -79,7 +79,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var contestDetailsServiceModel = await this.contestsCacheService.GetContestDetailsServiceModel(id);
             var isLecturerInContestOrAdmin = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contestDetailsServiceModel?.Id);
 
-            var validationResult = this.contestDetailsValidationService.GetValidationResult((
+            var validationResult = await this.contestDetailsValidationService.GetValidationResult((
                 contestDetailsServiceModel,
                 isLecturerInContestOrAdmin));
 
@@ -155,7 +155,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest,
                 id,
                 user,
@@ -198,7 +198,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest,
                 id,
                 user,
@@ -302,7 +302,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var contest =
                 await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId);
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<Contest>(),
                 model.ContestId,
                 user,

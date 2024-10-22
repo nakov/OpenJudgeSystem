@@ -21,4 +21,8 @@ public interface IContestCategoriesCacheService : IService
 
     Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(
         int? cacheSeconds = CacheConstants.OneHourInSeconds);
+
+    Task<bool> IsCategoryChildOfInvisibleParentRecursive(
+        int? categoryId,
+        int? cacheSeconds = CacheConstants.OneDayInSeconds);
 }
