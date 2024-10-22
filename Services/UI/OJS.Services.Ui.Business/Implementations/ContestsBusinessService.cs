@@ -351,10 +351,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             await participant.Contest.Problems.ForEachAsync(problem =>
             {
-                problem.Points = maxParticipationScores
-                    .Where(ps => ps.ProblemId == problem.Id)
-                    .Select(x => x.Points)
-                    .FirstOrDefault();
+                problem.Points = maxParticipationScores.GetValueOrDefault(problem.Id);
             });
 
             var participantsCount =
