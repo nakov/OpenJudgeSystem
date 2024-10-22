@@ -233,7 +233,7 @@ const ContestSolutionSubmitPage = () => {
                 setRemainingTime(newRemainingTime);
                 setIsSubmitButtonDisabled(true);
             }
-        }, 1000);
+        });
 
         return () => {
             clearInterval(intervalId);
@@ -263,7 +263,7 @@ const ContestSolutionSubmitPage = () => {
                 setRemainingTimeForCompete(calculatedTimeFormatted(moment.duration(0, 'milliseconds')));
                 clearInterval(intervalId);
             }
-        }, 1000);
+        });
 
         return () => {
             clearInterval(intervalId);
@@ -296,7 +296,12 @@ const ContestSolutionSubmitPage = () => {
             if (!data?.contest) {
                 return;
             }
-            dispatch(setContestDetailsIdAndCategoryId({ id: data!.contest!.id, categoryId: data!.contest!.categoryId }));
+
+            dispatch(setContestDetailsIdAndCategoryId({
+                id: data!.contest!.id,
+                name: data.contest.name,
+                categoryId: data!.contest!.categoryId,
+            }));
         }
     }, [ contestDetails, contestId, data, dispatch ]);
 
