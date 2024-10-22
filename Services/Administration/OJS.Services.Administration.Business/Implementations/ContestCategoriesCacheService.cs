@@ -78,25 +78,45 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             childCategory => this.cache.Remove(string.Format(CultureInfo.InvariantCulture, CacheConstants.IsCategoryChildOfInvisibleParentFormat, childCategory.Id)));
     }
 
+    /// <summary>
+    /// Performs a breadth-first traversal of contest categories starting from the specified parent category.
+    /// Executes a provided action on each visited category.
+    /// </summary>
+    /// <param name="parent">The root category from which the traversal begins.</param>
+    /// <param name="action">The action to execute on each visited category ( including the parent category ).</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <remarks>
+    /// <para>Warning: The contest category's children are loaded inside
+    /// the method, do not <c>.Include(cc =&gt; cc.Children)</c> for the parent category.</para>
+    /// </remarks>
     private async Task BreadthFirstSearch(ContestCategory parent, Action<ContestCategory> action)
     {
+        // Initialize a queue to manage the order of category traversal
         var queue = new Queue<ContestCategory>();
+
+        // Enqueue the root category to start the traversal
         queue.Enqueue(parent);
 
+        // Continue processing until there are no more categories in the queue
         while (queue.Count > 0)
         {
-            var contestCategory = queue.Dequeue();
+            // Dequeue the next category to visit
+            var currentCategory = queue.Dequeue();
 
-            await this.contestCategoriesData.LoadChildrenRecursively(contestCategory);
+            // Asynchronously load all child categories of the current category
+            await this.contestCategoriesData.LoadChildrenRecursively(currentCategory);
 
-            action(contestCategory);
+            // Execute the specified action on the current category
+            action(currentCategory);
 
-            foreach (var child in contestCategory.Children)
+            // Enqueue all immediate child categories to be visited next
+            foreach (var child in currentCategory.Children)
             {
                 queue.Enqueue(child);
             }
         }
     }
+
 
     private async Task RemoveCacheFromCategory(int contestCategoryId)
     {
