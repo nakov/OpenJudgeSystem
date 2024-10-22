@@ -17,19 +17,22 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
 {
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
     {
-        var allCategories =
-            await contestCategoriesData.GetAllVisible<ContestCategoryTreeViewModel>()
-                .OrderByAsync(x => x.OrderBy)
-                .ToListAsync();
+        var allCategories = await contestCategoriesData
+            .GetAllVisible<ContestCategoryTreeViewModel>()
+            .OrderByAsync(x => x.OrderBy)
+            .ToListAsync();
 
         var categoriesWithChildren = FillChildren(allCategories);
 
-        var mainCategories = categoriesWithChildren
+        var mainCategories = await categoriesWithChildren
             .Where(c => !c.ParentId.HasValue)
             .OrderBy(c => c.OrderBy)
-            .ToList();
+            .ToListAsync();
 
-        await mainCategories.ForEachAsync(this.FillAllowedStrategyTypes);
+        foreach (var category in mainCategories)
+        {
+            await this.FillAllowedStrategyTypes(category);
+        }
 
         return mainCategories;
     }
@@ -148,7 +151,10 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
 
     private async Task FillAllowedStrategyTypes(ContestCategoryTreeViewModel category)
     {
-        await category.Children.ForEachAsync(this.FillAllowedStrategyTypes);
+        foreach (var child in category.Children)
+        {
+            await this.FillAllowedStrategyTypes(child);
+        }
 
         category.AllowedStrategyTypes = await contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);
 
