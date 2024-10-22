@@ -83,20 +83,22 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
             return null;
         }
 
-        category.IsVisible = category.IsVisible && !this.IsCategoryChildOfInvisibleParentRecursive(categoryId);
+        category.IsVisible = category.IsVisible && !await this.IsCategoryChildOfInvisibleParentRecursive(categoryId);
 
         return category;
     }
 
-    private bool IsCategoryChildOfInvisibleParentRecursive(int? categoryId)
+    private async Task<bool> IsCategoryChildOfInvisibleParentRecursive(int? categoryId)
     {
         if (categoryId == null)
         {
             return false;
         }
 
-        var categoryWithParent = contestCategoriesData
-            .GetByIdQuery(categoryId.Value).Include(c => c.Parent).FirstOrDefault();
+        var categoryWithParent = await contestCategoriesData
+            .GetByIdQuery(categoryId.Value)
+            .Include(c => c.Parent)
+            .FirstOrDefaultAsync();
 
         if (categoryWithParent?.Parent != null)
         {
@@ -105,7 +107,7 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
                 return true;
             }
 
-            return this.IsCategoryChildOfInvisibleParentRecursive(categoryWithParent.Parent.Id);
+            return await this.IsCategoryChildOfInvisibleParentRecursive(categoryWithParent.Parent.Id);
         }
 
         return false;
