@@ -5,21 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Data;
 using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Models.Contests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ContestCategoryListViewModel = OJS.Services.Common.Models.Cache.ContestCategoryListViewModel;
 
-public class ContestCategoriesBusinessService : IContestCategoriesBusinessService
+public class ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData)
+    : IContestCategoriesBusinessService
 {
-    private readonly IContestCategoriesDataService contestCategoriesData;
-
-    public ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData)
-        => this.contestCategoriesData = contestCategoriesData;
-
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
     {
         var allCategories =
-            await this.contestCategoriesData.GetAllVisible<ContestCategoryTreeViewModel>()
+            await contestCategoriesData.GetAllVisible<ContestCategoryTreeViewModel>()
                 .OrderByAsync(x => x.OrderBy)
                 .ToListAsync();
 
@@ -36,13 +34,13 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     }
 
     public async Task<IEnumerable<ContestCategoryListViewModel>> GetAllMain()
-        => await this.contestCategoriesData
+        => await contestCategoriesData
             .GetAllVisibleMainOrdered<ContestCategoryListViewModel>()
             .ToListAsync();
 
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllSubcategories(int categoryId)
     {
-        var allCategories = await this.contestCategoriesData
+        var allCategories = await contestCategoriesData
             .GetAllVisible<ContestCategoryTreeViewModel>()
             .ToListAsync();
 
@@ -62,7 +60,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     public async Task<IEnumerable<ContestCategoryListViewModel>> GetAllParentCategories(int categoryId)
     {
         var categories = new List<ContestCategoryListViewModel>();
-        var category = await this.contestCategoriesData.OneById(categoryId);
+        var category = await contestCategoriesData.OneById(categoryId);
 
         while (category != null)
         {
@@ -74,6 +72,43 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         categories.Reverse();
 
         return categories;
+    }
+
+    public async Task<ContestCategoryServiceModel?> GetById(int categoryId)
+    {
+        var category = await contestCategoriesData.OneByIdTo<ContestCategoryServiceModel>(categoryId);
+
+        if (category == null)
+        {
+            return null;
+        }
+
+        category.IsVisible = category.IsVisible && !this.IsCategoryChildOfInvisibleParentRecursive(categoryId);
+
+        return category;
+    }
+
+    private bool IsCategoryChildOfInvisibleParentRecursive(int? categoryId)
+    {
+        if (categoryId == null)
+        {
+            return false;
+        }
+
+        var categoryWithParent = contestCategoriesData
+            .GetByIdQuery(categoryId.Value).Include(c => c.Parent).FirstOrDefault();
+
+        if (categoryWithParent?.Parent != null)
+        {
+            if (categoryWithParent.Parent.IsVisible == false)
+            {
+                return true;
+            }
+
+            return this.IsCategoryChildOfInvisibleParentRecursive(categoryWithParent.Parent.Id);
+        }
+
+        return false;
     }
 
     private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
@@ -112,7 +147,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     {
         category.Children.ForEach(this.FillAllowedStrategyTypes);
 
-        category.AllowedStrategyTypes = this.contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);
+        category.AllowedStrategyTypes = contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);
 
         category.AllowedStrategyTypes = category.AllowedStrategyTypes.Concat(
                 category.Children.SelectMany(c => c.AllowedStrategyTypes))
