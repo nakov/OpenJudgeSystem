@@ -9,6 +9,7 @@ using OJS.Services.Ui.Models.Contests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 using ContestCategoryListViewModel = OJS.Services.Common.Models.Cache.ContestCategoryListViewModel;
 
 public class ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData)
@@ -28,7 +29,7 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
             .OrderBy(c => c.OrderBy)
             .ToList();
 
-        mainCategories.ForEach(this.FillAllowedStrategyTypes);
+        await mainCategories.ForEachAsync(this.FillAllowedStrategyTypes);
 
         return mainCategories;
     }
@@ -145,15 +146,15 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
             });
     }
 
-    private void FillAllowedStrategyTypes(ContestCategoryTreeViewModel category)
+    private async Task FillAllowedStrategyTypes(ContestCategoryTreeViewModel category)
     {
-        category.Children.ForEach(this.FillAllowedStrategyTypes);
+        await category.Children.ForEachAsync(this.FillAllowedStrategyTypes);
 
-        category.AllowedStrategyTypes = contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);
+        category.AllowedStrategyTypes = await contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);
 
-        category.AllowedStrategyTypes = category.AllowedStrategyTypes.Concat(
+        category.AllowedStrategyTypes = await category.AllowedStrategyTypes.Concat(
                 category.Children.SelectMany(c => c.AllowedStrategyTypes))
                     .DistinctBy(x => x.Id)
-                    .ToList();
+                    .ToListAsync();
     }
 }
