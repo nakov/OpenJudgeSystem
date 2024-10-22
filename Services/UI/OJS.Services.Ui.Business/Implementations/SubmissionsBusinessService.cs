@@ -151,13 +151,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         var currentUser = this.userProviderService.GetCurrentUser();
 
-        //AsNoTracking() Method is added to prevent ''tracking query'' error.
-        //Error is thrown when we map from UserSettings (owned entity) without including the
-        //UserProfile (owner entity) in the query.
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
             .AsSplitQuery()
-            .AsNoTracking()
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
@@ -165,6 +161,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
+
+        submissionDetailsServiceModel.User.MapFrom(currentUser);
 
         submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel
             .TestRuns
@@ -192,17 +190,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             {
                 var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
 
-                var displayShowInput = currentTestRunTest != null
-                                       && (!currentTestRunTest.HideInput
-                                           && ((currentTestRunTest.IsTrialTest
-                                                || currentTestRunTest.IsOpenTest)
-                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+                var displayShowInput = currentTestRunTest is { HideInput: false }
+                                       && (currentTestRunTest.IsTrialTest
+                                           || currentTestRunTest.IsOpenTest
+                                           || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
                 var showExecutionComment = currentTestRunTest != null
-                                           && (!string.IsNullOrEmpty(tr.ExecutionComment)
+                                           && !string.IsNullOrEmpty(tr.ExecutionComment)
                                                && (currentTestRunTest.IsOpenTest
                                                    || currentTestRunTest.IsTrialTest
-                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
                 if (!showExecutionComment)
                 {

@@ -19,10 +19,9 @@
 
         public string? Content { get; set; }
 
-        public IEnumerable<TestRunDetailsServiceModel> TestRuns { get; set; } =
-            Enumerable.Empty<TestRunDetailsServiceModel>();
+        public IEnumerable<TestRunDetailsServiceModel> TestRuns { get; set; } = [];
 
-        public UserProfileServiceModel User { get; set; } = null!;
+        public UserServiceModel User { get; set; } = null!;
 
         public double MaxUsedTime { get; set; }
 
@@ -68,18 +67,16 @@
 
         public int ContestCategoryId { get; set; }
 
-        public IEnumerable<Test> Tests { get; set; } =
-            Enumerable.Empty<Test>();
+        public IEnumerable<Test> Tests { get; set; } = [];
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
-                .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant.User))
                 .ForMember(d => d.MaxUsedMemory, opt => opt.MapFrom(source =>
-                    source.TestRuns.Any()
+                    source.TestRuns.Count != 0
                         ? source.TestRuns.Max(tr => tr.MemoryUsed)
                         : 0.0))
                 .ForMember(d => d.MaxUsedTime, opt => opt.MapFrom(source =>
-                    source.TestRuns.Any()
+                    source.TestRuns.Count != 0
                         ? source.TestRuns.Max(tr => tr.TimeUsed)
                         : 0.0))
                 .ForMember(d => d.Content, opt => opt.MapFrom(s =>
@@ -96,6 +93,7 @@
                 .ForMember(d => d.MaxPoints, opt => opt.MapFrom(s => s.Problem.MaximumPoints))
                 .ForMember(d => d.TotalTests, opt => opt.Ignore())
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
-                .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore());
+                .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore())
+                .ForMember(s => s.User, opt => opt.Ignore());
     }
 }
