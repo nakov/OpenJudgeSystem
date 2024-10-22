@@ -350,13 +350,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
 
-            var participant = await this.participantsData
-                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
-                    model.ContestId,
-                    user.Id,
-                    model.IsOfficial);
-
-            if (participant == null)
+            if (!await this.participantsData.ExistsByContestByUserAndIsOfficial(model.ContestId, user.Id, model.IsOfficial))
             {
                 // Participant must be registered in previous steps
                 return new ContestParticipationServiceModel
@@ -365,8 +359,14 @@ namespace OJS.Services.Ui.Business.Implementations
                 };
             }
 
+            var participant = await this.participantsData
+                .GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(
+                    model.ContestId,
+                    user.Id,
+                    model.IsOfficial);
+
             var contest =
-                await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, model);
+                await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<Contest>(),
@@ -396,10 +396,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Max();
             participationModel.LastSubmissionTime = lastSubmissionTime;
 
-            participationModel.Contest!.AllowedSubmissionTypes = participationModel
-                .Contest
-                .AllowedSubmissionTypes
-                .DistinctBy(st => st.Id);
+            participationModel.Contest!.AllowedSubmissionTypes = participationModel.Contest.Problems
+                .SelectMany(p => p.AllowedSubmissionTypes)
+                .DistinctBy(st => st.Id)
+                .ToList();
 
             participationModel.ParticipantId = participant.Id;
             participationModel.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;
@@ -415,13 +415,15 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (!userIsAdminOrLecturerInContest && isOfficialOnlineContest)
             {
-                participationModel.Contest.Problems = participant
+                var participantProblems = participant
                     .ProblemsForParticipants
-                    .Select(x => x.Problem)
-                    .MapCollection<ContestProblemServiceModel>()
+                    .Select(x => x.ProblemId)
+                    .ToList();
+
+                participationModel.Contest.Problems = participationModel.Contest.Problems
+                    .Where(x => participantProblems.Contains(x.Id))
                     .OrderBy(p => p.ProblemGroupOrderBy)
                     .ThenBy(p => p.OrderBy)
-                    .ThenBy(p => p.Name)
                     .ToList();
             }
 
