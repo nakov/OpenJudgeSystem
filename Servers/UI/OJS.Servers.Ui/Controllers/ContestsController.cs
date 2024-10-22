@@ -35,12 +35,12 @@ public class ContestsController : BaseApiController
             .ToOkResult();
 
     // /// <summary>
-    // /// Gets details of the current contest.
+    // /// Gets details of a contest by id.
     // /// </summary>
     // /// <param name="id">ID of the contest.</param>
-    // /// <returns>Model containing information about the name, description and problems of the contest.</returns>
+    // /// <returns>Model containing all information about the name, description and problems of the contest.</returns>
     [HttpPost("{id:int}")]
-    [ProducesResponseType(typeof(ContestDetailsServiceModel), Status200OK)]
+    [ProducesResponseType(typeof(ContestLegacyExportServiceModel), Status200OK)]
     public async Task<IActionResult> Export(int id)
         => await this.contestsBusinessService
             .Export(id)
