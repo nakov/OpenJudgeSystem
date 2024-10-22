@@ -35,7 +35,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
     {
         var contestCategory = await this.contestCategoriesData
             .GetByIdQuery(categoryId)
-            .Include(cc => cc.Children)
             .FirstOrDefaultAsync();
 
         if (contestCategory == null)
@@ -43,21 +42,22 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             return;
         }
 
-        // Collect all direct child category IDs
-        var allCategoryIds = new HashSet<int>(contestCategory.Children.Select(cc => cc.Id));
+        var allCategoryIds = new HashSet<int>();
         var currentCategory = contestCategory;
 
-        // Traverse upwards and collect parent IDs
-        while (currentCategory != null && currentCategory.ParentId.HasValue)
+        // Retrieve the IDs of all children
+        await this.BreadthFirstSearch(
+            contestCategory,
+            childCategory => allCategoryIds.Add(childCategory.Id));
+
+        // Traverse upwards and retrieve the IDs of all parents
+        while (currentCategory is { ParentId: not null })
         {
             allCategoryIds.Add(currentCategory.ParentId.Value);
             currentCategory = await this.contestCategoriesData
                 .GetByIdQuery(currentCategory.ParentId.Value)
                 .FirstOrDefaultAsync();
         }
-
-        // Add the initial categoryId
-        allCategoryIds.Add(categoryId);
 
         // Remove cache for all collected category IDs
         await allCategoryIds.ToList().ForEachAsync(this.RemoveCacheFromCategory);
@@ -80,7 +80,7 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
 
     private async Task BreadthFirstSearch(ContestCategory parent, Action<ContestCategory> action)
     {
-        Queue<ContestCategory> queue = [];
+        var queue = new Queue<ContestCategory>();
         queue.Enqueue(parent);
 
         while (queue.Count > 0)
