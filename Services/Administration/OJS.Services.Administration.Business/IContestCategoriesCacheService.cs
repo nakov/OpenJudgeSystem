@@ -8,6 +8,4 @@ public interface IContestCategoriesCacheService : IService
     Task ClearMainContestCategoriesCache();
 
     Task ClearContestCategoryParentsAndChildren(int categoryId);
-
-    Task ClearIsCategoryChildOfInvisibleParent(int categoryId);
 }

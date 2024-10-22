@@ -60,21 +60,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         await allCategoryIds.ForEachAsync(this.RemoveCacheFromCategory);
     }
 
-    public async Task ClearIsCategoryChildOfInvisibleParent(int categoryId)
-    {
-        var contestCategory = await this.contestCategoriesData.GetByIdQuery(categoryId)
-            .FirstOrDefaultAsync();
-
-        if (contestCategory == null)
-        {
-            return;
-        }
-
-        await this.BreadthFirstSearch(
-            contestCategory,
-            childCategory => this.cache.Remove(string.Format(CultureInfo.InvariantCulture, CacheConstants.IsCategoryChildOfInvisibleParentFormat, childCategory.Id)));
-    }
-
     /// <summary>
     /// Performs a breadth-first traversal of contest categories starting from the specified parent category.
     /// Executes a provided action on each visited category.
@@ -128,16 +113,10 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             CacheConstants.ContestParentCategoriesFormat,
             contestCategoryId);
 
-        var isCategoryChildOfInvisibleParentCacheId = string.Format(
-            CultureInfo.InvariantCulture,
-            CacheConstants.IsCategoryChildOfInvisibleParentFormat,
-            contestCategoryId);
-
         await this.RemoveCaches([
             categoryNameCacheId,
             subCategoriesCacheId,
             parentCategoriesCacheId,
-            isCategoryChildOfInvisibleParentCacheId
         ]);
     }
 

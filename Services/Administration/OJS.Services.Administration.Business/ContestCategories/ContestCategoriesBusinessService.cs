@@ -128,11 +128,6 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
 
         await this.contestCategoriesCache.ClearContestCategoryParentsAndChildren(contestCategory.Id);
 
-        if (model.IsVisible != contestCategory.IsVisible)
-        {
-            await this.contestCategoriesCache.ClearIsCategoryChildOfInvisibleParent(contestCategory.Id);
-        }
-
         this.categoriesDataService.Update(contestCategory!);
         await this.categoriesDataService.SaveChanges();
 
