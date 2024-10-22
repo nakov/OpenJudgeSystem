@@ -351,7 +351,7 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 var participantProblems = participant
                     .ProblemsForParticipants
-                    .Select(x => x.Problem.Id)
+                    .Select(x => x.ProblemId)
                     .ToList();
 
                 participationModel.Contest.Problems = participationModel.Contest.Problems
