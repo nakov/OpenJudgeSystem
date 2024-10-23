@@ -84,16 +84,21 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
                 }),
             } as IPageBreadcrumbsItem)));
 
-        const isResultsPage = () => location.pathname.toLowerCase().includes(`/${CONTESTS_PATH.toLowerCase()}`) &&
-            location.pathname.toLowerCase().includes('/results');
+        const contestsListingByCategoryWithOptionalSlugRegex = `^\\/${CONTESTS_PATH.toLowerCase()}\\/by-category\\/(?:[^\\/]+\\/)?\\d+$`;
+        const contestListingByCategoryMatch = location.pathname.match(contestsListingByCategoryWithOptionalSlugRegex);
 
-        if (contestDetails && !isResultsPage()) {
+        const contestResultsRegex = `^\\/${CONTESTS_PATH.toLowerCase()}\\/(?:[^\\/]+\\/)?\\d+\\/[^\\/]+\\/results\\/[^\\/]+$`;
+        const contestResultsMatch = location.pathname.match(contestResultsRegex);
+
+        const isPageWithSimpleContestNameInBreadcrumbs = !contestListingByCategoryMatch && !contestResultsMatch;
+
+        if (contestDetails && isPageWithSimpleContestNameInBreadcrumbs) {
             // For pages that populate contestDetails (submit/contest details/submission details),
             // the contest name is appended as last element and its not an active link
             items = items.concat({ text: contestDetails.name } as IPageBreadcrumbsItem);
         }
 
-        if (contestDetails && isResultsPage()) {
+        if (contestDetails && contestResultsMatch) {
             const isCompete = location.pathname
                 .toLowerCase()
                 .includes(`/${ContestParticipationType.Compete.toLowerCase()}`);
