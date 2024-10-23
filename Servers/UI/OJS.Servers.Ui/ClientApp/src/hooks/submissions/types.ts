@@ -1,4 +1,4 @@
-import { ISubmissionTypeType, IUserProfileType } from '../../common/types';
+import { ISubmissionTypeType } from '../../common/types';
 
 interface IProblemType {
     id: number;
