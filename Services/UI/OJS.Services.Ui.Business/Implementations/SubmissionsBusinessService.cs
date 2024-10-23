@@ -144,6 +144,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
         => await this.submissionsData
             .GetByIdQuery(submissionId)
+            .AsSplitQuery()
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
