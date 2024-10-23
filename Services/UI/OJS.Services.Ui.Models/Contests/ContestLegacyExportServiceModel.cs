@@ -16,7 +16,7 @@ public class ContestLegacyExportServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = String.Empty;
 
     public bool IsVisible { get; set; }
 
@@ -58,7 +58,7 @@ public class ContestLegacyExportServiceModel : IMapExplicitly
 
     public bool EnsureValidAuthorSubmisions { get; set; }
 
-    public List<LegacyProblemGroup> ProblemGroups { get; set; }
+    public IEnumerable<LegacyProblemGroup> ProblemGroups { get; set; } = [];
 
     public void RegisterMappings(IProfileExpression configuration)
     {
@@ -71,13 +71,19 @@ public class ContestLegacyExportServiceModel : IMapExplicitly
         configuration.CreateMap<Problem, LegacyProblem>()
             .ForMember(dest => dest.SubmissionTypes, opt => opt.MapFrom(src => src.SubmissionTypesInProblems.Select(stp => stp.SubmissionType)))
             .ForMember(dest => dest.DefaultSubmissionTypeId,
-                opt => opt.MapFrom(src => src.SubmissionTypesInProblems.FirstOrDefault().SubmissionTypeId))
+                opt => opt.MapFrom(src =>
+                    src.SubmissionTypesInProblems.Count > 0 && src.SubmissionTypesInProblems.FirstOrDefault() != null
+                        ? src.SubmissionTypesInProblems.FirstOrDefault()!.SubmissionTypeId
+                        : (int?)null))
             .ForMember(dest => dest.DefaultSubmissionType,
-                opt => opt.MapFrom(src => src.SubmissionTypesInProblems.FirstOrDefault().SubmissionType));
+                opt => opt.MapFrom(src =>
+                    src.SubmissionTypesInProblems.Count > 0 && src.SubmissionTypesInProblems.FirstOrDefault() != null
+                    ? src.SubmissionTypesInProblems.FirstOrDefault()!.SubmissionType
+                    : null));
 
         configuration.CreateMap<SubmissionType, LegacySubmissionType>()
-            .ForMember(dest => dest.AllowedFileExtensionsList,
-                opt => opt.Ignore())
+            .ForMember(dest => dest.AllowedFileExtensions,
+                opt => opt.MapFrom(src => src.AllowedFileExtensions))
             .ForMember(dest => dest.ProblemSubmissionTypeExecutionDetails,
                 opt => opt.MapFrom(src => src.SubmissionTypesInProblems));
 
@@ -96,14 +102,14 @@ public class LegacyProblemGroup : IMapFrom<ProblemGroup>
 
     public int? Type { get; set; }
 
-    public List<LegacyProblem> Problems { get; set; }
+    public IEnumerable<LegacyProblem> Problems { get; set; } = [];
 }
 
 public class LegacyProblem
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = String.Empty;
 
     public short MaximumPoints { get; set; }
 
@@ -123,24 +129,24 @@ public class LegacyProblem
 
     public double OrderBy { get; set; }
 
-    public LegacyChecker Checker { get; set; }
+    public LegacyChecker? Checker { get; set; }
 
-    public List<LegacyTest> Tests { get; set; }
+    public IEnumerable<LegacyTest> Tests { get; set; } = [];
 
-    public List<LegacySubmissionType> SubmissionTypes { get; set; }
+    public IEnumerable<LegacySubmissionType> SubmissionTypes { get; set; } = [];
 
-    public int DefaultSubmissionTypeId { get; set; }
+    public int? DefaultSubmissionTypeId { get; set; }
 
-    public LegacySubmissionType DefaultSubmissionType { get; set; }
+    public LegacySubmissionType? DefaultSubmissionType { get; set; }
 
-    public List<LegacyResource> Resources { get; set; }
+    public IEnumerable<LegacyResource> Resources { get; set; } = [];
 }
 
 public class LegacyChecker : IMapFrom<Checker>
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = String.Empty;
 
     public string? Description { get; set; }
 
@@ -155,9 +161,9 @@ public class LegacyTest : IMapFrom<Test>
 {
     public int Id { get; set; }
 
-    public byte[] InputData { get; set; }
+    public byte[] InputData { get; set; } = null!;
 
-    public byte[] OutputData { get; set; }
+    public byte[] OutputData { get; set; } = null!;
 
     public bool IsTrialTest { get; set; }
 
@@ -172,7 +178,7 @@ public class LegacyResource : IMapFrom<ProblemResource>
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = String.Empty;
 
     public int Type { get; set; }
 
@@ -191,17 +197,16 @@ public class LegacySubmissionType
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = String.Empty;
 
     public int ExecutionStrategyType { get; set; }
 
     public int CompilerType { get; set; }
 
-    public string FileNameExtension { get; set; }
+    public string AllowedFileExtensions { get; set; } = String.Empty;
 
-    public List<string> AllowedFileExtensionsList { get; set; }
-
-    public List<LegacyProblemSubmissionTypeExecutionDetail> ProblemSubmissionTypeExecutionDetails { get; set; }
+    public IEnumerable<LegacyProblemSubmissionTypeExecutionDetail> ProblemSubmissionTypeExecutionDetails { get; set; } =
+        [];
 }
 
 public class LegacyProblemSubmissionTypeExecutionDetail
