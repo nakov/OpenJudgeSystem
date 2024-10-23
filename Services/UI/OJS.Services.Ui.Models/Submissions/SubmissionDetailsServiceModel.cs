@@ -47,10 +47,6 @@
 
         public DateTime? ModifiedOn { get; set; }
 
-        public byte[]? ByteContent { get; set; }
-
-        public string? FileExtension { get; set; }
-
         public DateTime? StartedExecutionOn { get; set; }
 
         public DateTime? CompletedExecutionOn { get; set; }
@@ -67,7 +63,7 @@
 
         public int ContestCategoryId { get; set; }
 
-        public IEnumerable<Test> Tests { get; set; } = [];
+        public IEnumerable<TestDetailsServiceModel> Tests { get; set; } = [];
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
@@ -84,12 +80,11 @@
                         ? null
                         : s.ContentAsString))
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s => s.Participant.IsOfficial))
-                .ForMember(d => d.ByteContent, opt => opt.MapFrom(s => s.Content))
                 .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
                 .ForMember(d => d.Tests, opt => opt.MapFrom(s => s.Problem.Tests))
-                .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.ContestId))
-                .ForMember(d => d.ContestName, opt => opt.MapFrom(s => s.Problem.ProblemGroup.Contest.Name))
-                .ForMember(d => d.ContestCategoryId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.Contest.CategoryId))
+                .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.Participant.ContestId))
+                .ForMember(d => d.ContestName, opt => opt.MapFrom(s => s.Participant.Contest.Name))
+                .ForMember(d => d.ContestCategoryId, opt => opt.MapFrom(s => s.Participant.Contest.CategoryId))
                 .ForMember(d => d.MaxPoints, opt => opt.MapFrom(s => s.Problem.MaximumPoints))
                 .ForMember(d => d.TotalTests, opt => opt.Ignore())
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
