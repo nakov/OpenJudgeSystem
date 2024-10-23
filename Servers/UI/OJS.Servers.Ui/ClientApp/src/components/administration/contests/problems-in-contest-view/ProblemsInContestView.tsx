@@ -254,7 +254,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                             openRetestModal,
                             retakeData,
                         )
-}
+                      }
                       queryParams={queryParams}
                       setQueryParams={setQueryParams}
                       defaultSorter={defaultProblemsSorterToAdd}
