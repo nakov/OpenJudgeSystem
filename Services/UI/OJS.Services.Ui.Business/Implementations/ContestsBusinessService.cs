@@ -23,6 +23,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
+    using System.Diagnostics;
     using static OJS.Services.Common.Constants.PaginationConstants.Contests;
 
     public class ContestsBusinessService : IContestsBusinessService
@@ -149,6 +150,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var contest = await this.contestsData
                 .GetByIdQuery(id)
+                .AsSplitQuery()
                 .Where(c => !c.IsDeleted)
                 .Include(c => c.ProblemGroups)
                     .ThenInclude(pg => pg.Problems)
