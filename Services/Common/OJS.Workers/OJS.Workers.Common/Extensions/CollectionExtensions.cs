@@ -9,11 +9,4 @@ public static class CollectionExtensions
             destination.Add(obj);
         }
     }
-
-    public static TResult GetValueOrSelectDefault<TKey, TValue, TResult>(
-        this Dictionary<TKey, TValue> dictionary,
-        TKey key,
-        Func<TValue, TResult> selector,
-        TResult defaultValue) where TKey : notnull
-            => dictionary.TryGetValue(key, out var value) ? selector(value) : defaultValue;
 }

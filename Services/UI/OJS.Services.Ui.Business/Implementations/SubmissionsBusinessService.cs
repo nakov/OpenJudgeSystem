@@ -197,36 +197,27 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .TestRuns
             .Select(tr =>
             {
-                var test = tests.GetValueOrSelectDefault(
-                    tr.TestId,
-                    test => test,
-                    default);
+                var test = tests.GetValueOrDefault(tr.TestId);
 
                 tr.Input = test?.InputDataAsString ?? default;
                 tr.IsTrialTest = test?.IsTrialTest ?? default;
                 tr.OrderBy = test?.OrderBy ?? default;
 
-                return tr;
-            })
-            .OrderBy(tr => tr.IsTrialTest)
-            .ThenBy(tr => tr.OrderBy)];
+                if (userIsAdminOrLecturerInContest)
+                {
+                    return tr;
+                }
 
-        if (!userIsAdminOrLecturerInContest)
-        {
-            submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
-            {
-                var currentTestRunTest = tests.GetValueOrDefault(tr.TestId);
-
-                var displayShowInput = currentTestRunTest is { HideInput: false }
-                                       && (currentTestRunTest.IsTrialTest
-                                           || currentTestRunTest.IsOpenTest
+                var displayShowInput = test is { HideInput: false }
+                                       && (test.IsTrialTest
+                                           || test.IsOpenTest
                                            || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
-                var showExecutionComment = currentTestRunTest != null
+                var showExecutionComment = test != null
                                            && !string.IsNullOrEmpty(tr.ExecutionComment)
-                                               && (currentTestRunTest.IsOpenTest
-                                                   || currentTestRunTest.IsTrialTest
-                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+                                           && (test.IsOpenTest
+                                               || test.IsTrialTest
+                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
                 if (!showExecutionComment)
                 {
@@ -242,8 +233,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 }
 
                 return tr;
-            });
-        }
+            })
+            .OrderBy(tr => tr.IsTrialTest)
+            .ThenBy(tr => tr.OrderBy)];
 
         return submissionDetailsServiceModel!;
     }
