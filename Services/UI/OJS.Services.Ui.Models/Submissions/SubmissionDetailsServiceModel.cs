@@ -5,7 +5,6 @@
     using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using OJS.Data.Models.Tests;
     using OJS.Services.Ui.Models.Users;
     using OJS.Services.Infrastructure.Models.Mapping;
 
@@ -67,14 +66,10 @@
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
-                .ForMember(d => d.MaxUsedMemory, opt => opt.MapFrom(source =>
-                    source.TestRuns.Count != 0
-                        ? source.TestRuns.Max(tr => tr.MemoryUsed)
-                        : 0.0))
-                .ForMember(d => d.MaxUsedTime, opt => opt.MapFrom(source =>
-                    source.TestRuns.Count != 0
-                        ? source.TestRuns.Max(tr => tr.TimeUsed)
-                        : 0.0))
+                .ForMember(d => d.MaxUsedMemory, opt => opt.MapFrom(s =>
+                    GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxMemoryUsed))
+                .ForMember(d => d.MaxUsedTime, opt => opt.MapFrom(s =>
+                    GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxTimeUsed))
                 .ForMember(d => d.Content, opt => opt.MapFrom(s =>
                     s.IsBinaryFile
                         ? null
@@ -90,5 +85,35 @@
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
                 .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore())
                 .ForMember(s => s.User, opt => opt.Ignore());
+
+        private static (long? MaxMemoryUsed, int? MaxTimeUsed) GetMaxMemoryAndTimeUsed(string? testRunsCache)
+        {
+            if (string.IsNullOrWhiteSpace(testRunsCache))
+            {
+                return (null, null);
+            }
+
+            var cacheParts = testRunsCache.Split('|');
+            if (cacheParts.Length <= 1)
+            {
+                return (null, null);
+            }
+
+            var timeMemoryPart = cacheParts[1];
+            var timeMemoryValues = timeMemoryPart.Split(',');
+
+            if (timeMemoryValues.Length < 2)
+            {
+                return (null, null);
+            }
+
+            if (int.TryParse(timeMemoryValues[0], out var maxTimeUsed) &&
+                long.TryParse(timeMemoryValues[1], out var maxMemoryUsed))
+            {
+                return (maxMemoryUsed, maxTimeUsed);
+            }
+
+            return (null, null);
+        }
     }
 }
