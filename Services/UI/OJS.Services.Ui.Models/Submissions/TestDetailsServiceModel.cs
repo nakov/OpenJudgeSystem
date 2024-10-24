@@ -12,4 +12,8 @@ public class TestDetailsServiceModel : IMapFrom<Test>
     public bool IsOpenTest { get; set; }
 
     public bool HideInput { get; set; }
+
+    public string InputDataAsString { get; set; } = string.Empty;
+
+    public double OrderBy { get; set; }
 }

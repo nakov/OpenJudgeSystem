@@ -65,7 +65,8 @@
         public IEnumerable<TestDetailsServiceModel> Tests { get; set; } = [];
 
         public void RegisterMappings(IProfileExpression configuration)
-            => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
+            => configuration
+                .CreateMap<Submission, SubmissionDetailsServiceModel>()
                 .ForMember(d => d.MaxUsedMemory, opt => opt.MapFrom(s =>
                     GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxMemoryUsed))
                 .ForMember(d => d.MaxUsedTime, opt => opt.MapFrom(s =>

@@ -32,6 +32,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using FluentExtensions.Extensions;
+using OJS.Workers.Common.Extensions;
+using X.PagedList;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
@@ -165,10 +168,22 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         submissionDetailsServiceModel.User.MapFrom(currentUser);
 
+        var tests = submissionDetailsServiceModel
+            .Tests
+            .ToDictionary(
+                t => t.Id,
+                t => t);
+
         submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel
             .TestRuns
-            .OrderBy(tr => !tr.IsTrialTest)
-            .ThenBy(tr => tr.OrderBy);
+            .OrderBy(tr => tests.GetValueOrSelectDefault(
+                tr.TestId,
+                test => test.IsTrialTest,
+                default))
+            .ThenBy(tr => tests.GetValueOrSelectDefault(
+                tr.TestId,
+                test => test.OrderBy,
+                default));
 
         var userIsAdminOrLecturerInContest =
             await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
@@ -185,11 +200,32 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
+        var testRuns = await submissionDetailsServiceModel.TestRuns.ToListAsync();
+
+        await testRuns.ForEachAsync(
+            tr =>
+            {
+                tr.Input = tests.GetValueOrSelectDefault(
+                    tr.TestId,
+                    test => test.InputDataAsString,
+                    default);
+
+                tr.IsTrialTest = tests.GetValueOrSelectDefault(
+                    tr.TestId,
+                    test => test.IsTrialTest,
+                    default);
+
+                tr.OrderBy = tests.GetValueOrSelectDefault(
+                    tr.TestId,
+                    test => test.OrderBy,
+                    default);
+            });
+
         if (!userIsAdminOrLecturerInContest)
         {
-            submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
+            submissionDetailsServiceModel.TestRuns = testRuns.Select(tr =>
             {
-                var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
+                var currentTestRunTest = tests.GetValueOrDefault(tr.TestId);
 
                 var displayShowInput = currentTestRunTest is { HideInput: false }
                                        && (currentTestRunTest.IsTrialTest
