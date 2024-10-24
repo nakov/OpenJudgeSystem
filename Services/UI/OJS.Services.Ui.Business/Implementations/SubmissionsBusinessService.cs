@@ -168,23 +168,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         submissionDetailsServiceModel.User.MapFrom(currentUser);
 
-        var tests = submissionDetailsServiceModel
-            .Tests
-            .ToDictionary(
-                t => t.Id,
-                t => t);
-
-        submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel
-            .TestRuns
-            .OrderBy(tr => tests.GetValueOrSelectDefault(
-                tr.TestId,
-                test => test.IsTrialTest,
-                default))
-            .ThenBy(tr => tests.GetValueOrSelectDefault(
-                tr.TestId,
-                test => test.OrderBy,
-                default));
-
         var userIsAdminOrLecturerInContest =
             await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
 
@@ -200,10 +183,23 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var testRuns = await submissionDetailsServiceModel.TestRuns.ToListAsync();
+        var tests = submissionDetailsServiceModel
+            .Tests
+            .ToDictionary(
+                t => t.Id,
+                t => t);
 
-        await testRuns.ForEachAsync(
-            tr =>
+        submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel
+            .TestRuns
+            .OrderBy(tr => tests.GetValueOrSelectDefault(
+                tr.TestId,
+                test => test.IsTrialTest,
+                default))
+            .ThenBy(tr => tests.GetValueOrSelectDefault(
+                tr.TestId,
+                test => test.OrderBy,
+                default))
+            .Select(tr =>
             {
                 tr.Input = tests.GetValueOrSelectDefault(
                     tr.TestId,
@@ -219,11 +215,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     tr.TestId,
                     test => test.OrderBy,
                     default);
-            });
+
+                return tr;
+            })
+            .ToList();
 
         if (!userIsAdminOrLecturerInContest)
         {
-            submissionDetailsServiceModel.TestRuns = testRuns.Select(tr =>
+            submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
             {
                 var currentTestRunTest = tests.GetValueOrDefault(tr.TestId);
 
