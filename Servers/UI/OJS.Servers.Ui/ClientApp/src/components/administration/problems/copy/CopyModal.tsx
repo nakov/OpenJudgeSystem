@@ -97,10 +97,6 @@ const CopyModal = (props: ICopyModalProps) => {
         }
     }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal ]);
 
-    useEffect(() => {
-        getAndSetExceptionMessage([ copyError ], setErrorMessages);
-    }, [ copyError ]);
-
     const onInputChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
     }, 300);
@@ -142,7 +138,9 @@ const CopyModal = (props: ICopyModalProps) => {
                               renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                               onChange={(event, newValue) => onSelectContest(newValue!)}
                               onInputChange={(event) => onInputChange(event)}
-                              value={null}
+                              value={contestToCopy !== null
+                                  ? contestToCopy
+                                  : null}
                               isOptionEqualToValue={(option, value) => option.id === value.id}
                               getOptionLabel={(option) => option?.name}
                               renderOption={(properties, option) => (
@@ -155,15 +153,15 @@ const CopyModal = (props: ICopyModalProps) => {
                               )}
                             />
                             {
-                          operation === AllowedOperations.Copy && (
-                          <TextField
-                            sx={{ mt: 2 }}
-                            label="Copy To new Problem Group"
-                            type="number"
-                            onChange={(e) => setNewProblemGroup(Number(e.target.value))}
-                          />
-                          )
-}
+                              operation === AllowedOperations.Copy && (
+                                  <TextField
+                                    sx={{ mt: 2 }}
+                                    label="Copy To new Problem Group"
+                                    type="number"
+                                    onChange={(e) => setNewProblemGroup(Number(e.target.value))}
+                                  />
+                              )
+                            }
                             <Box sx={{ marginTop: '1rem' }}>
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
                                     {sourceContestName}
