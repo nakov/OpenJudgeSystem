@@ -65,6 +65,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
     private readonly ISubmissionTypesDataService submissionTypesData;
+    private readonly ITestsDataService testsDataService;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -89,7 +90,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         IContestsDataService contestsData,
-        ISubmissionTypesDataService submissionTypesData)
+        ISubmissionTypesDataService submissionTypesData,
+        ITestsDataService testsDataService)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -114,6 +116,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.cache = cache;
         this.contestsData = contestsData;
         this.submissionTypesData = submissionTypesData;
+        this.testsDataService = testsDataService;
     }
 
     public async Task Retest(int id)
@@ -183,42 +186,30 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var tests = submissionDetailsServiceModel
-            .Tests
-            .ToDictionary(
+        var tests = await this.testsDataService
+            .GetAllByProblem(submissionDetailsServiceModel.Problem.Id)
+            .MapCollection<TestDetailsServiceModel>()
+            .ToDictionaryAsync(
                 t => t.Id,
                 t => t);
 
-        submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel
+        submissionDetailsServiceModel.TestRuns = [.. submissionDetailsServiceModel
             .TestRuns
-            .OrderBy(tr => tests.GetValueOrSelectDefault(
-                tr.TestId,
-                test => test.IsTrialTest,
-                default))
-            .ThenBy(tr => tests.GetValueOrSelectDefault(
-                tr.TestId,
-                test => test.OrderBy,
-                default))
             .Select(tr =>
             {
-                tr.Input = tests.GetValueOrSelectDefault(
+                var test = tests.GetValueOrSelectDefault(
                     tr.TestId,
-                    test => test.InputDataAsString,
+                    test => test,
                     default);
 
-                tr.IsTrialTest = tests.GetValueOrSelectDefault(
-                    tr.TestId,
-                    test => test.IsTrialTest,
-                    default);
-
-                tr.OrderBy = tests.GetValueOrSelectDefault(
-                    tr.TestId,
-                    test => test.OrderBy,
-                    default);
+                tr.Input = test?.InputDataAsString ?? default;
+                tr.IsTrialTest = test?.IsTrialTest ?? default;
+                tr.OrderBy = test?.OrderBy ?? default;
 
                 return tr;
             })
-            .ToList();
+            .OrderBy(tr => tr.IsTrialTest)
+            .ThenBy(tr => tr.OrderBy)];
 
         if (!userIsAdminOrLecturerInContest)
         {
