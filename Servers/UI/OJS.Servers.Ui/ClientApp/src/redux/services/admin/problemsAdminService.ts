@@ -80,7 +80,7 @@ const problemsAdminService = createApi({
             }),
         }),
 
-        copy: builder.mutation<string, {destinationContestId:number; problemId: number; problemGroupId: number | undefined} >({
+        copy: builder.mutation<string, {destinationContestId:number; problemId: number; problemGroupId: number | null} >({
             query: ({ destinationContestId, problemId, problemGroupId }) => ({
                 url: 'Copy',
                 method: 'POST',
