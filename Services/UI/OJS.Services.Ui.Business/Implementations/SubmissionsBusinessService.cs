@@ -118,46 +118,57 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.testRunsDataService = testRunsDataService;
     }
 
-    public async Task Retest(int id)
+    public async Task Retest(int submissionId)
     {
-        var user = this.userProviderService.GetCurrentUser();
-
-        var submission = this.submissionsData
-            .GetSubmissionById<SubmissionDetailsServiceModel>(id);
+        var submission = await this.submissionsData
+            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
 
         if (submission == null)
         {
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
-        var isUserInRoleForContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submission.ContestId);
+        var user = this.userProviderService.GetCurrentUser();
+        submission.User = user.Map<UserServiceModel>();
+
+        var testRuns = await this.testRunsDataService
+            .GetAllBySubmission(submissionId)
+            .MapCollection<TestRunDetailsServiceModel>()
+            .ToListAsync();
+
+        submission.TestRuns = testRuns;
+
+        submission.Tests = testRuns
+            .Select(tr => tr.Test)
+            .ToList();
+
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(submission.ContestId);
 
         var validationResult = await this.retestSubmissionValidationService.GetValidationResult((
                 submission,
                 user,
-                isUserInRoleForContest));
+                userIsAdminOrLecturerInContest));
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = id });
+        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = submissionId });
     }
 
     public async Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId)
     {
-        var currentUser = this.userProviderService.GetCurrentUser();
-
         var submissionDetailsServiceModel = await this.submissionsData
-            .GetByIdQuery(submissionId)
-            .MapCollection<SubmissionDetailsServiceModel>()
-            .FirstOrDefaultAsync();
+            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
 
         if (submissionDetailsServiceModel == null)
         {
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
+
+        var currentUser = this.userProviderService.GetCurrentUser();
 
         submissionDetailsServiceModel.User = currentUser.Map<UserServiceModel>();
 
@@ -221,9 +232,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return submissionDetailsServiceModel!;
     }
 
-    public SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId)
+    public async Task<SubmissionFileDownloadServiceModel> GetSubmissionFile(int submissionId)
     {
-        var submissionDetailsServiceModel = this.submissionsData
+        var submissionDetailsServiceModel = await this.submissionsData
             .GetSubmissionById<SubmissionFileDetailsServiceModel>(submissionId);
 
         var currentUser = this.userProviderService.GetCurrentUser();
@@ -231,6 +242,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var validationResult =
             this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!,
                 currentUser));
+
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);

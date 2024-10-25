@@ -21,11 +21,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         : base(db)
         => this.datesService = datesService;
 
-    public TServiceModel? GetSubmissionById<TServiceModel>(int id)
+    public Task<TServiceModel?> GetSubmissionById<TServiceModel>(int id)
         => this.GetByIdQuery(id)
             .AsNoTracking()
             .MapCollection<TServiceModel>()
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
 
     public IQueryable<TServiceModel> GetLatestSubmissions<TServiceModel>(int? limit = null)
         => this.GetQuery(
