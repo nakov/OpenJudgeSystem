@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Ui.Models.Users;
@@ -54,7 +53,7 @@
 
         public string? ProcessingComment { get; set; }
 
-        public int TotalTests => this.Tests.Count();
+        public int TotalTests => this.Tests.Count;
 
         public int ContestId { get; set; }
 
@@ -62,7 +61,7 @@
 
         public int ContestCategoryId { get; set; }
 
-        public IEnumerable<TestDetailsServiceModel> Tests { get; set; } = [];
+        public ICollection<TestDetailsServiceModel> Tests { get; set; } = [];
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration
@@ -85,7 +84,8 @@
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
                 .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore())
                 .ForMember(s => s.User, opt => opt.Ignore())
-                .ForMember(s => s.Tests, opt => opt.Ignore());
+                .ForMember(s => s.Tests, opt => opt.Ignore())
+                .ForMember(s => s.TestRuns, opt => opt.Ignore());
 
         private static (long? MaxMemoryUsed, int? MaxTimeUsed) GetMaxMemoryAndTimeUsed(string? testRunsCache)
         {

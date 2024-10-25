@@ -35,10 +35,12 @@ public class TestRunDetailsServiceModel : IMapExplicitly
 
     public int TestId { get; set; }
 
+    public TestDetailsServiceModel Test { get; set; } = null!;
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<TestRun, TestRunDetailsServiceModel>()
-            .ForMember(d => d.IsTrialTest, opt => opt.Ignore())
-            .ForMember(d => d.Input, opt => opt.Ignore())
-            .ForMember(d => d.OrderBy, opt => opt.Ignore())
+            .ForMember(d => d.Input, opt => opt.MapFrom(s => s.Test.InputDataAsString))
+            .ForMember(d => d.IsTrialTest, opt => opt.MapFrom(s => s.Test.IsTrialTest))
+            .ForMember(d => d.OrderBy, opt => opt.MapFrom(s => s.Test.OrderBy))
             .ForMember(d => d.ShowInput, opt => opt.Ignore());
 }

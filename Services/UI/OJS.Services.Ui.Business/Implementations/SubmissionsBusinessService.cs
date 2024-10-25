@@ -32,8 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using FluentExtensions.Extensions;
-using OJS.Workers.Common.Extensions;
+using OJS.Services.Ui.Models.Users;
 using X.PagedList;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -65,7 +64,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
     private readonly ISubmissionTypesDataService submissionTypesData;
-    private readonly ITestsDataService testsDataService;
+    private readonly ITestRunsDataService testRunsDataService;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -91,7 +90,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ICacheService cache,
         IContestsDataService contestsData,
         ISubmissionTypesDataService submissionTypesData,
-        ITestsDataService testsDataService)
+        ITestRunsDataService testRunsDataService)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -116,7 +115,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.cache = cache;
         this.contestsData = contestsData;
         this.submissionTypesData = submissionTypesData;
-        this.testsDataService = testsDataService;
+        this.testRunsDataService = testRunsDataService;
     }
 
     public async Task Retest(int id)
@@ -133,8 +132,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var isUserInRoleForContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submission.ContestId);
 
-        var validationResult =
-            this.retestSubmissionValidationService.GetValidationResult((
+        var validationResult = await this.retestSubmissionValidationService.GetValidationResult((
                 submission,
                 user,
                 isUserInRoleForContest));
@@ -147,20 +145,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = id });
     }
 
-    public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
-        => await this.submissionsData
-            .GetByIdQuery(submissionId)
-            .AsSplitQuery()
-            .MapCollection<SubmissionDetailsServiceModel>()
-            .FirstOrDefaultAsync();
-
     public async Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId)
     {
         var currentUser = this.userProviderService.GetCurrentUser();
 
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
-            .AsSplitQuery()
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
@@ -169,73 +159,64 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
-        submissionDetailsServiceModel.User.MapFrom(currentUser);
+        submissionDetailsServiceModel.User = currentUser.Map<UserServiceModel>();
 
-        var userIsAdminOrLecturerInContest =
-            await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
-
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
         submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
-        submissionDetailsServiceModel.IsEligibleForRetest =
-            this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
-        var validationResult =
-            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest));
+        var validationResult = this.submissionDetailsValidationService
+            .GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest));
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var tests = await this.testsDataService
-            .GetAllByProblem(submissionDetailsServiceModel.Problem.Id)
-            .MapCollection<TestDetailsServiceModel>()
-            .ToDictionaryAsync(
-                t => t.Id,
-                t => t);
+        var testRuns = await this.testRunsDataService
+            .GetAllBySubmission(submissionId)
+            .OrderBy(tr => tr.IsTrialTest)
+            .ThenBy(tr => tr.Test.OrderBy)
+            .MapCollection<TestRunDetailsServiceModel>()
+            .ToListAsync();
 
-        submissionDetailsServiceModel.TestRuns = [.. submissionDetailsServiceModel
-            .TestRuns
-            .Select(tr =>
+        foreach (var testRun in testRuns)
+        {
+            var test = testRun.Test;
+            submissionDetailsServiceModel.Tests.Add(test);
+
+            if (userIsAdminOrLecturerInContest)
             {
-                var test = tests.GetValueOrDefault(tr.TestId);
+                continue;
+            }
 
-                tr.Input = test?.InputDataAsString ?? default;
-                tr.IsTrialTest = test?.IsTrialTest ?? default;
-                tr.OrderBy = test?.OrderBy ?? default;
+            var displayShowInput = test is { HideInput: false }
+                                   && (test.IsTrialTest
+                                       || test.IsOpenTest
+                                       || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
-                if (userIsAdminOrLecturerInContest)
-                {
-                    return tr;
-                }
-
-                var displayShowInput = test is { HideInput: false }
-                                       && (test.IsTrialTest
-                                           || test.IsOpenTest
+            var showExecutionComment = !string.IsNullOrEmpty(testRun.ExecutionComment)
+                                       && (test.IsOpenTest
+                                           || test.IsTrialTest
                                            || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
-                var showExecutionComment = test != null
-                                           && !string.IsNullOrEmpty(tr.ExecutionComment)
-                                           && (test.IsOpenTest
-                                               || test.IsTrialTest
-                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+            if (!showExecutionComment)
+            {
+                testRun.ExecutionComment = string.Empty;
+            }
 
-                if (!showExecutionComment)
-                {
-                    tr.ExecutionComment = string.Empty;
-                }
+            if (!displayShowInput)
+            {
+                testRun.ShowInput = false;
+                testRun.Input = string.Empty;
+                testRun.ExpectedOutputFragment = string.Empty;
+                testRun.UserOutputFragment = string.Empty;
+            }
+        }
 
-                if (!displayShowInput)
-                {
-                    tr.ShowInput = false;
-                    tr.Input = string.Empty;
-                    tr.ExpectedOutputFragment = string.Empty;
-                    tr.UserOutputFragment = string.Empty;
-                }
+        submissionDetailsServiceModel.TestRuns = testRuns;
 
-                return tr;
-            })
-            .OrderBy(tr => tr.IsTrialTest)
-            .ThenBy(tr => tr.OrderBy)];
+        submissionDetailsServiceModel.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
         return submissionDetailsServiceModel!;
     }
