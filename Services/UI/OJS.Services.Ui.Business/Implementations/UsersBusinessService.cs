@@ -40,6 +40,7 @@ public class UsersBusinessService : IUsersBusinessService
 
         var profile = await this.usersProfileData
             .GetByIdQuery(currentUser.Id!)
+            .AsNoTracking()
             .Include(u => u.UsersInRoles)
             .ThenInclude(ur => ur.Role)
             .FirstOrDefaultAsync();
