@@ -72,24 +72,13 @@ const CopyModal = (props: ICopyModalProps) => {
 
     const onSelectContest = (contest: IContestAutocomplete) => {
         setContestToCopy(contest);
-
-        // Do not retrieve problem groups if user selects copy into new problem group
-        if (!copyIntoNewProblemGroup) {
-            getProblemGroups(contest.id);
-        }
+        getProblemGroups(contest.id);
     };
 
     useEffect(() => {
         // Reset problem group when checkbox is checked
         if (copyIntoNewProblemGroup) {
             setNewProblemGroup(undefined);
-        }
-
-        // If copyIntoNewProblemGroup was set to checked (true) before contest is selected,
-        // problemGroups will not be retrieved,
-        // then when the checkbox is unchecked, problemGroups must be fetched
-        if (!copyIntoNewProblemGroup && isNilOrEmpty(problemGroupsData) && !isNil(contestToCopy)) {
-            getProblemGroups(contestToCopy.id);
         }
     }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
 
