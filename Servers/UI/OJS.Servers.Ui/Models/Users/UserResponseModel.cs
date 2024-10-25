@@ -5,5 +5,5 @@ using OJS.Services.Ui.Models.Users;
 
 public class UserResponseModel : IMapFrom<UserServiceModel>
 {
-    public string? Username { get; set; }
+    public string? UserName { get; set; }
 }

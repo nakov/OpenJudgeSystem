@@ -75,6 +75,7 @@
                         ? null
                         : s.ContentAsString))
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s => s.Participant.IsOfficial))
+                .ForMember(d => d.User, opt => opt.MapFrom(s => s.Participant.User))
                 .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.Participant.ContestId))
                 .ForMember(d => d.ContestName, opt => opt.MapFrom(s => s.Participant.Contest.Name))
@@ -83,7 +84,6 @@
                 .ForMember(d => d.TotalTests, opt => opt.Ignore())
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
                 .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore())
-                .ForMember(s => s.User, opt => opt.Ignore())
                 .ForMember(s => s.Tests, opt => opt.Ignore())
                 .ForMember(s => s.TestRuns, opt => opt.Ignore());
 

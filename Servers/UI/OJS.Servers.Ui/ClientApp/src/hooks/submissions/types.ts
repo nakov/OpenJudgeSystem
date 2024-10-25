@@ -31,7 +31,7 @@ interface ITestRunIcon {
 }
 
 interface IUserResponseType {
-    username: string;
+    userName: string;
 }
 
 interface ISubmissionDetailsResponseType {

@@ -129,7 +129,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         var user = this.userProviderService.GetCurrentUser();
-        submission.User = user.Map<UserServiceModel>();
 
         var testRuns = await this.testRunsDataService
             .GetAllBySubmission(submissionId)
@@ -169,8 +168,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         var currentUser = this.userProviderService.GetCurrentUser();
-
-        submissionDetailsServiceModel.User = currentUser.Map<UserServiceModel>();
 
         var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
             .IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
