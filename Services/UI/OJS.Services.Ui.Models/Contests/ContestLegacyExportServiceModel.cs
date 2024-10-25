@@ -16,7 +16,7 @@ public class ContestLegacyExportServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = String.Empty;
+    public string Name { get; set; } = string.Empty;
 
     public bool IsVisible { get; set; }
 
@@ -109,7 +109,7 @@ public class LegacyProblem
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = String.Empty;
+    public string Name { get; set; } = string.Empty;
 
     public short MaximumPoints { get; set; }
 
@@ -146,7 +146,7 @@ public class LegacyChecker : IMapFrom<Checker>
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = String.Empty;
+    public string Name { get; set; } = string.Empty;
 
     public string? Description { get; set; }
 
@@ -178,7 +178,7 @@ public class LegacyResource : IMapFrom<ProblemResource>
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = String.Empty;
+    public string Name { get; set; } = string.Empty;
 
     public int Type { get; set; }
 
@@ -197,13 +197,13 @@ public class LegacySubmissionType
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = String.Empty;
+    public string Name { get; set; } = string.Empty;
 
     public int ExecutionStrategyType { get; set; }
 
     public int CompilerType { get; set; }
 
-    public string AllowedFileExtensions { get; set; } = String.Empty;
+    public string AllowedFileExtensions { get; set; } = string.Empty;
 
     public IEnumerable<LegacyProblemSubmissionTypeExecutionDetail> ProblemSubmissionTypeExecutionDetails { get; set; } =
         [];
