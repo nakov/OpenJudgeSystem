@@ -166,6 +166,7 @@ namespace OJS.Services.Administration.Business.ProblemGroups
 
         public ICollection<ProblemGroupDropdownModel> GetOrderByContestId(int contestId)
             => this.problemGroupsData.GetAllByContest(contestId)
+                .Where(pg => !pg.IsDeleted)
                 .OrderBy(x => x.OrderBy)
                 .MapCollection<ProblemGroupDropdownModel>()
                 .ToHashSet();

@@ -1,12 +1,26 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaLongArrowAltRight } from 'react-icons/fa';
-import { Autocomplete, Box, Button, debounce, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import {
+    Autocomplete,
+    Box,
+    Button, Checkbox,
+    createFilterOptions,
+    debounce, FormControlLabel,
+    MenuItem,
+    Modal,
+    TextField,
+    Typography,
+} from '@mui/material';
+import isNil from 'lodash/isNil';
+import { COPY_INTO_NEW_PROBLEM_GROUP } from 'src/common/labels';
+import isNilOrEmpty from 'src/utils/check-utils';
 
-import { IContestAutocomplete } from '../../../../common/types';
+import { IContestAutocomplete, IProblemGroupDropdownModel } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
+import { useLazyGetIdsByContestIdQuery } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { useCopyAllMutation, useCopyMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { modalStyles } from '../../../../utils/object-utils';
@@ -47,12 +61,37 @@ const CopyModal = (props: ICopyModalProps) => {
     const [ problemGroupId, setNewProblemGroup ] = useState<number | undefined>(undefined);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
+    const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>();
 
     const { data, isLoading } = useGetContestAutocompleteQuery(contestSearchString);
 
+    const [ getProblemGroups, {
+        data: problemGroupsData,
+        isLoading: problemGroupsAreLoading,
+    } ] = useLazyGetIdsByContestIdQuery();
+
     const onSelectContest = (contest: IContestAutocomplete) => {
         setContestToCopy(contest);
+
+        // Do not retrieve problem groups if user selects copy into new problem group
+        if (!copyIntoNewProblemGroup) {
+            getProblemGroups(contest.id);
+        }
     };
+
+    useEffect(() => {
+        // Reset problem group when checkbox is checked
+        if (copyIntoNewProblemGroup) {
+            setNewProblemGroup(undefined);
+        }
+
+        // If copyIntoNewProblemGroup was set to checked (true) before contest is selected,
+        // problemGroups will not be retrieved,
+        // then when the checkbox is unchecked, problemGroups must be fetched
+        if (!copyIntoNewProblemGroup && isNilOrEmpty(problemGroupsData) && !isNil(contestToCopy)) {
+            getProblemGroups(contestToCopy.id);
+        }
+    }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
 
     const [ copy,
         {
@@ -114,6 +153,14 @@ const CopyModal = (props: ICopyModalProps) => {
         return <SpinningLoader />;
     }
 
+    const problemGroupsFormatFilterOptions = createFilterOptions({
+        stringify: (option: IProblemGroupDropdownModel) => {
+            const { id, orderBy } = option;
+
+            return `${orderBy} ${id}`;
+        },
+    });
+
     return (
         <Modal
           key={index}
@@ -132,6 +179,7 @@ const CopyModal = (props: ICopyModalProps) => {
                                 {problemToCopyName}
                             </Typography>
                             <Autocomplete<IContestAutocomplete>
+                              sx={{ marginTop: '1rem' }}
                               disabled={sourceContestName === ''}
                               options={contestAutocomplete}
                               filterOptions={autocompleteNameIdFormatFilterOptions}
@@ -153,15 +201,39 @@ const CopyModal = (props: ICopyModalProps) => {
                               )}
                             />
                             {
-                              operation === AllowedOperations.Copy && (
-                                  <TextField
-                                    sx={{ mt: 2 }}
-                                    label="Copy To new Problem Group"
-                                    type="number"
-                                    onChange={(e) => setNewProblemGroup(Number(e.target.value))}
-                                  />
+                              operation === AllowedOperations.Copy && !copyIntoNewProblemGroup && (
+                              <Autocomplete<IProblemGroupDropdownModel>
+                                sx={{ marginTop: '1rem' }}
+                                disabled={problemGroupsAreLoading || isNil(contestToCopy)}
+                                options={problemGroupsData || []}
+                                filterOptions={problemGroupsFormatFilterOptions}
+                                renderInput={(params) => <TextField {...params} label="Select Problem Group" key={params.id} />}
+                                onChange={(event, newValue) => {
+                                    setNewProblemGroup(Number(newValue.id));
+                                }}
+                                value={problemGroupId !== null
+                                    ? problemGroupsData?.find((pg) => pg.id === problemGroupId)
+                                    : null}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                getOptionLabel={(option) => option?.orderBy.toString()}
+                                renderOption={(properties, option) => (
+                                    <MenuItem {...properties} key={option.id} value={option.id}>
+                                        {option.orderBy}
+                                    </MenuItem>
+                                )}
+                              />
                               )
                             }
+                            <FormControlLabel
+                              control={(
+                                  <Checkbox
+                                    checked={copyIntoNewProblemGroup}
+                                  />
+                                )}
+                              name="copyIntoNewProblemGroup"
+                              onChange={(e) => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
+                              label={COPY_INTO_NEW_PROBLEM_GROUP}
+                            />
                             <Box sx={{ marginTop: '1rem' }}>
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
                                     {sourceContestName}

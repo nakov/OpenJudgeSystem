@@ -40,8 +40,7 @@ const problemGroupsAdminService = createApi({
                 body: problemGroup,
             }),
         }),
-        getIdsByContestId:
-        builder.query<Array<IProblemGroupDropdownModel>, number>({ query: (id) => ({ url: `/ByContestId/${id}` }), keepUnusedDataFor: 3 }),
+        getIdsByContestId: builder.query<Array<IProblemGroupDropdownModel>, number>({ query: (id) => ({ url: `/ByContestId/${id}` }), keepUnusedDataFor: 3 }),
 
         exportProblemGroupsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
@@ -65,6 +64,7 @@ export const {
     useUpdateProblemGroupMutation,
     useCreateProblemGroupMutation,
     useGetIdsByContestIdQuery,
+    useLazyGetIdsByContestIdQuery,
     useLazyExportProblemGroupsToExcelQuery,
 } = problemGroupsAdminService;
 export default problemGroupsAdminService;
