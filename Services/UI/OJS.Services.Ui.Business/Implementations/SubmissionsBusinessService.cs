@@ -132,6 +132,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var testRuns = await this.testRunsDataService
             .GetAllBySubmission(submissionId)
+            .AsNoTracking()
             .MapCollection<TestRunDetailsServiceModel>()
             .ToListAsync();
 
@@ -183,6 +184,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var testRuns = await this.testRunsDataService
             .GetAllBySubmission(submissionId)
+            .AsNoTracking()
             .OrderBy(tr => tr.IsTrialTest)
             .ThenBy(tr => tr.Test.OrderBy)
             .MapCollection<TestRunDetailsServiceModel>()
