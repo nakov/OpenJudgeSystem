@@ -69,6 +69,10 @@ export const SHOW_DETAILED_FEEDBACK = 'Show Detailed feedback';
 export const SHOW_RESULTS = 'Show Results';
 export const SOLUTION_SKELETON = 'Solution Skeleton';
 
+// Problem groups
+
+export const COPY_INTO_NEW_PROBLEM_GROUP = 'Copy into new problem group';
+
 // Submission types
 export const SUBMISSION_TYPE_NAME = 'Submission Type Name';
 export const SUBMISSION_TYPE_ID = 'Submission Type Id';

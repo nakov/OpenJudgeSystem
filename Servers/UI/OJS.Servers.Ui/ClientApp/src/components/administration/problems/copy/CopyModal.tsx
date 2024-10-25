@@ -1,12 +1,25 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaLongArrowAltRight } from 'react-icons/fa';
-import { Autocomplete, Box, Button, debounce, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import {
+    Autocomplete,
+    Box,
+    Button, Checkbox,
+    createFilterOptions,
+    debounce, FormControlLabel,
+    MenuItem,
+    Modal,
+    TextField,
+    Typography,
+} from '@mui/material';
+import isNil from 'lodash/isNil';
+import { COPY_INTO_NEW_PROBLEM_GROUP } from 'src/common/labels';
 
-import { IContestAutocomplete } from '../../../../common/types';
+import { IContestAutocomplete, IProblemGroupDropdownModel } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
+import { useLazyGetIdsByContestIdQuery } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { useCopyAllMutation, useCopyMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { modalStyles } from '../../../../utils/object-utils';
@@ -20,28 +33,53 @@ import { autocompleteNameIdFormatFilterOptions } from '../../utils/mui-utils';
 }
 
 interface ICopyModalProps{
-    index :number;
+    index: number;
     operation: AllowedOperations;
-    sourceId : number;
-    sourceName: string;
-    problemToCopy?: number | null;
+    sourceContestId : number;
+    sourceContestName: string;
+    problemToCopyId?: number | null;
+    problemToCopyName: string | null;
     setShowModal: Function;
     setParentSuccessMessage: Function;
 }
 
 const CopyModal = (props: ICopyModalProps) => {
-    const { index, setShowModal, operation, sourceId, sourceName, problemToCopy = null, setParentSuccessMessage } = props;
+    const {
+        index,
+        setShowModal,
+        operation,
+        sourceContestId,
+        sourceContestName,
+        problemToCopyName,
+        problemToCopyId = null,
+        setParentSuccessMessage,
+    } = props;
+
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete | null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
-    const [ problemGroupId, setNewProblemGroup ] = useState<number | undefined>(undefined);
+    const [ problemGroupId, setNewProblemGroup ] = useState<number | null>(null);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
+    const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>();
 
     const { data, isLoading } = useGetContestAutocompleteQuery(contestSearchString);
 
-    const onSelect = (contest: IContestAutocomplete) => {
+    const [ getProblemGroups, {
+        data: problemGroupsData,
+        isLoading: problemGroupsAreLoading,
+    } ] = useLazyGetIdsByContestIdQuery();
+
+    const onSelectContest = (contest: IContestAutocomplete) => {
         setContestToCopy(contest);
+        getProblemGroups(contest.id);
     };
+
+    useEffect(() => {
+        // Reset problem group when checkbox is checked
+        if (copyIntoNewProblemGroup) {
+            setNewProblemGroup(null);
+        }
+    }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
 
     const [ copy,
         {
@@ -86,19 +124,15 @@ const CopyModal = (props: ICopyModalProps) => {
         }
     }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal ]);
 
-    useEffect(() => {
-        getAndSetExceptionMessage([ copyError ], setErrorMessages);
-    }, [ copyError ]);
-
     const onInputChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
     }, 300);
 
     const onSubmit = () => {
         if (operation === AllowedOperations.Copy) {
-            copy({ destinationContestId: contestToCopy!.id, problemId: problemToCopy!, problemGroupId });
+            copy({ destinationContestId: contestToCopy!.id, problemId: problemToCopyId!, problemGroupId });
         } else {
-            copyAll({ sourceContestId: sourceId, destinationContestId: contestToCopy!.id });
+            copyAll({ sourceContestId, destinationContestId: contestToCopy!.id });
         }
         setContestSearchString('');
     };
@@ -106,6 +140,14 @@ const CopyModal = (props: ICopyModalProps) => {
     if (isCopying || isCopyingAll) {
         return <SpinningLoader />;
     }
+
+    const problemGroupsFormatFilterOptions = createFilterOptions({
+        stringify: (option: IProblemGroupDropdownModel) => {
+            const { id, orderBy } = option;
+
+            return `${orderBy} ${id}`;
+        },
+    });
 
     return (
         <Modal
@@ -119,15 +161,22 @@ const CopyModal = (props: ICopyModalProps) => {
                     : (
                         <>
                             {renderErrorMessagesAlert(errorMessages)}
-                            <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
+                            <Typography variant="h5" padding="0.5rem">
+                                Copy
+                                {' '}
+                                {problemToCopyName}
+                            </Typography>
                             <Autocomplete<IContestAutocomplete>
-                              disabled={sourceName === ''}
+                              sx={{ marginTop: '1rem' }}
+                              disabled={sourceContestName === ''}
                               options={contestAutocomplete}
                               filterOptions={autocompleteNameIdFormatFilterOptions}
                               renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
-                              onChange={(event, newValue) => onSelect(newValue!)}
+                              onChange={(event, newValue) => onSelectContest(newValue!)}
                               onInputChange={(event) => onInputChange(event)}
-                              value={null}
+                              value={contestToCopy !== null
+                                  ? contestToCopy
+                                  : null}
                               isOptionEqualToValue={(option, value) => option.id === value.id}
                               getOptionLabel={(option) => option?.name}
                               renderOption={(properties, option) => (
@@ -140,29 +189,55 @@ const CopyModal = (props: ICopyModalProps) => {
                               )}
                             />
                             {
-                          operation === AllowedOperations.Copy && (
-                          <TextField
-                            sx={{ mt: 2 }}
-                            label="Copy To new Problem Group"
-                            type="number"
-                            onChange={(e) => setNewProblemGroup(Number(e.target.value))}
-                          />
-                          )
-}
-                            {contestToCopy !== null && (
-                            <Box sx={{ padding: '4rem' }}>
+                              operation === AllowedOperations.Copy && !copyIntoNewProblemGroup && (
+                              <Autocomplete<IProblemGroupDropdownModel>
+                                sx={{ marginTop: '1rem' }}
+                                disabled={problemGroupsAreLoading || isNil(contestToCopy)}
+                                options={problemGroupsData || []}
+                                filterOptions={problemGroupsFormatFilterOptions}
+                                renderInput={(params) => <TextField {...params} label="Select Problem Group" key={params.id} />}
+                                onChange={(event, newValue) => {
+                                    setNewProblemGroup(newValue
+                                        ? Number(newValue.id)
+                                        : null);
+                                }}
+                                value={problemGroupId !== null
+                                    ? problemGroupsData?.find((pg) => pg.id === problemGroupId)
+                                    : null}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                getOptionLabel={(option) => option?.orderBy.toString()}
+                                renderOption={(properties, option) => (
+                                    <MenuItem {...properties} key={option.id} value={option.id}>
+                                        {option.orderBy}
+                                    </MenuItem>
+                                )}
+                              />
+                              )
+                            }
+                            <FormControlLabel
+                              control={(
+                                  <Checkbox
+                                    checked={copyIntoNewProblemGroup}
+                                  />
+                                )}
+                              name="copyIntoNewProblemGroup"
+                              onChange={() => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
+                              label={COPY_INTO_NEW_PROBLEM_GROUP}
+                            />
+                            <Box sx={{ marginTop: '1rem' }}>
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                                    {sourceName}
+                                    {sourceContestName}
                                     {' '}
                                     <FaLongArrowAltRight />
-                                    {contestToCopy?.name}
+                                    {contestToCopy !== null
+                                        ? contestToCopy?.name
+                                        : 'Select contest'}
                                 </Typography>
                             </Box>
-                            )}
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                                 <Button
                                   variant="contained"
-                                  disabled={contestToCopy === null || sourceName === ''}
+                                  disabled={contestToCopy === null || sourceContestName === ''}
                                   onClick={() => onSubmit()}
                                 >
                                     Copy
