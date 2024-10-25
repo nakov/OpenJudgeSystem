@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import isNil from 'lodash/isNil';
 import { COPY_INTO_NEW_PROBLEM_GROUP } from 'src/common/labels';
-import isNilOrEmpty from 'src/utils/check-utils';
 
 import { IContestAutocomplete, IProblemGroupDropdownModel } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
@@ -58,7 +57,7 @@ const CopyModal = (props: ICopyModalProps) => {
 
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete | null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
-    const [ problemGroupId, setNewProblemGroup ] = useState<number | undefined>(undefined);
+    const [ problemGroupId, setNewProblemGroup ] = useState<number | null>(null);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
     const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>();
@@ -78,7 +77,7 @@ const CopyModal = (props: ICopyModalProps) => {
     useEffect(() => {
         // Reset problem group when checkbox is checked
         if (copyIntoNewProblemGroup) {
-            setNewProblemGroup(undefined);
+            setNewProblemGroup(null);
         }
     }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
 
@@ -198,7 +197,9 @@ const CopyModal = (props: ICopyModalProps) => {
                                 filterOptions={problemGroupsFormatFilterOptions}
                                 renderInput={(params) => <TextField {...params} label="Select Problem Group" key={params.id} />}
                                 onChange={(event, newValue) => {
-                                    setNewProblemGroup(Number(newValue.id));
+                                    setNewProblemGroup(newValue
+                                        ? Number(newValue.id)
+                                        : null);
                                 }}
                                 value={problemGroupId !== null
                                     ? problemGroupsData?.find((pg) => pg.id === problemGroupId)
@@ -220,7 +221,7 @@ const CopyModal = (props: ICopyModalProps) => {
                                   />
                                 )}
                               name="copyIntoNewProblemGroup"
-                              onChange={(e) => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
+                              onChange={() => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
                               label={COPY_INTO_NEW_PROBLEM_GROUP}
                             />
                             <Box sx={{ marginTop: '1rem' }}>
