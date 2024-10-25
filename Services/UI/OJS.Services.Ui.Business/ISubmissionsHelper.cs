@@ -6,5 +6,5 @@ using OJS.Services.Ui.Models.Submissions;
 
 public interface ISubmissionsHelper : IService
 {
-    Task<bool>  IsEligibleForRetest(SubmissionDetailsServiceModel detailsModel);
+    Task<bool> IsEligibleForRetest(SubmissionDetailsServiceModel detailsModel);
 }
