@@ -66,14 +66,14 @@ public class UsersBusinessService : IUsersBusinessService
 
         if (currentUser.Id == null && (username.IsNull() || username!.IsEmpty()))
         {
-            throw new BusinessServiceException("Empty username is not valid");
+            throw new BusinessServiceException("The user could not be found.");
         }
 
         var userWithUsernameExists = await this.usersProfileData.Exists(p => p.UserName == username);
 
         if (!userWithUsernameExists)
         {
-            throw new BusinessServiceException("User with this username does not exist");
+            throw new BusinessServiceException("A user with this username does not exist.");
         }
 
         if (currentUser.Id == null && userWithUsernameExists)
@@ -84,13 +84,12 @@ public class UsersBusinessService : IUsersBusinessService
             });
         }
 
-        bool isLoggedInUserAdminOrProfileOwner = this.IsUserInRolesOrProfileOwner(
+        var isLoggedInUserAdminOrProfileOwner = this.IsUserInRolesOrProfileOwner(
             username,
             [Administrator]);
 
         var profile = await (isLoggedInUserAdminOrProfileOwner
-            ? this.usersProfileData
-                .GetByUsername<UserProfileServiceModel>(username)
+            ? this.usersProfileData.GetByUsername<UserProfileServiceModel>(username)
             : this.GetByUsernameAsShortProfile(username));
 
         profile!.Id = isLoggedInUserAdminOrProfileOwner ? profile.Id : string.Empty;
@@ -127,7 +126,7 @@ public class UsersBusinessService : IUsersBusinessService
             throw new BusinessServiceException("User with this username does not exist");
         }
 
-        bool isLoggedInUserAdminLecturerOrProfileOwner =
+        var isLoggedInUserAdminLecturerOrProfileOwner =
             currentUser.IsInRoles([Administrator, Lecturer]) ||
             this.usersProfileData.GetByIdQuery(currentUser.Id!).Any(u => u.UserName == username);
 
@@ -179,12 +178,9 @@ public class UsersBusinessService : IUsersBusinessService
     //Error is thrown when we map from UserSettings (owned entity) without including the
     //UserProfile (owner entity) in the query.
     private async Task<UserProfileServiceModel?> GetByUsernameAsShortProfile(string? username) =>
-        await this.usersProfileData.GetByUsername(username)
+        await this.usersProfileData
+            .GetByUsername(username)
             .AsNoTracking()
-            .Select(user => new UserProfileServiceModel
-            {
-                UserName = user.UserName!,
-                Id = user.Id,
-            })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync()
+            .Map<UserProfileServiceModel>();
 }

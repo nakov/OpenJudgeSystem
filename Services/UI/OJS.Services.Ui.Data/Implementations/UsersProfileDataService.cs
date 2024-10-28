@@ -49,6 +49,7 @@
 
         public Task<TServiceModel?> GetByUsername<TServiceModel>(string? username)
             => this.GetByUsername(username)
+                .AsNoTracking()
                 .FirstOrDefaultAsync()
                 .Map<TServiceModel?>();
 
