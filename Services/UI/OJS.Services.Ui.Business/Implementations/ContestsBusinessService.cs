@@ -106,19 +106,33 @@ namespace OJS.Services.Ui.Business.Implementations
                 ? competeParticipant
                 : practiceParticipant;
 
-            if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted)
+            if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted && contestDetailsServiceModel!.IsOnlineExam)
             {
                 var problemsForParticipant = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInCompete = (!contestDetailsServiceModel!.HasContestPassword && !contestDetailsServiceModel!.IsOnlineExam && contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null) || isLecturerInContestOrAdmin;
-            var canShowProblemsInPractice = (!contestDetailsServiceModel.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerInContestOrAdmin;
+            var isActiveParticipantInCompete = competeParticipant != null && this.activityService.GetParticipantActivity(competeParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive;
+            var isActiveParticipantInPractice = practiceParticipant != null && this.activityService.GetParticipantActivity(practiceParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive;
+
+            var canShowProblemsInCompete =
+                (!contestDetailsServiceModel!.HasContestPassword &&
+                 !contestDetailsServiceModel!.IsOnlineExam &&
+                 contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null)
+                 || isLecturerInContestOrAdmin
+                 || isActiveParticipantInCompete;
+
+            var canShowProblemsInPractice =
+                (!contestDetailsServiceModel.HasPracticePassword &&
+                 contestActivityEntity.CanBePracticed)
+                || isLecturerInContestOrAdmin
+                || isActiveParticipantInPractice;
+
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
             if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
-                contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
+                contestDetailsServiceModel.Problems = [];
             }
 
             if (isLecturerInContestOrAdmin || competeParticipant != null)
