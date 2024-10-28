@@ -377,7 +377,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int page,
         int itemsInPage = DefaultSubmissionsPerPage)
     {
-        if (!this.usersBusiness.IsUserInRolesOrProfileOwner(
+        if (!await this.usersBusiness.IsUserInRolesOrProfileOwner(
                 username,
                 [GlobalConstants.Roles.Administrator, GlobalConstants.Roles.Lecturer]))
         {
