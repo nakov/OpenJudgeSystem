@@ -6,15 +6,11 @@ import {
     Box,
     FormControl,
     MenuItem,
-    styled,
     TextField,
-    Tooltip, tooltipClasses,
-    TooltipProps,
     Typography,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import moment from 'moment';
-import { ThemeMode } from 'src/common/enums';
 import {
     IChangeParticipationTimeForMultipleParticipants, IChangeParticipationTimeForSingleParticipant,
     IContestAdministration,

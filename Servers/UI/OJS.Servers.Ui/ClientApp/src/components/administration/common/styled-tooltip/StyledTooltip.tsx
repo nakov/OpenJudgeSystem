@@ -1,4 +1,4 @@
-﻿import { styled, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
+import { styled, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
 import { ThemeMode } from 'src/common/enums';
 
 interface IStyledTooltipProps extends TooltipProps {
