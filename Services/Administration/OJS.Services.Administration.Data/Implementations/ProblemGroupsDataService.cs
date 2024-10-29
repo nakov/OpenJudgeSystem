@@ -37,6 +37,12 @@
                 .SelectMany(eg => eg.Problems)
                 .Where(p => !p.IsDeleted);
 
+        public ProblemGroup? GetLastNonDeletedByContest(int contestId)
+            => this.GetAllByContest(contestId)
+                .Where(pg => !pg.IsDeleted)
+                .OrderByDescending(pg => pg.OrderBy)
+                .FirstOrDefault();
+
         public bool IsFromContestByIdAndContest(int id, int contestId) =>
             this.GetByIdQuery(id)
                 .Any(pg => pg.ContestId == contestId);

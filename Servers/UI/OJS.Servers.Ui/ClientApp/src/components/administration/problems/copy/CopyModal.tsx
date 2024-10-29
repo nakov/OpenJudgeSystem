@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import isNil from 'lodash/isNil';
 import { COPY_INTO_NEW_PROBLEM_GROUP } from 'src/common/labels';
+import isNilOrEmpty from 'src/utils/check-utils';
 
 import { IContestAutocomplete, IProblemGroupDropdownModel } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
@@ -60,7 +61,20 @@ const CopyModal = (props: ICopyModalProps) => {
     const [ problemGroupId, setNewProblemGroup ] = useState<number | null>(null);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
-    const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>();
+    const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>(false);
+    const [ isFormValid, setIsFormValid ] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!isNil(contestToCopy) &&
+            ((!copyIntoNewProblemGroup && !isNil(problemGroupId)) || (copyIntoNewProblemGroup && isNil(problemGroupId))) &&
+            !isNilOrEmpty(sourceContestName)
+        ) {
+            setIsFormValid(true);
+            return;
+        }
+
+        setIsFormValid(false);
+    }, [ contestToCopy, copyIntoNewProblemGroup, problemGroupId, sourceContestName ]);
 
     const { data, isLoading } = useGetContestAutocompleteQuery(contestSearchString);
 
@@ -71,7 +85,11 @@ const CopyModal = (props: ICopyModalProps) => {
 
     const onSelectContest = (contest: IContestAutocomplete) => {
         setContestToCopy(contest);
-        getProblemGroups(contest.id);
+        setNewProblemGroup(null);
+
+        if (!isNil(contest)) {
+            getProblemGroups(contest.id);
+        }
     };
 
     useEffect(() => {
@@ -130,7 +148,13 @@ const CopyModal = (props: ICopyModalProps) => {
 
     const onSubmit = () => {
         if (operation === AllowedOperations.Copy) {
-            copy({ destinationContestId: contestToCopy!.id, problemId: problemToCopyId!, problemGroupId });
+            copy({
+                destinationContestId: contestToCopy!.id,
+                problemId: problemToCopyId!,
+                problemGroupId: copyIntoNewProblemGroup
+                    ? null
+                    : problemGroupId,
+            });
         } else {
             copyAll({ sourceContestId, destinationContestId: contestToCopy!.id });
         }
@@ -162,9 +186,11 @@ const CopyModal = (props: ICopyModalProps) => {
                         <>
                             {renderErrorMessagesAlert(errorMessages)}
                             <Typography variant="h5" padding="0.5rem">
-                                Copy
+                                Copy problem
                                 {' '}
+                                &quot;
                                 {problemToCopyName}
+                                &quot;
                             </Typography>
                             <Autocomplete<IContestAutocomplete>
                               sx={{ marginTop: '1rem' }}
@@ -237,7 +263,7 @@ const CopyModal = (props: ICopyModalProps) => {
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                                 <Button
                                   variant="contained"
-                                  disabled={contestToCopy === null || sourceContestName === ''}
+                                  disabled={!isFormValid}
                                   onClick={() => onSubmit()}
                                 >
                                     Copy

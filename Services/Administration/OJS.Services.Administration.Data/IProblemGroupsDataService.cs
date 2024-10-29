@@ -16,6 +16,8 @@
 
         IQueryable<Problem> GetProblemsById(int id);
 
+        ProblemGroup? GetLastNonDeletedByContest(int contestId);
+
         bool IsFromContestByIdAndContest(int id, int contestId);
     }
 }

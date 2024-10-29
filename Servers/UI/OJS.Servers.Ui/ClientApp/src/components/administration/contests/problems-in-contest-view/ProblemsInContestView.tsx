@@ -94,8 +94,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     }, [ isSuccessfullyDeletedAll, retakeData ]);
 
     const openCopyModal = (id: number) => {
-        setShowCopyModal(true);
         setProblemToCopy(id);
+        setShowCopyModal(true);
     };
 
     const openRetestModal = (id: number) => {
@@ -231,7 +231,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
           sourceContestName={problemsData?.items
               ? problemsData?.items[0]?.contest ?? ''
               : ''}
-          problemToCopyName="Problem to copy"
+          problemToCopyName={problemsData?.items!.find((x) => x.id === problemToCopy)?.name}
           problemToCopyId={problemToCopy}
           setParentSuccessMessage={setSuccessMessage}
         />
