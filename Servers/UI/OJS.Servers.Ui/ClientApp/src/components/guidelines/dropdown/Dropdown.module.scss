@@ -25,8 +25,16 @@
   :global {
     .MuiFormControl-root {
       background-color: colors.$light-base-color-100;
-      border: 0.1px solid colors.$dark-base-color-300;
+      border: 2px solid colors.$background-color-btn-primary;
       border-radius: 4px;
+    }
+
+    .MuiOutlinedInput-root {
+      padding: 0 spacings.$sp-4 2px 6px !important;
+    }
+
+    .MuiAutocomplete-endAdornment {
+      margin-right: spacings.$sp-16;
     }
 
     ::placeholder {
@@ -40,10 +48,6 @@
   .MuiAutocomplete-root {
     background-color: colors.$light-base-color-100;
     color: colors.$black-color;
-
-    &:hover .MuiOutlinedInput-notchedOutline {
-      border-color: colors.$light-base-color-300;
-    }
   }
 
   .MuiSvgIcon-root {
@@ -65,11 +69,11 @@
   background-color: colors.$light-base-color-100;
 
   &:hover {
-    background-color: colors.$light-base-color-200;
+    background-color: colors.$light-base-color-200 !important;
   }
 
   &[aria-selected='true'] {
-    background-color: colors.$light-base-color-500;
+    background-color: colors.$dark-base-color-300 !important;
   }
 }
 
@@ -79,11 +83,7 @@
 
   :global {
     color: colors.$black-color !important;
-    border: 0.1px solid colors.$dark-base-color-300;
-  }
-
-  &[aria-selected='true'] {
-    background-color: colors.$light-base-color-500;
+    border: 2px solid colors.$background-color-btn-primary;
   }
 }
 
@@ -93,7 +93,7 @@
 
 .lightListbox {
   background-color: colors.$light-base-color-100;
-  border: 0.1px solid colors.$dark-base-color-300;
+  border: 2px solid colors.$background-color-btn-primary;
 }
 
 .darkAutocomplete {
@@ -101,9 +101,17 @@
 
   :global {
     .MuiFormControl-root {
-      background-color: colors.$dark-base-color-200;
-      border: 0.1px solid colors.$light-base-color-300;
+      background-color: colors.$dark-base-color-400;
+      border: 2px solid colors.$background-color-btn-primary;
       border-radius: spacings.$sp-4;
+    }
+
+    .MuiOutlinedInput-root {
+      padding: 0 spacings.$sp-4 2px 6px !important;
+    }
+
+    .MuiAutocomplete-endAdornment {
+      margin-right: spacings.$sp-16;
     }
 
     ::placeholder {
@@ -117,10 +125,6 @@
   .MuiInputBase-root {
     background-color: colors.$dark-base-color-100;
     color: colors.$light-base-color-100;
-
-    &:hover .MuiOutlinedInput-notchedOutline {
-      border-color: colors.$dark-base-color-300;
-    }
   }
 
   .MuiSvgIcon-root {
@@ -138,31 +142,27 @@
 }
 
 .darkOption {
-  background-color: colors.$dark-base-color-200;
+  background-color: colors.$dark-base-color-400;
 
   :global {
     color: colors.$light-base-color-100 !important;
   }
 
   &:hover {
-    background-color: colors.$dark-base-color-200;
+    background-color: colors.$dark-base-color-300 !important;
   }
 
   &[aria-selected='true'] {
-    background-color: colors.$dark-base-color-500;
+    background-color: colors.$dark-base-color-300 !important;
   }
 }
 
 .darkNoOptions {
-  background-color: colors.$dark-base-color-200;
+  background-color: colors.$dark-base-color-400;
 
   :global {
     color: colors.$light-base-color-100 !important;
-    border: 0.1px solid colors.$light-base-color-300;
-  }
-
-  &[aria-selected='true'] {
-    background-color: colors.$dark-base-color-500;
+    border: 2px solid colors.$background-color-btn-primary;
   }
 }
 
@@ -171,6 +171,10 @@
 }
 
 .darkListbox {
-  background-color: colors.$dark-base-color-200;
-  border: 0.1px solid colors.$light-base-color-300;
+  background-color: colors.$dark-base-color-400;
+  border: 2px solid colors.$background-color-btn-primary;
+}
+
+:global(.MuiOutlinedInput-notchedOutline) {
+  border: none !important;
 }

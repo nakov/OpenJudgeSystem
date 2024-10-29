@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Autocomplete, Popper, TextField } from '@mui/material';
+import { IoMdClose } from 'react-icons/io';
+import { Autocomplete, IconButton, InputAdornment, Popper, TextField } from '@mui/material';
 import { IDropdownItem } from 'src/common/types';
 
 import useTheme from '../../../hooks/use-theme';
@@ -77,7 +78,7 @@ const Dropdown = (props: IDropdownProps) => {
         <Autocomplete
           options={dropdownItems}
           getOptionLabel={(option) => option.name}
-          value={value}
+          value={value ?? undefined}
           inputValue={inputValue}
           onInputChange={(event, newInputValue) => {
               setInputValue(newInputValue.trim() === ''
@@ -91,11 +92,36 @@ const Dropdown = (props: IDropdownProps) => {
           disabled={isDisabled}
           PopperComponent={StyledPopper}
           classes={autocompleteClasses}
+          disableClearable
           renderInput={(params) => (
               <TextField
                 {...params}
                 placeholder={placeholder}
                 classes={textFieldClasses}
+                InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                        <>
+                            {inputValue !== '' && !isDisabled && (
+                            <InputAdornment position="end">
+                                <IconButton
+                                  onClick={(event) => {
+                                      event.stopPropagation();
+                                      setInputValue('');
+                                      handleDropdownItemClick?.(null);
+                                  }}
+                                  edge="end"
+                                  size="small"
+                                  aria-label="clear input"
+                                >
+                                    <IoMdClose />
+                                </IconButton>
+                            </InputAdornment>
+                            )}
+                            {params.InputProps.endAdornment}
+                        </>
+                    ),
+                }}
               />
           )}
           ListboxProps={{ style: { maxHeight: '400px' } }}
