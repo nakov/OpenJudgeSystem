@@ -1,11 +1,176 @@
-@use 'src/styles/variables';
-@use 'src/styles/font-weights';
+@use 'src/styles/colors.scss';
 @use 'src/styles/spacings';
 
-.dropdown {
-  font-size: variables.$f-size-16;
-  font-weight: font-weights.$font-weight-regular;
-  height: 40px;
-  margin-left: spacings.$sp-16;
-  width: 350px;
+.textField {
+  width: 100%;
+}
+
+.inputRoot {
+  padding: spacings.$sp-0 spacings.$sp-4;
+}
+
+.input {
+  font-size: spacings.$sp-16;
+}
+
+.option {
+  font-size: spacings.$sp-16;
+  padding: spacings.$sp-8 spacings.$sp-16;
+  cursor: pointer;
+}
+
+.lightAutocomplete {
+  min-width: 20rem;
+
+  :global {
+    .MuiFormControl-root {
+      background-color: colors.$light-base-color-100;
+      border: 0.1px solid colors.$dark-base-color-300;
+      border-radius: 4px;
+    }
+
+    ::placeholder {
+      color: colors.$black-color !important;
+      opacity: 0.6 !important;
+    }
+  }
+}
+
+.lightInputRoot {
+  .MuiAutocomplete-root {
+    background-color: colors.$light-base-color-100;
+    color: colors.$black-color;
+
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: colors.$light-base-color-300;
+    }
+  }
+
+  .MuiSvgIcon-root {
+    color: colors.$black-color;
+  }
+}
+
+.lightTextField {
+  :global {
+    .MuiInputBase-input {
+      border-color: colors.$light-base-color-100;
+      color: colors.$black-color;
+    }
+  }
+}
+
+.lightOption {
+  color: colors.$black-color;
+  background-color: colors.$light-base-color-100;
+
+  &:hover {
+    background-color: colors.$light-base-color-200;
+  }
+
+  &[aria-selected='true'] {
+    background-color: colors.$light-base-color-500;
+  }
+}
+
+.lightNoOptions {
+  color: colors.$black-color;
+  background-color: colors.$light-base-color-100;
+
+  :global {
+    color: colors.$black-color !important;
+    border: 0.1px solid colors.$dark-base-color-300;
+  }
+
+  &[aria-selected='true'] {
+    background-color: colors.$light-base-color-500;
+  }
+}
+
+.lightPaper {
+  background-color: colors.$light-base-color-400;
+}
+
+.lightListbox {
+  background-color: colors.$light-base-color-100;
+  border: 0.1px solid colors.$dark-base-color-300;
+}
+
+.darkAutocomplete {
+  min-width: 20rem;
+
+  :global {
+    .MuiFormControl-root {
+      background-color: colors.$dark-base-color-200;
+      border: 0.1px solid colors.$light-base-color-300;
+      border-radius: spacings.$sp-4;
+    }
+
+    ::placeholder {
+      color: colors.$light-base-color-100 !important;
+      opacity: 0.8 !important;
+    }
+  }
+}
+
+.darkInputRoot {
+  .MuiInputBase-root {
+    background-color: colors.$dark-base-color-100;
+    color: colors.$light-base-color-100;
+
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: colors.$dark-base-color-300;
+    }
+  }
+
+  .MuiSvgIcon-root {
+    color: colors.$light-base-color-100;
+  }
+}
+
+.darkTextField {
+  :global {
+    .MuiInputBase-input {
+      border-color: colors.$light-base-color-100;
+      color: colors.$light-base-color-100 !important;
+    }
+  }
+}
+
+.darkOption {
+  background-color: colors.$dark-base-color-200;
+
+  :global {
+    color: colors.$light-base-color-100 !important;
+  }
+
+  &:hover {
+    background-color: colors.$dark-base-color-200;
+  }
+
+  &[aria-selected='true'] {
+    background-color: colors.$dark-base-color-500;
+  }
+}
+
+.darkNoOptions {
+  background-color: colors.$dark-base-color-200;
+
+  :global {
+    color: colors.$light-base-color-100 !important;
+    border: 0.1px solid colors.$light-base-color-300;
+  }
+
+  &[aria-selected='true'] {
+    background-color: colors.$dark-base-color-500;
+  }
+}
+
+.darkPaper {
+  background-color: colors.$dark-base-color-400;
+}
+
+.darkListbox {
+  background-color: colors.$dark-base-color-200;
+  border: 0.1px solid colors.$light-base-color-300;
 }
