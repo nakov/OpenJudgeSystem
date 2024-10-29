@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using OJS.Data.Models.Submissions;
 using IsolationLevel = System.Transactions.IsolationLevel;
 using Resource = OJS.Common.Resources.ProblemsBusiness;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -44,6 +45,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly IProblemGroupsDataService problemGroupsDataService;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ITransactionsProvider transactionsProvider;
+    private readonly ISubmissionTypesDataService submissionTypesData;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -58,7 +60,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IProblemGroupsDataService problemGroupsDataService,
         IZippedTestsParserService zippedTestsParser,
-        ITransactionsProvider transactionsProvider)
+        ITransactionsProvider transactionsProvider,
+        ISubmissionTypesDataService submissionTypesData)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -73,6 +76,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemGroupsDataService = problemGroupsDataService;
         this.zippedTestsParser = zippedTestsParser;
         this.transactionsProvider = transactionsProvider;
+        this.submissionTypesData = submissionTypesData;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -94,7 +98,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         await this.problemsData.Add(problem);
 
-        AddSubmissionTypes(problem, model);
+        await this.AddSubmissionTypes(problem, model);
         await this.TryAddTestsToProblem(problem, model.Tests);
 
         await this.problemsData.SaveChanges();
@@ -191,7 +195,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
     public override async Task<ProblemAdministrationModel> Get(int id)
     {
-        var problem = await this.problemsData.GetByIdQuery(id)
+        var problem = await this.problemsData
+            .GetByIdQuery(id)
             .Include(stp => stp.SubmissionTypesInProblems)
             .ThenInclude(stp => stp.SubmissionType)
             .Include(p => p.ProblemGroup)
@@ -234,7 +239,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             problem.ProblemGroup.OrderBy = model.OrderBy;
         }
 
-        AddSubmissionTypes(problem, model);
+        await this.AddSubmissionTypes(problem, model);
 
         this.problemsData.Update(problem);
 
@@ -265,20 +270,38 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
     }
 
-    private static void AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
+    private async Task AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
     {
-        var newSubmissionTypes = model.SubmissionTypes
-            .Select(x => new SubmissionTypeInProblem
+        var submissionTypeIds = model.SubmissionTypes.Select(st => st.Id).ToList();
+
+        var submissionTypes = await this.submissionTypesData
+            .All(st => submissionTypeIds.Contains(st.Id))
+            .ToDictionaryAsync(st => st.Id, st => st);
+
+        var newSubmissionTypes = new List<SubmissionTypeInProblem>();
+
+        foreach (var newSubmissionType in model.SubmissionTypes)
+        {
+            if (!submissionTypes.TryGetValue(newSubmissionType.Id, out var submissionType))
+            {
+                throw new BusinessServiceException($"Submission type with Id #{newSubmissionType.Id} does not exist.");
+            }
+
+            submissionType.IsSelectedByDefault = newSubmissionType.IsSelectedByDefault;
+
+            newSubmissionTypes.Add(new SubmissionTypeInProblem
             {
                 ProblemId = problem.Id,
-                SubmissionTypeId = x.Id,
-                SolutionSkeleton = x.SolutionSkeleton?.ToString().Compress(),
-                TimeLimit = x.TimeLimit,
-                MemoryLimit = x.MemoryLimit,
+                SubmissionTypeId = newSubmissionType.Id,
+                SolutionSkeleton = newSubmissionType.SolutionSkeleton?.ToString().Compress(),
+                TimeLimit = newSubmissionType.TimeLimit,
+                MemoryLimit = newSubmissionType.MemoryLimit,
             });
+        }
 
         problem.SubmissionTypesInProblems = new HashSet<SubmissionTypeInProblem>(newSubmissionTypes);
     }
+
 
     private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
     {

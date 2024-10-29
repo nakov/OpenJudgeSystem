@@ -40,7 +40,7 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public string? ProblemGroupType { get; set; }
 
-    public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
+    public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = [];
 
     public IFormFile? Tests { get; set; }
 
