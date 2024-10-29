@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ContestsGeneral;
+using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
 {
@@ -146,7 +147,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         var fileName = string.Format(
             Resource.ReportExcelFormat,
             official ? Resource.Contest : Resource.Practice,
-            contest.Name);
+            contest.Name,
+            Excel);
 
         return await this.excelService.ExportContestResultsToExcel(contestResults, fileName);
     }
