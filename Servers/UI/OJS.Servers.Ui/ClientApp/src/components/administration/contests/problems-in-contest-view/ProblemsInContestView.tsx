@@ -234,7 +234,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
           problemToCopyName={problemsData?.items!.find((x) => x.id === problemToCopy)?.name ?? null}
           problemToCopyId={problemToCopy}
           setParentSuccessMessage={setSuccessMessage}
-          onClose={retakeData}
         />
     );
 

@@ -42,7 +42,7 @@ interface ICopyModalProps{
     problemToCopyName: string | null;
     setShowModal: Function;
     setParentSuccessMessage: Function;
-    onClose: () => {};
+    onClose?: () => {};
 }
 
 const CopyModal = (props: ICopyModalProps) => {
@@ -106,14 +106,18 @@ const CopyModal = (props: ICopyModalProps) => {
     }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
 
     useEffect(() => {
-        if (!isNil(contestToCopy) &&
+        if (operation === AllowedOperations.CopyAll && !isNil(contestToCopy)) {
+            setIsFormValid(true);
+            return;
+        }
 
+        if (!isNil(contestToCopy) &&
             (
-                operation === AllowedOperations.CopyAll ||
                 // Copy into existing problem group and problem group id is set
                 (!copyIntoNewProblemGroup && !isNil(problemGroupId)) ||
                 // Copy into new problem group and problem group id is reset to null
-                (copyIntoNewProblemGroup && isNil(problemGroupId))) &&
+                (copyIntoNewProblemGroup && isNil(problemGroupId))
+            ) &&
             !isNilOrEmpty(sourceContestName)
         ) {
             setIsFormValid(true);
@@ -121,7 +125,7 @@ const CopyModal = (props: ICopyModalProps) => {
         }
 
         setIsFormValid(false);
-    }, [ contestToCopy, copyIntoNewProblemGroup, problemGroupId, sourceContestName ]);
+    }, [ contestToCopy, copyIntoNewProblemGroup, operation, problemGroupId, sourceContestName ]);
 
     useDisableMouseWheelOnNumberInputs();
 
@@ -149,7 +153,9 @@ const CopyModal = (props: ICopyModalProps) => {
             setShowModal(false);
         }
 
-        onClose();
+        if (onClose) {
+            onClose();
+        }
     }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal, onClose ]);
 
     const onInputChange = debounce((e: any) => {
