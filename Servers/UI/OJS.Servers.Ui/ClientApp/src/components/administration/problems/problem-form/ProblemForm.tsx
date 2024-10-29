@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Autocomplete, Box, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
@@ -121,6 +121,10 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
 
     const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
 
+    const isDefaultStrategySelected = useMemo(() => currentProblem
+        .submissionTypes
+        .some((st) => st.isSelectedByDefault), [ currentProblem.submissionTypes ]);
+
     useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
     useSuccessMessageEffect({
@@ -215,6 +219,12 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     type?.memoryLimit.toString(),
                 );
             }
+            if (type.isSelectedByDefault) {
+                formData.append(
+                    `SubmissionTypes[${index}].isSelectedByDefault`,
+                    type?.isSelectedByDefault.toString(),
+                );
+            }
         });
         if (currentProblem.tests) {
             formData.append('tests', currentProblem.tests);
@@ -245,6 +255,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     solutionSkeleton: null,
                     memoryLimit: null,
                     timeLimit: null,
+                    isSelectedByDefault: false,
                 });
 
                 newSubmissionTypes = newSubmissionTypes.filter((x) => x.id !== submissionType.id);
@@ -395,6 +406,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                   onPropChange={onPropChangeInSubmissionType}
                   onStrategyRemoved={onStrategyRemoved}
                   strategy={st}
+                  isDefaultStrategySelected={isDefaultStrategySelected}
                 />
             ))
         }

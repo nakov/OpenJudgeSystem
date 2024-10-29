@@ -549,6 +549,7 @@ interface IProblemSubmissionType{
     solutionSkeleton: string | null;
     timeLimit: number | null;
     memoryLimit: number | null;
+    isSelectedByDefault: boolean;
 }
 
 interface IIndexExamGroupsType {

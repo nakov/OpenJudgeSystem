@@ -151,17 +151,21 @@ const ContestSolutionSubmitPage = () => {
         allowedSubmissionTypes: problemAllowedSubmissionTypes,
     } = selectedContestDetailsProblem || {};
 
+    const strategyDropdownItems = useMemo(
+        () => problemAllowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({
+            id: item.id,
+            name: item.name,
+            isSelectedByDefault: item.isSelectedByDefault,
+        })),
+        [ problemAllowedSubmissionTypes ],
+    );
+
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
         const submissionType = selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
 
         setSelectedStrategyValue(s.id);
         setSelectedSubmissionType(submissionType);
     }, [ selectedContestDetailsProblem ]);
-
-    const strategyDropdownItems = useMemo(
-        () => problemAllowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
-        [ problemAllowedSubmissionTypes ],
-    );
 
     const handleRefreshClick = () => {
         setIsRotating(true);
@@ -309,9 +313,10 @@ const ContestSolutionSubmitPage = () => {
     // instead of having the default empty one selected
     useEffect(() => {
         const previousSelectedStrategy = strategyDropdownItems?.find((strat) => strat.id === Number(selectedStrategyValue));
+
         if (strategyDropdownItems?.length && strategyDropdownItems?.length > 0) {
             if (!previousSelectedStrategy) {
-                onStrategyDropdownItemSelect(strategyDropdownItems[0]);
+                onStrategyDropdownItemSelect(strategyDropdownItems.find((s) => s.isSelectedByDefault) ?? strategyDropdownItems[0]);
             } else {
                 onStrategyDropdownItemSelect(previousSelectedStrategy);
             }
