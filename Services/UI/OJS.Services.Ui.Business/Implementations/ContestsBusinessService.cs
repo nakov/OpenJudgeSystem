@@ -79,6 +79,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
             var contestDetailsServiceModel = await this.contestsCacheService.GetContestDetailsServiceModel(id);
+
             var isLecturerInContestOrAdmin = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contestDetailsServiceModel?.Id);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
@@ -112,8 +113,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var isActiveParticipantInCompete = competeParticipant != null && this.activityService.GetParticipantActivity(competeParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive;
-            var isActiveParticipantInPractice = practiceParticipant != null && this.activityService.GetParticipantActivity(practiceParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive;
+            var (isActiveParticipantInCompete, isActiveParticipantInPractice) = this.GetParticipantsActivity(competeParticipant, practiceParticipant, contestDetailsServiceModel!);
 
             var canShowProblemsInCompete =
                 (!contestDetailsServiceModel!.HasContestPassword &&
@@ -724,6 +724,40 @@ namespace OJS.Services.Ui.Business.Implementations
                 userId,
                 official,
                 isUserAdminOrLecturerInContest);
+        }
+
+        private (bool isActiveParticipantInCompete, bool isActiveParticipantInPractice) GetParticipantsActivity(
+            Participant? competeParticipant,
+            Participant? practiceParticipant,
+            ContestDetailsServiceModel contestDetailsServiceModel)
+        {
+            if (competeParticipant != null)
+            {
+                competeParticipant.Contest = new Contest
+                {
+                    StartTime = contestDetailsServiceModel!.StartTime,
+                    EndTime = contestDetailsServiceModel!.EndTime,
+                    PracticeStartTime = contestDetailsServiceModel!.PracticeStartTime,
+                    PracticeEndTime = contestDetailsServiceModel!.PracticeEndTime,
+                };
+            }
+
+            if (practiceParticipant != null)
+            {
+                practiceParticipant.Contest = new Contest
+                {
+                    StartTime = contestDetailsServiceModel!.StartTime,
+                    EndTime = contestDetailsServiceModel!.EndTime,
+                    PracticeStartTime = contestDetailsServiceModel!.PracticeStartTime,
+                    PracticeEndTime = contestDetailsServiceModel!.PracticeEndTime,
+                };
+            }
+
+            return (
+                competeParticipant != null && this.activityService
+                    .GetParticipantActivity(competeParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive,
+                practiceParticipant != null && this.activityService
+                    .GetParticipantActivity(practiceParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive);
         }
     }
 }
