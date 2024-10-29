@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { IoMdClose } from 'react-icons/io';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { IDropdownItem } from 'src/common/types';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
@@ -14,7 +14,6 @@ const ContestStrategies = () => {
     const dispatch = useAppDispatch();
     const [ searchParams ] = useSearchParams();
     const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
-    const [ selectValue, setSelectValue ] = useState<string>('');
 
     const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
     const {
@@ -35,33 +34,31 @@ const ContestStrategies = () => {
         }
     }, [ selectedId, contestStrategies, dispatch ]);
 
-    useEffect(() => {
-        if (selectedStrategy) {
-            setSelectValue(selectedStrategy.id.toString());
-        } else {
-            setSelectValue('');
-        }
-    }, [ selectedStrategy ]);
-
     const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({
         id: el.id,
         name: el.name,
     });
 
-    const dropdownItems = useMemo(
-        () => !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
-            ? (contestStrategies || []).map(mapDataToDropdownItem)
-            : selectedCategory?.allowedStrategyTypes.map(mapDataToDropdownItem),
-        [ contestStrategies, selectedCategory ],
-    );
+    const dropdownItems = useMemo(() => {
+        const items =
+            !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
+                ? contestStrategies || []
+                : selectedCategory?.allowedStrategyTypes;
 
-    const removeSelectedStrategy = () => {
-        dispatch(setContestStrategy(null));
-    };
+        return items
+            .filter((item) => item?.name && item.name.trim() !== '')
+            .map(mapDataToDropdownItem);
+    }, [ contestStrategies, selectedCategory ]);
 
-    const handleStrategySelect = (s: IContestStrategyFilter) => {
-        dispatch(setContestStrategy(s));
-        setSelectValue(s.id.toString());
+    const handleStrategySelect = (item: IDropdownItem | null) => {
+        if (item) {
+            const strategy = contestStrategies?.find((s) => s.id === item.id);
+            if (strategy) {
+                dispatch(setContestStrategy(strategy));
+            }
+        } else {
+            dispatch(setContestStrategy(null));
+        }
     };
 
     if (strategiesError) {
@@ -74,11 +71,13 @@ const ContestStrategies = () => {
 
     return (
         <div className={styles.selectWrapper}>
-            {selectedStrategy && <IoMdClose onClick={removeSelectedStrategy} />}
             <Dropdown
-              dropdownItems={dropdownItems || []}
-              value={selectValue}
+              dropdownItems={dropdownItems}
+              value={selectedStrategy
+                  ? mapDataToDropdownItem(selectedStrategy)
+                  : null}
               placeholder="Select strategy"
+              noOptionsFoundText="No strategies found"
               handleDropdownItemClick={handleStrategySelect}
             />
         </div>
