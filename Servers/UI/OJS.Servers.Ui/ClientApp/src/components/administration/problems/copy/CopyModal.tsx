@@ -42,6 +42,7 @@ interface ICopyModalProps{
     problemToCopyName: string | null;
     setShowModal: Function;
     setParentSuccessMessage: Function;
+    onClose: () => {};
 }
 
 const CopyModal = (props: ICopyModalProps) => {
@@ -54,6 +55,7 @@ const CopyModal = (props: ICopyModalProps) => {
         problemToCopyName,
         problemToCopyId = null,
         setParentSuccessMessage,
+        onClose,
     } = props;
 
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete | null>(null);
@@ -63,18 +65,6 @@ const CopyModal = (props: ICopyModalProps) => {
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
     const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>(false);
     const [ isFormValid, setIsFormValid ] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (!isNil(contestToCopy) &&
-            ((!copyIntoNewProblemGroup && !isNil(problemGroupId)) || (copyIntoNewProblemGroup && isNil(problemGroupId))) &&
-            !isNilOrEmpty(sourceContestName)
-        ) {
-            setIsFormValid(true);
-            return;
-        }
-
-        setIsFormValid(false);
-    }, [ contestToCopy, copyIntoNewProblemGroup, problemGroupId, sourceContestName ]);
 
     const { data, isLoading } = useGetContestAutocompleteQuery(contestSearchString);
 
@@ -92,13 +82,6 @@ const CopyModal = (props: ICopyModalProps) => {
         }
     };
 
-    useEffect(() => {
-        // Reset problem group when checkbox is checked
-        if (copyIntoNewProblemGroup) {
-            setNewProblemGroup(null);
-        }
-    }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
-
     const [ copy,
         {
             data: copyData,
@@ -114,6 +97,31 @@ const CopyModal = (props: ICopyModalProps) => {
             isLoading: isCopyingAll,
             error: copyAllError,
         } ] = useCopyAllMutation();
+
+    useEffect(() => {
+        // Reset problem group when checkbox is checked
+        if (copyIntoNewProblemGroup) {
+            setNewProblemGroup(null);
+        }
+    }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
+
+    useEffect(() => {
+        if (!isNil(contestToCopy) &&
+
+            (
+                operation === AllowedOperations.CopyAll ||
+                // Copy into existing problem group and problem group id is set
+                (!copyIntoNewProblemGroup && !isNil(problemGroupId)) ||
+                // Copy into new problem group and problem group id is reset to null
+                (copyIntoNewProblemGroup && isNil(problemGroupId))) &&
+            !isNilOrEmpty(sourceContestName)
+        ) {
+            setIsFormValid(true);
+            return;
+        }
+
+        setIsFormValid(false);
+    }, [ contestToCopy, copyIntoNewProblemGroup, problemGroupId, sourceContestName ]);
 
     useDisableMouseWheelOnNumberInputs();
 
@@ -140,7 +148,9 @@ const CopyModal = (props: ICopyModalProps) => {
         if (isSuccessfullyCopied || isSuccessfullyCopiedAll) {
             setShowModal(false);
         }
-    }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal ]);
+
+        onClose();
+    }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal, onClose ]);
 
     const onInputChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
@@ -240,16 +250,20 @@ const CopyModal = (props: ICopyModalProps) => {
                               />
                               )
                             }
-                            <FormControlLabel
-                              control={(
-                                  <Checkbox
-                                    checked={copyIntoNewProblemGroup}
-                                  />
-                                )}
-                              name="copyIntoNewProblemGroup"
-                              onChange={() => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
-                              label={COPY_INTO_NEW_PROBLEM_GROUP}
-                            />
+                            {
+                                operation === AllowedOperations.Copy && (
+                                    <FormControlLabel
+                                      control={(
+                                          <Checkbox
+                                            checked={copyIntoNewProblemGroup}
+                                          />
+                                        )}
+                                      name="copyIntoNewProblemGroup"
+                                      onChange={() => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
+                                      label={COPY_INTO_NEW_PROBLEM_GROUP}
+                                    />
+                                )
+                            }
                             <Box sx={{ marginTop: '1rem' }}>
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
                                     {sourceContestName}
