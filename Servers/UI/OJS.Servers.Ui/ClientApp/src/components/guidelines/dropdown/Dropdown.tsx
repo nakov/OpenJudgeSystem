@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
-import { Autocomplete, IconButton, InputAdornment, Popper, TextField } from '@mui/material';
+import { Autocomplete, createFilterOptions, IconButton, InputAdornment, Popper, TextField } from '@mui/material';
 import { IDropdownItem } from 'src/common/types';
 
 import useTheme from '../../../hooks/use-theme';
@@ -15,6 +15,7 @@ interface IDropdownProps {
     placeholder?: string;
     isDisabled?: boolean;
     noOptionsFoundText?: string;
+    isSearchable?: boolean;
 }
 
 const StyledPopper = (popperProps: any) => (
@@ -42,6 +43,7 @@ const Dropdown = (props: IDropdownProps) => {
         isDisabled = false,
         placeholder = 'Select element',
         noOptionsFoundText = 'No options found',
+        isSearchable = false,
     } = props;
 
     const { isDarkMode } = useTheme();
@@ -75,6 +77,8 @@ const Dropdown = (props: IDropdownProps) => {
         input: `${styles.input} ${styles[`${theme}Input`]}`,
     };
 
+    const defaultFilterOptions = createFilterOptions<IDropdownItem>();
+
     return (
         <Autocomplete
           options={dropdownItems}
@@ -82,9 +86,11 @@ const Dropdown = (props: IDropdownProps) => {
           value={value ?? undefined}
           inputValue={inputValue}
           onInputChange={(event, newInputValue) => {
-              setInputValue(newInputValue.trim() === ''
-                  ? ''
-                  : newInputValue);
+              if (isSearchable) {
+                  setInputValue(newInputValue.trim() === ''
+                      ? ''
+                      : newInputValue);
+              }
           }}
           onChange={(event, newValue) => {
               handleDropdownItemClick?.(newValue);
@@ -95,6 +101,9 @@ const Dropdown = (props: IDropdownProps) => {
           classes={autocompleteClasses}
           disableClearable
           isOptionEqualToValue={(option, val) => option.id === val.id}
+          filterOptions={(options, state) => isSearchable
+              ? defaultFilterOptions(options, state)
+              : options}
           renderInput={(params) => (
               <TextField
                 {...params}
@@ -102,27 +111,33 @@ const Dropdown = (props: IDropdownProps) => {
                 classes={textFieldClasses}
                 InputProps={{
                     ...params.InputProps,
-                    endAdornment: (
-                        <>
-                            {inputValue !== '' && !isDisabled && (
-                            <InputAdornment position="end">
-                                <IconButton
-                                  onClick={(event) => {
-                                      event.stopPropagation();
-                                      setInputValue('');
-                                      handleDropdownItemClick?.(undefined);
-                                  }}
-                                  edge="end"
-                                  size="small"
-                                  aria-label="clear input"
-                                >
-                                    <IoMdClose />
-                                </IconButton>
-                            </InputAdornment>
-                            )}
-                            {params.InputProps.endAdornment}
-                        </>
-                    ),
+                    inputProps: {
+                        ...params.inputProps,
+                        readOnly: !isSearchable,
+                    },
+                    endAdornment: isSearchable
+                        ? (
+                            <>
+                                {inputValue !== '' && !isDisabled && (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                      onClick={(event) => {
+                                          event.stopPropagation();
+                                          setInputValue('');
+                                          handleDropdownItemClick?.(undefined);
+                                      }}
+                                      edge="end"
+                                      size="small"
+                                      aria-label="clear input"
+                                    >
+                                        <IoMdClose />
+                                    </IconButton>
+                                </InputAdornment>
+                                )}
+                                {params.InputProps.endAdornment}
+                            </>
+                        )
+                        : params.InputProps.endAdornment,
                 }}
               />
           )}

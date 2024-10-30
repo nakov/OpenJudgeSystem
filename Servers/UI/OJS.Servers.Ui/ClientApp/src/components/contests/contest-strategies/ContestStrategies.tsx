@@ -79,6 +79,7 @@ const ContestStrategies = () => {
               placeholder="Select strategy"
               noOptionsFoundText="No strategies found"
               handleDropdownItemClick={handleStrategySelect}
+              isSearchable
             />
         </div>
     );

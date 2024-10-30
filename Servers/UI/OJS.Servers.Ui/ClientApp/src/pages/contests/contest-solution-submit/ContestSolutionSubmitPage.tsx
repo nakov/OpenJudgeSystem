@@ -600,10 +600,8 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Dropdown
                           dropdownItems={strategyDropdownItems || []}
-                          placeholder="Select submission type"
                           value={selectedStrategyValue}
                           handleDropdownItemClick={onStrategyDropdownItemSelect}
-                          noOptionsFoundText="No submission types found"
                         />
                         <Button
                           onClick={onSolutionSubmitFile}
@@ -639,10 +637,8 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems || []}
-                      placeholder="Select submission type"
                       value={selectedStrategyValue}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
-                      noOptionsFoundText="No submission types found"
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Button
