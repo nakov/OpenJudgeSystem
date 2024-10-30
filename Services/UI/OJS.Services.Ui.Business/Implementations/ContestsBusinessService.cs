@@ -731,33 +731,30 @@ namespace OJS.Services.Ui.Business.Implementations
             Participant? practiceParticipant,
             ContestDetailsServiceModel contestDetailsServiceModel)
         {
+            var isActiveParticipantInCompete = false;
+            var isActiveParticipantInPractice = false;
+
             if (competeParticipant != null)
             {
-                competeParticipant.Contest = new Contest
-                {
-                    StartTime = contestDetailsServiceModel!.StartTime,
-                    EndTime = contestDetailsServiceModel!.EndTime,
-                    PracticeStartTime = contestDetailsServiceModel!.PracticeStartTime,
-                    PracticeEndTime = contestDetailsServiceModel!.PracticeEndTime,
-                };
+                var competeParticipantActivityServiceModel = competeParticipant.Map<ParticipantForActivityServiceModel>();
+
+                competeParticipantActivityServiceModel.ContestStartTime = contestDetailsServiceModel.StartTime;
+                competeParticipantActivityServiceModel.ContestEndTime = contestDetailsServiceModel.EndTime;
+
+                isActiveParticipantInCompete = this.activityService.GetParticipantActivity(competeParticipantActivityServiceModel).IsActive;
             }
 
             if (practiceParticipant != null)
             {
-                practiceParticipant.Contest = new Contest
-                {
-                    StartTime = contestDetailsServiceModel!.StartTime,
-                    EndTime = contestDetailsServiceModel!.EndTime,
-                    PracticeStartTime = contestDetailsServiceModel!.PracticeStartTime,
-                    PracticeEndTime = contestDetailsServiceModel!.PracticeEndTime,
-                };
+                var practiceParticipantActivityServiceModel = practiceParticipant.Map<ParticipantForActivityServiceModel>();
+
+                practiceParticipantActivityServiceModel.ContestPracticeStartTime = contestDetailsServiceModel.PracticeStartTime;
+                practiceParticipantActivityServiceModel.ContestPracticeEndTime = contestDetailsServiceModel.PracticeEndTime;
+
+                isActiveParticipantInPractice = this.activityService.GetParticipantActivity(practiceParticipantActivityServiceModel).IsActive;
             }
 
-            return (
-                competeParticipant != null && this.activityService
-                    .GetParticipantActivity(competeParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive,
-                practiceParticipant != null && this.activityService
-                    .GetParticipantActivity(practiceParticipant!.Map<ParticipantForActivityServiceModel>()).IsActive);
+            return (isActiveParticipantInCompete, isActiveParticipantInPractice);
         }
     }
 }
