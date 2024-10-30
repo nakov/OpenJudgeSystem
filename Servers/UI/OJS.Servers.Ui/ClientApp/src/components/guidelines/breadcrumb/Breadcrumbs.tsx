@@ -44,8 +44,13 @@ const Breadcrumbs = ({
                 return null;
             }
 
-            const renderItemContent = (item: IPageBreadcrumbsItem, isLast: boolean) => (
+            const renderItemContent = (
+                item: IPageBreadcrumbsItem,
+                isLast: boolean,
+                key: string,
+            ) => (
                 <div
+                  key={key}
                   className={concatClassNames(
                       styles.item,
                       isLast
@@ -63,15 +68,16 @@ const Breadcrumbs = ({
             return itemsList
                 .map((item: IPageBreadcrumbsItem, idx: number) => {
                     const isLast = idx === itemsList.length - 1;
+                    const key = `${keyPrefix}-breadcrumb-item-${idx}`;
 
                     return isNilOrEmpty(item.to) || isLast
-                        ? renderItemContent(item, isLast)
+                        ? renderItemContent(item, isLast, key)
                         : (
                             <Link
-                              key={`${keyPrefix}-breadcrumb-item-${idx}`}
+                              key={key}
                               to={item.to!}
                             >
-                                {renderItemContent(item, isLast)}
+                                {renderItemContent(item, isLast, '')}
                             </Link>
                         );
                 });
