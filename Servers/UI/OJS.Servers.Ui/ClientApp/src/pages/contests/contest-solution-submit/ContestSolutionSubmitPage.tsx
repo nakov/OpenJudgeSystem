@@ -14,7 +14,7 @@ import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
+import { IDropdownItem, IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
 import {
     getAllContestsPageUrl,
     getContestsDetailsPageUrl,
@@ -66,7 +66,7 @@ const ContestSolutionSubmitPage = () => {
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
-    const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
+    const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<IDropdownItem>({ name: '', id: 0 });
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
     const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
@@ -151,11 +151,16 @@ const ContestSolutionSubmitPage = () => {
         allowedSubmissionTypes: problemAllowedSubmissionTypes,
     } = selectedContestDetailsProblem || {};
 
-    const onStrategyDropdownItemSelect = useCallback((s: any) => {
-        const submissionType = selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
-
-        setSelectedStrategyValue(s.id);
-        setSelectedSubmissionType(submissionType);
+    const onStrategyDropdownItemSelect = useCallback((s: IDropdownItem | undefined) => {
+        if (s) {
+            const submissionType =
+                selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
+            setSelectedStrategyValue({ name: s.name, id: s.id });
+            setSelectedSubmissionType(submissionType);
+        } else {
+            setSelectedStrategyValue({ name: '', id: 0 });
+            setSelectedSubmissionType(undefined);
+        }
     }, [ selectedContestDetailsProblem ]);
 
     const strategyDropdownItems = useMemo(
@@ -308,7 +313,7 @@ const ContestSolutionSubmitPage = () => {
     // set dropdown data to the first element in the dropdown
     // instead of having the default empty one selected
     useEffect(() => {
-        const previousSelectedStrategy = strategyDropdownItems?.find((strat) => strat.id === Number(selectedStrategyValue));
+        const previousSelectedStrategy = strategyDropdownItems?.find((strat) => strat.id === Number(selectedStrategyValue?.id));
         if (strategyDropdownItems?.length && strategyDropdownItems?.length > 0) {
             if (!previousSelectedStrategy) {
                 onStrategyDropdownItemSelect(strategyDropdownItems[0]);
@@ -595,9 +600,10 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Dropdown
                           dropdownItems={strategyDropdownItems || []}
-                          placeholder="Select strategy"
+                          placeholder="Select submission type"
                           value={selectedStrategyValue}
                           handleDropdownItemClick={onStrategyDropdownItemSelect}
+                          noOptionsFoundText="No submission types found"
                         />
                         <Button
                           onClick={onSolutionSubmitFile}
@@ -633,9 +639,10 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems || []}
-                      placeholder="Select strategy"
+                      placeholder="Select submission type"
                       value={selectedStrategyValue}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
+                      noOptionsFoundText="No submission types found"
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Button

@@ -50,7 +50,7 @@ const ContestStrategies = () => {
             .map(mapDataToDropdownItem);
     }, [ contestStrategies, selectedCategory ]);
 
-    const handleStrategySelect = (item: IDropdownItem | null) => {
+    const handleStrategySelect = (item: IDropdownItem | undefined) => {
         if (item) {
             const strategy = contestStrategies?.find((s) => s.id === item.id);
             if (strategy) {
@@ -75,7 +75,7 @@ const ContestStrategies = () => {
               dropdownItems={dropdownItems}
               value={selectedStrategy
                   ? mapDataToDropdownItem(selectedStrategy)
-                  : null}
+                  : { name: '', id: 0 }}
               placeholder="Select strategy"
               noOptionsFoundText="No strategies found"
               handleDropdownItemClick={handleStrategySelect}

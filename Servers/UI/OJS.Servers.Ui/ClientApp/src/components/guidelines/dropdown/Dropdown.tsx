@@ -11,7 +11,7 @@ import styles from './Dropdown.module.scss';
 interface IDropdownProps {
     dropdownItems: Array<IDropdownItem>;
     value: IDropdownItem | null;
-    handleDropdownItemClick?: (arg?: any) => any;
+    handleDropdownItemClick?: (item: IDropdownItem | undefined) => void;
     placeholder?: string;
     isDisabled?: boolean;
     noOptionsFoundText?: string;
@@ -93,6 +93,7 @@ const Dropdown = (props: IDropdownProps) => {
           PopperComponent={StyledPopper}
           classes={autocompleteClasses}
           disableClearable
+          isOptionEqualToValue={(option, val) => option.id === val.id}
           renderInput={(params) => (
               <TextField
                 {...params}
@@ -108,7 +109,7 @@ const Dropdown = (props: IDropdownProps) => {
                                   onClick={(event) => {
                                       event.stopPropagation();
                                       setInputValue('');
-                                      handleDropdownItemClick?.(null);
+                                      handleDropdownItemClick?.(undefined);
                                   }}
                                   edge="end"
                                   size="small"
