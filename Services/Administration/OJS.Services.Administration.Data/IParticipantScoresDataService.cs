@@ -33,7 +33,8 @@ namespace OJS.Services.Administration.Data
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant);
+            Participant participant,
+            bool shouldSaveChanges = true);
 
         Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
     }

@@ -39,7 +39,9 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public IQueryable<ParticipantScore> GetAllHavingPointsExceedingLimit() =>
             this.GetAll()
-                .Where(ps => ps.Points > ps.Problem.MaximumPoints);
+                .Where(ps => ps.Points > ps.Problem.MaximumPoints)
+                .Include(ps => ps.Participant)
+                .Include(ps => ps.Problem);
 
         public async Task ResetBySubmission(Submission submission)
         {
@@ -119,23 +121,28 @@ namespace OJS.Services.Administration.Data.Implementations
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant)
+            Participant participant,
+            bool shouldSaveChanges = true)
         {
+            // The submission TotalScoreSnapshotModifiedOn must be changed only if it is new submission in other way the results will not be ordered correctly.
+            var shouldUpdateTotalScoreDate = submissionId != null && submissionId != participantScore.SubmissionId;
+
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
 
-            // The submission TotalScoreSnapshotModifiedOn must be changed only if it is new submission in other way the results will not be ordered correctly.
-            var shouldUpdateTotalScoreDate = submissionId != null && submissionId != participantScore.SubmissionId;
             UpdateTotalScoreSnapshot(
                 participant,
                 participantScore.Points,
                 submissionPoints,
                 shouldUpdateTotalScoreDate);
 
-            this.Update(participantScore);
-            this.participantsData.Update(participant);
+            if (shouldSaveChanges)
+            {
+                this.Update(participantScore);
+                this.participantsData.Update(participant);
 
-            await this.SaveChanges();
+                await this.SaveChanges();
+            }
         }
 
         public Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>
@@ -152,7 +159,7 @@ namespace OJS.Services.Administration.Data.Implementations
             int newPoints,
             bool shouldUpdateDate)
         {
-            participant.TotalScoreSnapshot = (participant.TotalScoreSnapshot - previousPoints) + newPoints;
+            participant.TotalScoreSnapshot = participant.TotalScoreSnapshot - previousPoints + newPoints;
             if (shouldUpdateDate)
             {
                 participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
