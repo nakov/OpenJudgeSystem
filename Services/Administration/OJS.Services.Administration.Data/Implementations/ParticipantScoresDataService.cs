@@ -30,16 +30,11 @@ namespace OJS.Services.Administration.Data.Implementations
                     ps.ProblemId == problemId &&
                     ps.IsOfficial == isOfficial);
 
-        public IQueryable<ParticipantScore> GetAll() =>
-            this.GetQuery();
-
         public IQueryable<ParticipantScore> GetAllByProblem(int problemId) =>
-            this.GetAll()
-                .Where(ps => ps.ProblemId == problemId);
+            this.GetQuery(ps => ps.ProblemId == problemId);
 
         public IQueryable<ParticipantScore> GetAllHavingPointsExceedingLimit() =>
-            this.GetAll()
-                .Where(ps => ps.Points > ps.Problem.MaximumPoints)
+            this.GetQuery(ps => ps.Points > ps.Problem.MaximumPoints)
                 .Include(ps => ps.Participant)
                 .Include(ps => ps.Problem);
 

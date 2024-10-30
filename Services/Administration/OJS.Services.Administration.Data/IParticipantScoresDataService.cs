@@ -13,8 +13,6 @@ namespace OJS.Services.Administration.Data
 
         Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial);
 
-        IQueryable<ParticipantScore> GetAll();
-
         IQueryable<ParticipantScore> GetAllByProblem(int problemId);
 
         IQueryable<ParticipantScore> GetAllHavingPointsExceedingLimit();
