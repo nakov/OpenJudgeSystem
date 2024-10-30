@@ -38,7 +38,7 @@
     }
 
     ::placeholder {
-      color: colors.$black-color !important;
+      color: colors.$light-text-color !important;
       opacity: 0.6 !important;
     }
   }
@@ -47,11 +47,11 @@
 .lightInputRoot {
   .MuiAutocomplete-root {
     background-color: colors.$light-base-color-100;
-    color: colors.$black-color;
+    color: colors.$light-text-color;
   }
 
   .MuiSvgIcon-root {
-    color: colors.$black-color;
+    color: colors.$light-text-color;
   }
 }
 
@@ -59,13 +59,13 @@
   :global {
     .MuiInputBase-input {
       border-color: colors.$light-base-color-100;
-      color: colors.$black-color;
+      color: colors.$light-text-color;
     }
   }
 }
 
 .lightOption {
-  color: colors.$black-color;
+  color: colors.$light-text-color;
   background-color: colors.$light-base-color-100;
 
   &:hover {
@@ -78,11 +78,11 @@
 }
 
 .lightNoOptions {
-  color: colors.$black-color;
+  color: colors.$light-text-color;
   background-color: colors.$light-base-color-100;
 
   :global {
-    color: colors.$black-color !important;
+    color: colors.$light-text-color !important;
     border: 2px solid colors.$background-color-btn-primary;
   }
 }
@@ -115,7 +115,7 @@
     }
 
     ::placeholder {
-      color: colors.$light-base-color-100 !important;
+      color: colors.$dark-text-color !important;
       opacity: 0.8 !important;
     }
   }
@@ -124,19 +124,19 @@
 .darkInputRoot {
   .MuiInputBase-root {
     background-color: colors.$dark-base-color-100;
-    color: colors.$light-base-color-100;
+    color: colors.$dark-text-color;
   }
 
   .MuiSvgIcon-root {
-    color: colors.$light-base-color-100;
+    color: colors.$dark-text-color;
   }
 }
 
 .darkTextField {
   :global {
     .MuiInputBase-input {
-      border-color: colors.$light-base-color-100;
-      color: colors.$light-base-color-100 !important;
+      border-color: colors.$dark-text-color;
+      color: colors.$dark-text-color !important;
     }
   }
 }
@@ -145,7 +145,7 @@
   background-color: colors.$dark-base-color-400;
 
   :global {
-    color: colors.$light-base-color-100 !important;
+    color: colors.$dark-text-color !important;
   }
 
   &:hover {
@@ -161,7 +161,7 @@
   background-color: colors.$dark-base-color-400;
 
   :global {
-    color: colors.$light-base-color-100 !important;
+    color: colors.$dark-text-color !important;
     border: 2px solid colors.$background-color-btn-primary;
   }
 }

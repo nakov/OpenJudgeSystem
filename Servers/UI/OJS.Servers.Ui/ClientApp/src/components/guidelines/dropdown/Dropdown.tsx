@@ -45,6 +45,7 @@ const Dropdown = (props: IDropdownProps) => {
     } = props;
 
     const { isDarkMode } = useTheme();
+
     const theme = isDarkMode
         ? 'dark'
         : 'light';
