@@ -78,7 +78,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
     }
 
     [HttpGet("{roleId}")]
-    [ProtectedEntityAction("roleId", typeof(RoleIdPermissionService))]
+    [ProtectedEntityAction(nameof(roleId), typeof(RoleIdPermissionService))]
     public async Task<IActionResult> GetByRoleId([FromQuery] PaginationRequestModel model, [FromRoute] string roleId)
         => this.Ok(
             await this.usersGridData.GetAll<UserInListModel>(
@@ -86,7 +86,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
                 user => user.UsersInRoles!.Any(ur => ur.RoleId == roleId)));
 
     [HttpGet("{userId}")]
-    [ProtectedEntityAction("userId", typeof(UserIdPermissionService))]
+    [ProtectedEntityAction(nameof(userId), typeof(UserIdPermissionService))]
     public async Task<IActionResult> GetLecturerContests([FromQuery] PaginationRequestModel model, [FromRoute] string userId)
         => this.Ok(
             await this.lecturersInContestsGridDataService.GetAll<LecturerInContestInListModel>(
@@ -94,7 +94,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
                 linc => linc.LecturerId == userId));
 
     [HttpPost]
-    [ProtectedEntityAction("model", typeof(LecturerToContestPermissionService))]
+    [ProtectedEntityAction(nameof(model), typeof(LecturerToContestPermissionService))]
     public async Task<IActionResult> AddLecturerToContest(LecturerToContestModel model)
     {
         await this.lecturersInContestsBusinessService.AddLecturerToContest(model);
@@ -102,7 +102,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
     }
 
     [HttpDelete]
-    [ProtectedEntityAction("lecturerId", typeof(UserIdPermissionService))]
+    [ProtectedEntityAction(nameof(lecturerId), typeof(UserIdPermissionService))]
     public async Task<IActionResult> RemoveLecturerFromContest([FromQuery] string lecturerId, [FromQuery] int contestId)
     {
         await this.lecturersInContestsBusinessService.RemoveLecturerFromContest(
@@ -112,11 +112,12 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
                 ContestId = contestId,
                 OperationType = CrudOperationType.Delete,
             });
+
         return this.Ok("Lecturer successfully removed from contest");
     }
 
     [HttpGet("{userId}")]
-    [ProtectedEntityAction("userId", typeof(UserIdPermissionService))]
+    [ProtectedEntityAction(nameof(userId), typeof(UserIdPermissionService))]
     public async Task<IActionResult> GetLecturerCategories([FromQuery] PaginationRequestModel model, [FromRoute] string userId)
         => this.Ok(
             await this.lecturersInCategoriesGridDataService.GetAll<LecturerInCategoryInListModel>(
@@ -124,7 +125,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
                 linc => linc.LecturerId == userId));
 
     [HttpPost]
-    [ProtectedEntityAction("model", typeof(LecturerToCategoryPermissionService))]
+    [ProtectedEntityAction(nameof(model), typeof(LecturerToCategoryPermissionService))]
     public async Task<IActionResult> AddLecturerToCategory(LecturerToCategoryModel model)
     {
         await this.lecturersInCategoriesBusinessService.AddLecturerToCategory(model);
@@ -132,7 +133,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
     }
 
     [HttpDelete]
-    [ProtectedEntityAction("lecturerId", typeof(UserIdPermissionService))]
+    [ProtectedEntityAction(nameof(lecturerId), typeof(UserIdPermissionService))]
     public async Task<IActionResult> RemoveLecturerFromCategory([FromQuery] string lecturerId, [FromQuery] int categoryId)
     {
         await this.lecturersInCategoriesBusinessService.RemoveLecturerFromCategory(
@@ -142,11 +143,12 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
                 CategoryId = categoryId,
                 OperationType = CrudOperationType.Delete,
             });
+
         return this.Ok("Lecturer successfully removed from category");
     }
 
     [HttpGet("{examGroupId}")]
-    [ProtectedEntityAction("examGroupId", typeof(ExamGroupIdPermissionsService))]
+    [ProtectedEntityAction(nameof(examGroupId), typeof(ExamGroupIdPermissionsService))]
     public async Task<IActionResult> GetByExamGroupId([FromQuery] PaginationRequestModel model, [FromRoute] int examGroupId)
         => this.Ok(
             await this.usersGridData.GetAll<UserInListModel>(
