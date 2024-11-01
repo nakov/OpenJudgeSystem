@@ -101,11 +101,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.GetByIdQuery(id)
             .Any(s => s.Participant!.IsOfficial);
 
-    public Submission? GetLastSubmitForParticipant(int participantId) =>
-        this.GetQuery(s => s.ParticipantId == participantId)
-            .OrderByDescending(s => s.CreatedOn)
-            .FirstOrDefault();
-
     public void SetAllToUnprocessedByProblem(int problemId) =>
         this.GetAllByProblem(problemId)
             .UpdateFromQueryAsync(s => new Submission { Processed = false });
@@ -117,20 +112,19 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.GetAllByProblem(problemId)
             .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
 
-    public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
+    public async Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
     {
         if (limitBetweenSubmissions <= 0)
         {
             return 0;
         }
 
-        var lastSubmission = this.GetLastSubmitForParticipant(participantId);
+        var lastSubmissionCreatedOn = await this.GetLastSubmitForParticipant(participantId);
 
-        if (lastSubmission != null)
+        if (lastSubmissionCreatedOn != default)
         {
             // check if the submission was sent after the submission time limit has passed
-            var latestSubmissionTime = lastSubmission.CreatedOn;
-            var differenceBetweenSubmissions = this.datesService.GetUtcNow() - latestSubmissionTime;
+            var differenceBetweenSubmissions = this.datesService.GetUtcNow() - lastSubmissionCreatedOn;
             // Adding 5 seconds to compensate for potential difference between server and client time
             if (differenceBetweenSubmissions.TotalSeconds + 5 < limitBetweenSubmissions)
             {
@@ -141,12 +135,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         return 0;
     }
 
-    public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
-        this.GetQuery().Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
+    public Task<bool> HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
+        this.Exists(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
 
-    public bool HasUserNotProcessedSubmissionForContest(int contestId, string userId) =>
-        this.GetQuery().Any(s => s.Problem.ProblemGroup.ContestId == contestId
-                               && s.Participant!.UserId == userId && !s.Processed);
+    public Task<bool> HasUserNotProcessedSubmissionForContest(int contestId, string userId) =>
+        this.Exists(s => s.Problem.ProblemGroup.ContestId == contestId
+                           && s.Participant!.UserId == userId && !s.Processed);
 
     public async Task<int> GetProblemIdBySubmission(int submissionId)
         => await this.GetByIdQuery(submissionId)
@@ -168,4 +162,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.GetQuery(s => s.Id == id);
+
+    private async Task<DateTime> GetLastSubmitForParticipant(int participantId)
+        => await this.GetQuery(s => s.ParticipantId == participantId)
+            .OrderByDescending(s => s.CreatedOn)
+            .Select(s => s.CreatedOn)
+            .FirstOrDefaultAsync();
 }
