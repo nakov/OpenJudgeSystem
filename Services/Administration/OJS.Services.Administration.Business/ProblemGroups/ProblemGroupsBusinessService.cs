@@ -173,14 +173,14 @@ namespace OJS.Services.Administration.Business.ProblemGroups
 
         public double GetNewLatestOrderByContest(int contestId)
         {
-            var lastProblemGroupByOrderBy = this.problemGroupsData.GetLastNonDeletedByContest(contestId);
+            var lastProblemGroupOrderBy = this.problemGroupsData.GetLastNonDeletedByContest(contestId);
 
-            if (lastProblemGroupByOrderBy == null)
+            if (lastProblemGroupOrderBy == null)
             {
                 return 1;
             }
 
-            return lastProblemGroupByOrderBy.OrderBy + 1;
+            return lastProblemGroupOrderBy.Value + 1;
         }
 
         public async Task GenerateNewProblem(

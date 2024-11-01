@@ -37,11 +37,12 @@
                 .SelectMany(eg => eg.Problems)
                 .Where(p => !p.IsDeleted);
 
-        public ProblemGroup? GetLastNonDeletedByContest(int contestId)
+        public double? GetLastNonDeletedByContest(int contestId)
             => this.GetAllByContest(contestId)
                 .Where(pg => !pg.IsDeleted)
                 .OrderByDescending(pg => pg.OrderBy)
-                .FirstOrDefault();
+                .FirstOrDefault()?
+                .OrderBy;
 
         public bool IsFromContestByIdAndContest(int id, int contestId) =>
             this.GetByIdQuery(id)

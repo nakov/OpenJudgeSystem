@@ -300,7 +300,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         }
         else
         {
-            orderBy = GlobalConstants.ProblemDefaultOrderBy;
+            orderBy = await this.problemsData.GetNewOrderByContest(contestId);
             var problemGroupOrderBy = this.problemGroupsBusiness.GetNewLatestOrderByContest(contestId);
 
             problem.ProblemGroup = new ProblemGroup
