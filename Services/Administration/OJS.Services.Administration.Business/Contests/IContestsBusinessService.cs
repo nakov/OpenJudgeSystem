@@ -20,6 +20,10 @@ public interface IContestsBusinessService : IAdministrationOperationService<Cont
 
     Task<FileResponseModel> DownloadSubmissions(DownloadSubmissionsModel model);
 
+    Task<ContestLegacyExportServiceModel> Export(int id);
+
+    Task<IEnumerable<int>> GetExistingIds(IEnumerable<int> ids);
+
     Task<ContestActivityModel> GetContestActivity(int contestId);
 
     Task TransferParticipantsToPracticeById(int contestId);
