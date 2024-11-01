@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaLongArrowAltRight } from 'react-icons/fa';
 import {
     Autocomplete,
@@ -177,6 +177,16 @@ const CopyModal = (props: ICopyModalProps) => {
         setContestSearchString('');
     };
 
+    const getModalTitle = useCallback(() => {
+        const text = 'Copy';
+
+        if (operation === AllowedOperations.Copy) {
+            return `${text} problem "${problemToCopyName}"`;
+        }
+
+        return `${text} all problems`;
+    }, [ operation, problemToCopyName ]);
+
     if (isCopying || isCopyingAll) {
         return <SpinningLoader />;
     }
@@ -202,11 +212,7 @@ const CopyModal = (props: ICopyModalProps) => {
                         <>
                             {renderErrorMessagesAlert(errorMessages)}
                             <Typography variant="h5" padding="0.5rem">
-                                Copy problem
-                                {' '}
-                                &quot;
-                                {problemToCopyName}
-                                &quot;
+                                {getModalTitle()}
                             </Typography>
                             <Autocomplete<IContestAutocomplete>
                               sx={{ marginTop: '1rem' }}
