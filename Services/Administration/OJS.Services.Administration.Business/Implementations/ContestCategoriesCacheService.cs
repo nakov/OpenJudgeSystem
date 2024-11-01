@@ -7,7 +7,6 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using OJS.Data.Models.Contests;
 

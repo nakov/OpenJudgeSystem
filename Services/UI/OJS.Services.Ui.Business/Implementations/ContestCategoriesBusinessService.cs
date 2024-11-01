@@ -87,34 +87,37 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
             return null;
         }
 
-        category.IsVisible = category.IsVisible && !await this.IsCategoryChildOfInvisibleParentRecursive(categoryId);
+        category.IsVisible = await this.IsCategoryVisible(category);
 
         return category;
     }
 
-    private async Task<bool> IsCategoryChildOfInvisibleParentRecursive(int? categoryId)
+    private async Task<bool> IsCategoryVisible(ContestCategoryServiceModel category)
     {
-        if (categoryId == null)
+        if (!category.IsVisible)
         {
             return false;
         }
 
-        var categoryWithParent = await contestCategoriesData
-            .GetByIdQuery(categoryId.Value)
-            .Include(c => c.Parent)
-            .FirstOrDefaultAsync();
-
-        if (categoryWithParent?.Parent != null)
+        // Category is visible, check if all its parents are visible.
+        var parentId = category.ParentId;
+        while (parentId != null)
         {
-            if (categoryWithParent.Parent.IsVisible == false)
+            var parent = await contestCategoriesData
+                .GetByIdQuery(parentId)
+                .AsNoTracking()
+                .MapCollection<ContestCategoryServiceModel>()
+                .FirstOrDefaultAsync();
+
+            if (parent is { IsVisible: false })
             {
-                return true;
+                return false;
             }
 
-            return await this.IsCategoryChildOfInvisibleParentRecursive(categoryWithParent.Parent.Id);
+            parentId = parent?.ParentId;
         }
 
-        return false;
+        return true;
     }
 
     private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
