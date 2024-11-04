@@ -439,11 +439,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant = await this.participantsDataService
             .GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(
-                problem.ProblemGroup.ContestId,
+                model.ContestId,
                 currentUser.Id!,
                 model.Official);
 
-        var contest = await this.contestsData.OneById(problem.ProblemGroup.ContestId);
+        var contest = await this.contestsData.OneById(model.ContestId);
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
