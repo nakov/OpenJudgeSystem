@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaLongArrowAltRight } from 'react-icons/fa';
 import {
     Autocomplete,
@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import isNil from 'lodash/isNil';
 import { COPY_INTO_NEW_PROBLEM_GROUP } from 'src/common/labels';
+import isNilOrEmpty from 'src/utils/check-utils';
 
 import { IContestAutocomplete, IProblemGroupDropdownModel } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
@@ -41,6 +42,7 @@ interface ICopyModalProps{
     problemToCopyName: string | null;
     setShowModal: Function;
     setParentSuccessMessage: Function;
+    onClose?: () => {};
 }
 
 const CopyModal = (props: ICopyModalProps) => {
@@ -53,6 +55,7 @@ const CopyModal = (props: ICopyModalProps) => {
         problemToCopyName,
         problemToCopyId = null,
         setParentSuccessMessage,
+        onClose,
     } = props;
 
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete | null>(null);
@@ -60,7 +63,8 @@ const CopyModal = (props: ICopyModalProps) => {
     const [ problemGroupId, setNewProblemGroup ] = useState<number | null>(null);
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
-    const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>();
+    const [ copyIntoNewProblemGroup, setCopyIntoNewProblemGroup ] = useState<boolean>(false);
+    const [ isFormValid, setIsFormValid ] = useState<boolean>(false);
 
     const { data, isLoading } = useGetContestAutocompleteQuery(contestSearchString);
 
@@ -71,15 +75,12 @@ const CopyModal = (props: ICopyModalProps) => {
 
     const onSelectContest = (contest: IContestAutocomplete) => {
         setContestToCopy(contest);
-        getProblemGroups(contest.id);
-    };
+        setNewProblemGroup(null);
 
-    useEffect(() => {
-        // Reset problem group when checkbox is checked
-        if (copyIntoNewProblemGroup) {
-            setNewProblemGroup(null);
+        if (!isNil(contest)) {
+            getProblemGroups(contest.id);
         }
-    }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
+    };
 
     const [ copy,
         {
@@ -96,6 +97,35 @@ const CopyModal = (props: ICopyModalProps) => {
             isLoading: isCopyingAll,
             error: copyAllError,
         } ] = useCopyAllMutation();
+
+    useEffect(() => {
+        // Reset problem group when checkbox is checked
+        if (copyIntoNewProblemGroup) {
+            setNewProblemGroup(null);
+        }
+    }, [ copyIntoNewProblemGroup, setNewProblemGroup ]);
+
+    useEffect(() => {
+        if (operation === AllowedOperations.CopyAll && !isNil(contestToCopy)) {
+            setIsFormValid(true);
+            return;
+        }
+
+        if (!isNil(contestToCopy) &&
+            (
+                // Copy into existing problem group and problem group id is set
+                (!copyIntoNewProblemGroup && !isNil(problemGroupId)) ||
+                // Copy into new problem group and problem group id is reset to null
+                (copyIntoNewProblemGroup && isNil(problemGroupId))
+            ) &&
+            !isNilOrEmpty(sourceContestName)
+        ) {
+            setIsFormValid(true);
+            return;
+        }
+
+        setIsFormValid(false);
+    }, [ contestToCopy, copyIntoNewProblemGroup, operation, problemGroupId, sourceContestName ]);
 
     useDisableMouseWheelOnNumberInputs();
 
@@ -122,7 +152,11 @@ const CopyModal = (props: ICopyModalProps) => {
         if (isSuccessfullyCopied || isSuccessfullyCopiedAll) {
             setShowModal(false);
         }
-    }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal ]);
+
+        if (onClose) {
+            onClose();
+        }
+    }, [ isSuccessfullyCopied, isSuccessfullyCopiedAll, setShowModal, onClose ]);
 
     const onInputChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
@@ -130,12 +164,28 @@ const CopyModal = (props: ICopyModalProps) => {
 
     const onSubmit = () => {
         if (operation === AllowedOperations.Copy) {
-            copy({ destinationContestId: contestToCopy!.id, problemId: problemToCopyId!, problemGroupId });
+            copy({
+                destinationContestId: contestToCopy!.id,
+                problemId: problemToCopyId!,
+                problemGroupId: copyIntoNewProblemGroup
+                    ? null
+                    : problemGroupId,
+            });
         } else {
             copyAll({ sourceContestId, destinationContestId: contestToCopy!.id });
         }
         setContestSearchString('');
     };
+
+    const getModalTitle = useCallback(() => {
+        const text = 'Copy';
+
+        if (operation === AllowedOperations.Copy) {
+            return `${text} problem "${problemToCopyName}"`;
+        }
+
+        return `${text} all problems`;
+    }, [ operation, problemToCopyName ]);
 
     if (isCopying || isCopyingAll) {
         return <SpinningLoader />;
@@ -162,9 +212,7 @@ const CopyModal = (props: ICopyModalProps) => {
                         <>
                             {renderErrorMessagesAlert(errorMessages)}
                             <Typography variant="h5" padding="0.5rem">
-                                Copy
-                                {' '}
-                                {problemToCopyName}
+                                {getModalTitle()}
                             </Typography>
                             <Autocomplete<IContestAutocomplete>
                               sx={{ marginTop: '1rem' }}
@@ -214,16 +262,20 @@ const CopyModal = (props: ICopyModalProps) => {
                               />
                               )
                             }
-                            <FormControlLabel
-                              control={(
-                                  <Checkbox
-                                    checked={copyIntoNewProblemGroup}
-                                  />
-                                )}
-                              name="copyIntoNewProblemGroup"
-                              onChange={() => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
-                              label={COPY_INTO_NEW_PROBLEM_GROUP}
-                            />
+                            {
+                                operation === AllowedOperations.Copy && (
+                                    <FormControlLabel
+                                      control={(
+                                          <Checkbox
+                                            checked={copyIntoNewProblemGroup}
+                                          />
+                                        )}
+                                      name="copyIntoNewProblemGroup"
+                                      onChange={() => setCopyIntoNewProblemGroup(!copyIntoNewProblemGroup)}
+                                      label={COPY_INTO_NEW_PROBLEM_GROUP}
+                                    />
+                                )
+                            }
                             <Box sx={{ marginTop: '1rem' }}>
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
                                     {sourceContestName}
@@ -237,7 +289,7 @@ const CopyModal = (props: ICopyModalProps) => {
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                                 <Button
                                   variant="contained"
-                                  disabled={contestToCopy === null || sourceContestName === ''}
+                                  disabled={!isFormValid}
                                   onClick={() => onSubmit()}
                                 >
                                     Copy
