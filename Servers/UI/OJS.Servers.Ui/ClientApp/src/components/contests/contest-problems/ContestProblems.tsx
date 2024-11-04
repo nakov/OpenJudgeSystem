@@ -12,7 +12,7 @@ import styles from './ContestProblems.module.scss';
 
 interface IContestProblemsProps {
     problems: Array<IProblemType>;
-    onContestProblemChange: () => void;
+    onContestProblemChange: (submissionId: number) => void;
     totalParticipantsCount?: number;
     sumMyPoints?: number;
     sumTotalPoints: number;
@@ -59,7 +59,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
     }, []);
 
     const onProblemClick = (problem: IProblemType) => {
-        onContestProblemChange();
+        onContestProblemChange(problem.defaultSubmissionTypeId ?? 0);
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: problem }));
     };
 

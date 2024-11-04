@@ -159,10 +159,11 @@ const ContestSolutionSubmitPage = () => {
         [ problemAllowedSubmissionTypes ],
     );
 
-    const onStrategyDropdownItemSelect = useCallback((s: any) => {
-        const submissionType = selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
+    const onStrategyDropdownItemSelect = useCallback((submissionId: number) => {
+        const submissionType =
+            selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === submissionId);
 
-        setSelectedStrategyValue(s.id);
+        setSelectedStrategyValue(submissionId.toString());
         setSelectedSubmissionType(submissionType);
     }, [ selectedContestDetailsProblem ]);
 
@@ -316,10 +317,10 @@ const ContestSolutionSubmitPage = () => {
         if (strategyDropdownItems?.length && strategyDropdownItems?.length > 0) {
             if (!previousSelectedStrategy && selectedContestDetailsProblem) {
                 onStrategyDropdownItemSelect(strategyDropdownItems
-                    .find((s) => s.id === selectedContestDetailsProblem.defaultSubmissionTypeId) ??
-                    strategyDropdownItems[0]);
+                    .find((s) => s.id === selectedContestDetailsProblem.defaultSubmissionTypeId)?.id ??
+                    strategyDropdownItems[0].id);
             } else {
-                onStrategyDropdownItemSelect(previousSelectedStrategy);
+                onStrategyDropdownItemSelect(previousSelectedStrategy!.id);
             }
         }
     }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue, selectedContestDetailsProblem ]);
@@ -404,6 +405,11 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFile,
         uploadedFile,
     ]);
+
+    const onContestProblemChange = (submissionId: number) => {
+        setSelectedSubmissionsPage(1);
+        onStrategyDropdownItemSelect(submissionId);
+    };
 
     const sumMyPoints = useMemo(() => contest
         ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.points, 0)
@@ -765,7 +771,7 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
                   problems={updatedProblems || problems || []}
-                  onContestProblemChange={() => setSelectedSubmissionsPage(1)}
+                  onContestProblemChange={onContestProblemChange}
                   totalParticipantsCount={participantsCount}
                   sumMyPoints={sumMyPoints}
                   sumTotalPoints={sumAllContestPoints}
