@@ -43,9 +43,11 @@
                 .OrderByDescending(pg => pg.OrderBy)
                 .Select(pg => (double?)pg.OrderBy)
                 .FirstOrDefault();
+
         public bool IsFromContestByIdAndContest(int id, int contestId) =>
             this.GetByIdQuery(id)
                 .Any(pg => pg.ContestId == contestId);
+
         protected override Expression<Func<ProblemGroup, bool>> GetUserFilter(UserInfoModel user)
             => problemGroup => user.IsAdmin ||
                                problemGroup.Contest!.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
