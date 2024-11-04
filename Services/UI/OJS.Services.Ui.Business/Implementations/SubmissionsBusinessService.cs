@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
@@ -42,8 +43,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
-
-    // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IUserProviderService userProviderService;
@@ -61,6 +60,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IContestsDataService contestsData;
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly ITestsDataService testsData;
+    private readonly ISubmissionTypesCacheService submissionTypesCache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -86,7 +86,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ICacheService cache,
         IContestsDataService contestsData,
         ISubmissionTypesDataService submissionTypesData,
-        ITestsDataService testsData)
+        ITestsDataService testsData,
+        ISubmissionTypesCacheService submissionTypesCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -112,6 +113,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.contestsData = contestsData;
         this.submissionTypesData = submissionTypesData;
         this.testsData = testsData;
+        this.submissionTypesCache = submissionTypesCache;
     }
 
     public async Task Retest(int id)
@@ -430,10 +432,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId)
             ?? throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
 
-        var submissionType = await this.cache.Get(
-            string.Format(CacheConstants.SubmissionTypeById, model.SubmissionTypeId),
-            async () => await this.submissionTypesData.OneById(model.SubmissionTypeId),
-            CacheConstants.FiveMinutesInSeconds);
+        var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
