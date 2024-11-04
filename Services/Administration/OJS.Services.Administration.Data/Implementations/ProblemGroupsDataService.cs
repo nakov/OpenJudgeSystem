@@ -41,9 +41,8 @@
             => this.GetAllByContest(contestId)
                 .Where(pg => !pg.IsDeleted)
                 .OrderByDescending(pg => pg.OrderBy)
-                .Select(pg => pg.OrderBy)
+                .Select(pg => (double?)pg.OrderBy)
                 .FirstOrDefault();
-
         public bool IsFromContestByIdAndContest(int id, int contestId) =>
             this.GetByIdQuery(id)
                 .Any(pg => pg.ContestId == contestId);
