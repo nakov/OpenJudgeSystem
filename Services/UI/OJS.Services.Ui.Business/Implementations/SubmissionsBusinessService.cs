@@ -58,9 +58,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ITransactionsProvider transactionsProvider;
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
-    private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly ITestsDataService testsData;
     private readonly ISubmissionTypesCacheService submissionTypesCache;
+    private readonly ICheckersCacheService checkersCache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -85,9 +85,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         IContestsDataService contestsData,
-        ISubmissionTypesDataService submissionTypesData,
         ITestsDataService testsData,
-        ISubmissionTypesCacheService submissionTypesCache)
+        ISubmissionTypesCacheService submissionTypesCache,
+        ICheckersCacheService checkersCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -111,9 +111,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
         this.contestsData = contestsData;
-        this.submissionTypesData = submissionTypesData;
         this.testsData = testsData;
         this.submissionTypesCache = submissionTypesCache;
+        this.checkersCache = checkersCache;
     }
 
     public async Task Retest(int id)
@@ -431,6 +431,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId)
             ?? throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
+
+        var checkerId = problem.CheckerId;
+        problem.Checker = checkerId.HasValue ?
+            await this.checkersCache.GetById(checkerId.Value) :
+            null;
 
         var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);
 

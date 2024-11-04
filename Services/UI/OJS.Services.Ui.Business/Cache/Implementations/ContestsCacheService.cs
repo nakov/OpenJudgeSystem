@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Infrastructure.Constants;
@@ -36,12 +35,11 @@ public class ContestsCacheService : IContestsCacheService
 
         if (contestDetailsServiceModel != null)
         {
-            contestDetailsServiceModel.AllowedSubmissionTypes = contestDetailsServiceModel.Problems
+            contestDetailsServiceModel.AllowedSubmissionTypes = [.. contestDetailsServiceModel.Problems
                 .AsQueryable()
                 .SelectMany(p => p.AllowedSubmissionTypes)
                 .DistinctBy(st => st.Id)
-                .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.Id, Name = x.Name })
-                .ToList();
+                .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.Id, Name = x.Name })];
         }
 
         return contestDetailsServiceModel;

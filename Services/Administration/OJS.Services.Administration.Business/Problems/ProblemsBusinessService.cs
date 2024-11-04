@@ -45,6 +45,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly IProblemGroupsDataService problemGroupsDataService;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ITransactionsProvider transactionsProvider;
+    private readonly ICheckersCacheService checkersCache;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -59,7 +60,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IProblemGroupsDataService problemGroupsDataService,
         IZippedTestsParserService zippedTestsParser,
-        ITransactionsProvider transactionsProvider)
+        ITransactionsProvider transactionsProvider,
+        ICheckersCacheService checkersCache)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -74,6 +76,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemGroupsDataService = problemGroupsDataService;
         this.zippedTestsParser = zippedTestsParser;
         this.transactionsProvider = transactionsProvider;
+        this.checkersCache = checkersCache;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -212,13 +215,17 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         var problem = await this.problemsData.GetByIdQuery(model.Id)
             .Include(s => s.SubmissionTypesInProblems)
             .Include(s => s.ProblemGroup)
-            .Include(s => s.Checker)
             .FirstOrDefaultAsync();
 
         if (problem is null)
         {
             throw new ArgumentNullException($"Problem with id {model.Id} not found");
         }
+
+        var checkerId = problem.CheckerId;
+        problem.Checker = checkerId.HasValue ?
+            await this.checkersCache.GetById(checkerId.Value) :
+            null;
 
         problem.MapFrom(model);
 

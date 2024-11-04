@@ -26,8 +26,6 @@ namespace OJS.Services.Ui.Data.Implementations
         public async Task<Problem?> GetWithProblemGroupCheckerAndTestsById(int id)
             => await this.GetByIdQuery(id)
                 .AsNoTracking()
-                .Include(p => p.ProblemGroup)
-                .Include(p => p.Checker)
                 .Include(p => p.SubmissionTypesInProblems)
                 .FirstOrDefaultAsync();
 
