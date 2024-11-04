@@ -371,6 +371,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submissionCode,
         submitSolution,
+        contestId,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
@@ -398,6 +399,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submitSolutionFile,
         uploadedFile,
+        contestId,
     ]);
 
     const sumMyPoints = useMemo(() => contest
