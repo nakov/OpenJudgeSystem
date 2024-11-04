@@ -30,15 +30,9 @@ namespace OJS.Workers.Compilers
 
         public override string BuildCompilerArguments(string inputFile, string outputFile, string additionalArguments)
         {
-            var inputFileDirectory = Path.GetDirectoryName(inputFile)
-                ?? throw new DirectoryNotFoundException($"Input file directory not found. Input file path value: {inputFile}");
-
-            var compilingDir = FileHelpers.BuildPath(inputFileDirectory, CompilationDirectoryName);
-            Directory.CreateDirectory(compilingDir);
-
             var arguments = new StringBuilder();
             arguments.Append("build ");
-            arguments.Append($"-o {compilingDir} ");
+            arguments.Append($"-o {this.CompilationDirectory} ");
             arguments.Append($"\"{inputFile}\" ");
             arguments.Append(additionalArguments);
             return arguments.ToString().Trim();
