@@ -301,7 +301,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         else
         {
             orderBy = await this.problemsData.GetNewOrderByContest(contestId);
-            var problemGroupOrderBy = this.problemGroupsBusiness.GetNewLatestOrderByContest(contestId);
+            var problemGroupOrderBy = await this.problemGroupsBusiness.GetNewLatestOrderByContest(contestId);
 
             problem.ProblemGroup = new ProblemGroup
             {
