@@ -23,12 +23,12 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Include(p => p.ProblemGroup)
                 .FirstOrDefaultAsync();
 
-        public Task<Problem?> GetWithProblemGroupCheckerAndTestsById(int id)
-            => this.GetByIdQuery(id)
+        public async Task<Problem?> GetWithProblemGroupCheckerAndTestsById(int id)
+            => await this.GetByIdQuery(id)
                 .AsNoTracking()
                 .Include(p => p.ProblemGroup)
                 .Include(p => p.Checker)
-                .Include(p => p.Tests)
+                .Include(p => p.SubmissionTypesInProblems)
                 .FirstOrDefaultAsync();
 
         public async Task<double> GetNewOrderByContest(int contestId) =>
