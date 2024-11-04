@@ -7,6 +7,7 @@
     using System;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Threading.Tasks;
 
     public class ProblemGroupsDataService : AdministrationDataService<ProblemGroup>, IProblemGroupsDataService
     {
@@ -37,12 +38,12 @@
                 .SelectMany(eg => eg.Problems)
                 .Where(p => !p.IsDeleted);
 
-        public double GetLastNonDeletedByContest(int contestId)
+        public Task<double> GetLastNonDeletedByContest(int contestId)
             => this.GetAllByContest(contestId)
                 .Where(pg => !pg.IsDeleted)
                 .OrderByDescending(pg => pg.OrderBy)
                 .Select(pg => pg.OrderBy)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
         public bool IsFromContestByIdAndContest(int id, int contestId) =>
             this.GetByIdQuery(id)

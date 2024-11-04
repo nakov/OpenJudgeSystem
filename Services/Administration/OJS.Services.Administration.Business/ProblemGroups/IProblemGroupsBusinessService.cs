@@ -23,6 +23,6 @@ namespace OJS.Services.Administration.Business.ProblemGroups
 
         ICollection<ProblemGroupDropdownModel> GetOrderByContestId(int contestId);
 
-        double GetNewLatestOrderByContest(int contestId);
+        Task<double> GetNewLatestOrderByContest(int contestId);
     }
 }

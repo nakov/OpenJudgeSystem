@@ -3,6 +3,7 @@
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public interface IProblemGroupsDataService : IDataService<ProblemGroup>
     {
@@ -16,7 +17,7 @@
 
         IQueryable<Problem> GetProblemsById(int id);
 
-        double GetLastNonDeletedByContest(int contestId);
+        Task<double> GetLastNonDeletedByContest(int contestId);
 
         bool IsFromContestByIdAndContest(int id, int contestId);
     }
