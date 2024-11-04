@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public interface ILecturersInContestsBusinessService : IService
 {
-     Task<LecturerToContestModel> AddLecturerToContest(LecturerToContestModel model);
+    Task<LecturerToContestModel> AddLecturerToContest(LecturerToContestModel model);
 
-     Task RemoveLecturerFromContest(LecturerToContestModel model);
+    Task RemoveLecturerFromContest(LecturerToContestModel model);
 }
