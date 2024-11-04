@@ -103,7 +103,7 @@ const CopyModal = (props: ICopyModalProps) => {
         if (copyIntoNewProblemGroup) {
             setNewProblemGroup(null);
         }
-    }, [ copyIntoNewProblemGroup, setNewProblemGroup, contestToCopy, problemGroupsData, getProblemGroups ]);
+    }, [ copyIntoNewProblemGroup, setNewProblemGroup ]);
 
     useEffect(() => {
         if (operation === AllowedOperations.CopyAll && !isNil(contestToCopy)) {
