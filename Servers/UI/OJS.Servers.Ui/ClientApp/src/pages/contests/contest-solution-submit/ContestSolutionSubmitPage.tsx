@@ -155,7 +155,6 @@ const ContestSolutionSubmitPage = () => {
         () => problemAllowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({
             id: item.id,
             name: item.name,
-            isSelectedByDefault: item.isSelectedByDefault,
         })),
         [ problemAllowedSubmissionTypes ],
     );
@@ -315,13 +314,15 @@ const ContestSolutionSubmitPage = () => {
         const previousSelectedStrategy = strategyDropdownItems?.find((strat) => strat.id === Number(selectedStrategyValue));
 
         if (strategyDropdownItems?.length && strategyDropdownItems?.length > 0) {
-            if (!previousSelectedStrategy) {
-                onStrategyDropdownItemSelect(strategyDropdownItems.find((s) => s.isSelectedByDefault) ?? strategyDropdownItems[0]);
+            if (!previousSelectedStrategy && selectedContestDetailsProblem) {
+                onStrategyDropdownItemSelect(strategyDropdownItems
+                    .find((s) => s.id === selectedContestDetailsProblem.defaultSubmissionTypeId) ??
+                    strategyDropdownItems[0]);
             } else {
                 onStrategyDropdownItemSelect(previousSelectedStrategy);
             }
         }
-    }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue ]);
+    }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue, selectedContestDetailsProblem ]);
 
     // fetching submissions only when we have selected problem,
     // otherwise the id is NaN and the query is invalid

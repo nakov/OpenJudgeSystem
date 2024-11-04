@@ -28,14 +28,15 @@ interface IProblemSubmissionTypesProps{
     onStrategyRemoved: Function;
     strategy: IProblemSubmissionType;
     isDefaultStrategySelected: boolean;
+    defaultSubmissionTypeId: number;
 }
 
 const ProblemSubmissionTypes = (props: IProblemSubmissionTypesProps) => {
-    const { onPropChange, onStrategyRemoved, strategy, isDefaultStrategySelected } = props;
+    const { onPropChange, onStrategyRemoved, strategy, isDefaultStrategySelected, defaultSubmissionTypeId } = props;
 
     const isSelectDefaultCheckboxDisabled = useMemo(
-        () => isDefaultStrategySelected && !strategy.isSelectedByDefault,
-        [ isDefaultStrategySelected, strategy.isSelectedByDefault ],
+        () => isDefaultStrategySelected && !(strategy.id === defaultSubmissionTypeId),
+        [ isDefaultStrategySelected, defaultSubmissionTypeId, strategy.id ],
     );
 
     useDisableMouseWheelOnNumberInputs();
@@ -117,10 +118,9 @@ const ProblemSubmissionTypes = (props: IProblemSubmissionTypesProps) => {
                     <FormControlLabel
                       sx={{ marginX: '0px' }}
                       label=""
-                      control={<Checkbox checked={strategy.isSelectedByDefault} />}
-                      name="isSelectedByDefault"
-                      onChange={(e, checked) => onPropChange(checked, strategy.id, 'isSelectedByDefault')}
-                      disabled={isSelectDefaultCheckboxDisabled}
+                      control={<Checkbox checked={strategy.id === defaultSubmissionTypeId} disabled={isSelectDefaultCheckboxDisabled} />}
+                      name="defaultSubmissionTypeId"
+                      onChange={(e, checked) => onPropChange(checked, strategy.id, 'defaultSubmissionTypeId')}
                     />
                 </StyledTooltip>
 

@@ -86,6 +86,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         contestType: contestType || ContestVariation.Exercise,
         problemGroupOrderBy: -1,
         problemGroupId: 0,
+        defaultSubmissionTypeId: 0,
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -123,7 +124,10 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
 
     const isDefaultStrategySelected = useMemo(() => currentProblem
         .submissionTypes
-        .some((st) => st.isSelectedByDefault), [ currentProblem.submissionTypes ]);
+        .some((st) => currentProblem.defaultSubmissionTypeId === st.id), [
+        currentProblem.defaultSubmissionTypeId,
+        currentProblem.submissionTypes,
+    ]);
 
     useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
@@ -169,6 +173,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     const onChange = (e: any) => {
         const { target } = e;
         const { name, type, value, checked } = target;
+
         setCurrentProblem((prevState) => ({
             ...prevState,
             [name]: type === 'checkbox'
@@ -197,9 +202,15 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
         formData.append('showResults', currentProblem.showResults?.toString() || '');
         formData.append('problemGroupId', currentProblem.problemGroupId?.toString() || '');
+        formData.append('defaultSubmissionTypeId', currentProblem.defaultSubmissionTypeId?.toString() || '');
         currentProblem.submissionTypes?.forEach((type, index) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
+
+            if (type.id === Number(formData.get('defaultSubmissionTypeId'))) {
+                formData.append('DefaultSubmissionType.Id', type.id.toString());
+                formData.append('DefaultSubmissionType.Name', type.name.toString());
+            }
 
             if (type.solutionSkeleton) {
                 formData.append(
@@ -207,22 +218,18 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     type?.solutionSkeleton!.toString(),
                 );
             }
+
             if (type.timeLimit) {
                 formData.append(
                     `SubmissionTypes[${index}].TimeLimit`,
                     type?.timeLimit.toString(),
                 );
             }
+
             if (type.memoryLimit) {
                 formData.append(
                     `SubmissionTypes[${index}].MemoryLimit`,
                     type?.memoryLimit.toString(),
-                );
-            }
-            if (type.isSelectedByDefault) {
-                formData.append(
-                    `SubmissionTypes[${index}].isSelectedByDefault`,
-                    type?.isSelectedByDefault.toString(),
                 );
             }
         });
@@ -255,7 +262,6 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     solutionSkeleton: null,
                     memoryLimit: null,
                     timeLimit: null,
-                    isSelectedByDefault: false,
                 });
 
                 newSubmissionTypes = newSubmissionTypes.filter((x) => x.id !== submissionType.id);
@@ -309,6 +315,28 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     }
                     // Assuming you want to convert these to numbers
                     updatedValue = number;
+                } else if (propName === 'defaultSubmissionTypeId') {
+                    onChange({
+                        target: {
+                            value: value
+                                ? item.id
+                                : 0,
+                            name: propName,
+                            type: typeof item.id,
+                            checked: false,
+                        },
+                    });
+
+                    onChange({
+                        target: {
+                            value: value
+                                ? item
+                                : null,
+                            name: 'defaultSubmissionType',
+                            type: '',
+                            checked: false,
+                        },
+                    });
                 }
 
                 return { ...item, [propName]: updatedValue };
@@ -407,6 +435,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                   onStrategyRemoved={onStrategyRemoved}
                   strategy={st}
                   isDefaultStrategySelected={isDefaultStrategySelected}
+                  defaultSubmissionTypeId={currentProblem.defaultSubmissionTypeId ?? 0}
                 />
             ))
         }

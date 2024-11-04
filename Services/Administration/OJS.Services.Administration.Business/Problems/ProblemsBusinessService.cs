@@ -287,8 +287,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
                 throw new BusinessServiceException($"Submission type with Id #{newSubmissionType.Id} does not exist.");
             }
 
-            submissionType.IsSelectedByDefault = newSubmissionType.IsSelectedByDefault;
-
             newSubmissionTypes.Add(new SubmissionTypeInProblem
             {
                 ProblemId = problem.Id,
