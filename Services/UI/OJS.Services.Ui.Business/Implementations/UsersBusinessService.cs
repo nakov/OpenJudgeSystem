@@ -183,6 +183,6 @@ public class UsersBusinessService : IUsersBusinessService
         await this.usersProfileData
             .GetByUsername(username)
             .AsNoTracking()
-            .FirstOrDefaultAsync()
-            .Map<UserProfileServiceModel>();
+            .MapCollection<UserProfileServiceModel>()
+            .FirstOrDefaultAsync();
 }
