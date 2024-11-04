@@ -576,7 +576,7 @@ const ContestSolutionSubmitPage = () => {
         const {
             allowBinaryFilesUpload,
             allowedFileExtensions,
-        } = selectedContestDetailsProblem?.allowedSubmissionTypes[0] || {};
+        } = selectedSubmissionType || selectedContestDetailsProblem?.allowedSubmissionTypes[0] || {};
 
         if (allowBinaryFilesUpload) {
             return (

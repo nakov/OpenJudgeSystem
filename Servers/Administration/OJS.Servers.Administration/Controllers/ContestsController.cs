@@ -1,7 +1,9 @@
 ﻿namespace OJS.Servers.Administration.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Contests;
@@ -23,6 +25,9 @@ using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using static Common.GlobalConstants.FileExtensions;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
@@ -120,10 +125,36 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
 
     [HttpPost]
     [ProtectedEntityAction(false)]
-    public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
+    public async Task<IActionResult> ExportResults(ContestResultsExportRequestModel model)
     {
         var file = await this.contestsBusinessService.ExportResults(model);
         return this.File(file.Content!, file.MimeType!, file.FileName);
+    }
+
+    /// <summary>
+    /// Gets details of a contest by id.
+    /// </summary>
+    /// <param name="id">ID of the contest.</param>
+    /// <returns>Model containing all information about the name, description and problems of the contest.</returns>
+    [HttpPost("{id:int}")]
+    [ProducesResponseType(typeof(ContestLegacyExportServiceModel), Status200OK)]
+    [ProtectedEntityAction(false)]
+    [AllowAnonymous]
+    [Authorize(ApiKeyPolicyName)]
+    public async Task<IActionResult> Export(int id)
+        => await this.contestsBusinessService
+            .Export(id)
+            .ToOkResult();
+
+    [HttpPost]
+    [ProtectedEntityAction(false)]
+    [AllowAnonymous]
+    [Authorize(ApiKeyPolicyName)]
+    public async Task<IActionResult> GetExistingIds(ContestsGetExistingIdsRequestModel requestModel)
+    {
+        var existingContestIds = await this.contestsBusinessService.GetExistingIds(requestModel.Ids);
+
+        return this.Content(JsonConvert.SerializeObject(existingContestIds));
     }
 
     [HttpPost]
@@ -142,7 +173,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         var result = await this.similarityService.GetSubmissionSimilarities(model);
 
         var file = this.excelService.ExportResults(result);
-        return this.File(file.Content!, file.MimeType!, $"{nameof(this.CheckSimilarity)}.xls");
+        return this.File(file.Content!, file.MimeType!, $"{nameof(this.CheckSimilarity)}{Excel}");
     }
 
     [HttpPatch]

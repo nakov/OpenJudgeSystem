@@ -11,6 +11,8 @@ using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using static OJS.Common.GlobalConstants.Roles;
 
 public class RolesBusinessService : AdministrationOperationService<Role, string, RoleAdministrationModel>, IRolesBusinessService
 {
@@ -18,17 +20,23 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
     private readonly UserManager<UserProfile> userManager;
     private readonly IUsersDataService usersDataService;
     private readonly RoleManager<Role> roleManager;
+    private readonly IDataService<LecturerInContest> lecturerInContestsDataService;
+    private readonly IDataService<LecturerInContestCategory> lecturerInContestCategoryDataService;
 
     public RolesBusinessService(
         IDataService<Role> roleDataService,
         UserManager<UserProfile> userManager,
         IUsersDataService usersDataService,
-        RoleManager<Role> roleManager)
+        RoleManager<Role> roleManager,
+        IDataService<LecturerInContest> lecturerInContestsDataService,
+        IDataService<LecturerInContestCategory> lecturerInContestCategoryDataService)
     {
         this.roleDataService = roleDataService;
         this.userManager = userManager;
         this.usersDataService = usersDataService;
         this.roleManager = roleManager;
+        this.lecturerInContestsDataService = lecturerInContestsDataService;
+        this.lecturerInContestCategoryDataService = lecturerInContestCategoryDataService;
     }
 
     public override async Task<RoleAdministrationModel> Get(string id)
@@ -74,6 +82,9 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
     public async Task RemoveFromRole(UserToRoleModel model)
     {
         var (roleName, user) = await this.GetUserAndRoleName(model);
+
+        await this.RemoveUserFromLecturerInContestAndContestCategory(roleName, user);
+
         await this.userManager.RemoveFromRoleAsync(user, roleName);
     }
 
@@ -88,15 +99,33 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
 
     private async Task<(string, UserProfile)> GetUserAndRoleName(UserToRoleModel model)
     {
-         var roleName = await this.roleDataService!
-            .GetByIdQuery(model.RoleId!)
-            .Select(x => x.Name!)
-            .FirstAsync();
+        var roleName = await this.roleDataService!
+           .GetByIdQuery(model.RoleId!)
+           .Select(x => x.Name!)
+           .FirstAsync();
 
-         var user = await this.usersDataService
-            .GetByIdQuery(model.UserId!)
-            .FirstAsync();
+        var user = await this.usersDataService
+           .GetByIdQuery(model.UserId!)
+           .FirstAsync();
 
-         return (roleName, user);
+        return (roleName, user);
+    }
+
+    private async Task RemoveUserFromLecturerInContestAndContestCategory(string roleName, UserProfile user)
+    {
+        if (roleName == Lecturer)
+        {
+            var categoriesUserIsLecturerIn = await this.lecturerInContestCategoryDataService
+                .GetQuery(licc => licc.LecturerId == user.Id)
+                .ToListAsync();
+
+            this.lecturerInContestCategoryDataService.DeleteMany(categoriesUserIsLecturerIn);
+
+            var contestsUserIsLecturerIn = await this.lecturerInContestsDataService
+                .GetQuery(lic => lic.LecturerId == user.Id)
+                .ToListAsync();
+
+            this.lecturerInContestsDataService.DeleteMany(contestsUserIsLecturerIn);
+        }
     }
 }
