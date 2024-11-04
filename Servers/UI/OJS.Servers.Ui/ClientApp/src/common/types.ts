@@ -8,7 +8,6 @@ import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from 
 interface ISubmissionTypeType {
     id: number;
     name: string;
-    isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
     timeLimit: number;
@@ -175,6 +174,7 @@ interface IProblemType {
     checkerDescription: string;
     resources: IProblemResourceType[];
     allowedSubmissionTypes: ISubmissionTypeType[];
+    defaultSubmissionTypeId?: number;
 }
 
 interface IProblemSearchType {
@@ -392,6 +392,7 @@ interface IProblemAdministration {
     tests: File | null;
     problemGroupOrderBy: number;
     problemGroupId : number;
+    defaultSubmissionTypeId?: number;
 }
 
 interface ISubmissionTypesInListModel {
@@ -549,7 +550,6 @@ interface IProblemSubmissionType{
     solutionSkeleton: string | null;
     timeLimit: number | null;
     memoryLimit: number | null;
-    isSelectedByDefault: boolean;
 }
 
 interface IIndexExamGroupsType {
@@ -592,7 +592,6 @@ interface ISubmissionTypeAdministrationModel {
     additionalCompilerArguments: string;
     description: string;
     allowedFileExtensions: string;
-    isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     baseTimeUsedInMilliseconds?: number;
     baseMemoryUsedInBytes?: number;

@@ -61,6 +61,10 @@ namespace OJS.Data.Models.Problems
         [DefaultValue(false)]
         public bool ShowDetailedFeedback { get; set; }
 
+        public int? DefaultSubmissionTypeId { get; set; }
+
+        public virtual SubmissionType DefaultSubmissionType { get; set; } = null!;
+
         public virtual ICollection<Test> Tests { get; set; } = new HashSet<Test>();
 
         public virtual ICollection<ProblemResource> Resources { get; set; } = new HashSet<ProblemResource>();

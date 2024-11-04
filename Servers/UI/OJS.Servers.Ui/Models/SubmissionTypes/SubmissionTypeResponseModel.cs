@@ -10,8 +10,6 @@
 
         public string Name { get; set; } = null!;
 
-        public bool IsSelectedByDefault { get; set; }
-
         public bool AllowBinaryFilesUpload { get; set; }
 
         public IEnumerable<string>? AllowedFileExtensions { get; set; }

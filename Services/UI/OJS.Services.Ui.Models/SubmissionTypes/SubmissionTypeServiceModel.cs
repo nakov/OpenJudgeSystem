@@ -16,8 +16,6 @@
 
         public string Name { get; set; } = null!;
 
-        public bool IsSelectedByDefault { get; set; }
-
         public bool AllowBinaryFilesUpload { get; set; }
 
         public IEnumerable<string> AllowedFileExtensions { get; set; } = new List<string>();
@@ -50,9 +48,6 @@
                 .ForMember(
                     d => d.AllowBinaryFilesUpload,
                     opt => opt.MapFrom(s => s.SubmissionType.AllowBinaryFilesUpload))
-                .ForMember(
-                    d => d.IsSelectedByDefault,
-                    opt => opt.MapFrom(s => s.SubmissionType.IsSelectedByDefault))
                 .ForMember(
                     d => d.TimeLimit,
                     opt => opt.MapFrom(s => s.TimeLimit != null ? (double?)s.TimeLimit : null))

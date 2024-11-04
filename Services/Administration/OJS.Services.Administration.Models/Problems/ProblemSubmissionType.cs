@@ -17,7 +17,6 @@ public class ProblemSubmissionType : IMapExplicitly
 
     public int? MemoryLimit { get; set; }
 
-    public bool IsSelectedByDefault { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<SubmissionTypeInProblem, ProblemSubmissionType>()
@@ -26,7 +25,5 @@ public class ProblemSubmissionType : IMapExplicitly
             .ForMember(d => d.Name, opt
                 => opt.MapFrom(d => d.SubmissionType.Name))
             .ForMember(d => d.SolutionSkeleton, opt
-                => opt.MapFrom(d => d.SolutionSkeleton != null ? d.SolutionSkeleton.Decompress().ToString() : null))
-            .ForMember(d => d.IsSelectedByDefault, opt
-                => opt.MapFrom(s => s.SubmissionType.IsSelectedByDefault));
+                => opt.MapFrom(d => d.SolutionSkeleton != null ? d.SolutionSkeleton.Decompress().ToString() : null));
 }

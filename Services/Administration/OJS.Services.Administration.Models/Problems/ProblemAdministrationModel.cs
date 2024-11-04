@@ -8,6 +8,7 @@ using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
+using OJS.Data.Models.Submissions;
 
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -22,6 +23,10 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
     public bool ShowResults { get; set; }
 
     public bool ShowDetailedFeedback { get; set; }
+
+    public int? DefaultSubmissionTypeId { get; set; }
+
+    public virtual SubmissionType DefaultSubmissionType { get; set; } = null!;
 
     public int CheckerId { get; set; }
 

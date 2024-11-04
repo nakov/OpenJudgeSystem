@@ -19,10 +19,6 @@ namespace OJS.Data.Models.Submissions
         [MinLength(NameMinLength)]
         public string Name { get; set; } = string.Empty;
 
-        [DefaultValue(false)]
-        // TODO: Deprecated, should be removed: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1585
-        public bool IsSelectedByDefault { get; set; }
-
         public ExecutionStrategyType ExecutionStrategyType { get; set; }
 
         public CompilerType CompilerType { get; set; }

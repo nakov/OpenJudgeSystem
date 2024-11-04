@@ -22,6 +22,8 @@
 
         public string Name { get; set; } = null!;
 
+        public int? DefaultSubmissionTypeId { get; set; }
+
         public double OrderBy { get; set; }
 
         public double ProblemGroupOrderBy { get; set; }
