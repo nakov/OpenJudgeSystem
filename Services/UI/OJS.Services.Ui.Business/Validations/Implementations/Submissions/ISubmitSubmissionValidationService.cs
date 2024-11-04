@@ -7,7 +7,6 @@ using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Validation;
 using OJS.Services.Ui.Models.Submissions;
 
-public interface ISubmitSubmissionValidationService : IValidationService
-   <(Problem?, Participant?, SubmitSubmissionServiceModel, Contest?, SubmissionType?)>
+public interface ISubmitSubmissionValidationService : IValidationServiceAsync<(Problem?, Participant?, SubmitSubmissionServiceModel, Contest?, SubmissionType?)>
 {
 }
