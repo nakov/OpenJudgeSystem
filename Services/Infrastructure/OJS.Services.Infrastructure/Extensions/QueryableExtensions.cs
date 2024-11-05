@@ -18,7 +18,7 @@ public static class QueryableExtensions
         int? itemsPerPage,
         int? pageNumber)
     {
-        var page = queryable.ToPagedResultInternal(queryable.Count(), itemsPerPage, pageNumber);
+        var page = GetPagedResult<T>(queryable.Count(), itemsPerPage, pageNumber);
 
         page.Items = [.. queryable.GetItemsPageQuery(itemsPerPage!.Value, pageNumber!.Value)];
 
@@ -30,7 +30,7 @@ public static class QueryableExtensions
         int? itemsPerPage,
         int? pageNumber)
     {
-        var page = queryable.ToPagedResultInternal(await queryable.CountAsync(), itemsPerPage, pageNumber);
+        var page = GetPagedResult<T>(await queryable.CountAsync(), itemsPerPage, pageNumber);
 
         page.Items = await queryable
             .GetItemsPageQuery(itemsPerPage!.Value, pageNumber!.Value)
@@ -39,8 +39,7 @@ public static class QueryableExtensions
         return page;
     }
 
-    private static PagedResult<T> ToPagedResultInternal<T>(
-        this IQueryable<T> _,
+    private static PagedResult<T> GetPagedResult<T>(
         int totalItemsCount,
         int? itemsPerPage,
         int? pageNumber)

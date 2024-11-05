@@ -389,7 +389,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var userParticipantsIds = await this.participantsDataService
             .GetAllByUser(userId)
             .Select(p => p.Id)
-            .ToEnumerableAsync();
+            .ToListAsync();
 
         return await this.submissionsData
             .GetLatestSubmissionsByUserParticipations<TServiceModel>(
