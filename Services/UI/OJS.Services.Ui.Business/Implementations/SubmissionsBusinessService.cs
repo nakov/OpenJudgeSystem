@@ -645,31 +645,28 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
         submission.CompilerComment = executionResult.CompilerComment;
         submission.Points = executionResult.TaskResult!.Points;
-        submission.TestRuns.Clear();
 
         if (!executionResult.IsCompiledSuccessfully)
         {
+            submission.TestRuns.Clear();
             return;
         }
 
-        foreach (var testResult in executionResult.TaskResult?.TestResults ?? [])
+        submission.TestRuns = (executionResult.TaskResult?.TestResults ?? []).Select(testResult => new TestRun
         {
-            submission.TestRuns.Add(
-                new TestRun
-                {
-                    ResultType = testResult.ResultType,
-                    CheckerComment = testResult.CheckerDetails?.Comment,
-                    ExecutionComment = testResult.ExecutionComment,
-                    ExpectedOutputFragment = testResult.CheckerDetails?.ExpectedOutputFragment,
-                    UserOutputFragment = testResult.CheckerDetails?.UserOutputFragment,
-                    IsTrialTest = testResult.IsTrialTest,
-                    TimeUsed = testResult.TimeUsed,
-                    MemoryUsed = testResult.MemoryUsed,
-                    SubmissionId = submission.Id,
-                    TestId = testResult.Id,
-                });
-        }
+            ResultType = testResult.ResultType,
+            CheckerComment = testResult.CheckerDetails?.Comment,
+            ExecutionComment = testResult.ExecutionComment,
+            ExpectedOutputFragment = testResult.CheckerDetails?.ExpectedOutputFragment,
+            UserOutputFragment = testResult.CheckerDetails?.UserOutputFragment,
+            IsTrialTest = testResult.IsTrialTest,
+            TimeUsed = testResult.TimeUsed,
+            MemoryUsed = testResult.MemoryUsed,
+            SubmissionId = submission.Id,
+            TestId = testResult.Id,
+        }).ToList();
     }
+
 
     private static void HandleProcessingException(Submission submission, Exception ex, string methodName)
     {
