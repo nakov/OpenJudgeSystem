@@ -47,6 +47,8 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
         await this.NormalizeSubmissionPoints();
         await this.NormalizeParticipantScorePoints();
 
+        await this.participantsData.SaveChanges();
+
         scope.Complete();
     }
 
