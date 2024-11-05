@@ -64,22 +64,29 @@ namespace OJS.Services.Administration.Business.ProblemGroups
         public override async Task<ProblemGroupsAdministrationModel> Create(ProblemGroupsAdministrationModel model)
         {
             var problemGroup = model.Map<ProblemGroup>();
+
             await this.problemGroupsData.Add(problemGroup);
+
             await this.problemGroupsData.SaveChanges();
+
             return model;
         }
 
         public override async Task<ProblemGroupsAdministrationModel> Edit(ProblemGroupsAdministrationModel model)
         {
             var problemGroup = model.Map<ProblemGroup>();
+
             this.problemGroupsData.Update(problemGroup);
+
             await this.problemGroupsData.SaveChanges();
+
             return model;
         }
 
         public override async Task Delete(int id)
         {
             await this.problemGroupsData.DeleteById(id);
+
             await this.problemGroupsData.SaveChanges();
         }
 
@@ -138,9 +145,10 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             return ServiceResult.Success;
         }
 
-        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup)
+        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId)
         {
-            var problemGroups = this.problemGroupsData.GetAllByContestId(contestId)
+            var problemGroups = this.problemGroupsData
+                .GetAllByContestId(contestId)
                 .Include(pr => pr.Problems);
 
             await this.problemGroupsOrderableService.ReevaluateOrder(problemGroups);
@@ -158,9 +166,17 @@ namespace OJS.Services.Administration.Business.ProblemGroups
 
         public ICollection<ProblemGroupDropdownModel> GetOrderByContestId(int contestId)
             => this.problemGroupsData.GetAllByContest(contestId)
+                .Where(pg => !pg.IsDeleted)
                 .OrderBy(x => x.OrderBy)
                 .MapCollection<ProblemGroupDropdownModel>()
                 .ToHashSet();
+
+        public async Task<double> GetNewLatestOrderByContest(int contestId)
+        {
+            var lastProblemGroupOrderBy = await this.problemGroupsData.GetLastNonDeletedByContest(contestId);
+
+            return lastProblemGroupOrderBy + 1;
+        }
 
         public async Task GenerateNewProblem(
             Problem problem,
@@ -239,7 +255,7 @@ namespace OJS.Services.Administration.Business.ProblemGroups
                this.problemGroupsData.Update(currentNewProblemGroup);
                await this.problemGroupsData.SaveChanges();
 
-               await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
+               await this.ReevaluateProblemsAndProblemGroupsOrder(contestId);
             }
         }
 

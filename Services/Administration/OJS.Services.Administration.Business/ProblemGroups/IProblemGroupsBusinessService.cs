@@ -19,8 +19,10 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             ProblemGroup currentNewProblemGroup,
             ICollection<Problem> problemsToAdd);
 
-        Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup);
+        Task ReevaluateProblemsAndProblemGroupsOrder(int contestId);
 
         ICollection<ProblemGroupDropdownModel> GetOrderByContestId(int contestId);
+
+        Task<double> GetNewLatestOrderByContest(int contestId);
     }
 }

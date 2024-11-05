@@ -2,9 +2,6 @@ namespace OJS.Services.Ui.Business
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Models;
-    using OJS.Services.Common.Models.Contests;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Infrastructure.Models;

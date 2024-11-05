@@ -41,6 +41,17 @@ const problemFilterableColumns: AdministrationGridColDef[] = [
         headerAlign: 'center',
     },
     {
+        field: 'orderBy',
+        headerName: 'Order By',
+        flex: 0.5,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        valueFormatter: (params) => params.value.toString(),
+    },
+    {
         field: 'contestId',
         headerName: 'Contest Id',
         flex: 2,

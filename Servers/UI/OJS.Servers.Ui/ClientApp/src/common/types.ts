@@ -291,6 +291,7 @@ interface IIndexContestsType {
 interface IIndexProblemsType {
     id: number;
     name: string;
+    orderBy: number;
     problemGroupId: number;
     groupType: string;
     contest: string;

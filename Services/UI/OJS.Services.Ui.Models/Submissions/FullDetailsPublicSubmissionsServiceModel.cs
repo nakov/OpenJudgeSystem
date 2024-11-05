@@ -5,8 +5,6 @@ using FluentExtensions.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
 {
@@ -49,10 +47,6 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(
-                    y => y))
-            .ForMember(
-                x => x.Result,
-                opt => opt.MapFrom(
                     y => new ResultForPublicSubmissionsServiceModel
                     {
                         Points = y.Points,
@@ -66,13 +60,42 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
                 opt => opt.MapFrom(
                     y => y.Participant!.IsOfficial))
             .ForMember(
-                d => d.MaxMemoryUsed,
-                opt => opt.MapFrom(s => s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.MemoryUsed) : (long?)null))
-            .ForMember(
-                d => d.MaxTimeUsed,
-                opt => opt.MapFrom(s =>
-                    s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null))
-            .ForMember(
                 x => x.PageNumber,
-                opt => opt.Ignore());
+                opt => opt.Ignore())
+            .ForMember(
+                x => x.MaxTimeUsed,
+                opt => opt.MapFrom(s => GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxTimeUsed))
+            .ForMember(
+                x => x.MaxMemoryUsed,
+                opt => opt.MapFrom(s => GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxMemoryUsed));
+
+    private static (long? MaxMemoryUsed, int? MaxTimeUsed) GetMaxMemoryAndTimeUsed(string? testRunsCache)
+    {
+        if (string.IsNullOrWhiteSpace(testRunsCache))
+        {
+            return (null, null);
+        }
+
+        var cacheParts = testRunsCache.Split('|');
+        if (cacheParts.Length <= 1)
+        {
+            return (null, null);
+        }
+
+        var timeMemoryPart = cacheParts[1];
+        var timeMemoryValues = timeMemoryPart.Split(',');
+
+        if (timeMemoryValues.Length < 2)
+        {
+            return (null, null);
+        }
+
+        if (int.TryParse(timeMemoryValues[0], out var maxTimeUsed) &&
+            long.TryParse(timeMemoryValues[1], out var maxMemoryUsed))
+        {
+            return (maxMemoryUsed, maxTimeUsed);
+        }
+
+        return (null, null);
+    }
 }
