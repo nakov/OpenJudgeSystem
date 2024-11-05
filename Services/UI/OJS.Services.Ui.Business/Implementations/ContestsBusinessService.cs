@@ -299,11 +299,25 @@ namespace OJS.Services.Ui.Business.Implementations
                     user.Id,
                     model.IsOfficial);
 
-            var contest =
+            if (participant is null)
+            {
+                throw new BusinessServiceException($"The participant with UserId #{user.Id} and ContestId #{model.ContestId} does not exist.");
+            }
+
+            var contestServiceModel =
                 await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId);
 
+            if (contestServiceModel is null)
+            {
+                throw new BusinessServiceException($"The contest with Id #{participant.ContestId} does not exist.");
+            }
+
+            var contest = contestServiceModel.Map<Contest>();
+
+            participant.Contest = contest;
+
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest?.Map<Contest>(),
+                contest,
                 model.ContestId,
                 user,
                 model.IsOfficial)!);
@@ -313,9 +327,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
+            var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contestServiceModel?.Id);
             var participationModel = participant.Map<ContestParticipationServiceModel>();
-            participationModel.Contest = contest;
+            participationModel.Contest = contestServiceModel;
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
@@ -325,7 +339,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
-                .GetAllForUserByContest(contest!.Id, user.Id)
+                .GetAllForUserByContest(contestServiceModel!.Id, user.Id)
                 .Select(x => (DateTime?)x.CreatedOn)
                 .Max();
             participationModel.LastSubmissionTime = lastSubmissionTime;
@@ -336,7 +350,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .ToList();
 
             participationModel.ParticipantId = participant.Id;
-            participationModel.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;
+            participationModel.UserSubmissionsTimeLimit = contestServiceModel.LimitBetweenSubmissions;
 
             var participantsList = new List<int> { participant.Id, };
 
@@ -345,7 +359,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
-            var isOfficialOnlineContest = model.IsOfficial && contest.IsOnlineExam;
+            var isOfficialOnlineContest = model.IsOfficial && contestServiceModel.IsOnlineExam;
 
             if (!userIsAdminOrLecturerInContest && isOfficialOnlineContest)
             {
@@ -354,11 +368,10 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Select(x => x.ProblemId)
                     .ToList();
 
-                participationModel.Contest.Problems = participationModel.Contest.Problems
+                participationModel.Contest.Problems = [.. participationModel.Contest.Problems
                     .Where(x => participantProblems.Contains(x.Id))
                     .OrderBy(p => p.ProblemGroupOrderBy)
-                    .ThenBy(p => p.OrderBy)
-                    .ToList();
+                    .ThenBy(p => p.OrderBy)];
             }
 
             await participationModel.Contest.Problems.ForEachAsync(problem =>

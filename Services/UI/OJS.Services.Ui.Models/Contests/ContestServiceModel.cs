@@ -34,6 +34,14 @@ public class ContestServiceModel : IMapExplicitly
 
     public bool UserIsAdminOrLecturerInContest { get; set; }
 
+    public DateTime? StartTime { get; set; }
+
+    public DateTime? EndTime { get; set; }
+
+    public DateTime? PracticeStartTime { get; set; }
+
+    public DateTime? PracticeEndTime { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Contest, ContestServiceModel>()
             .ForMember(

@@ -8,7 +8,7 @@ using System.Linq;
 
 public class ContestParticipationServiceModel : IMapExplicitly
 {
-    public ContestServiceModel? Contest { get; set; } = null!;
+    public ContestServiceModel? Contest { get; set; }
 
     public bool IsRegisteredParticipant { get; set; }
 
