@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using OJS.Services.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Infrastructure.Constants;
@@ -8,7 +8,6 @@ using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Ui.Models.Contests;
 using System.Linq;
 using System.Threading.Tasks;
-using X.PagedList;
 
 public class ContestsCacheService : IContestsCacheService
 {

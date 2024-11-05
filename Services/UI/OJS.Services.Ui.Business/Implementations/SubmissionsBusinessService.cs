@@ -32,8 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using OJS.Services.Ui.Models.Users;
-using X.PagedList;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
@@ -228,7 +226,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         submissionDetailsServiceModel.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
-        return submissionDetailsServiceModel!;
+        return submissionDetailsServiceModel;
     }
 
     public async Task<SubmissionFileDownloadServiceModel> GetSubmissionFile(int submissionId)

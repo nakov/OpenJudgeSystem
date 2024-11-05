@@ -1,15 +1,10 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
-    using System.Collections.Generic;
     using OJS.Data;
     using OJS.Data.Models.Tests;
     using OJS.Services.Common.Data.Implementations;
     using System.Linq;
     using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
-    using Microsoft.EntityFrameworkCore;
-    using OJS.Services.Infrastructure.Extensions;
-    using OJS.Services.Ui.Models.Submissions;
 
     public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
     {
@@ -41,7 +36,6 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public IQueryable<TestRun> GetAllBySubmission(int submissionId)
             => this.GetQuery()
-                   .Where(tr => tr.SubmissionId == submissionId)
-                   .Include(tr => tr.Test);
+                .Where(tr => tr.SubmissionId == submissionId);
     }
 }

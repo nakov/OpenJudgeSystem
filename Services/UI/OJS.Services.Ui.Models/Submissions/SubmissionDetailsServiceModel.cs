@@ -17,7 +17,7 @@
 
         public string? Content { get; set; }
 
-        public IEnumerable<TestRunDetailsServiceModel> TestRuns { get; set; } = [];
+        public ICollection<TestRunDetailsServiceModel> TestRuns { get; set; } = [];
 
         public UserServiceModel User { get; set; } = null!;
 
