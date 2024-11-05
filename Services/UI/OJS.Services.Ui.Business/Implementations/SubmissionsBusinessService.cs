@@ -14,7 +14,6 @@ using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions;
-using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
@@ -31,7 +30,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
@@ -62,6 +60,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
     private readonly ISubmissionTypesDataService submissionTypesData;
+    private readonly ITestsDataService testsData;
     private readonly ITestRunsDataService testRunsDataService;
 
     public SubmissionsBusinessService(
@@ -88,6 +87,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ICacheService cache,
         IContestsDataService contestsData,
         ISubmissionTypesDataService submissionTypesData,
+        ITestsDataService testsData,
         ITestRunsDataService testRunsDataService)
     {
         this.logger = logger;
@@ -113,6 +113,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.cache = cache;
         this.contestsData = contestsData;
         this.submissionTypesData = submissionTypesData;
+        this.testsData = testsData;
         this.testRunsDataService = testRunsDataService;
     }
 
@@ -450,7 +451,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var contest = await this.contestsData.OneById(problem.ProblemGroup.ContestId);
 
-        var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
+        var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
@@ -478,31 +479,36 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                                  !contest.IsDeleted &&
                                  problem.ShowResults;
 
-        SubmissionServiceModel submissionServiceModel;
-        var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        if (submissionType!.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
+        SubmissionForProcessing? submissionForProcessing = null;
+        await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
-            // Submission is just uploaded and should not be processed
-            await this.AddNewDefaultProcessedSubmission(participant, newSubmission);
+            if (submissionType!.ExecutionStrategyType
+                is ExecutionStrategyType.NotFound
+                or ExecutionStrategyType.DoNothing)
+            {
+                // Submission is just uploaded and should not be processed
+                await this.AddNewDefaultProcessedSubmission(participant, newSubmission);
+                return;
+            }
 
-            scope.Complete();
-            scope.Dispose();
-            return;
-        }
+            await this.submissionsData.Add(newSubmission);
+            await this.submissionsData.SaveChanges();
 
-        await this.submissionsData.Add(newSubmission);
-        await this.submissionsData.SaveChanges();
+            submissionForProcessing = await this.submissionsForProcessingData.Add(newSubmission.Id);
+            await this.submissionsData.SaveChanges();
+        });
 
-        submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        var submissionForProcessing = await this.submissionsForProcessingData.Add(newSubmission.Id);
-        await this.submissionsData.SaveChanges();
+        problem.Tests = await this.testsData
+            .GetAllByProblem(problem.Id)
+            .AsNoTracking()
+            .ToListAsync();
 
-        scope.Complete();
-        // Should be disposed explicitly (not with using keyword), otherwise the next operation will fail with
-        // "The current TransactionScope is already complete"
-        scope.Dispose();
+        var submissionServiceModel =
+            this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem,
+                submissionType!);
 
-        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing);
+        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel,
+            submissionForProcessing!);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -510,7 +516,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submission = await this.submissionsData
             .GetByIdQuery(submissionExecutionResult.SubmissionId)
             .IgnoreQueryFilters()
-            .Include(s => s.Problem!.Tests)
             .Include(s => s.TestRuns)
             .FirstOrDefaultAsync();
 

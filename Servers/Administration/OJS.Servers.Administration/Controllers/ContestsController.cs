@@ -23,6 +23,7 @@ using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using static Common.GlobalConstants.FileExtensions;
 
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
@@ -120,7 +121,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
 
     [HttpPost]
     [ProtectedEntityAction(false)]
-    public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
+    public async Task<IActionResult> ExportResults(ContestResultsExportRequestModel model)
     {
         var file = await this.contestsBusinessService.ExportResults(model);
         return this.File(file.Content!, file.MimeType!, file.FileName);
@@ -142,7 +143,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         var result = await this.similarityService.GetSubmissionSimilarities(model);
 
         var file = this.excelService.ExportResults(result);
-        return this.File(file.Content!, file.MimeType!, $"{nameof(this.CheckSimilarity)}.xls");
+        return this.File(file.Content!, file.MimeType!, $"{nameof(this.CheckSimilarity)}{Excel}");
     }
 
     [HttpPatch]

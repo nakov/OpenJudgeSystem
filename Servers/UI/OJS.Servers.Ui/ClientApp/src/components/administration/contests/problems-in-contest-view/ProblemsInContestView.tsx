@@ -94,8 +94,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     }, [ isSuccessfullyDeletedAll, retakeData ]);
 
     const openCopyModal = (id: number) => {
-        setShowCopyModal(true);
         setProblemToCopy(id);
+        setShowCopyModal(true);
     };
 
     const openRetestModal = (id: number) => {
@@ -227,11 +227,12 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
           setShowModal={operation === AllowedOperations.Copy
               ? setShowCopyModal
               : setShowCopyAllModal}
-          sourceId={contestId}
-          sourceName={problemsData?.items
+          sourceContestId={contestId}
+          sourceContestName={problemsData?.items
               ? problemsData?.items[0]?.contest ?? ''
               : ''}
-          problemToCopy={problemToCopy}
+          problemToCopyName={problemsData?.items!.find((x) => x.id === problemToCopy)?.name ?? null}
+          problemToCopyId={problemToCopy}
           setParentSuccessMessage={setSuccessMessage}
         />
     );
@@ -254,7 +255,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                             openRetestModal,
                             retakeData,
                         )
-}
+                      }
                       queryParams={queryParams}
                       setQueryParams={setQueryParams}
                       defaultSorter={defaultProblemsSorterToAdd}

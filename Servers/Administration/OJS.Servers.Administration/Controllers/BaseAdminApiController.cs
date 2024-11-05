@@ -18,6 +18,7 @@ using OJS.Services.Infrastructure.Extensions;
 using OJS.Data.Models.Common;
 using System.Threading.Tasks;
 using static OJS.Services.Administration.Models.AdministrationConstants;
+using static Common.GlobalConstants.FileExtensions;
 
 [Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
 [TypeFilter(typeof(EntityPermissionsFilter))]
@@ -65,7 +66,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
         }
 
         var file = await this.gridDataService.GetExcelResultsForUser<TGridModel>(model, user);
-        return this.File(file.Content!, file.MimeType!, $"{typeof(TEntity).Name}.xls");
+        return this.File(file.Content!, file.MimeType!, $"{typeof(TEntity).Name}{Excel}");
     }
 
     // TODO: use nameof(id) for the argument name in the attribute when upgraded to .NET 7 or above.

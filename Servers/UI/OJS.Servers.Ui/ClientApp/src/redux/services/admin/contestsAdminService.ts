@@ -60,7 +60,7 @@ const contestService = createApi({
 
         downloadResults: builder.mutation<{ blob: Blob; filename: string }, {id:number; type:number} >({
             query: ({ ...contestAdministrationModel }) => ({
-                url: '/Export',
+                url: '/ExportResults',
                 method: 'POST',
                 body: contestAdministrationModel,
             }),
