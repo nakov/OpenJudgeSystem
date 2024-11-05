@@ -442,7 +442,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var currentUser = this.userProviderService.GetCurrentUser();
 
         var participant = await this.participantsDataService
-            .GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(
+            .GetWithProblemsForParticipantByContestByUserAndIsOfficial(
                 model.ContestId,
                 currentUser.Id!,
                 model.Official);

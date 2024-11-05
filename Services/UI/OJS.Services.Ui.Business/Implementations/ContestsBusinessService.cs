@@ -294,7 +294,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var participant = await this.participantsData
-                .GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(
+                .GetWithProblemsForParticipantByContestByUserAndIsOfficial(
                     model.ContestId,
                     user.Id,
                     model.IsOfficial);
