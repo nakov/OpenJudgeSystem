@@ -429,7 +429,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
-        var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId)
+        var problem = await this.problemsDataService.GetWithSubmissionTypesById(model.ProblemId)
             ?? throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
 
         var checkerId = problem.CheckerId;
