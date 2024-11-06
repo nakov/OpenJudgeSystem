@@ -21,11 +21,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         : base(db)
         => this.datesService = datesService;
 
-    public TServiceModel? GetSubmissionById<TServiceModel>(int id)
+    public Task<TServiceModel?> GetSubmissionById<TServiceModel>(int id)
         => this.GetByIdQuery(id)
             .AsNoTracking()
             .MapCollection<TServiceModel>()
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
 
     public IQueryable<TServiceModel> GetLatestSubmissions<TServiceModel>(int? limit = null)
         => this.GetQuery(
@@ -34,13 +34,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 take: limit)
             .MapCollection<TServiceModel>();
 
-    // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/903
     public async Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(
-        IEnumerable<int?> userParticipantsIds,
+        IEnumerable<int> userParticipantsIds,
         int submissionsPerPage,
         int pageNumber)
             => await this.GetQuery(
-                    filter: s => !s.IsDeleted && userParticipantsIds.Contains(s.ParticipantId!),
+                    filter: s => !s.IsDeleted && userParticipantsIds.Contains(s.ParticipantId),
                     orderBy: s => s.Id,
                     descending: true)
                 .MapCollection<TServiceModel>()

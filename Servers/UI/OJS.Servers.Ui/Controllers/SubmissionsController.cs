@@ -54,11 +54,14 @@ public class SubmissionsController : BaseApiController
         "Usage",
         "ASP0023:Route conflict detected between controller actions",
         Justification = "Base API controller Route handles different actions names.")]
-    public IActionResult Download(int id)
+    public async Task<IActionResult> Download(int id)
     {
-        var submissionDownloadServiceModel = this.submissionsBusiness.GetSubmissionFile(id);
+        var submissionDownloadServiceModel = await this.submissionsBusiness.GetSubmissionFile(id);
 
-        return this.File(submissionDownloadServiceModel.Content!, submissionDownloadServiceModel.MimeType!, submissionDownloadServiceModel.FileName);
+        return this.File(
+            submissionDownloadServiceModel.Content!,
+            submissionDownloadServiceModel.MimeType!,
+            submissionDownloadServiceModel.FileName);
     }
 
     /// <summary>
