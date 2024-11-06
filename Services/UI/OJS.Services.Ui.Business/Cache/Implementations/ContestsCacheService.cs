@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Infrastructure.Constants;
@@ -14,16 +13,13 @@ public class ContestsCacheService : IContestsCacheService
 {
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
-    private readonly IProblemsDataService problemsData;
 
     public ContestsCacheService(
         ICacheService cache,
-        IContestsDataService contestsData,
-        IProblemsDataService problemsData)
+        IContestsDataService contestsData)
     {
         this.cache = cache;
         this.contestsData = contestsData;
-        this.problemsData = problemsData;
     }
 
     public async Task<ContestDetailsServiceModel?> GetContestDetailsServiceModel(
@@ -41,7 +37,6 @@ public class ContestsCacheService : IContestsCacheService
         if (contestDetailsServiceModel != null)
         {
             contestDetailsServiceModel.AllowedSubmissionTypes = contestDetailsServiceModel.Problems
-                .AsQueryable()
                 .SelectMany(p => p.AllowedSubmissionTypes)
                 .DistinctBy(st => st.Id)
                 .MapCollection<ContestDetailsSubmissionTypeServiceModel>()
