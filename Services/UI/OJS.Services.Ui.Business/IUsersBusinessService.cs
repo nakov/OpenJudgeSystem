@@ -15,7 +15,7 @@
 
         Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model);
 
-        bool IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles);
+        Task<bool> IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles);
 
         Task AddOrUpdateUser(UserProfile userEntity);
 

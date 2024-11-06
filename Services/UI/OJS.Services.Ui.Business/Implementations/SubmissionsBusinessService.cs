@@ -384,7 +384,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int page,
         int itemsInPage = DefaultSubmissionsPerPage)
     {
-        if (!this.usersBusiness.IsUserInRolesOrProfileOwner(
+        if (!await this.usersBusiness.IsUserInRolesOrProfileOwner(
                 username,
                 [GlobalConstants.Roles.Administrator, GlobalConstants.Roles.Lecturer]))
         {
@@ -396,11 +396,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var userParticipantsIds = await this.participantsDataService
             .GetAllByUser(userId)
             .Select(p => p.Id)
-                .ToEnumerableAsync();
+            .ToListAsync();
 
         return await this.submissionsData
             .GetLatestSubmissionsByUserParticipations<TServiceModel>(
-                userParticipantsIds.MapCollection<int?>(),
+                userParticipantsIds,
                 itemsInPage,
                 page);
     }
