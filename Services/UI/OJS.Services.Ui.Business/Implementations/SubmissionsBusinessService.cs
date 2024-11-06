@@ -62,6 +62,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionTypesCacheService submissionTypesCache;
     private readonly ICheckersCacheService checkersCache;
     private readonly ITestRunsDataService testRunsDataService;
+    private readonly IContestsCacheService contestsCache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -89,7 +90,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITestsDataService testsData,
         ITestRunsDataService testRunsDataService,
         ISubmissionTypesCacheService submissionTypesCache,
-        ICheckersCacheService checkersCache)
+        ICheckersCacheService checkersCache,
+        IContestsCacheService contestsCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -117,6 +119,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.testRunsDataService = testRunsDataService;
         this.submissionTypesCache = submissionTypesCache;
         this.checkersCache = checkersCache;
+        this.contestsCache = contestsCache;
     }
 
     public async Task Retest(int submissionId)
@@ -453,7 +456,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id,
                 model.Official);
 
-        var contest = await this.contestsData.OneById(model.ContestId);
+        var contest = await this.contestsCache.GetContestDetailsServiceModel(model.ContestId);
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
