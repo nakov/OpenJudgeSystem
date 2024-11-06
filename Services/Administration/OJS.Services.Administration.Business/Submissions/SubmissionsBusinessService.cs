@@ -198,12 +198,11 @@ namespace OJS.Services.Administration.Business.Submissions
         public async Task<ServiceResult> Retest(int id)
         {
             var submission = this.submissionsData.GetByIdQuery(id)
-                .Include(s => s.SubmissionType!)
-                .Include(s => s.Problem)
+                .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
                     .ThenInclude(p => p.Tests)
                 .Include(s => s.Problem)
-                .ThenInclude(p => p.SubmissionTypesInProblems)
+                    .ThenInclude(p => p.SubmissionTypesInProblems)
                 .FirstOrDefault();
 
             if (submission == null || submission.Id == 0)

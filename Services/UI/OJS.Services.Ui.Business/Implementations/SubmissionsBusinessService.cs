@@ -433,9 +433,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             ?? throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
 
         var checkerId = problem.CheckerId;
-        problem.Checker = checkerId.HasValue ?
-            await this.checkersCache.GetById(checkerId.Value) :
-            null;
+        problem.Checker = checkerId.HasValue
+            ? await this.checkersCache.GetById(checkerId.Value)
+            : null;
 
         var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);
 
@@ -444,7 +444,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var participant = await this.participantsDataService
             .GetWithProblemsForParticipantByContestByUserAndIsOfficial(
                 model.ContestId,
-                currentUser.Id!,
+                currentUser.Id,
                 model.Official);
 
         var contest = await this.contestsData.OneById(model.ContestId);

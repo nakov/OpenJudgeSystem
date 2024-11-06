@@ -2,12 +2,10 @@
 
 using OJS.Data.Models.Contests;
 using OJS.Services.Common;
-using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 
