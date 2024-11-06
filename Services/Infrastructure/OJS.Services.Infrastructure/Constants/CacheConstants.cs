@@ -16,8 +16,6 @@
         public const string ContestCategoryDetails = "ContestCategoryDetails:{0}";
 
         public const string ContestSubCategoriesFormat = "ContestSubCategories:{0}";
-        public const string ContestParentCategoriesFormat = "ContestParentCategories:{0}";
-        public const string ContestCategoryNameFormat = "ContestCategoryName:{0}";
 
         public const string TotalSubmissionsCount = "TotalSubmissionsCount";
         public const string LatestPublicSubmissions = "PublicSubmissions";

@@ -14,10 +14,6 @@ public interface IContestCategoriesCacheService : IService
         int categoryId,
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
-    Task<IEnumerable<ContestCategoryListViewModel>> GetContestCategoryParentsList(
-        int categoryId,
-        int? cacheSeconds = CacheConstants.OneDayInSeconds);
-
     Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 

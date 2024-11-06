@@ -29,15 +29,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId),
             () => this.contestCategoriesBusiness.GetAllSubcategories(categoryId),
             cacheSeconds);
-
-    public Task<IEnumerable<ContestCategoryListViewModel>> GetContestCategoryParentsList(
-        int categoryId,
-        int? cacheSeconds = CacheConstants.OneDayInSeconds)
-        => this.GetFromCache(
-            string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId),
-            () => this.contestCategoriesBusiness.GetAllParentCategories(categoryId),
-            cacheSeconds);
-
     public Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(int? cacheSeconds)
         => this.GetFromCache(
             CacheConstants.MainContestCategoriesDropDown,

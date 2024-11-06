@@ -99,25 +99,11 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
     }
 
     private async Task RemoveCacheFromCategory(int contestCategoryId)
-    {
-        var categoryNameCacheId = string.Format(
-            CacheConstants.ContestCategoryNameFormat,
-            contestCategoryId);
-
-        var subCategoriesCacheId = string.Format(
-            CacheConstants.ContestSubCategoriesFormat,
-            contestCategoryId);
-
-        var parentCategoriesCacheId = string.Format(
-            CacheConstants.ContestParentCategoriesFormat,
-            contestCategoryId);
-
-        await this.RemoveCaches([
-            categoryNameCacheId,
-            subCategoriesCacheId,
-            parentCategoriesCacheId,
+        => await this.RemoveCaches([
+            string.Format(
+                CacheConstants.ContestSubCategoriesFormat,
+                contestCategoryId),
         ]);
-    }
 
     private async Task RemoveCaches(IEnumerable<string> keys)
         => await keys.ForEachAsync(this.cache.Remove);
