@@ -8,18 +8,22 @@ using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Ui.Models.Contests;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Infrastructure.Extensions;
 
 public class ContestsCacheService : IContestsCacheService
 {
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
+    private readonly IProblemsDataService problemsData;
 
     public ContestsCacheService(
         ICacheService cache,
-        IContestsDataService contestsData)
+        IContestsDataService contestsData,
+        IProblemsDataService problemsData)
     {
         this.cache = cache;
         this.contestsData = contestsData;
+        this.problemsData = problemsData;
     }
 
     public async Task<ContestDetailsServiceModel?> GetContestDetailsServiceModel(
@@ -36,12 +40,12 @@ public class ContestsCacheService : IContestsCacheService
 
         if (contestDetailsServiceModel != null)
         {
-            contestDetailsServiceModel.AllowedSubmissionTypes = await contestDetailsServiceModel.Problems
+            contestDetailsServiceModel.AllowedSubmissionTypes = contestDetailsServiceModel.Problems
                 .AsQueryable()
                 .SelectMany(p => p.AllowedSubmissionTypes)
                 .DistinctBy(st => st.Id)
-                .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.Id, Name = x.Name })
-                .ToListAsync();
+                .MapCollection<ContestDetailsSubmissionTypeServiceModel>()
+                .ToList();
         }
 
         return contestDetailsServiceModel;
