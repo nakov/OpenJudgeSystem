@@ -32,7 +32,6 @@ namespace OJS.Services.Administration.Business.Submissions
         private readonly ITransactionsProvider transactions;
         private readonly IDatesService dates;
         private readonly ITestRunsDataService testRunsDataService;
-        private readonly ICheckersCacheService checkersCache;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
@@ -44,8 +43,7 @@ namespace OJS.Services.Administration.Business.Submissions
             ITestRunsDataService testRunsData,
             IDatesService dates,
             ISubmissionsCommonBusinessService submissionsCommonBusinessService,
-            ITestRunsDataService testRunsDataService,
-            ICheckersCacheService checkersCache)
+            ITestRunsDataService testRunsDataService)
         {
             this.submissionsData = submissionsData;
             this.participantScoresData = participantScoresData;
@@ -57,7 +55,6 @@ namespace OJS.Services.Administration.Business.Submissions
             this.testRunsDataService = testRunsDataService;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.testRunsData = testRunsData;
-            this.checkersCache = checkersCache;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -200,6 +197,8 @@ namespace OJS.Services.Administration.Business.Submissions
             var submission = this.submissionsData.GetByIdQuery(id)
                 .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
+                .ThenInclude(p => p.Checker)
+                .Include(s => s.Problem)
                     .ThenInclude(p => p.Tests)
                 .Include(s => s.Problem)
                     .ThenInclude(p => p.SubmissionTypesInProblems)
@@ -209,11 +208,6 @@ namespace OJS.Services.Administration.Business.Submissions
             {
                 return new ServiceResult("Submission doesn't exist");
             }
-
-            var checkerId = submission.Problem.CheckerId;
-            submission.Problem.Checker = checkerId.HasValue ?
-                await this.checkersCache.GetById(checkerId.Value) :
-                null;
 
             return await this.Retest(submission!);
         }

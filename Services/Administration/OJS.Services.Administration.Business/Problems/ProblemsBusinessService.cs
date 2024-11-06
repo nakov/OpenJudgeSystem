@@ -45,7 +45,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly IProblemGroupsDataService problemGroupsDataService;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ITransactionsProvider transactionsProvider;
-    private readonly ICheckersCacheService checkersCache;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -60,8 +59,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IProblemGroupsDataService problemGroupsDataService,
         IZippedTestsParserService zippedTestsParser,
-        ITransactionsProvider transactionsProvider,
-        ICheckersCacheService checkersCache)
+        ITransactionsProvider transactionsProvider)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -76,7 +74,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemGroupsDataService = problemGroupsDataService;
         this.zippedTestsParser = zippedTestsParser;
         this.transactionsProvider = transactionsProvider;
-        this.checkersCache = checkersCache;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -213,6 +210,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     public override async Task<ProblemAdministrationModel> Edit(ProblemAdministrationModel model)
     {
         var problem = await this.problemsData.GetByIdQuery(model.Id)
+            .Include(s => s.Checker)
             .Include(s => s.SubmissionTypesInProblems)
             .Include(s => s.ProblemGroup)
             .FirstOrDefaultAsync();
@@ -221,11 +219,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         {
             throw new ArgumentNullException($"Problem with id {model.Id} not found");
         }
-
-        var checkerId = problem.CheckerId;
-        problem.Checker = checkerId.HasValue ?
-            await this.checkersCache.GetById(checkerId.Value) :
-            null;
 
         problem.MapFrom(model);
 
