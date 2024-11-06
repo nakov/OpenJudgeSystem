@@ -33,5 +33,9 @@ namespace OJS.Services.Ui.Data.Implementations
             this.Delete(tr => tr.SubmissionId == submissionId);
             await this.SaveChanges();
         }
+
+        public IQueryable<TestRun> GetAllBySubmission(int submissionId)
+            => this.GetQuery()
+                .Where(tr => tr.SubmissionId == submissionId);
     }
 }

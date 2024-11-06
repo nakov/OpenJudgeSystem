@@ -10,7 +10,7 @@ using OJS.Services.Infrastructure.Models;
 
 public interface ISubmissionsDataService : IDataService<Submission>
 {
-    TServiceModel? GetSubmissionById<TServiceModel>(int id);
+    Task<TServiceModel?> GetSubmissionById<TServiceModel>(int id);
 
     IQueryable<TServiceModel> GetLatestSubmissions<TServiceModel>(int? limit = null);
 
