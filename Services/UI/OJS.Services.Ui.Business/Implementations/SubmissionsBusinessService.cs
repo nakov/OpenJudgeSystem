@@ -14,7 +14,6 @@ using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions;
-using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
@@ -31,7 +30,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
@@ -62,6 +60,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
     private readonly ISubmissionTypesDataService submissionTypesData;
+    private readonly ITestsDataService testsData;
+    private readonly ITestRunsDataService testRunsDataService;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -86,7 +86,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         IContestsDataService contestsData,
-        ISubmissionTypesDataService submissionTypesData)
+        ISubmissionTypesDataService submissionTypesData,
+        ITestsDataService testsData,
+        ITestRunsDataService testRunsDataService)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -111,122 +113,126 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.cache = cache;
         this.contestsData = contestsData;
         this.submissionTypesData = submissionTypesData;
+        this.testsData = testsData;
+        this.testRunsDataService = testRunsDataService;
     }
 
-    public async Task Retest(int id)
+    public async Task Retest(int submissionId)
     {
-        var user = this.userProviderService.GetCurrentUser();
-
-        var submission = this.submissionsData
-            .GetSubmissionById<SubmissionDetailsServiceModel>(id);
+        var submission = await this.submissionsData
+            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
 
         if (submission == null)
         {
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
-        var isUserInRoleForContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submission.ContestId);
+        var user = this.userProviderService.GetCurrentUser();
 
-        var validationResult =
-            this.retestSubmissionValidationService.GetValidationResult((
+        var testRuns = await this.testRunsDataService
+            .GetAllBySubmission(submissionId)
+            .AsNoTracking()
+            .MapCollection<TestRunDetailsServiceModel>()
+            .ToListAsync();
+
+        submission.TestRuns = testRuns;
+
+        submission.Tests = testRuns
+            .Select(tr => tr.Test)
+            .ToList();
+
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(submission.ContestId);
+
+        var validationResult = await this.retestSubmissionValidationService.GetValidationResult((
                 submission,
                 user,
-                isUserInRoleForContest));
+                userIsAdminOrLecturerInContest));
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = id });
+        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = submissionId });
     }
-
-    public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
-        => await this.submissionsData
-            .GetByIdQuery(submissionId)
-            .MapCollection<SubmissionDetailsServiceModel>()
-            .FirstOrDefaultAsync();
 
     public async Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId)
     {
-        var currentUser = this.userProviderService.GetCurrentUser();
-
-        //AsNoTracking() Method is added to prevent ''tracking query'' error.
-        //Error is thrown when we map from UserSettings (owned entity) without including the
-        //UserProfile (owner entity) in the query.
         var submissionDetailsServiceModel = await this.submissionsData
-            .GetByIdQuery(submissionId)
-            .AsSplitQuery()
-            .AsNoTracking()
-            .MapCollection<SubmissionDetailsServiceModel>()
-            .FirstOrDefaultAsync();
+            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
 
         if (submissionDetailsServiceModel == null)
         {
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
-        submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel
-            .TestRuns
-            .OrderBy(tr => !tr.IsTrialTest)
-            .ThenBy(tr => tr.OrderBy);
+        var currentUser = this.userProviderService.GetCurrentUser();
 
-        var userIsAdminOrLecturerInContest =
-            await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
-
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
         submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
-        submissionDetailsServiceModel.IsEligibleForRetest =
-            this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
-        var validationResult =
-            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest));
+        var validationResult = this.submissionDetailsValidationService
+            .GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest));
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        if (!userIsAdminOrLecturerInContest)
+        var testRuns = await this.testRunsDataService
+            .GetAllBySubmission(submissionId)
+            .AsNoTracking()
+            .OrderBy(tr => tr.IsTrialTest)
+            .ThenBy(tr => tr.Test.OrderBy)
+            .MapCollection<TestRunDetailsServiceModel>()
+            .ToListAsync();
+
+        foreach (var testRun in testRuns)
         {
-            submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
+            var test = testRun.Test;
+            submissionDetailsServiceModel.Tests.Add(test);
+
+            if (userIsAdminOrLecturerInContest)
             {
-                var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
+                continue;
+            }
 
-                var displayShowInput = currentTestRunTest != null
-                                       && (!currentTestRunTest.HideInput
-                                           && ((currentTestRunTest.IsTrialTest
-                                                || currentTestRunTest.IsOpenTest)
-                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+            var displayShowInput = test is { HideInput: false }
+                                   && (test.IsTrialTest
+                                       || test.IsOpenTest
+                                       || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
-                var showExecutionComment = currentTestRunTest != null
-                                           && (!string.IsNullOrEmpty(tr.ExecutionComment)
-                                               && (currentTestRunTest.IsOpenTest
-                                                   || currentTestRunTest.IsTrialTest
-                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+            var showExecutionComment = !string.IsNullOrEmpty(testRun.ExecutionComment)
+                                       && (test.IsOpenTest
+                                           || test.IsTrialTest
+                                           || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
-                if (!showExecutionComment)
-                {
-                    tr.ExecutionComment = string.Empty;
-                }
+            if (!showExecutionComment)
+            {
+                testRun.ExecutionComment = string.Empty;
+            }
 
-                if (!displayShowInput)
-                {
-                    tr.ShowInput = false;
-                    tr.Input = string.Empty;
-                    tr.ExpectedOutputFragment = string.Empty;
-                    tr.UserOutputFragment = string.Empty;
-                }
-
-                return tr;
-            });
+            if (!displayShowInput)
+            {
+                testRun.ShowInput = false;
+                testRun.Input = string.Empty;
+                testRun.ExpectedOutputFragment = string.Empty;
+                testRun.UserOutputFragment = string.Empty;
+            }
         }
 
-        return submissionDetailsServiceModel!;
+        submissionDetailsServiceModel.TestRuns = testRuns;
+
+        submissionDetailsServiceModel.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
+
+        return submissionDetailsServiceModel;
     }
 
-    public SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId)
+    public async Task<SubmissionFileDownloadServiceModel> GetSubmissionFile(int submissionId)
     {
-        var submissionDetailsServiceModel = this.submissionsData
+        var submissionDetailsServiceModel = await this.submissionsData
             .GetSubmissionById<SubmissionFileDetailsServiceModel>(submissionId);
 
         var currentUser = this.userProviderService.GetCurrentUser();
@@ -234,6 +240,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var validationResult =
             this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!,
                 currentUser));
+
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
@@ -444,7 +451,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var contest = await this.contestsData.OneById(problem.ProblemGroup.ContestId);
 
-        var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
+        var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
@@ -472,31 +479,36 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                                  !contest.IsDeleted &&
                                  problem.ShowResults;
 
-        SubmissionServiceModel submissionServiceModel;
-        var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        if (submissionType!.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
+        SubmissionForProcessing? submissionForProcessing = null;
+        await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
-            // Submission is just uploaded and should not be processed
-            await this.AddNewDefaultProcessedSubmission(participant, newSubmission);
+            if (submissionType!.ExecutionStrategyType
+                is ExecutionStrategyType.NotFound
+                or ExecutionStrategyType.DoNothing)
+            {
+                // Submission is just uploaded and should not be processed
+                await this.AddNewDefaultProcessedSubmission(participant, newSubmission);
+                return;
+            }
 
-            scope.Complete();
-            scope.Dispose();
-            return;
-        }
+            await this.submissionsData.Add(newSubmission);
+            await this.submissionsData.SaveChanges();
 
-        await this.submissionsData.Add(newSubmission);
-        await this.submissionsData.SaveChanges();
+            submissionForProcessing = await this.submissionsForProcessingData.Add(newSubmission.Id);
+            await this.submissionsData.SaveChanges();
+        });
 
-        submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        var submissionForProcessing = await this.submissionsForProcessingData.Add(newSubmission.Id);
-        await this.submissionsData.SaveChanges();
+        problem.Tests = await this.testsData
+            .GetAllByProblem(problem.Id)
+            .AsNoTracking()
+            .ToListAsync();
 
-        scope.Complete();
-        // Should be disposed explicitly (not with using keyword), otherwise the next operation will fail with
-        // "The current TransactionScope is already complete"
-        scope.Dispose();
+        var submissionServiceModel =
+            this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem,
+                submissionType!);
 
-        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing);
+        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel,
+            submissionForProcessing!);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -504,7 +516,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submission = await this.submissionsData
             .GetByIdQuery(submissionExecutionResult.SubmissionId)
             .IgnoreQueryFilters()
-            .Include(s => s.Problem!.Tests)
             .Include(s => s.TestRuns)
             .FirstOrDefaultAsync();
 

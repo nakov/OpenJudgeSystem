@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class ExcelService : IExcelService
 {
@@ -53,89 +54,89 @@ public class ExcelService : IExcelService
 
         // Return the result to the end user
         return new FileResponseModel(
-            outputStream.ToArray(), // The binary data of the XLS file
-            $"{this.GetType().Name}.xls",
+            outputStream.ToArray(), // The binary data of the XLSX file
+            $"{this.GetType().Name}{Excel}",
             GlobalConstants.MimeTypes.ExcelSheet);
     }
 
     private static void WriteData<TModel>(IEnumerable<TModel?> items, XLWorkbook workbook, string sheetName)
     {
-            Type dataType = items.GetType().GetGenericArguments()[0];
+        Type dataType = items.GetType().GetGenericArguments()[0];
 
-            var dataTypeProperties = dataType.GetProperties();
+        var dataTypeProperties = dataType.GetProperties();
 
-            /*
-             * Create new Excel sheet.
-             * The maximum length for the Excel sheet's name is 31 characters.
-             */
-            var sheet = workbook.Worksheets.Add(sheetName.Length > 31 ? sheetName.Substring(0, 31) : sheetName);
+        /*
+         * Create new Excel sheet.
+         * The maximum length for the Excel sheet's name is 31 characters.
+         */
+        var sheet = workbook.Worksheets.Add(sheetName.Length > 31 ? sheetName.Substring(0, 31) : sheetName);
 
-            // Create a header row
-            var columnNumber = 1;
-            foreach (var property in dataTypeProperties)
+        // Create a header row
+        var columnNumber = 1;
+        foreach (var property in dataTypeProperties)
+        {
+            var cellName = property.Name;
+            var attributes = property.GetCustomAttributes(typeof(DisplayAttribute), true);
+            if (attributes.Length != 0)
             {
-                var cellName = property.Name;
-                var attributes = property.GetCustomAttributes(typeof(DisplayAttribute), true);
-                if (attributes.Any())
+                if (attributes[0] is DisplayAttribute attribute)
                 {
-                    if (attributes[0] is DisplayAttribute attribute)
-                    {
-                        cellName = attribute.Name ?? property.Name;
-                    }
+                    cellName = attribute.Name ?? property.Name;
                 }
-
-                sheet.Cell(1, columnNumber++).Value = cellName;
             }
 
-            var rowNumber = 2;
+            sheet.Cell(1, columnNumber++).Value = cellName;
+        }
 
-            // Populate the sheet with values from the grid data
-            foreach (object? item in items)
+        var rowNumber = 2;
+
+        // Populate the sheet with values from the grid data
+        foreach (object? item in items)
+        {
+            // Create a new row
+            var row = sheet.Row(rowNumber++);
+
+            var cellNumber = 1;
+            foreach (var property in dataTypeProperties)
             {
-                // Create a new row
-                var row = sheet.Row(rowNumber++);
-
-                var cellNumber = 1;
-                foreach (var property in dataTypeProperties)
+                var propertyValue = item?.GetType().GetProperty(property.Name)?.GetValue(item, null);
+                if (propertyValue == null)
                 {
-                    var propertyValue = item?.GetType().GetProperty(property.Name)?.GetValue(item, null);
-                    if (propertyValue == null)
+                    sheet.Cell(row.RowNumber(), cellNumber).Value = string.Empty;
+                }
+                else
+                {
+                    var typeCode = Type.GetTypeCode(property.PropertyType);
+                    if (typeCode == TypeCode.Single || typeCode == TypeCode.Char)
                     {
-                        sheet.Cell(row.RowNumber(), cellNumber).Value = string.Empty;
+                        sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValue.ToString();
+                    }
+
+                    if (double.TryParse(propertyValue.ToString(), out var value))
+                    {
+                        sheet.Cell(row.RowNumber(), cellNumber).Value = value;
+                    }
+                    else if (typeCode == TypeCode.DateTime)
+                    {
+                        sheet.Cell(row.RowNumber(), cellNumber).Value = (DateTime)propertyValue;
                     }
                     else
                     {
-                        var typeCode = Type.GetTypeCode(property.PropertyType);
-                        if (typeCode == TypeCode.Single || typeCode == TypeCode.Char)
+                        var propertyValueAsString = propertyValue.ToString()!;
+                        if (propertyValue.ToString()!.Length > 10000)
                         {
-                            sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValue.ToString();
+                            propertyValueAsString = string.Concat("THIS CELL DOES NOT CONTAIN FULL INFORMATION: ", propertyValueAsString.AsSpan(0, 10000));
                         }
 
-                        if (double.TryParse(propertyValue.ToString(), out var value))
-                        {
-                            sheet.Cell(row.RowNumber(), cellNumber).Value = value;
-                        }
-                        else if (typeCode == TypeCode.DateTime)
-                        {
-                            sheet.Cell(row.RowNumber(), cellNumber).Value = (DateTime)propertyValue;
-                        }
-                        else
-                        {
-                            var propertyValueAsString = propertyValue.ToString()!;
-                            if (propertyValue.ToString()!.Length > 10000)
-                            {
-                                propertyValueAsString = "THIS CELL DOES NOT CONTAIN FULL INFORMATION: " + propertyValueAsString.Substring(0, 10000);
-                            }
-
-                            sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValueAsString;
-                        }
+                        sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValueAsString;
                     }
-
-                    cellNumber++;
                 }
-            }
 
-            sheet.Columns().AdjustToContents();
+                cellNumber++;
+            }
+        }
+
+        sheet.Columns().AdjustToContents();
     }
 
     private static void FillSheetWithParticipantResults(IXLWorksheet sheet, ContestResultsViewModel contestResults)

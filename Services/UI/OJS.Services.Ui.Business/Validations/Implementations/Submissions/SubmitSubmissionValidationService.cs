@@ -3,6 +3,7 @@
 using OJS.Data.Models.Contests;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
@@ -30,7 +31,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         this.submissionsData = submissionsData;
     }
 
-    public ValidationResult GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel, Contest?, SubmissionType?) item)
+    public async Task<ValidationResult> GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel, Contest?, SubmissionType?) item)
     {
         var (problem, participant, submitSubmissionServiceModel, contest, submissionType) = item;
 
@@ -49,10 +50,8 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid("Contest not found");
         }
 
-        var isAdminOrLecturer = this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(contest.Id)
-            .GetAwaiter()
-            .GetResult();
+        var isAdminOrLecturer = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(contest.Id);
 
         var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
 
@@ -74,10 +73,10 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         var problemIdToString = problem.Id.ToString();
 
         var userHasUnprocessedSubmissionForProblem =
-            this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, participant.UserId);
+            await this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, participant.UserId);
 
         var userHasUnprocessedSubmissionForContest =
-            this.submissionsData.HasUserNotProcessedSubmissionForContest(contest.Id, participant.UserId);
+            await this.submissionsData.HasUserNotProcessedSubmissionForContest(contest.Id, participant.UserId);
 
         if (userHasUnprocessedSubmissionForProblem)
         {
@@ -146,7 +145,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemIdToString);
         }
 
-        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(participant.Id, contest.LimitBetweenSubmissions);
+        var userSubmissionTimeLimit = await this.submissionsData.GetUserSubmissionTimeLimit(participant.Id, contest.LimitBetweenSubmissions);
 
         if (userSubmissionTimeLimit != 0)
         {

@@ -15,9 +15,7 @@
     {
         Task Submit(SubmitSubmissionServiceModel model);
 
-        Task Retest(int id);
-
-        Task<SubmissionDetailsServiceModel?> GetById(int submissionId);
+        Task Retest(int submissionId);
 
         Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId);
 
@@ -43,7 +41,7 @@
             int page,
             int itemsPerPage = DefaultSubmissionsPerPage);
 
-        SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
+        Task<SubmissionFileDownloadServiceModel> GetSubmissionFile(int submissionId);
 
         Task<Dictionary<SubmissionProcessingState, int>> GetAllUnprocessedCount();
     }

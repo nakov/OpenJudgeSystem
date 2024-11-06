@@ -10,7 +10,7 @@ using OJS.Services.Infrastructure.Models;
 
 public interface ISubmissionsDataService : IDataService<Submission>
 {
-    TServiceModel? GetSubmissionById<TServiceModel>(int id);
+    Task<TServiceModel?> GetSubmissionById<TServiceModel>(int id);
 
     IQueryable<TServiceModel> GetLatestSubmissions<TServiceModel>(int? limit = null);
 
@@ -53,9 +53,9 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     void RemoveTestRunsCacheByProblem(int problemId);
 
-    int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
+    Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
 
-    bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
+    Task<bool> HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
 
-    bool HasUserNotProcessedSubmissionForContest(int contestId, string userId);
+    Task<bool> HasUserNotProcessedSubmissionForContest(int contestId, string userId);
 }

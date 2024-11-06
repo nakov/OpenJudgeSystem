@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ContestsGeneral;
+using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
 {
@@ -146,7 +147,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         var fileName = string.Format(
             Resource.ReportExcelFormat,
             official ? Resource.Contest : Resource.Practice,
-            contest.Name);
+            contest.Name,
+            Excel);
 
         return await this.excelService.ExportContestResultsToExcel(contestResults, fileName);
     }
@@ -202,6 +204,44 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             FileName = zipFileName, Content = zipFile, MimeType = GlobalConstants.MimeTypes.ApplicationZip,
         };
     }
+
+    public async Task<ContestLegacyExportServiceModel> Export(int id)
+    {
+        var contest = await this.contestsData
+            .GetByIdQuery(id)
+            .AsSplitQuery()
+            .Where(c => !c.IsDeleted)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.Tests)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.Checker)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.SubmissionTypesInProblems)
+            .ThenInclude(sp => sp.SubmissionType)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.Resources)
+            .FirstOrDefaultAsync();
+
+        if (contest == null)
+        {
+            throw new BusinessServiceException($"Contest with Id:{id} not found.");
+        }
+
+        RemoveCircularReferences(contest);
+
+        return contest.Map<ContestLegacyExportServiceModel>();
+    }
+
+    public async Task<IEnumerable<int>> GetExistingIds(IEnumerable<int> ids)
+        => await this.contestsData
+            .GetQuery()
+            .Where(c => !c.IsDeleted && ids.Contains(c.Id))
+            .Select(c => c.Id)
+            .ToListAsync();
 
     public async Task<ContestActivityModel> GetContestActivity(int contestId) =>
         await this.activityService.GetContestActivity(await this.contestsData.GetByIdQuery(contestId)
@@ -356,6 +396,34 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
         this.participantsData.DeleteMany(participantsForDeletion);
         await this.participantsData.SaveChanges();
+    }
+
+    private static void RemoveCircularReferences(Contest contest)
+    {
+        foreach (var problemGroup in contest.ProblemGroups)
+        {
+            problemGroup.Contest = null;
+
+            foreach (var problem in problemGroup.Problems)
+            {
+                problem.ProblemGroup = null;
+
+                foreach (var test in problem.Tests)
+                {
+                    test.Problem = null;
+                }
+
+                foreach (var resource in problem.Resources)
+                {
+                    resource.Problem = null;
+                }
+
+                foreach (var submissionTypeInProblem in problem.SubmissionTypesInProblems)
+                {
+                    submissionTypeInProblem.Problem = null;
+                }
+            }
+        }
     }
 
     private static StringBuilder PrepareSolutionsFileComment(

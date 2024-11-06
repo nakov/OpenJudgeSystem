@@ -22,7 +22,7 @@ public class UserAuthInfoServiceModel : IMapExplicitly
     public bool IsDeveloper { get; set; }
 
     public bool CanAccessAdministration { get; set; }
-    public IEnumerable<RoleServiceModel> Roles { get; set; } = Enumerable.Empty<RoleServiceModel>();
+    public IEnumerable<RoleServiceModel> Roles { get; set; } = [];
 
     public void RegisterMappings(IProfileExpression configuration) => configuration
         .CreateMap<UserProfile, UserAuthInfoServiceModel>()

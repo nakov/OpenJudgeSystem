@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Infrastructure.Constants;
@@ -8,6 +7,7 @@ using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Ui.Models.Contests;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Infrastructure.Extensions;
 
 public class ContestsCacheService : IContestsCacheService
 {
@@ -27,7 +27,7 @@ public class ContestsCacheService : IContestsCacheService
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
         => await this.cache.Get(
             string.Format(CacheConstants.ContestDetails, contestId),
-            async () => (await this.GetContestServiceModel(contestId)),
+            async () => await this.GetContestServiceModel(contestId),
             cacheSeconds);
 
     private async Task<ContestDetailsServiceModel?> GetContestServiceModel(int contestId)
@@ -37,10 +37,9 @@ public class ContestsCacheService : IContestsCacheService
         if (contestDetailsServiceModel != null)
         {
             contestDetailsServiceModel.AllowedSubmissionTypes = contestDetailsServiceModel.Problems
-                .AsQueryable()
                 .SelectMany(p => p.AllowedSubmissionTypes)
                 .DistinctBy(st => st.Id)
-                .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.Id, Name = x.Name })
+                .MapCollection<ContestDetailsSubmissionTypeServiceModel>()
                 .ToList();
         }
 

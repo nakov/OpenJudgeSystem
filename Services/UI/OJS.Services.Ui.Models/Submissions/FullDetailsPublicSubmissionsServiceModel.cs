@@ -5,6 +5,7 @@ using FluentExtensions.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
+using static OJS.Services.Infrastructure.Models.ModelHelpers;
 
 public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
 {
@@ -47,10 +48,6 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(
-                    y => y))
-            .ForMember(
-                x => x.Result,
-                opt => opt.MapFrom(
                     y => new ResultForPublicSubmissionsServiceModel
                     {
                         Points = y.Points,
@@ -68,44 +65,8 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
                 opt => opt.Ignore())
             .ForMember(
                 x => x.MaxTimeUsed,
-                opt => opt.Ignore())
+                opt => opt.MapFrom(s => GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxTimeUsed))
             .ForMember(
                 x => x.MaxMemoryUsed,
-                opt => opt.Ignore())
-            .AfterMap((src, dest) =>
-            {
-                var timeAndMemory = GetMaxMemoryAndTimeUsed(src.TestRunsCache);
-                dest.MaxTimeUsed = timeAndMemory.MaxTimeUsed;
-                dest.MaxMemoryUsed = timeAndMemory.MaxMemoryUsed;
-            });
-
-    private static (long? MaxMemoryUsed, int? MaxTimeUsed) GetMaxMemoryAndTimeUsed(string? testRunsCache)
-    {
-        if (string.IsNullOrWhiteSpace(testRunsCache))
-        {
-            return (null, null);
-        }
-
-        var cacheParts = testRunsCache.Split('|');
-        if (cacheParts.Length <= 1)
-        {
-            return (null, null);
-        }
-
-        var timeMemoryPart = cacheParts[1];
-        var timeMemoryValues = timeMemoryPart.Split(',');
-
-        if (timeMemoryValues.Length < 2)
-        {
-            return (null, null);
-        }
-
-        if (int.TryParse(timeMemoryValues[0], out var maxTimeUsed) &&
-            long.TryParse(timeMemoryValues[1], out var maxMemoryUsed))
-        {
-            return (maxMemoryUsed, maxTimeUsed);
-        }
-
-        return (null, null);
-    }
+                opt => opt.MapFrom(s => GetMaxMemoryAndTimeUsed(s.TestRunsCache).MaxMemoryUsed));
 }

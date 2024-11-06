@@ -105,6 +105,7 @@ const AdministrationProblemsPage = () => {
           problemToCopyName={findProblemInData()?.name || ''}
           problemToCopyId={problemId}
           setParentSuccessMessage={setSuccessMessage}
+          onClose={retakeProblems}
         />
     );
 

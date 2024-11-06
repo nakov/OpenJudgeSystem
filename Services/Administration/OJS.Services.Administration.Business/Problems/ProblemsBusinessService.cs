@@ -3,6 +3,7 @@ namespace OJS.Services.Administration.Business.Problems;
 using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
 using OJS.Data;
@@ -300,11 +301,12 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         else
         {
             orderBy = await this.problemsData.GetNewOrderByContest(contestId);
+            var problemGroupOrderBy = await this.problemGroupsBusiness.GetNewLatestOrderByContest(contestId);
 
             problem.ProblemGroup = new ProblemGroup
             {
                 ContestId = contestId,
-                OrderBy = orderBy,
+                OrderBy = problemGroupOrderBy,
             };
         }
 

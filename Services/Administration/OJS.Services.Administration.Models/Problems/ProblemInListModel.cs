@@ -13,6 +13,8 @@ public class ProblemInListModel : IMapExplicitly
 
     public string? Name { get; set; }
 
+    public double OrderBy { get; set; }
+
     public ProblemGroupType ProblemGroupType { get; set; }
 
     public double ProblemGroupOrderBy { get; set; }
