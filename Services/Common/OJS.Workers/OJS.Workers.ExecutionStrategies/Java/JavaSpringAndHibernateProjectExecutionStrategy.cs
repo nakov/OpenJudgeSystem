@@ -87,12 +87,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             try
             {
                 submissionFilePath = this.CreateSubmissionFile(executionContext);
-                var isValid = ValidateFolderStructure(submissionFilePath);
-
-                if (!isValid)
-                {
-                    throw new ArgumentException($"Folder structure is invalid! The zip folder structure must contain files with path: pom.xml and your main code must be in folder pattern {MainCodeFolderPattern}");
-                }
+                this.ValidateSubmissionFile(submissionFilePath);
             }
             catch (ArgumentException exception)
             {
@@ -325,11 +320,35 @@ namespace OJS.Workers.ExecutionStrategies.Java
             return GetMavenErrorsComment(testOutput);
         }
 
+        private void ValidateSubmissionFile(string submissionFilePath)
+        {
+            var isMainClassFilePathValid = this.ValidateMainClassFileName();
+
+            if (!isMainClassFilePathValid)
+            {
+                throw new ArgumentException($"Submission does not contain main class at: {FileHelpers.BuildPath(this.ProjectRootDirectoryInSubmissionZip, this.MainClassFileName)}. Check your folder structure and pom.xml start-class definition.");
+            }
+
+            var isValid = ValidateFolderStructure(submissionFilePath);
+
+            if (!isValid)
+            {
+                throw new ArgumentException($"Folder structure is invalid! The zip folder structure must contain files with path: {MainCodeFolderPattern} and pom.xml start-class definition.");
+            }
+        }
+
         private static bool ValidateFolderStructure(string submissionFilePath)
         {
             var paths = FileHelpers.GetFilePathsFromZip(submissionFilePath).ToList();
 
             return paths.Any(x => x.StartsWith(MainCodeFolderPattern)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension));
+        }
+
+        private bool ValidateMainClassFileName()
+        {
+            var mainClassFilePath = FileHelpers.BuildPath(this.ProjectRootDirectoryInSubmissionZip, this.MainClassFileName);
+
+            return FileHelpers.FileExists(mainClassFilePath);
         }
 
         private void ReplacePom(string pomXmlFilePath)
