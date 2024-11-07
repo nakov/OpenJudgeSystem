@@ -20,8 +20,6 @@ namespace OJS.Workers.ExecutionStrategies.Java
         where TSettings : JavaSpringAndHibernateProjectExecutionStrategySettings
     {
         private const string PomXmlFileNameAndExtension = "pom.xml";
-        private const string PomXmlFileStartClassDefinitionOpeningTag = "<start-class>";
-        private const string PomXmlFileStartClassDefinitionClosingTag = "</start-class>";
         private const string ApplicationPropertiesFileName = "application.properties";
         private const string IntelliJProjectTemplatePattern = "src/main/java";
         private const string IntelliJTestProjectTemplatePattern = "src/test/java";
@@ -324,6 +322,10 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
         private void ValidateSubmissionFile(string submissionFilePath)
         {
+            // Main class is validated against the value in pom.xml.
+            // If package names don't correspond,
+            // then the tests are saved in a different folder structure (see how this.PackageName is exported)
+            // and when ran, tests are unable to find their correct configuration.
             if (!this.ValidateMainClassFileName(submissionFilePath))
             {
                 throw new ArgumentException($"Submission does not contain start class at: {this.GetMainClassFilePath()}. Check your folder structure and pom.xml start-class definition.");
@@ -351,24 +353,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             FileHelpers.DeleteFiles(pomXmlFilePath);
 
             var newPomFileContent = File.ReadAllText(this.Settings.JavaSpringAndHibernateStrategyPomFilePath);
-            newPomFileContent = this.UpdateStartClassInPom(newPomFileContent);
             FileHelpers.WriteAllText(pomXmlFilePath, newPomFileContent);
-        }
-
-        private string UpdateStartClassInPom(string xmlContent)
-        {
-            int startIndex = xmlContent.IndexOf(PomXmlFileStartClassDefinitionOpeningTag) + PomXmlFileStartClassDefinitionOpeningTag.Length;
-            int endIndex = xmlContent.IndexOf(PomXmlFileStartClassDefinitionClosingTag);
-
-            if (startIndex >= PomXmlFileStartClassDefinitionOpeningTag.Length && endIndex > startIndex)
-            {
-                string currentValue = xmlContent.Substring(startIndex, endIndex - startIndex);
-                xmlContent = xmlContent.Replace(
-                    $"{PomXmlFileStartClassDefinitionOpeningTag}{currentValue}{PomXmlFileStartClassDefinitionClosingTag}",
-                    $"{PomXmlFileStartClassDefinitionOpeningTag}{this.PackageName}.{this.MainClassFileName.Replace(".java", "")}{PomXmlFileStartClassDefinitionClosingTag}");
-            }
-
-            return xmlContent;
         }
 
         private string ExtractEntryPointFromPomXml(string submissionFilePath)
