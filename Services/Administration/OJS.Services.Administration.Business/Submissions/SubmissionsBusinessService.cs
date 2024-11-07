@@ -22,7 +22,6 @@ namespace OJS.Services.Administration.Business.Submissions
 
     public class SubmissionsBusinessService : AdministrationOperationService<Submission, int, SubmissionAdministrationServiceModel>, ISubmissionsBusinessService
     {
-        private readonly IParticipantScoresBusinessService participantScoresBusiness;
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService;
         private readonly IParticipantScoresDataService participantScoresData;
@@ -36,7 +35,6 @@ namespace OJS.Services.Administration.Business.Submissions
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
-            IParticipantScoresBusinessService participantScoresBusiness,
             IParticipantScoresDataService participantScoresData,
             ITransactionsProvider transactions,
             ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService,
@@ -55,7 +53,6 @@ namespace OJS.Services.Administration.Business.Submissions
             this.dates = dates;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
             this.testRunsDataService = testRunsDataService;
-            this.participantScoresBusiness = participantScoresBusiness;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.testRunsData = testRunsData;
         }
@@ -198,13 +195,13 @@ namespace OJS.Services.Administration.Business.Submissions
         public async Task<ServiceResult> Retest(int id)
         {
             var submission = this.submissionsData.GetByIdQuery(id)
-                .Include(s => s.SubmissionType!)
+                .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
-                    .ThenInclude(p => p.Checker)
+                .ThenInclude(p => p.Checker)
                 .Include(s => s.Problem)
                     .ThenInclude(p => p.Tests)
                 .Include(s => s.Problem)
-                .ThenInclude(p => p.SubmissionTypesInProblems)
+                    .ThenInclude(p => p.SubmissionTypesInProblems)
                 .FirstOrDefault();
 
             if (submission == null || submission.Id == 0)
