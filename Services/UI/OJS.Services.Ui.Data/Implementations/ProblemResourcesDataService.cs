@@ -10,8 +10,5 @@
             : base(problemResources)
         {
         }
-
-        public void DeleteByProblem(int problemId) =>
-            this.Delete(pr => pr.ProblemId == problemId);
     }
 }

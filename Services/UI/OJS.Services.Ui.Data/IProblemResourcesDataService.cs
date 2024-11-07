@@ -6,6 +6,5 @@
 
     public interface IProblemResourcesDataService : IDataService<ProblemResource>, IService
     {
-        void DeleteByProblem(int problemId);
     }
 }
