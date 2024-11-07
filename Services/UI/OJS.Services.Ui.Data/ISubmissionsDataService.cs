@@ -15,7 +15,7 @@ public interface ISubmissionsDataService : IDataService<Submission>
     IQueryable<TServiceModel> GetLatestSubmissions<TServiceModel>(int? limit = null);
 
     Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(
-        IEnumerable<int?> userParticipantsIds,
+        IEnumerable<int> userParticipantsIds,
         int submissionsPerPage,
         int pageNumber);
 

@@ -18,11 +18,9 @@ public static class QueryableExtensions
         int? itemsPerPage,
         int? pageNumber)
     {
-        var page = queryable.ToPagedResultInternal(itemsPerPage, pageNumber);
+        var page = GetPagedResult<T>(queryable.Count(), itemsPerPage, pageNumber);
 
-        page.Items = queryable
-            .GetItemsPageQuery(itemsPerPage!.Value, pageNumber!.Value)
-            .ToList();
+        page.Items = [.. queryable.GetItemsPageQuery(itemsPerPage!.Value, pageNumber!.Value)];
 
         return page;
     }
@@ -32,7 +30,7 @@ public static class QueryableExtensions
         int? itemsPerPage,
         int? pageNumber)
     {
-        var page = queryable.ToPagedResultInternal(itemsPerPage, pageNumber);
+        var page = GetPagedResult<T>(await queryable.CountAsync(), itemsPerPage, pageNumber);
 
         page.Items = await queryable
             .GetItemsPageQuery(itemsPerPage!.Value, pageNumber!.Value)
@@ -41,8 +39,8 @@ public static class QueryableExtensions
         return page;
     }
 
-    private static PagedResult<T> ToPagedResultInternal<T>(
-        this IQueryable<T> queryable,
+    private static PagedResult<T> GetPagedResult<T>(
+        int totalItemsCount,
         int? itemsPerPage,
         int? pageNumber)
     {
@@ -52,7 +50,6 @@ public static class QueryableExtensions
             throw new ArgumentException("Value cannot be less than or equal to zero", parameterName);
         }
 
-        var totalItemsCount = queryable.Count();
         itemsPerPage ??= totalItemsCount;
         pageNumber ??= 1;
 
