@@ -40,11 +40,20 @@ public class DataService<TEntity> : IDataService<TEntity>
     public virtual void Update(TEntity entity)
         => this.dbSet.Update(entity);
 
+    public void Update(Expression<Func<TEntity, bool>>? filter = null)
+        => this.dbSet.UpdateRange(this.GetQuery(filter));
+
+    public virtual void UpdateMany(IEnumerable<TEntity> entities)
+        => this.dbSet.UpdateRange(entities);
+
     public virtual void Delete(TEntity entity)
         => this.dbSet.Remove(entity);
 
     public void Delete(Expression<Func<TEntity, bool>>? filter = null)
         => this.dbSet.RemoveRange(this.GetQuery(filter));
+
+    public virtual void DeleteMany(IEnumerable<TEntity> entities)
+        => this.dbSet.RemoveRange(entities);
 
     public virtual async Task DeleteById(object id)
     {
@@ -60,9 +69,6 @@ public class DataService<TEntity> : IDataService<TEntity>
 
     public EntityEntry<TEntity> GetEntry(TEntity entity)
         => this.dbSet.Entry(entity);
-
-    public virtual void DeleteMany(IEnumerable<TEntity> entities)
-        => this.dbSet.RemoveRange(entities);
 
     public virtual async Task<IEnumerable<TEntity>> All(
         Expression<Func<TEntity, bool>>? filter = null,
