@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using OJS.Common.Extensions.Strings;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.ResilienceStrategies;
@@ -13,18 +14,21 @@ using static OJS.Services.Infrastructure.Constants.ResilienceStrategyConstants.R
 
 public class CacheService : ICacheService
 {
-    private readonly IDistributedCache cache;
+    private readonly IDistributedCache distributedCache;
+    private readonly IMemoryCache memoryCache;
     private readonly IResilienceStrategiesService resilienceStrategiesService;
     private readonly IDatesService datesService;
     private readonly IConnectionMultiplexer redisConnection;
 
     public CacheService(
-        IDistributedCache cache,
+        IDistributedCache distributedCache,
+        IMemoryCache memoryCache,
         IResilienceStrategiesService resilienceStrategiesService,
         IDatesService datesService,
         IConnectionMultiplexer redisConnection)
     {
-        this.cache = cache;
+        this.distributedCache = distributedCache;
+        this.memoryCache = memoryCache;
         this.resilienceStrategiesService = resilienceStrategiesService;
         this.datesService = datesService;
         this.redisConnection = redisConnection;
@@ -34,14 +38,17 @@ public class CacheService : ICacheService
         => await this.resilienceStrategiesService.ExecuteRedisWithCircuitBreaker(
             async (_) =>
             {
-                this.CheckRedisConnection();
+                if (this.redisConnection is not { IsConnecting: false, IsConnected: true })
+                {
+                    this.memoryCache.TryGetValue(cacheId, out T result);
+                }
 
                 await this.VerifyValueInCache(
                     cacheId,
                     getItemCallback,
                     absoluteExpiration);
 
-                return ParseValue<T>((await this.cache.GetAsync(cacheId))!);
+                return ParseValue<T>((await this.distributedCache.GetAsync(cacheId))!);
             },
             getItemCallback,
             string.Format(GetItem, cacheId));
@@ -58,7 +65,7 @@ public class CacheService : ICacheService
             {
                 this.CheckRedisConnection();
 
-                await this.cache.RemoveAsync(cacheId);
+                await this.distributedCache.RemoveAsync(cacheId);
                 return Task.CompletedTask;
             },
             () => Task.FromResult(Task.CompletedTask),
@@ -79,14 +86,14 @@ public class CacheService : ICacheService
         Func<Task<T>> getItemCallback,
         DateTime absoluteExpiration)
     {
-        var value = await this.cache.GetAsync(cacheId);
+        var value = await this.distributedCache.GetAsync(cacheId);
         if (value.IsNull())
         {
             var options = new DistributedCacheEntryOptions()
                 .SetAbsoluteExpiration(absoluteExpiration);
 
             var result = await getItemCallback();
-            await this.cache.SetAsync(
+            await this.distributedCache.SetAsync(
                 cacheId,
                 ParseValue(result),
                 options);

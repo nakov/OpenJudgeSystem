@@ -6,12 +6,6 @@
 
     public interface ITestsDataService : IDataService<Test>
     {
-        IQueryable<Test> GetByIdQuery(int id);
-
         IQueryable<Test> GetAllByProblem(int problemId);
-
-        IQueryable<Test> GetAllNonTrialByProblem(int problemId);
-
-        void DeleteByProblem(int problemId);
     }
 }

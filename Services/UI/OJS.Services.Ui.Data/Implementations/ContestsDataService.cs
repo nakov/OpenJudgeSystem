@@ -33,19 +33,8 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
 
-    public async Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId)
-        => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
-            .Include(c => c.Category)
-            .MapCollection<TServiceModel>()
-            .FirstOrDefaultAsync();
-
     public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
         => await this.GetAllCompetableQuery()
-            .MapCollection<TServiceModel>()
-            .ToListAsync();
-
-    public async Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>()
-        => await this.GetAllPracticableQuery()
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
@@ -65,18 +54,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(
         ContestFiltersServiceModel model)
-    {
-        var contests = model.CategoryIds.Any()
-            ? this.GetAllVisibleByCategories(model.CategoryIds)
-            : this.GetAllVisible()
-                .Include(c => c.Category);
-
-        return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
-    }
-
-    public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSortingAndParticipants<TServiceModel>(
-        ContestFiltersServiceModel model,
-        string username)
     {
         var contests = model.CategoryIds.Any()
             ? this.GetAllVisibleByCategories(model.CategoryIds)
@@ -117,57 +94,13 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .ThenInclude(pg => pg.Problems)
             .FirstOrDefaultAsync();
 
-    public Task<Contest?> GetByIdWithParticipants(int id)
-        => this.GetByIdQuery(id)
-            .Include(c => c.Participants)
-            .FirstOrDefaultAsync();
-
-    public IQueryable<Contest> GetAllActive()
-        => this.GetAllVisible()
-            .Where(c =>
-                c.StartTime <= DateTime.Now &&
-                (c.EndTime >= DateTime.Now ||
-                 (c.Type == ContestType.OnlinePracticalExam && c.Participants.Any(p =>
-                     p.IsOfficial &&
-                     p.ParticipationEndTime >= DateTime.Now))));
-
-    public IQueryable<Contest> GetAllInactive()
-        => this.GetQuery(c =>
-                c.StartTime > DateTime.Now ||
-                (c.EndTime < DateTime.Now && c.Type != ContestType.OnlinePracticalExam) ||
-                !c.Participants.Any(p => p.ParticipationEndTime < DateTime.Now));
-
-    public IQueryable<Contest> GetAllUpcoming()
-        => this.GetAllVisible()
-            .Where(c => c.StartTime > DateTime.Now);
-
-    public IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId)
-        => this.GetAllVisible()
-            .Where(c => c.ProblemGroups
-                .SelectMany(pg => pg.Problems)
-                .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
-
     public IQueryable<Contest> GetAllByLecturer(string lecturerId)
         => this.GetQuery(c =>
                 c.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
 
-    public IQueryable<Contest> GetAllVisibleByCategoryAndLecturer(int categoryId, string lecturerId)
-        => this.GetAllByLecturer(lecturerId)
-            .Where(c => c.CategoryId == categoryId);
-
-    public IQueryable<Contest> GetAllWithDeleted() => this.GetQuery().IgnoreQueryFilters();
-
-    public Task<int> GetMaxPointsById(int id)
-        => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => true);
-
     public Task<int> GetMaxPointsForExportById(int id)
         => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => pg.Type != ProblemGroupType.ExcludedFromHomework);
-
-    public Task<string?> GetNameById(int id)
-        => this.GetByIdQuery(id)
-            .Select(c => c.Name)
-            .FirstOrDefaultAsync();
 
     public async Task<bool> IsOnlineById(int id)
         => await this.GetByIdQuery(id)
@@ -179,11 +112,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .AnyAsync(c =>
                 c.LecturersInContests.Any(l => l.LecturerId == userId) ||
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
-
-    public Task<bool> IsUserParticipantInByContestAndUser(int id, string userId)
-        => this.Exists(c =>
-                c.Id == id &&
-                c.Participants.Any(p => p.UserId == userId));
 
     public Task<bool> IsUserInExamGroupByContestAndUser(int id, string userId)
         => this.Exists(c =>
@@ -295,10 +223,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     private IQueryable<Contest> GetAllExpiredQuery()
         => this.GetAllVisible()
             .Where(this.IsExpired());
-
-    private IQueryable<Contest> GetAllPracticableQuery()
-        => this.GetAllVisible()
-            .Where(this.CanBePracticed());
 
     private Expression<Func<Contest, bool>> CanBeCompeted()
         => c => c.StartTime <= this.dates.GetUtcNow()

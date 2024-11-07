@@ -13,26 +13,12 @@ namespace OJS.Services.Ui.Data.Implementations
         {
         }
 
-        public IQueryable<TestRun> GetAllByTest(int testId) =>
-            this.GetQuery(tr => tr.TestId == testId);
-
         public async Task DeleteByProblem(int problemId)
         {
             this.Delete(tr => tr.Submission.ProblemId == problemId);
             await this.SaveChanges();
         }
 
-        public async Task DeleteByTest(int testId)
-        {
-            this.Delete(tr => tr.TestId == testId);
-            await this.SaveChanges();
-        }
-
-        public async Task DeleteBySubmission(int submissionId)
-        {
-            this.Delete(tr => tr.SubmissionId == submissionId);
-            await this.SaveChanges();
-        }
 
         public IQueryable<TestRun> GetAllBySubmission(int submissionId)
             => this.GetQuery()
