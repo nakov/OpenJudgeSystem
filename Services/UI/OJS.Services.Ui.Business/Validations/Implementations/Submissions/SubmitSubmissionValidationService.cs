@@ -32,7 +32,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         this.submissionsData = submissionsData;
     }
 
-    public async Task<ValidationResult> GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel, ContestDetailsServiceModel?, SubmissionType?) item)
+    public async Task<ValidationResult> GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel, Contest?, SubmissionType?) item)
     {
         var (problem, participant, submitSubmissionServiceModel, contest, submissionType) = item;
 
