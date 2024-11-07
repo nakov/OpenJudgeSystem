@@ -1,8 +1,9 @@
 namespace OJS.Services.Ui.Business;
 
+using System.Threading.Tasks;
 using OJS.Services.Infrastructure;
 
 public interface ISubmissionsForProcessingBusinessService : IService
 {
-    bool IsSubmissionProcessing(int submissionId);
+    Task<bool> IsSubmissionProcessing(int submissionId);
 }
