@@ -38,8 +38,12 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.GetQuery(p => p.UserId == userId);
 
         public IQueryable<Participant> GetAllByUsernameAndContests(string username, IEnumerable<int> contestIds)
-            => this.GetQuery(p => p.User.UserName == username)
-                .Where(p => contestIds.Contains(p.ContestId));
+        {
+            var distinctContestIds = contestIds.Distinct();
+
+            return this.GetQuery(p => p.User.UserName == username)
+                .Where(p => distinctContestIds.Contains(p.ContestId));
+        }
 
         public IQueryable<Participant> GetAllByContest(int contestId)
             => this.GetQuery(p => p.ContestId == contestId);

@@ -419,7 +419,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var userParticipants = this.participantsData
                 .GetAllByUsernameAndContests(user.Username ?? string.Empty, contestIds);
 
-            return await MapParticipationResultsToContestsInPage(contestIds, userParticipants);
+            return await MapParticipationResultsToContestsInPage(userParticipants);
         }
 
         public async Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
@@ -438,16 +438,17 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (loggedInUser.IsAuthenticated && (loggedInUser.Username == username || loggedInUser.IsAdmin))
             {
-                var contestIds = participatedContestsInPage.Items.Select(c => c.Id).ToList();
+                var contestIds = participatedContestsInPage
+                    .Items
+                    .Select(c => c.Id)
+                    .ToList();
 
                 // Lecturers should not see points
                 var userParticipants = this.participantsData
                     .GetAllByUsernameAndContests(username, contestIds);
 
                 participantResultsByContest =
-                    await MapParticipationResultsToContestsInPage(
-                        contestIds,
-                        userParticipants);
+                    await MapParticipationResultsToContestsInPage(userParticipants);
             }
 
             return await this.PrepareActivityAndResults(participatedContestsInPage, participantResultsByContest);
@@ -518,7 +519,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
                 ParticipantResultServiceModel? competeParticipant = null;
                 ParticipantResultServiceModel? practiceParticipant = null;
-                if (participantResultsByContest.Any())
+                if (participantResultsByContest.Count != 0)
                 {
                     var participants = participantResultsByContest.GetValueOrDefault(c.Id);
                     if (participants != null)
@@ -542,19 +543,11 @@ namespace OJS.Services.Ui.Business.Implementations
         }
 
         private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
-            IEnumerable<int> contestIds,
             IQueryable<Participant> participants)
-        {
-            var participatedContestIds = contestIds
-                .Distinct();
-
-            return (await participants
-                .Where(p => participatedContestIds.Contains(p.ContestId))
+            => await participants
                 .MapCollection<ParticipantResultServiceModel>()
-                .ToListAsync())
                 .GroupBy(p => p.ContestId)
-                .ToDictionary(g => g.Key, g => g.ToList());
-        }
+                .ToDictionaryAsync(g => g.Key, g => g.ToList());
 
         private static bool ShouldRequirePassword(bool hasContestPassword, bool hasPracticePassword, Participant? participant, bool official)
         {
