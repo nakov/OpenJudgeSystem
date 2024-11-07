@@ -52,21 +52,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .ThenByDescending(s => s.Id)
             .FirstOrDefault();
 
-    public IQueryable<Submission> GetAllByProblem(int problemId)
-        => this.GetQuery(s => s.ProblemId == problemId);
-
     public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
         => this.GetQuery(
             filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
             orderBy: q => q.CreatedOn,
             descending: true);
-
-    public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
-        DateTime createdBeforeDate,
-        DateTime nonBestCreatedBeforeDate) =>
-        this.GetQuery(s => s.CreatedOn < createdBeforeDate ||
-                           (s.CreatedOn < nonBestCreatedBeforeDate &&
-                            s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)));
 
     public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
         => this.GetQuery(s => s.Points > s.Problem!.MaximumPoints);
@@ -77,9 +67,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                      && s.Problem.ProblemGroup.ContestId == contestId,
         orderBy: s => s.Id,
         descending: true);
-
-    public void DeleteByProblem(int problemId) =>
-        this.Delete(s => s.ProblemId == problemId);
 
     public async Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
     {

@@ -2,7 +2,6 @@ namespace OJS.Services.Ui.Data;
 
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,19 +22,11 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Submission? GetBestForParticipantByProblem(int participantId, int problemId);
 
-    IQueryable<Submission> GetAllByProblem(int problemId);
-
     IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
-
-    IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
-        DateTime createdBeforeDate,
-        DateTime nonBestCreatedBeforeDate);
 
     IQueryable<Submission> GetAllHavingPointsExceedingLimit();
 
     IQueryable<Submission> GetAllForUserByContest(int contestId, string userId);
-
-    void DeleteByProblem(int problemId);
 
     Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
 

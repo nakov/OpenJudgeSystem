@@ -102,11 +102,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     public Task<int> GetMaxPointsForExportById(int id)
         => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => pg.Type != ProblemGroupType.ExcludedFromHomework);
 
-    public async Task<bool> IsOnlineById(int id)
-        => await this.GetByIdQuery(id)
-            .Select(c => c.Type)
-            .FirstOrDefaultAsync() == ContestType.OnlinePracticalExam;
-
     public Task<bool> IsUserLecturerInByContestAndUser(int id, string userId)
         => this.GetByIdQuery(id)
             .AnyAsync(c =>
