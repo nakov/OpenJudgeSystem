@@ -355,7 +355,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             FileHelpers.WriteAllText(pomXmlFilePath, newPomFileContent);
         }
 
-        public string UpdateStartClassInPom(string xmlContent)
+        private string UpdateStartClassInPom(string xmlContent)
         {
             int startIndex = xmlContent.IndexOf(PomXmlFileStartClassDefinitionOpeningTag) + PomXmlFileStartClassDefinitionOpeningTag.Length;
             int endIndex = xmlContent.IndexOf(PomXmlFileStartClassDefinitionClosingTag);
