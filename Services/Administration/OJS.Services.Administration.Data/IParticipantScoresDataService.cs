@@ -13,8 +13,6 @@ namespace OJS.Services.Administration.Data
 
         Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial);
 
-        IQueryable<ParticipantScore> GetAll();
-
         IQueryable<ParticipantScore> GetAllByProblem(int problemId);
 
         IQueryable<ParticipantScore> GetAllHavingPointsExceedingLimit();
@@ -33,7 +31,8 @@ namespace OJS.Services.Administration.Data
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant);
+            Participant participant,
+            bool shouldSaveChanges = true);
 
         Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
     }

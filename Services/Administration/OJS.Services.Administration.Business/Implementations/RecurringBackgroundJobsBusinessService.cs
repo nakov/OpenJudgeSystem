@@ -14,17 +14,20 @@
     {
         private readonly ISubmissionsForProcessingBusinessService submissionsForProcessing;
         private readonly IParticipantsBusinessService participantsBusinessService;
+        private readonly IParticipantScoresBusinessService participantScoresBusiness;
         private readonly IBusControl bus;
         private readonly ILogger<RecurringBackgroundJobsBusinessService> logger;
 
         public RecurringBackgroundJobsBusinessService(
             ISubmissionsForProcessingBusinessService submissionsForProcessing,
             IParticipantsBusinessService participantsBusinessService,
+            IParticipantScoresBusinessService participantScoresBusiness,
             IBusControl bus,
             ILogger<RecurringBackgroundJobsBusinessService> logger)
         {
             this.submissionsForProcessing = submissionsForProcessing;
             this.participantsBusinessService = participantsBusinessService;
+            this.participantScoresBusiness = participantScoresBusiness;
             this.bus = bus;
             this.logger = logger;
         }
@@ -66,6 +69,13 @@
             await this.participantsBusinessService.RemoveDuplicateParticipantScores();
 
             return "Successfully removed participant multiple scores";
+        }
+
+        public async Task<object> NormalizeAllPointsThatExceedAllowedLimit()
+        {
+            await this.participantScoresBusiness.NormalizeAllPointsThatExceedAllowedLimit();
+
+            return "Successfully normalized all points that exceed allowed limit";
         }
     }
 }

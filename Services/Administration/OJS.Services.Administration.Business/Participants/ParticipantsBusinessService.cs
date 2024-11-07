@@ -50,7 +50,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
     public async Task RemoveDuplicateParticipantScores()
     {
         var duplicateGroups = await this.scoresDataService
-            .GetAll()
+            .GetQuery()
             .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
             .Where(psGroup => psGroup.Count() > 1)
             .Select(psGroup => new
