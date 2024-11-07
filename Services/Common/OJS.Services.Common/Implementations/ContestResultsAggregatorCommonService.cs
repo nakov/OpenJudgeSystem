@@ -8,10 +8,8 @@ using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using X.PagedList;
 
 public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCommonService
 {

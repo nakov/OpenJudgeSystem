@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Participants;
 
 using OJS.Data.Models.Participants;
-using OJS.Services.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.Participants;

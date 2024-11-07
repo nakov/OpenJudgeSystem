@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Participants;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Enumerations;
 using OJS.Data.Models.Participants;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Participants;

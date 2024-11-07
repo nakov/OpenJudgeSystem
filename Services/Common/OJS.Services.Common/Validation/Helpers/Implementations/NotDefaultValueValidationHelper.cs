@@ -1,7 +1,5 @@
 namespace OJS.Services.Common.Validation.Helpers.Implementations;
 
-using OJS.Services.Common.Models;
-using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
 using static OJS.Services.Common.Validation.ValidationConstants;
 

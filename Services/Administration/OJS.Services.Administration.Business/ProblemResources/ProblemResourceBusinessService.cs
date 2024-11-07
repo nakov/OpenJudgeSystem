@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Common;
-using OJS.Common.Extensions;
 using System.Linq;
 
 public class ProblemResourceBusinessService : AdministrationOperationService<ProblemResource, int, ProblemResourceAdministrationModel>, IProblemResourcesBusinessService

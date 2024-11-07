@@ -2,7 +2,6 @@
 {
     using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public class SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BaseSqlServerSingleDatabaseExecutionStrategy<TSettings>
