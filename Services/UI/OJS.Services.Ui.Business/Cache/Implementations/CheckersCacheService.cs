@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using OJS.Data.Models.Checkers;
-using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;

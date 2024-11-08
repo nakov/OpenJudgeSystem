@@ -13,9 +13,6 @@ public interface IContestsBusinessService : IAdministrationOperationService<Cont
 
     Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin);
 
-    Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string searchString)
-        where TServiceModel : class;
-
     Task<FileResponseModel> ExportResults(ContestResultsExportRequestModel model);
 
     Task<FileResponseModel> DownloadSubmissions(DownloadSubmissionsModel model);

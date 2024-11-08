@@ -140,14 +140,6 @@ namespace OJS.Services.Administration.Data.Implementations
             }
         }
 
-        public Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>
-            this.GetQuery(ps => submissionIds.Cast<int?>().Contains(ps.SubmissionId))
-                .UpdateFromQueryAsync(
-                    ps => new ParticipantScore
-                    {
-                        SubmissionId = null,
-                    });
-
         private static void UpdateTotalScoreSnapshot(
             Participant participant,
             int previousPoints,

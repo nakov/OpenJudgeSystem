@@ -1,10 +1,7 @@
 namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
-using System.Linq;
 using System.Threading.Tasks;
-using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
-using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;

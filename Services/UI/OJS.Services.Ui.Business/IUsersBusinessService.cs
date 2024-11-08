@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business
 {
-    using System.Security.Claims;
     using System.Threading.Tasks;
     using OJS.Data.Models.Users;
     using OJS.Services.Ui.Models.Search;

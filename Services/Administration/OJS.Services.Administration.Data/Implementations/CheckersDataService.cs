@@ -2,7 +2,6 @@
 
 using OJS.Data;
 using OJS.Data.Models.Checkers;
-using System.Threading.Tasks;
 
 public class CheckersDataService : AdministrationDataService<Checker>, ICheckersDataService
 {
@@ -10,7 +9,4 @@ public class CheckersDataService : AdministrationDataService<Checker>, ICheckers
         : base(db)
     {
     }
-
-    public Task<Checker?> GetByName(string name)
-        => this.One(ch => ch.Name == name);
 }

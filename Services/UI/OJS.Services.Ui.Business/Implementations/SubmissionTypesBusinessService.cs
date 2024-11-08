@@ -1,15 +1,11 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Submissions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
-using OJS.Common;
-using OJS.Data.Models.Problems;
-using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.SubmissionTypes;
 
@@ -26,17 +22,6 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
         this.submissionTypesData = submissionTypesData;
         this.submissionsData = submissionsData;
     }
-
-    public Task<SubmissionTypeServiceModel> GetById(int id)
-        => this.submissionTypesData
-            .OneById(id)
-            .Map<SubmissionTypeServiceModel>();
-
-    public Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId)
-        => this.submissionTypesData
-            .GetAllByProblem(problemId)
-            .MapCollection<SubmissionTypeServiceModel>()
-            .ToEnumerableAsync();
 
     public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
     {
@@ -56,25 +41,5 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
         return allSubmissionTypes
             .OrderByDescending(x => submissionTypesUsageGroups.GetValueOrDefault(x.Id));
-    }
-
-    public void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false)
-    {
-        var submissionType =
-            problem.SubmissionTypesInProblems.FirstOrDefault(st => st.SubmissionTypeId == submissionTypeId);
-        if (submissionType == null)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionTypeNotFound);
-        }
-
-        if (shouldAllowBinaryFiles && !submissionType.SubmissionType.AllowBinaryFilesUpload)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.BinaryFilesNotAllowed);
-        }
-
-        if (!shouldAllowBinaryFiles && submissionType.SubmissionType.AllowBinaryFilesUpload)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.TextUploadNotAllowed);
-        }
     }
 }

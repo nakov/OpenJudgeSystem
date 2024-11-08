@@ -6,7 +6,6 @@ using OJS.Common;
 using OJS.Data.Models.Contests;
 using OJS.Servers.Administration.Attributes;
 using OJS.Servers.Infrastructure.Extensions;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ContestCategories;
 using OJS.Services.Administration.Business.ContestCategories.GridData;
 using OJS.Services.Administration.Business.ContestCategories.Validators;

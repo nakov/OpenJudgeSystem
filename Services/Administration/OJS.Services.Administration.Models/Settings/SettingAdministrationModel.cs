@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Models.Settings;
 
 using AutoMapper;
-using OJS.Common.Enumerations;
 using OJS.Data.Models;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Models.Mapping;

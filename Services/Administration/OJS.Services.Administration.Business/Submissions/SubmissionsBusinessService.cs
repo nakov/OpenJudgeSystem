@@ -1,22 +1,17 @@
 namespace OJS.Services.Administration.Business.Submissions
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
-    using OJS.Common.Helpers;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
-    using OJS.Services.Administration.Models;
     using OJS.Services.Administration.Models.Submissions;
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.Exceptions;
-    using OJS.Workers.Common.Models;
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Data;
 
@@ -55,103 +50,6 @@ namespace OJS.Services.Administration.Business.Submissions
             this.testRunsDataService = testRunsDataService;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.testRunsData = testRunsData;
-        }
-
-        public Task<IQueryable<Submission>> GetAllForArchiving()
-        {
-            var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
-                -GlobalConstants.BestSubmissionEligibleForArchiveAgeInYears);
-
-            var archiveNonBestSubmissionsLimit = DateTime.Now.AddYears(
-                -GlobalConstants.NonBestSubmissionEligibleForArchiveAgeInYears);
-
-            return Task.FromResult(this.submissionsData
-                .GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
-                    archiveBestSubmissionsLimit,
-                    archiveNonBestSubmissionsLimit));
-        }
-
-        public Task RecalculatePointsByProblem(int problemId)
-        {
-            using (var scope = TransactionsHelper.CreateTransactionScope())
-            {
-                var problemSubmissions = this.submissionsData
-                    .GetAllByProblem(problemId)
-                    .Include(s => s.TestRuns)
-                    .Include(s => s.TestRuns.Select(tr => tr.Test))
-                    .ToList();
-
-                var submissionResults = problemSubmissions
-                    .Select(s => new
-                    {
-                        s.Id,
-                        s.ParticipantId,
-                        CorrectTestRuns = s.TestRuns.Count(t =>
-                            t.ResultType == TestRunResultType.CorrectAnswer &&
-                            !t.Test.IsTrialTest),
-                        AllTestRuns = s.TestRuns.Count(t => !t.Test.IsTrialTest),
-                        MaxPoints = s.Problem!.MaximumPoints,
-                    })
-                    .ToList();
-
-                var problemSubmissionsById = problemSubmissions.ToDictionary(s => s.Id);
-                var topResults = new Dictionary<int, ParticipantScoreModel>();
-
-                foreach (var submissionResult in submissionResults)
-                {
-                    var submission = problemSubmissionsById[submissionResult.Id];
-                    var points = 0;
-                    if (submissionResult.AllTestRuns != 0)
-                    {
-                        points = (submissionResult.CorrectTestRuns * submissionResult.MaxPoints) /
-                            submissionResult.AllTestRuns;
-                    }
-
-                    submission.Points = points;
-                    submission.CacheTestRuns();
-
-                    var participantId = submissionResult.ParticipantId;
-
-                    if (!topResults.ContainsKey(participantId) || topResults[participantId].Points < points)
-                    {
-                        topResults[participantId] = new ParticipantScoreModel
-                        {
-                            Points = points,
-                            SubmissionId = submission.Id,
-                        };
-                    }
-                    else if (topResults[participantId].Points == points)
-                    {
-                        if (topResults[participantId].SubmissionId < submission.Id)
-                        {
-                            topResults[participantId].SubmissionId = submission.Id;
-                        }
-                    }
-                }
-
-                this.submissionsData.SaveChanges();
-
-                var participants = topResults.Keys.ToList();
-
-                var existingScores = this.participantScoresData
-                    .GetAllByProblem(problemId)
-                    .Where(p => participants.Contains(p.ParticipantId))
-                    .ToList();
-
-                foreach (var existingScore in existingScores)
-                {
-                    var topScore = topResults[existingScore.ParticipantId];
-
-                    existingScore.Points = topScore.Points;
-                    existingScore.SubmissionId = topScore.SubmissionId;
-                }
-
-                this.submissionsData.SaveChanges();
-
-                scope.Complete();
-            }
-
-            return Task.CompletedTask;
         }
 
         public async Task<ServiceResult> Retest(Submission submission)
