@@ -10,6 +10,9 @@ using OJS.Services.Ui.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
+using OJS.Data.Models.Problems;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Cache;
 
 public class ContestResultsBusinessService : IContestResultsBusinessService
@@ -44,12 +47,15 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
 
     public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults, int page)
     {
-        var (contest, problems) = await this.contestsCache.GetContestWithProblems(contestId);
+        var (contestCache, problemsCache) = await this.contestsCache.GetContestWithProblems(contestId);
 
-        if (contest == null)
+        if (contestCache == null)
         {
             throw new BusinessServiceException("Contest does not exist or is deleted.");
         }
+
+        var contest = contestCache.Map<Contest>();
+        var problems = problemsCache.MapCollection<Problem>().ToList();
 
         var validationResult = this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
 

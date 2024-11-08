@@ -9,9 +9,8 @@ using OJS.Services.Ui.Models.Contests;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Models.Cache;
 
 public class ContestsCacheService : IContestsCacheService
 {
@@ -72,7 +71,7 @@ public class ContestsCacheService : IContestsCacheService
         return contestServiceModel;
     }
 
-    public async Task<(Contest? Contest, ICollection<Problem> Problems)> GetContestWithProblems(int contestId)
+    public async Task<(ContestCacheModel? Contest, ICollection<ProblemCacheModel> Problems)> GetContestWithProblems(int contestId)
     {
         var contest = await this.GetContest(contestId);
 
@@ -86,15 +85,16 @@ public class ContestsCacheService : IContestsCacheService
         return (contest, problems);
     }
 
-    public async Task<Contest?> GetContest(int contestId)
+    public async Task<ContestCacheModel?> GetContest(int contestId)
         => await this.cache.Get(
-            string.Format(CacheConstants.Contest),
+            string.Format(CacheConstants.Contest, contestId),
             async () => await this.contestsData
                 .GetByIdQuery(contestId)
                 .AsNoTracking()
+                .MapCollection<ContestCacheModel>()
                 .FirstOrDefaultAsync(),
             CacheConstants.FiveMinutesInSeconds);
 
-    private async Task<ICollection<Problem>> GetProblemsForContest(int contestId)
+    private async Task<ICollection<ProblemCacheModel>> GetProblemsForContest(int contestId)
         => await this.problemsCache.GetByContestId(contestId);
 }

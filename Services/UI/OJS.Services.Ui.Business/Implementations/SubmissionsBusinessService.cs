@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
 using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -456,7 +457,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id,
                 model.Official);
 
-        var contest = await this.contestsCache.GetContest(model.ContestId);
+        var contest = await this.contestsCache
+            .GetContest(model.ContestId)
+            .Map<Contest>();
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));

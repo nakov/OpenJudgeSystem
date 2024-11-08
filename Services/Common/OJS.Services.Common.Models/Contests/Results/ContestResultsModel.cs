@@ -1,10 +1,10 @@
 ﻿namespace OJS.Services.Common.Models.Contests.Results;
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using AutoMapper;
 using OJS.Data.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
-using System.Linq;
 using OJS.Data.Models.Problems;
 
 public class ContestResultsModel : IMapExplicitly
@@ -48,5 +48,7 @@ public class ContestResultsModel : IMapExplicitly
             .ForMember(d => d.IsExportResults, opt => opt.Ignore())
             .ForMember(d => d.Page, opt => opt.Ignore())
             .ForMember(d => d.ItemsPerPage, opt => opt.Ignore())
-            .ReverseMap();
+            .ForMember(d => d.Problems, opt => opt.Ignore())
+            .ReverseMap()
+            .ForMember(d => d.Problems, opt => opt.Ignore());
 }

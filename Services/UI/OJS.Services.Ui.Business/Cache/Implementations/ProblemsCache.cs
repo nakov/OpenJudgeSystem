@@ -1,15 +1,13 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Contests;
+using OJS.Services.Ui.Models.Cache;
 
 public class ProblemsCache : IProblemsCacheService
 {
@@ -24,19 +22,18 @@ public class ProblemsCache : IProblemsCacheService
         this.cache = cache;
     }
 
-    public async Task<ICollection<Problem>> GetByContestId(
+    public async Task<ICollection<ProblemCacheModel>> GetByContestId(
         int contestId,
         int cacheSeconds)
         => await this.cache.Get(
-            string.Format(CacheConstants.ProblemsByContestId),
+            string.Format(CacheConstants.ProblemsByContestId, contestId),
             async () => await this.GetWithResourcesAndSubmissionTypesInProblemsByContestId(contestId),
             cacheSeconds);
 
-    private async Task<ICollection<Problem>> GetWithResourcesAndSubmissionTypesInProblemsByContestId(int contestId)
+    private async Task<ICollection<ProblemCacheModel>> GetWithResourcesAndSubmissionTypesInProblemsByContestId(int contestId)
         => await this.problemsData
             .GetAllByContest(contestId)
             .AsNoTracking()
-            .Include(p => p.Resources)
-            .Include(p => p.SubmissionTypesInProblems)
+            .MapCollection<ProblemCacheModel>()
             .ToListAsync();
 }

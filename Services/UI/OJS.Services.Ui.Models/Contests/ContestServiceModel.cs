@@ -8,6 +8,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using OJS.Services.Infrastructure.Models.Mapping;
+using OJS.Services.Ui.Models.Cache;
 
 public class ContestServiceModel : IMapExplicitly
 {
@@ -44,7 +45,7 @@ public class ContestServiceModel : IMapExplicitly
     public DateTime? PracticeEndTime { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>
-        configuration.CreateMap<Contest, ContestServiceModel>()
+        configuration.CreateMap<ContestCacheModel, ContestServiceModel>()
             .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
             .ForMember(d => d.Problems, opt => opt.Ignore())
             .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())

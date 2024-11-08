@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Problems;
+using OJS.Services.Ui.Models.Cache;
 
 public interface IContestsCacheService : IService
 {
@@ -13,7 +12,7 @@ public interface IContestsCacheService : IService
 
     Task<ContestServiceModel?> GetContestServiceModel(int contestId);
 
-    Task<Contest?> GetContest(int contestId);
+    Task<ContestCacheModel?> GetContest(int contestId);
 
-    Task<(Contest? Contest, ICollection<Problem> Problems)> GetContestWithProblems(int contestId);
+    Task<(ContestCacheModel? Contest, ICollection<ProblemCacheModel> Problems)> GetContestWithProblems(int contestId);
 }
