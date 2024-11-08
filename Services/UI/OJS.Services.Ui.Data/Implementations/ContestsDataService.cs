@@ -26,13 +26,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         : base(db)
         => this.dates = dates;
 
-    public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
-        => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-            .MapCollection<TServiceModel>()
-            .FirstOrDefaultAsync();
-
     public async Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId)
         => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
             .Include(c => c.Category)

@@ -237,19 +237,6 @@ namespace OJS.Services.Ui.Business.Implementations
             return participant != null;
         }
 
-        public async Task<ContestServiceModel> GetContestByProblem(int problemId)
-        {
-           var contestServiceModel = await this.contestsData.GetByProblemId<ContestServiceModel>(problemId);
-           if (contestServiceModel == null)
-           {
-               throw new BusinessServiceException(GlobalConstants.ErrorMessages.ContestNotFound);
-           }
-
-           contestServiceModel.AllowedSubmissionTypes = contestServiceModel.AllowedSubmissionTypes.DistinctBy(st => st.Id);
-
-           return contestServiceModel;
-        }
-
         public async Task ValidateContestPassword(int id, bool official, string password)
         {
             if (string.IsNullOrEmpty(password))

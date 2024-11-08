@@ -31,8 +31,6 @@ namespace OJS.Services.Ui.Business
 
         Task<ContestSearchServiceResultModel> GetSearchContestsByName(SearchServiceModel model);
 
-        Task<ContestServiceModel> GetContestByProblem(int problemId);
-
         Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
 
         Task DeleteById(int id);
