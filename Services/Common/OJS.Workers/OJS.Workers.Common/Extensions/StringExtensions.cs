@@ -72,16 +72,6 @@
         public static string ToSingleLine(this string input) =>
             Regex.Replace(input, @"\t|\r|\n", string.Empty);
 
-        public static string RemoveMultipleSpaces(this string input) =>
-            Regex.Replace(input, @"\s+", " ");
-
-        public static string ToHyphenSeparatedWords(this string str)
-            => string.Concat(
-                    str.Select((x, i) => i > 0 && char.IsUpper(x)
-                        ? "-" + x
-                        : x.ToString()))
-                .ToLower();
-
         public static string TrimFromEnd(this string source, string wordToTrim)
         {
             if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(wordToTrim))
