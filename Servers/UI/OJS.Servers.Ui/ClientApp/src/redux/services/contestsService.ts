@@ -104,14 +104,14 @@ export const contestsService = createApi({
             keepUnusedDataFor: 0,
         }),
         submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, problemId, submissionTypeId }) => ({
+            query: ({ content, official, problemId, submissionTypeId, contestId }) => ({
                 url: '/Compete/Submit',
                 method: 'POST',
-                body: { content, official, problemId, submissionTypeId },
+                body: { content, official, problemId, submissionTypeId, contestId },
             }),
         }),
         submitContestSolutionFile: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, submissionTypeId, problemId }) => {
+            query: ({ content, official, submissionTypeId, problemId, contestId }) => {
                 const formData = new FormData();
                 formData.append('content', content);
                 formData.append('official', official
@@ -119,6 +119,7 @@ export const contestsService = createApi({
                     : 'false');
                 formData.append('problemId', problemId.toString());
                 formData.append('submissionTypeId', submissionTypeId.toString());
+                formData.append('contestId', contestId.toString());
 
                 return {
                     url: '/Compete/SubmitFileSubmission',

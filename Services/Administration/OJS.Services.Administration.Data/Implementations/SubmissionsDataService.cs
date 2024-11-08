@@ -66,7 +66,8 @@
                                    s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)));
 
         public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
-            => this.GetQuery(s => s.Points > s.Problem.MaximumPoints);
+            => this.GetQuery(s => s.Points > s.Problem.MaximumPoints)
+                .Include(s => s.Problem);
 
         public IQueryable<Submission> GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(int submissionTypeId, int monthsCount)
             => this.GetQuery()

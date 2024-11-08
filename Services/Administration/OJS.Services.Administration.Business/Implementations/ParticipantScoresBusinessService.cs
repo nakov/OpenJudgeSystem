@@ -1,27 +1,32 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
-using FluentExtensions.Extensions;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Helpers;
+using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models.Participants;
+using System.Data;
 
 public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
 {
     private readonly IParticipantScoresDataService participantScoresData;
     private readonly IParticipantsDataService participantsData;
     private readonly ISubmissionsDataService submissionsData;
+    private readonly ITransactionsProvider transactionsProvider;
 
     public ParticipantScoresBusinessService(
         IParticipantScoresDataService participantScoresData,
         IParticipantsDataService participantsData,
-        ISubmissionsDataService submissionsData)
+        ISubmissionsDataService submissionsData,
+        ITransactionsProvider transactionsProvider)
     {
         this.participantScoresData = participantScoresData;
         this.participantsData = participantsData;
         this.submissionsData = submissionsData;
+        this.transactionsProvider = transactionsProvider;
     }
 
     public async Task RecalculateForParticipantByProblem(int participantId, int problemId)
@@ -39,13 +44,14 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
     }
 
     public async Task NormalizeAllPointsThatExceedAllowedLimit()
-    {
-        using var scope = TransactionsHelper.CreateLongRunningTransactionScope();
-        await this.NormalizeSubmissionPoints();
-        await this.NormalizeParticipantScorePoints();
+        => await this.transactionsProvider.ExecuteInTransaction(async () =>
+        {
+            await this.NormalizeSubmissionPoints();
+            await this.NormalizeParticipantScorePoints();
 
-        scope.Complete();
-    }
+            await this.participantsData.SaveChanges();
+        },
+        IsolationLevel.ReadCommitted);
 
     public async Task SaveForSubmission(Submission submission)
     {
@@ -92,35 +98,37 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
     }
 
     private async Task NormalizeSubmissionPoints()
-        => await (await this.submissionsData
+    {
+        var submissions = await this.submissionsData
             .GetAllHavingPointsExceedingLimit()
-            .Select(s => new
-            {
-                Submission = s,
-                ProblemMaxPoints = s.Problem!.MaximumPoints,
-            })
-            .ToListAsync())
-            .ForEachSequential(async x =>
-            {
-                x.Submission.Points = x.ProblemMaxPoints;
+            .ToListAsync();
 
-                this.submissionsData.Update(x.Submission);
-                await this.submissionsData.SaveChanges();
-            });
+        submissions.ForEach(s => s.Points = s.Problem.MaximumPoints);
+
+        this.submissionsData.UpdateMany(submissions);
+    }
 
     private async Task NormalizeParticipantScorePoints()
-        => await (await this.participantScoresData
+    {
+        var participantScores = await this.participantScoresData
             .GetAllHavingPointsExceedingLimit()
-            .Select(ps => new
-            {
-                ParticipantScore = ps,
-                ProblemMaxPoints = ps.Problem.MaximumPoints,
-            })
-            .ToListAsync())
-            .ForEachSequential(async x =>
-                await this.participantScoresData.UpdateBySubmissionAndPoints(
-                    x.ParticipantScore,
-                    x.ParticipantScore.SubmissionId,
-                    x.ProblemMaxPoints,
-                    x.ParticipantScore.Participant));
+            .ToListAsync();
+
+        var participants = new List<Participant>();
+
+        foreach (var participantScore in participantScores)
+        {
+            await this.participantScoresData.UpdateBySubmissionAndPoints(
+                participantScore,
+                participantScore.SubmissionId,
+                participantScore.Problem.MaximumPoints,
+                participantScore.Participant,
+                shouldSaveChanges: false);
+
+            participants.Add(participantScore.Participant);
+        }
+
+        this.participantScoresData.UpdateMany(participantScores);
+        this.participantsData.UpdateMany(participants);
+    }
 }

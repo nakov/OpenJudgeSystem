@@ -210,9 +210,9 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     public override async Task<ProblemAdministrationModel> Edit(ProblemAdministrationModel model)
     {
         var problem = await this.problemsData.GetByIdQuery(model.Id)
+            .Include(s => s.Checker)
             .Include(s => s.SubmissionTypesInProblems)
             .Include(s => s.ProblemGroup)
-            .Include(s => s.Checker)
             .FirstOrDefaultAsync();
 
         if (problem is null)

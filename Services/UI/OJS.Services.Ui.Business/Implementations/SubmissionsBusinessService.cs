@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
@@ -42,8 +43,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
-
-    // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IUserProviderService userProviderService;
@@ -59,9 +58,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ITransactionsProvider transactionsProvider;
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
-    private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly ITestsDataService testsData;
+    private readonly ISubmissionTypesCacheService submissionTypesCache;
+    private readonly ICheckersCacheService checkersCache;
     private readonly ITestRunsDataService testRunsDataService;
+    private readonly IContestsCacheService contestsCache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -86,9 +87,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         IContestsDataService contestsData,
-        ISubmissionTypesDataService submissionTypesData,
         ITestsDataService testsData,
-        ITestRunsDataService testRunsDataService)
+        ITestRunsDataService testRunsDataService,
+        ISubmissionTypesCacheService submissionTypesCache,
+        ICheckersCacheService checkersCache,
+        IContestsCacheService contestsCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -112,9 +115,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
         this.contestsData = contestsData;
-        this.submissionTypesData = submissionTypesData;
         this.testsData = testsData;
         this.testRunsDataService = testRunsDataService;
+        this.submissionTypesCache = submissionTypesCache;
+        this.checkersCache = checkersCache;
+        this.contestsCache = contestsCache;
     }
 
     public async Task Retest(int submissionId)
@@ -433,23 +438,25 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
-        var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId)
+        var problem = await this.problemsDataService.GetWithSubmissionTypesById(model.ProblemId)
             ?? throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
 
-        var submissionType = await this.cache.Get(
-            string.Format(CacheConstants.SubmissionTypeById, model.SubmissionTypeId),
-            async () => await this.submissionTypesData.OneById(model.SubmissionTypeId),
-            CacheConstants.FiveMinutesInSeconds);
+        var checkerId = problem.CheckerId;
+        problem.Checker = checkerId.HasValue
+            ? await this.checkersCache.GetById(checkerId.Value)
+            : null;
+
+        var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
         var participant = await this.participantsDataService
-            .GetWithContestAndProblemsForParticipantByContestByUserAndIsOfficial(
-                problem.ProblemGroup.ContestId,
-                currentUser.Id!,
+            .GetWithProblemsForParticipantByContestByUserAndIsOfficial(
+                model.ContestId,
+                currentUser.Id,
                 model.Official);
 
-        var contest = await this.contestsData.OneById(problem.ProblemGroup.ContestId);
+        var contest = await this.contestsData.OneById(model.ContestId);
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
@@ -647,31 +654,28 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
         submission.CompilerComment = executionResult.CompilerComment;
         submission.Points = executionResult.TaskResult!.Points;
-        submission.TestRuns.Clear();
 
         if (!executionResult.IsCompiledSuccessfully)
         {
+            submission.TestRuns.Clear();
             return;
         }
 
-        foreach (var testResult in executionResult.TaskResult?.TestResults ?? [])
+        submission.TestRuns = (executionResult.TaskResult?.TestResults ?? []).Select(testResult => new TestRun
         {
-            submission.TestRuns.Add(
-                new TestRun
-                {
-                    ResultType = testResult.ResultType,
-                    CheckerComment = testResult.CheckerDetails?.Comment,
-                    ExecutionComment = testResult.ExecutionComment,
-                    ExpectedOutputFragment = testResult.CheckerDetails?.ExpectedOutputFragment,
-                    UserOutputFragment = testResult.CheckerDetails?.UserOutputFragment,
-                    IsTrialTest = testResult.IsTrialTest,
-                    TimeUsed = testResult.TimeUsed,
-                    MemoryUsed = testResult.MemoryUsed,
-                    SubmissionId = submission.Id,
-                    TestId = testResult.Id,
-                });
-        }
+            ResultType = testResult.ResultType,
+            CheckerComment = testResult.CheckerDetails?.Comment,
+            ExecutionComment = testResult.ExecutionComment,
+            ExpectedOutputFragment = testResult.CheckerDetails?.ExpectedOutputFragment,
+            UserOutputFragment = testResult.CheckerDetails?.UserOutputFragment,
+            IsTrialTest = testResult.IsTrialTest,
+            TimeUsed = testResult.TimeUsed,
+            MemoryUsed = testResult.MemoryUsed,
+            SubmissionId = submission.Id,
+            TestId = testResult.Id,
+        }).ToList();
     }
+
 
     private static void HandleProcessingException(Submission submission, Exception ex, string methodName)
     {

@@ -61,7 +61,6 @@ const ContestSolutionSubmitPage = () => {
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType, slug } = useParams();
-
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
@@ -352,6 +351,7 @@ const ContestSolutionSubmitPage = () => {
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
+            contestId: Number(contestId!),
         }).then((d) => {
             if (!(d as any).error) {
                 refetch();
@@ -371,6 +371,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submissionCode,
         submitSolution,
+        contestId,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
@@ -381,6 +382,7 @@ const ContestSolutionSubmitPage = () => {
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
+            contestId: Number(contestId!),
         });
         refetch();
         await getSubmissionsData({
@@ -397,6 +399,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submitSolutionFile,
         uploadedFile,
+        contestId,
     ]);
 
     const sumMyPoints = useMemo(() => contest

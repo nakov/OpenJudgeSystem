@@ -84,6 +84,7 @@ interface ISubmitContestSolutionParams {
     official: boolean;
     problemId: number;
     submissionTypeId: number;
+    contestId: number;
 }
 
 interface IRegisterUserForContestParams {

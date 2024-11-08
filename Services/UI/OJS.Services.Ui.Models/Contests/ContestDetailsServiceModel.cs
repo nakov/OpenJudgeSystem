@@ -58,6 +58,14 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public int PracticeParticipantsCount { get; set; }
 
+    public int LimitBetweenSubmissions { get; set; }
+
+    public bool AllowParallelSubmissionsInTasks { get; set; }
+
+    public string? ContestPassword { get; set; }
+
+    public string? PracticePassword { get; set; }
+
     public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = [];
 
     public ICollection<ContestProblemServiceModel> Problems { get; set; } = [];
@@ -80,5 +88,6 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
             .ForMember(d => d.PracticeParticipantsCount, opt => opt.Ignore())
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
             .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
-            .ForMember(d => d.IsActive, opt => opt.Ignore());
+            .ForMember(d => d.IsActive, opt => opt.Ignore())
+            .ReverseMap();
 }
