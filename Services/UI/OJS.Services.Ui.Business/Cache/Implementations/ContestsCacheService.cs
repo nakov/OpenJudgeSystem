@@ -89,7 +89,10 @@ public class ContestsCacheService : IContestsCacheService
     public async Task<Contest?> GetContest(int contestId)
         => await this.cache.Get(
             string.Format(CacheConstants.Contest),
-            async () => await this.contestsData.GetByIdQuery(contestId).FirstOrDefaultAsync(),
+            async () => await this.contestsData
+                .GetByIdQuery(contestId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(),
             CacheConstants.FiveMinutesInSeconds);
 
     private async Task<ICollection<Problem>> GetProblemsForContest(int contestId)

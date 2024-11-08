@@ -35,6 +35,7 @@ public class ProblemsCache : IProblemsCacheService
     private async Task<ICollection<Problem>> GetWithResourcesAndSubmissionTypesInProblemsByContestId(int contestId)
         => await this.problemsData
             .GetAllByContest(contestId)
+            .AsNoTracking()
             .Include(p => p.Resources)
             .Include(p => p.SubmissionTypesInProblems)
             .ToListAsync();
