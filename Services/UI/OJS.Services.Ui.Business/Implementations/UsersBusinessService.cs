@@ -184,6 +184,10 @@ public class UsersBusinessService : IUsersBusinessService
         await this.usersProfileData
             .GetByUsername(username)
             .AsNoTracking()
+            /*
+             * A projection is used on purpose, since in this case we do not want other
+             * users to be able to see another user's sensitive data ( like email, etc. ).
+             */
             .Select(u => new UserProfileServiceModel
             {
                 UserName = u.UserName!,

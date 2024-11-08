@@ -19,9 +19,15 @@ namespace OJS.Services.Common.Data
 
         void Update(TEntity entity);
 
+        void Update(Expression<Func<TEntity, bool>>? filter = null);
+
+        void UpdateMany(IEnumerable<TEntity> entities);
+
         void Delete(TEntity entity);
 
         void Delete(Expression<Func<TEntity, bool>>? filter = null);
+
+        void DeleteMany(IEnumerable<TEntity> entities);
 
         Task DeleteById(object id);
 
@@ -30,8 +36,6 @@ namespace OJS.Services.Common.Data
         void Detach(TEntity entity);
 
         EntityEntry<TEntity> GetEntry(TEntity entity);
-
-        void DeleteMany(IEnumerable<TEntity> entities);
 
         Task<IEnumerable<TEntity>> All(
             Expression<Func<TEntity, bool>>? filter = null,

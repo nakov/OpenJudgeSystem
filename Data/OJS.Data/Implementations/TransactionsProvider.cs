@@ -2,6 +2,7 @@ namespace OJS.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Data;
     using System.Threading.Tasks;
 
     public class TransactionsProvider<TDbContext> : ITransactionsProvider
@@ -18,9 +19,24 @@ namespace OJS.Data.Implementations
             await transaction.CommitAsync();
         }
 
+        public async Task ExecuteInTransaction(Func<Task> action, IsolationLevel isolationLevel)
+        {
+            await using var transaction = await this.Db.Database.BeginTransactionAsync(isolationLevel);
+            await action();
+            await transaction.CommitAsync();
+        }
+
         public async Task<T> ExecuteInTransaction<T>(Func<Task<T>> action)
         {
             await using var transaction = await this.Db.Database.BeginTransactionAsync();
+            var result = await action();
+            await transaction.CommitAsync();
+            return result;
+        }
+
+        public async Task<T> ExecuteInTransaction<T>(Func<Task<T>> action, IsolationLevel isolationLevel)
+        {
+            await using var transaction = await this.Db.Database.BeginTransactionAsync(isolationLevel);
             var result = await action();
             await transaction.CommitAsync();
             return result;

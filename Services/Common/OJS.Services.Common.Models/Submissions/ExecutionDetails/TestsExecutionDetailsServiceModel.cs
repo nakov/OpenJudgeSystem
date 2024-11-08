@@ -22,7 +22,7 @@
 
         public string? CheckerParameter { get; set; }
 
-        public IEnumerable<TestContext> Tests { get; set; } = Enumerable.Empty<TestContext>();
+        public IEnumerable<TestContext> Tests { get; set; } = [];
 
         public void RegisterMappings(IProfileExpression configuration)
         {
