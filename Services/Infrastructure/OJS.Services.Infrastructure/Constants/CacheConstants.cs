@@ -24,5 +24,7 @@
         public const string SubmissionTypeById = "SubmissionTypesById:{0}";
 
         public const string CheckersById = "CheckersById:{0}";
+
+        public const string TestsByProblemId = "TestsByProblemId:{0}";
     }
 }

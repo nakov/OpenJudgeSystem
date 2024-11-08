@@ -30,6 +30,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentExtensions.Extensions;
+using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -63,6 +65,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICheckersCacheService checkersCache;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly IContestsCacheService contestsCache;
+    private readonly ITestsCacheService testsCache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -91,7 +94,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITestRunsDataService testRunsDataService,
         ISubmissionTypesCacheService submissionTypesCache,
         ICheckersCacheService checkersCache,
-        IContestsCacheService contestsCache)
+        IContestsCacheService contestsCache,
+        ITestsCacheService testsCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -120,6 +124,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionTypesCache = submissionTypesCache;
         this.checkersCache = checkersCache;
         this.contestsCache = contestsCache;
+        this.testsCache = testsCache;
     }
 
     public async Task Retest(int submissionId)
@@ -505,10 +510,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.SaveChanges();
         });
 
-        problem.Tests = await this.testsData
-            .GetAllByProblem(problem.Id)
-            .AsNoTracking()
-            .ToListAsync();
+        problem.Tests = (await this.testsCache
+            .GetByProblemId(problem.Id))
+            .MapCollection<Test>()
+            .ToList();
 
         var submissionServiceModel =
             this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem,
