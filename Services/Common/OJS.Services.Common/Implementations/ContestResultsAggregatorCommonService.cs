@@ -42,8 +42,7 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
         contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
         contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
 
-        var problems = contestResultsModel.Contest.ProblemGroups
-            .SelectMany(pg => pg.Problems)
+        var problems = contestResultsModel.Problems
             .AsQueryable()
             .Where(p => !p.IsDeleted)
             .OrderBy(p => p.OrderBy)

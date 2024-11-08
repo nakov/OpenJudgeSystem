@@ -73,13 +73,7 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration
             .CreateMap<Contest, ContestDetailsServiceModel>()
-            .ForMember(
-                d => d.Problems,
-                opt => opt.MapFrom(s =>
-                    s.ProblemGroups
-                        .SelectMany(pg => pg.Problems)
-                        .OrderBy(p => p.ProblemGroup.OrderBy)
-                        .ThenBy(p => p.OrderBy)))
+            .ForMember(d => d.Problems, opt => opt.Ignore())
             .ForMember(d => d.IsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.CanViewCompeteResults, opt => opt.Ignore())
             .ForMember(d => d.CanViewPracticeResults, opt => opt.Ignore())

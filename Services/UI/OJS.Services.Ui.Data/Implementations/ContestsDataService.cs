@@ -110,13 +110,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         return await contests.Paginate<TServiceModel>(model.ItemsPerPage, model.PageNumber);
     }
 
-    public Task<Contest?> GetByIdWithProblems(int id)
-        => this.GetByIdQuery(id)
-            .Include(c => c.Category)
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-            .FirstOrDefaultAsync();
-
     public Task<Contest?> GetByIdWithParticipants(int id)
         => this.GetByIdQuery(id)
             .Include(c => c.Participants)

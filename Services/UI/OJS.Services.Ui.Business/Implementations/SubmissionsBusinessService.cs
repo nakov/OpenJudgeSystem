@@ -456,7 +456,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id,
                 model.Official);
 
-        var contest = await this.contestsData.OneById(model.ContestId);
+        var contest = await this.contestsCache.GetContest(model.ContestId);
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));

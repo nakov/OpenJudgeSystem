@@ -22,8 +22,6 @@ namespace OJS.Services.Ui.Data
 
         Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(ContestFiltersServiceModel model);
 
-        Task<Contest?> GetByIdWithProblems(int id);
-
         Task<TServiceModel?> GetById<TServiceModel>(int id);
 
         Task<Contest?> GetByIdWithParticipants(int id);

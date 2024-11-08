@@ -45,16 +45,8 @@ public class ContestServiceModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Contest, ContestServiceModel>()
-            .ForMember(
-                d => d.AllowedSubmissionTypes,
-                opt => opt.Ignore())
-            .ForMember(
-                d => d.Problems,
-                opt => opt.MapFrom(s =>
-                    s.ProblemGroups
-                        .SelectMany(pg => pg.Problems)
-                        .OrderBy(p => p.ProblemGroup.OrderBy)
-                        .ThenBy(p => p.OrderBy)))
+            .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
+            .ForMember(d => d.Problems, opt => opt.Ignore())
             .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
             .ReverseMap();
 }
