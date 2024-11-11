@@ -9,7 +9,6 @@ using OJS.Servers.Infrastructure.Controllers;
 using OJS.Services.Administration.Business.SubmissionTypes;
 using OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments.GridData;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Pagination;

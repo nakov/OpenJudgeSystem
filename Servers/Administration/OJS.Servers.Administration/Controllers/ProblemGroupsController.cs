@@ -8,11 +8,9 @@ using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.GridData;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemGroups;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int, ProblemGroupInListModel, ProblemGroupsAdministrationModel>
 {

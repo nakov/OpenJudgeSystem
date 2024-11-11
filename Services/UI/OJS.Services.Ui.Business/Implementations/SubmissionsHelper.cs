@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Data;

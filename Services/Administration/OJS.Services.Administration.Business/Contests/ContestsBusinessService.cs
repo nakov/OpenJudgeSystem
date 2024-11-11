@@ -35,9 +35,7 @@ using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
 {
-    private const int NumberOfContestsToGet = 20;
     private readonly IContestsDataService contestsData;
-    private readonly Business.IUserProviderService userProvider;
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IContestsCacheService contestsCacheService;
@@ -54,7 +52,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
-        Business.IUserProviderService userProvider,
         IIpsDataService ipsData,
         IContestsActivityService activityService,
         IContestsCacheService contestsCacheService,
@@ -70,7 +67,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         IDataService<LecturerInContest> lecturerInContestDataService)
     {
         this.contestsData = contestsData;
-        this.userProvider = userProvider;
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.contestsCacheService = contestsCacheService;
@@ -98,25 +94,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         bool isUserAdmin)
         => !string.IsNullOrWhiteSpace(userId) &&
            (isUserAdmin || await this.contestsData.IsUserLecturerInContestByContestAndUser(contestId, userId));
-
-    public async Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string searchString)
-        where TServiceModel : class
-    {
-        var user = this.userProvider.GetCurrentUser();
-
-        return user.IsAdmin
-            ? await this.contestsData.AllTo<TServiceModel>(
-                filter: c => c.Name!.Contains(searchString),
-                null,
-                false,
-                0,
-                NumberOfContestsToGet)
-            : await this.contestsData.GetAllByLecturer(user.Id)
-                .Where(x => x.Name!.Contains(searchString))
-                .Take(NumberOfContestsToGet)
-                .MapCollection<TServiceModel>()
-                .ToListAsync();
-    }
 
     public async Task<FileResponseModel> ExportResults(ContestResultsExportRequestModel model)
     {

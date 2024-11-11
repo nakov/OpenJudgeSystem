@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Infrastructure.Configurations;
 
-using Polly;
 using OJS.Services.Infrastructure.Configurations;
 using System;
 using System.ComponentModel.DataAnnotations;

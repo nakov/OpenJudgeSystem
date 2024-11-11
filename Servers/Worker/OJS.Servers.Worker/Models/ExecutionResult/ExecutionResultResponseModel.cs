@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionResult;
 
-using System;
 using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Servers.Worker.Models.ExecutionResult.Output;
 using OJS.Services.Common.Models.Submissions;

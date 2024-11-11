@@ -15,18 +15,9 @@ public class TestRunsDataService : AdministrationDataService<TestRun>, ITestRuns
     {
     }
 
-    public IQueryable<TestRun> GetAllByTest(int testId) =>
-        this.GetQuery(tr => tr.TestId == testId);
-
     public async Task DeleteByProblem(int problemId)
     {
         this.Delete(tr => tr.Test.ProblemId == problemId);
-        await this.SaveChanges();
-    }
-
-    public async Task DeleteByTest(int testId)
-    {
-        this.Delete(tr => tr.TestId == testId);
         await this.SaveChanges();
     }
 

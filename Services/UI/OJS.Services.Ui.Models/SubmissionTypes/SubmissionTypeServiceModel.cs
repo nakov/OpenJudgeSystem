@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using AutoMapper;
     using Data.Models;
-    using Infrastructure.Extensions;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Infrastructure.Models.Mapping;
     using OJS.Services.Ui.Models.Cache;
