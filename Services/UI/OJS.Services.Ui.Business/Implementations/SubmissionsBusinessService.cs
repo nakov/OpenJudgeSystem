@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Data;
+using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -327,7 +328,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var checkerId = problem.CheckerId;
         problem.Checker = checkerId.HasValue
-            ? await this.checkersCache.GetById(checkerId.Value)
+            ? await this.checkersCache.GetById(checkerId.Value).Map<Checker?>()
             : null;
 
         var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);

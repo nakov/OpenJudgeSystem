@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using AutoMapper;
-using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Models.Mapping;
 
@@ -27,7 +26,7 @@ public class ProblemCacheModel : IMapExplicitly
 
     public int? CheckerId { get; set; }
 
-    public virtual Checker? Checker { get; set; }
+    public virtual CheckerCacheModel? Checker { get; set; }
 
     public double OrderBy { get; set; }
 
@@ -48,5 +47,6 @@ public class ProblemCacheModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<Problem, ProblemCacheModel>()
+            .ForMember(m => m.Checker, opt => opt.Ignore()) // Checker is mapped separately, as it's cached separately.
             .ReverseMap();
 }

@@ -69,7 +69,7 @@ public class ContestsCacheService : IContestsCacheService
 
     public async Task<ContestCacheModel?> GetContest(int contestId)
         => await this.cache.Get(
-            string.Format(CacheConstants.Contest, contestId),
+            string.Format(CacheConstants.ContestById, contestId),
             async () => await this.contestsData
                 .GetByIdQuery(contestId)
                 .AsNoTracking()
