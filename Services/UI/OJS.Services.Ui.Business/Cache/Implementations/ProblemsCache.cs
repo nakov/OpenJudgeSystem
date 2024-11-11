@@ -27,13 +27,10 @@ public class ProblemsCache : IProblemsCacheService
         int cacheSeconds)
         => await this.cache.Get(
             string.Format(CacheConstants.ProblemsByContestId, contestId),
-            async () => await this.GetWithResourcesAndSubmissionTypesInProblemsByContestId(contestId),
+            async () => await this.problemsData
+                .GetAllByContest(contestId)
+                .AsNoTracking()
+                .MapCollection<ProblemCacheModel>()
+                .ToListAsync(),
             cacheSeconds);
-
-    private async Task<ICollection<ProblemCacheModel>> GetWithResourcesAndSubmissionTypesInProblemsByContestId(int contestId)
-        => await this.problemsData
-            .GetAllByContest(contestId)
-            .AsNoTracking()
-            .MapCollection<ProblemCacheModel>()
-            .ToListAsync();
 }
