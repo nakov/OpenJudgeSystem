@@ -25,15 +25,7 @@ namespace OJS.Services.Ui.Business
 
         Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex();
 
-        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable();
-
-        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPastContests();
-
         Task<ContestSearchServiceResultModel> GetSearchContestsByName(SearchServiceModel model);
-
-        Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
-
-        Task DeleteById(int id);
 
         Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
             string username,
