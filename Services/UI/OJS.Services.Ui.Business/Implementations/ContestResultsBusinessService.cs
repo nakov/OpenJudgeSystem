@@ -27,6 +27,8 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
     private readonly IUserProviderService userProvider;
     private readonly IParticipantsDataService participantsData;
     private readonly IContestsCacheService contestsCache;
+    private readonly IProblemsCacheService problemsCache;
+
     public ContestResultsBusinessService(
         IContestResultsAggregatorCommonService contestResultsAggregator,
         IContestsDataService contestsData,
@@ -34,7 +36,8 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         ILecturersInContestsBusinessService lecturersInContestsBusinessService,
         IUserProviderService userProvider,
         IParticipantsDataService participantsData,
-        IContestsCacheService contestsCache)
+        IContestsCacheService contestsCache,
+        IProblemsCacheService problemsCache)
     {
         this.contestResultsAggregator = contestResultsAggregator;
         this.contestsData = contestsData;
@@ -43,19 +46,13 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         this.userProvider = userProvider;
         this.participantsData = participantsData;
         this.contestsCache = contestsCache;
+        this.problemsCache = problemsCache;
     }
 
     public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults, int page)
     {
-        var (contestCache, problemsCache) = await this.contestsCache.GetContestWithProblems(contestId);
-
-        if (contestCache == null)
-        {
-            throw new BusinessServiceException("Contest does not exist or is deleted.");
-        }
-
-        var contest = contestCache.Map<Contest>();
-        var problems = problemsCache.MapCollection<Problem>().ToList();
+        var contest = await this.contestsCache.GetContest(contestId).Map<Contest>()
+            ?? throw new BusinessServiceException("Contest does not exist or is deleted.");
 
         var validationResult = this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
 
@@ -65,6 +62,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         }
 
         var user = this.userProvider.GetCurrentUser();
+        var problems = (await this.problemsCache.GetByContestId(contestId).MapCollection<Problem>()).ToList();
 
         var contestResultsModel = new ContestResultsModel
         {

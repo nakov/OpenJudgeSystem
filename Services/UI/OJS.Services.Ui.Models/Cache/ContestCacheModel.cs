@@ -58,10 +58,6 @@ public class ContestCacheModel : IMapExplicitly
 
     public bool IsOnlineExam { get; set; }
 
-    public bool IsOnsiteExam { get; set; }
-
-    public bool IsExam { get; set; }
-
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<Contest, ContestCacheModel>()

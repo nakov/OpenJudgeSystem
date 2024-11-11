@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using System.Collections.Generic;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Infrastructure.Constants;
@@ -11,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Cache;
+using System.Collections.Generic;
 
 public class ContestsCacheService : IContestsCacheService
 {
@@ -30,59 +30,41 @@ public class ContestsCacheService : IContestsCacheService
 
     public async Task<ContestDetailsServiceModel?> GetContestDetailsServiceModel(int contestId)
     {
-        var (contest, problems) = await this.GetContestWithProblems(contestId);
+        var contest = await this.GetContest(contestId).Map<ContestDetailsServiceModel?>();
 
         if (contest is null)
         {
             return null;
         }
 
-        var contestDetailsServiceModel = contest.Map<ContestDetailsServiceModel>();
+        contest.Problems = await this.GetContestProblems(contestId);
 
-        contestDetailsServiceModel.Problems = problems.MapCollection<ContestProblemServiceModel>().ToList();
-
-        contestDetailsServiceModel.AllowedSubmissionTypes = contestDetailsServiceModel.Problems
+        contest.AllowedSubmissionTypes = contest.Problems
             .SelectMany(p => p.AllowedSubmissionTypes)
             .DistinctBy(st => st.Id)
             .MapCollection<ContestDetailsSubmissionTypeServiceModel>()
             .ToList();
 
-        return contestDetailsServiceModel;
+        return contest;
     }
 
     public async Task<ContestServiceModel?> GetContestServiceModel(int contestId)
     {
-        var (contest, problems) = await this.GetContestWithProblems(contestId);
+        var contest = await this.GetContest(contestId).Map<ContestServiceModel?>();
 
         if (contest is null)
         {
             return null;
         }
 
-        var contestServiceModel = contest.Map<ContestServiceModel>();
+        contest.Problems = await this.GetContestProblems(contestId);
 
-        contestServiceModel.Problems = problems.MapCollection<ContestProblemServiceModel>().ToList();
-
-        contestServiceModel.AllowedSubmissionTypes = contestServiceModel.Problems
+        contest.AllowedSubmissionTypes = contest.Problems
             .SelectMany(p => p.AllowedSubmissionTypes)
             .DistinctBy(st => st.Id)
             .ToList();
 
-        return contestServiceModel;
-    }
-
-    public async Task<(ContestCacheModel? Contest, ICollection<ProblemCacheModel> Problems)> GetContestWithProblems(int contestId)
-    {
-        var contest = await this.GetContest(contestId);
-
-        if (contest is null)
-        {
-            return (null, []);
-        }
-
-        var problems = await this.GetProblemsForContest(contestId);
-
-        return (contest, problems);
+        return contest;
     }
 
     public async Task<ContestCacheModel?> GetContest(int contestId)
@@ -95,6 +77,9 @@ public class ContestsCacheService : IContestsCacheService
                 .FirstOrDefaultAsync(),
             CacheConstants.FiveMinutesInSeconds);
 
-    private async Task<ICollection<ProblemCacheModel>> GetProblemsForContest(int contestId)
-        => await this.problemsCache.GetByContestId(contestId);
+    private async Task<List<ContestProblemServiceModel>> GetContestProblems(int contestId)
+        => [.. (await this.problemsCache.GetByContestId(contestId))
+            .MapCollection<ContestProblemServiceModel>()
+            .OrderBy(p => p.OrderBy)
+            .ThenBy(p => p.Name)];
 }

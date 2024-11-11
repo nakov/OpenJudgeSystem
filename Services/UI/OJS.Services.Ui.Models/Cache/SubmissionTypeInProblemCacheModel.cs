@@ -17,6 +17,7 @@ public class SubmissionTypeInProblemCacheModel : IMapExplicitly
     public int? TimeLimit { get; set; }
 
     public int? MemoryLimit { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<SubmissionTypeInProblem, SubmissionTypeInProblemCacheModel>()

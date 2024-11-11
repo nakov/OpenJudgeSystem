@@ -1,8 +1,6 @@
 ﻿namespace OJS.Services.Ui.Models.Cache;
 
-using System.Collections.Generic;
 using AutoMapper;
-using OJS.Data.Models;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Workers.Common.Models;
@@ -36,6 +34,7 @@ public class SubmissionTypeCacheModel : IMapExplicitly
     public int? MaxAllowedMemoryLimitInBytes { get; set; }
 
     public string FileNameExtension { get; set; } = string.Empty;
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<SubmissionType, SubmissionTypeCacheModel>()
