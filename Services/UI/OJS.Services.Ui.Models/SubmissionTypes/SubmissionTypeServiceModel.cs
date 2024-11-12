@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using AutoMapper;
-    using Data.Models;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Infrastructure.Models.Mapping;
+    using OJS.Services.Ui.Models.Cache;
 
     public class SubmissionTypeServiceModel : IMapExplicitly
     {
@@ -39,7 +39,7 @@
                 .ForMember(d => d.TimeLimit, opt => opt.Ignore())
                 .ForMember(d => d.MemoryLimit, opt => opt.Ignore());
 
-            configuration.CreateMap<SubmissionTypeInProblem, SubmissionTypeServiceModel>()
+            configuration.CreateMap<SubmissionTypeInProblemCacheModel, SubmissionTypeServiceModel>()
                 .ForMember(
                     d => d.Id,
                     opt => opt.MapFrom(s => s.SubmissionType.Id))

@@ -40,6 +40,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly IProblemGroupsDataService problemGroupsDataService;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ITransactionsProvider transactionsProvider;
+    private readonly IProblemsCacheService problemsCache;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -53,7 +54,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IProblemGroupsDataService problemGroupsDataService,
         IZippedTestsParserService zippedTestsParser,
-        ITransactionsProvider transactionsProvider)
+        ITransactionsProvider transactionsProvider,
+        IProblemsCacheService problemsCache)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -67,6 +69,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemGroupsDataService = problemGroupsDataService;
         this.zippedTestsParser = zippedTestsParser;
         this.transactionsProvider = transactionsProvider;
+        this.problemsCache = problemsCache;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -126,6 +129,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemResourcesData.DeleteByProblem(id);
 
         this.submissionsData.DeleteByProblem(id);
+
+        await this.problemsCache.ClearProblemsCacheByContestId(problem.ContestId);
 
         scope.Complete();
     }
@@ -217,6 +222,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         }
 
         AddSubmissionTypes(problem, model);
+
+        await this.problemsCache.ClearProblemsCacheByContestId(problem.ProblemGroup.ContestId);
 
         this.problemsData.Update(problem);
 

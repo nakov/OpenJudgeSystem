@@ -27,8 +27,6 @@ namespace OJS.Services.Ui.Business
 
         Task<ContestSearchServiceResultModel> GetSearchContestsByName(SearchServiceModel model);
 
-        Task<ContestServiceModel> GetContestByProblem(int problemId);
-
         Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
             string username,
             ContestFiltersServiceModel? sortAndFilterModel);

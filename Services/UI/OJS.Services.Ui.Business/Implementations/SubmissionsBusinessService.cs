@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Data;
+using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -29,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
 using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -326,7 +328,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var checkerId = problem.CheckerId;
         problem.Checker = checkerId.HasValue
-            ? await this.checkersCache.GetById(checkerId.Value)
+            ? await this.checkersCache.GetById(checkerId.Value).Map<Checker?>()
             : null;
 
         var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);
@@ -339,7 +341,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id,
                 model.Official);
 
-        var contest = await this.contestsData.OneById(model.ContestId);
+        var contest = await this.contestsCache
+            .GetContest(model.ContestId)
+            .Map<Contest>();
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));

@@ -10,8 +10,7 @@
         public const string MainContestCategoriesDropDown = "MainContestCategoriesDropDown";
         public const string ParticipantsCountByContest = "ParticipantsCountByContest:{0}";
         public const string ParticipantsCountByContestsPage = "ParticipantsCountByContestsPage:{0}:{1}";
-        public const string ContestDetails = "ContestDetails:{0}";
-        public const string ContestDetailsForSubmit = "ContestDetailsForSubmit:{0}";
+        public const string ContestById = "Contest:{0}";
         public const string ContestCategoriesTree = "ContestCategoriesTree";
         public const string ContestCategoryDetails = "ContestCategoryDetails:{0}";
 
@@ -21,8 +20,10 @@
         public const string LatestPublicSubmissions = "PublicSubmissions";
 
         public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
-        public const string SubmissionTypeById = "SubmissionTypesById:{0}";
+        public const string SubmissionTypeById = "SubmissionType:{0}";
 
-        public const string CheckersById = "CheckersById:{0}";
+        public const string CheckerById = "Checker:{0}";
+
+        public const string ProblemsByContestId = "ProblemsByContestId:{0}";
     }
 }

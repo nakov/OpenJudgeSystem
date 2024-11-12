@@ -25,6 +25,9 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Include(p => p.SubmissionTypesInProblems)
                 .FirstOrDefaultAsync();
 
+        public IQueryable<Problem> GetAllByContest(int contestId) =>
+            this.GetQuery(p => p.ProblemGroup.ContestId == contestId);
+
         public IQueryable<Problem> GetAllNonDeletedProblems() =>
             this.GetQuery(p => !p.IsDeleted);
     }

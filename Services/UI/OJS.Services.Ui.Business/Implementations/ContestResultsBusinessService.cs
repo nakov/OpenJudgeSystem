@@ -10,44 +10,51 @@ using OJS.Services.Ui.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
+using OJS.Data.Models.Problems;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Business.Cache;
 
 public class ContestResultsBusinessService : IContestResultsBusinessService
 {
+    private readonly int itemsPerPageCompete = 100;
+    private readonly int itemsPerPagePractice = 50;
+
     private readonly IContestResultsAggregatorCommonService contestResultsAggregator;
     private readonly IContestsDataService contestsData;
-    private readonly IParticipantsDataService participantsDataService;
     private readonly IContestResultsValidationService contestResultsValidation;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
     private readonly IUserProviderService userProvider;
-    private readonly int itemsPerPageCompete = 100;
-    private readonly int itemsPerPagePractice = 50;
+    private readonly IParticipantsDataService participantsData;
+    private readonly IContestsCacheService contestsCache;
+    private readonly IProblemsCacheService problemsCache;
+
     public ContestResultsBusinessService(
         IContestResultsAggregatorCommonService contestResultsAggregator,
         IContestsDataService contestsData,
         IContestResultsValidationService contestResultsValidation,
         ILecturersInContestsBusinessService lecturersInContestsBusinessService,
-        IParticipantsDataService participantsData,
         IUserProviderService userProvider,
-        IParticipantsDataService participantsDataService)
+        IParticipantsDataService participantsData,
+        IContestsCacheService contestsCache,
+        IProblemsCacheService problemsCache)
     {
         this.contestResultsAggregator = contestResultsAggregator;
         this.contestsData = contestsData;
         this.contestResultsValidation = contestResultsValidation;
         this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
         this.userProvider = userProvider;
-        this.participantsDataService = participantsDataService;
+        this.participantsData = participantsData;
+        this.contestsCache = contestsCache;
+        this.problemsCache = problemsCache;
     }
 
-    public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool full, int page)
+    public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults, int page)
     {
-        var contest = await this.contestsData.GetByIdWithProblems(contestId);
+        var contest = await this.contestsCache.GetContest(contestId).Map<Contest>()
+            ?? throw new BusinessServiceException("Contest does not exist or is deleted.");
 
-        if (contest == null)
-        {
-            throw new BusinessServiceException("Contest does not exist or is deleted.");
-        }
-
-        var validationResult = this.contestResultsValidation.GetValidationResult((contest, full, official));
+        var validationResult = this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
 
         if (!validationResult.IsValid)
         {
@@ -55,14 +62,16 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         }
 
         var user = this.userProvider.GetCurrentUser();
+        var problems = (await this.problemsCache.GetByContestId(contestId).MapCollection<Problem>()).ToList();
 
         var contestResultsModel = new ContestResultsModel
         {
             Contest = contest,
+            Problems = problems,
             CategoryId = contest.CategoryId.GetValueOrDefault(),
             Official = official,
             IsUserAdminOrLecturer = user.IsAdminOrLecturer,
-            IsFullResults = full,
+            IsFullResults = isFullResults,
             TotalResultsCount = null,
             IsExportResults = false,
             ItemsPerPage = official ? this.itemsPerPageCompete : this.itemsPerPagePractice,
@@ -85,7 +94,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
 
         var contestMaxPoints = await this.contestsData.GetMaxPointsForExportById(contestId.Value);
 
-        var participants = await this.participantsDataService
+        var participants = await this.participantsData
             .GetAllByContestWithScoresAndProblems(contestId.Value)
             .ToListAsync();
 

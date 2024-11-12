@@ -3,8 +3,9 @@
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Problems;
     using OJS.Services.Infrastructure.Models.Mapping;
+    using OJS.Services.Ui.Models.Cache;
 
-    public class ContestProblemResourceServiceModel : IMapFrom<ProblemResource>
+    public class ContestProblemResourceServiceModel : IMapFrom<ProblemResourceCacheModel>
     {
         public int Id { get; set; }
 

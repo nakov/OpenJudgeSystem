@@ -26,13 +26,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         : base(db)
         => this.dates = dates;
 
-    public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
-        => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-            .MapCollection<TServiceModel>()
-            .FirstOrDefaultAsync();
-
     public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
         => await this.GetAllCompetableQuery()
             .MapCollection<TServiceModel>()
@@ -42,12 +35,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => await this.GetAllExpiredQuery()
             .MapCollection<TServiceModel>()
             .ToListAsync();
-
-    public async Task<TServiceModel?> GetById<TServiceModel>(int id)
-        => await this.GetByIdQuery(id)
-            .AsSplitQuery()
-            .MapCollection<TServiceModel>()
-            .FirstOrDefaultAsync();
 
     public IQueryable<Contest> GetAllVisible()
         => this.GetQuery(c => c.IsVisible || c.VisibleFrom <= this.dates.GetUtcNow());
@@ -86,13 +73,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
         return await contests.Paginate<TServiceModel>(model.ItemsPerPage, model.PageNumber);
     }
-
-    public Task<Contest?> GetByIdWithProblems(int id)
-        => this.GetByIdQuery(id)
-            .Include(c => c.Category)
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-            .FirstOrDefaultAsync();
 
     public IQueryable<Contest> GetAllByLecturer(string lecturerId)
         => this.GetQuery(c =>
