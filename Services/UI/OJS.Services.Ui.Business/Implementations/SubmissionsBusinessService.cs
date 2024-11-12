@@ -345,6 +345,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .GetContest(model.ContestId)
             .Map<Contest>();
 
+        if (participant != null)
+        {
+            participant.Contest = contest;
+        }
+
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
 
