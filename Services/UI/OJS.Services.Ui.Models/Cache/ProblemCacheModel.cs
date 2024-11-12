@@ -12,7 +12,7 @@ public class ProblemCacheModel : IMapExplicitly
 
     public int ProblemGroupId { get; set; }
 
-    public virtual ProblemGroup ProblemGroup { get; set; } = null!;
+    public virtual ProblemGroupCacheModel ProblemGroup { get; set; } = null!;
 
     public string Name { get; set; } = string.Empty;
 
