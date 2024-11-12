@@ -29,5 +29,6 @@ public class TestsCacheService : ITestsCacheService
                 .GetAllByProblem(problemId)
                 .MapCollection<TestCacheModel>()
                 .ToListAsync(),
-            CacheConstants.FiveMinutesInSeconds);
+            cacheSeconds: CacheConstants.OneDayInSeconds,
+            slidingExpirationSeconds: CacheConstants.FiveMinutesInSeconds);
 }
