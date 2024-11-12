@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Data;
-using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -31,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Contests;
+using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -58,11 +58,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IDatesService dates;
     private readonly ITransactionsProvider transactionsProvider;
     private readonly ICacheService cache;
-    private readonly ISubmissionTypesCacheService submissionTypesCache;
-    private readonly ICheckersCacheService checkersCache;
     private readonly ITestRunsDataService testRunsDataService;
-    private readonly IContestsCacheService contestsCache;
     private readonly ITestsCacheService testsCache;
+    private readonly IProblemsCacheService problemsCache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -87,10 +85,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         ITestRunsDataService testRunsDataService,
-        ISubmissionTypesCacheService submissionTypesCache,
-        ICheckersCacheService checkersCache,
-        IContestsCacheService contestsCache,
-        ITestsCacheService testsCache)
+        ITestsCacheService testsCache,
+        IProblemsCacheService problemsCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -114,10 +110,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
         this.testRunsDataService = testRunsDataService;
-        this.submissionTypesCache = submissionTypesCache;
-        this.checkersCache = checkersCache;
-        this.contestsCache = contestsCache;
         this.testsCache = testsCache;
+        this.problemsCache = problemsCache;
     }
 
     public async Task Retest(int submissionId)
@@ -322,15 +316,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
-        var problem = await this.problemsDataService.GetWithSubmissionTypesById(model.ProblemId)
+        var problem = await this.problemsCache.GetForSubmitById(model.ProblemId)
             ?? throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
-
-        var checkerId = problem.CheckerId;
-        problem.Checker = checkerId.HasValue
-            ? await this.checkersCache.GetById(checkerId.Value).Map<Checker?>()
-            : null;
-
-        var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
@@ -340,17 +327,19 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id,
                 model.Official);
 
-        var contest = await this.contestsCache
-            .GetContest(model.ContestId)
-            .Map<Contest>();
-
-        if (participant != null)
-        {
-            participant.Contest = contest;
-        }
+        var contest = problem.Contest;
+        var submissionType = problem.SubmissionTypesInProblems
+            .Select(p => p.SubmissionType)
+            .MapCollection<SubmissionType>()
+            .FirstOrDefault(st => st.Id == model.SubmissionTypeId);
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
+
+        if (participant != null)
+        {
+            participant.Contest = problem.Contest!.Map<Contest>();
+        }
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -396,13 +385,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.SaveChanges();
         });
 
-        problem.Tests = (await this.testsCache.GetByProblemId(problem.Id))
-            .Values
-            .MapCollection<Test>()
-            .ToList();
-
         var submissionServiceModel =
-            this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem,
+            this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem.Map<Problem>(),
                 submissionType!);
 
         await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel,

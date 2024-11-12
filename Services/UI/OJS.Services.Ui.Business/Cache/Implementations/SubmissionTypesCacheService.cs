@@ -5,8 +5,8 @@ using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OJS.Data.Models.Submissions;
 using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Cache;
 
 public class SubmissionTypesCacheService : ISubmissionTypesCacheService
 {
@@ -30,11 +30,11 @@ public class SubmissionTypesCacheService : ISubmissionTypesCacheService
             this.submissionTypesBusiness.GetAllOrderedByLatestUsage,
             cacheSeconds);
 
-    public async Task<SubmissionType?> GetById(
+    public async Task<SubmissionTypeCacheModel?> GetById(
         int submissionTypeId,
         int cacheSeconds)
         => await this.cache.Get(
             string.Format(CacheConstants.SubmissionTypeById, submissionTypeId),
-            async () => await this.submissionTypesData.OneById(submissionTypeId),
+            async () => await this.submissionTypesData.OneByIdTo<SubmissionTypeCacheModel>(submissionTypeId),
             cacheSeconds);
 }

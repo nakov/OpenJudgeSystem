@@ -13,6 +13,7 @@
         public const string ParticipantsCountByContest = "ParticipantsCountByContest:{0}";
         public const string ParticipantsCountByContestsPage = "ParticipantsCountByContestsPage:{0}:{1}";
         public const string ContestById = "Contest:{0}";
+        public const string ProblemForSubmit = "Problem:{0}:Submit";
         public const string ContestCategoriesTree = "ContestCategoriesTree";
         public const string ContestCategoryDetails = "ContestCategoryDetails:{0}";
 
