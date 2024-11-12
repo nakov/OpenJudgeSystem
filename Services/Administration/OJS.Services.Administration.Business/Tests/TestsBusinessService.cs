@@ -121,26 +121,21 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
 
     public override async Task Delete(int id)
     {
-        var test = await this.testsDataService
+        var problemId = await this.testsDataService
             .GetByIdQuery(id)
-            .Select(t => new { t.ProblemId })
+            .Select(t => t.ProblemId)
             .FirstOrDefaultAsync();
 
-        if (test is null)
-        {
-            return;
-        }
-
-        await this.testsCache.ClearTestsCacheByProblemId(test.ProblemId);
         await this.testsDataService.DeleteById(id);
         await this.testsDataService.SaveChanges();
+        await this.testsCache.ClearTestsCacheByProblemId(problemId);
     }
 
     public async Task DeleteAll(int problemId)
     {
         await this.testRunsDataService.DeleteByProblem(problemId);
-        await this.testsCache.ClearTestsCacheByProblemId(problemId);
         await this.testsDataService.DeleteByProblem(problemId);
+        await this.testsCache.ClearTestsCacheByProblemId(problemId);
     }
 
     public async Task<string> Import(TestsImportRequestModel model)
