@@ -97,6 +97,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.problemsData.SaveChanges();
 
         await this.ReevaluateProblemsOrder(contestId);
+        await this.problemsCache.ClearProblemsCacheByContestId(contestId);
 
         return model;
     }
