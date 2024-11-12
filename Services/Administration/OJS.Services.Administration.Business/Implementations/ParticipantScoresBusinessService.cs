@@ -3,9 +3,7 @@ namespace OJS.Services.Administration.Business.Implementations;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data;
-using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Participants;
 using System.Data;
@@ -52,50 +50,6 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
             await this.participantsData.SaveChanges();
         },
         IsolationLevel.ReadCommitted);
-
-    public async Task SaveForSubmission(Submission submission)
-    {
-        var participant = this.participantsData
-            .GetByIdQuery(submission.ParticipantId)
-            .Select(p => new
-            {
-                p.IsOfficial,
-                p.User.UserName,
-                Participant = p,
-            })
-            .FirstOrDefault();
-
-        if (participant == null)
-        {
-            return;
-        }
-
-        var existingScore = await this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
-            submission.ParticipantId,
-            submission.ProblemId,
-            participant.IsOfficial);
-
-        if (existingScore == null)
-        {
-            await this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
-                submission,
-                participant.UserName!,
-                participant.IsOfficial,
-                participant.Participant);
-
-            return;
-        }
-
-        if (submission.Points > existingScore.Points ||
-            submission.Id == existingScore.SubmissionId)
-        {
-            await this.participantScoresData.UpdateBySubmissionAndPoints(
-                existingScore,
-                submission.Id,
-                submission.Points,
-                participant.Participant);
-        }
-    }
 
     private async Task NormalizeSubmissionPoints()
     {

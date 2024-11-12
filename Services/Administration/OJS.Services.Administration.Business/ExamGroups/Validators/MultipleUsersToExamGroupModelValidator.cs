@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.ExamGroups.Validators;
 
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common.Validation;

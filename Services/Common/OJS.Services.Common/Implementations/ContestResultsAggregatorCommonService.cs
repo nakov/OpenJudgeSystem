@@ -8,10 +8,8 @@ using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using X.PagedList;
 
 public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCommonService
 {
@@ -42,8 +40,7 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
         contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
         contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
 
-        var problems = contestResultsModel.Contest.ProblemGroups
-            .SelectMany(pg => pg.Problems)
+        var problems = contestResultsModel.Problems
             .AsQueryable()
             .Where(p => !p.IsDeleted)
             .OrderBy(p => p.OrderBy)

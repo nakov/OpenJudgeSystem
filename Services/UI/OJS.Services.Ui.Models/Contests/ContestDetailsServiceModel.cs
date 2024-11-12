@@ -2,13 +2,12 @@
 
 using AutoMapper;
 using OJS.Common.Enumerations;
-using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
-using System.Linq;
 using OJS.Services.Ui.Models.Submissions;
 using System;
+using OJS.Services.Ui.Models.Cache;
 
 public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed, IMapTo<ContestForActivityServiceModel>
 {
@@ -72,14 +71,8 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration
-            .CreateMap<Contest, ContestDetailsServiceModel>()
-            .ForMember(
-                d => d.Problems,
-                opt => opt.MapFrom(s =>
-                    s.ProblemGroups
-                        .SelectMany(pg => pg.Problems)
-                        .OrderBy(p => p.ProblemGroup.OrderBy)
-                        .ThenBy(p => p.OrderBy)))
+            .CreateMap<ContestCacheModel, ContestDetailsServiceModel>()
+            .ForMember(d => d.Problems, opt => opt.Ignore())
             .ForMember(d => d.IsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.CanViewCompeteResults, opt => opt.Ignore())
             .ForMember(d => d.CanViewPracticeResults, opt => opt.Ignore())

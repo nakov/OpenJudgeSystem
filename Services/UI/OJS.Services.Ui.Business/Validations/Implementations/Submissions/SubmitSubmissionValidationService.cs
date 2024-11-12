@@ -13,7 +13,6 @@ using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService

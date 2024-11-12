@@ -1,7 +1,6 @@
 namespace OJS.Services.Ui.Models.Contests;
 
 using System.Collections.Generic;
-using System.Linq;
 
 public class ContestFiltersServiceModel
 {

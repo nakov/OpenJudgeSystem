@@ -3,22 +3,18 @@ namespace OJS.Services.Administration.Business.Problems;
 using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
 using OJS.Data;
 using OJS.Data.Models;
 using OJS.Data.Models.Problems;
-using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
-using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -40,11 +36,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-    private readonly IContestsBusinessService contestsBusiness;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
     private readonly IProblemGroupsDataService problemGroupsDataService;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ITransactionsProvider transactionsProvider;
+    private readonly IProblemsCacheService problemsCache;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -55,11 +51,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ITestRunsDataService testRunsData,
         IProblemGroupsBusinessService problemGroupsBusiness,
-        IContestsBusinessService contestsBusiness,
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IProblemGroupsDataService problemGroupsDataService,
         IZippedTestsParserService zippedTestsParser,
-        ITransactionsProvider transactionsProvider)
+        ITransactionsProvider transactionsProvider,
+        IProblemsCacheService problemsCache)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -69,11 +65,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.testRunsData = testRunsData;
         this.problemGroupsBusiness = problemGroupsBusiness;
-        this.contestsBusiness = contestsBusiness;
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.problemGroupsDataService = problemGroupsDataService;
         this.zippedTestsParser = zippedTestsParser;
         this.transactionsProvider = transactionsProvider;
+        this.problemsCache = problemsCache;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -134,6 +130,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         this.submissionsData.DeleteByProblem(id);
 
+        await this.problemsCache.ClearProblemsCacheByContestId(problem.ContestId);
+
         scope.Complete();
     }
 
@@ -173,18 +171,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.CopyProblemToContest(problem, contestId, problemGroupId);
 
         return ServiceResult.Success;
-    }
-
-    public async Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin)
-    {
-        var problem = await this.problemsData.OneByIdTo<ProblemShortDetailsServiceModel>(problemId);
-
-        if (problem == null)
-        {
-            throw new BusinessServiceException("Problem cannot be null");
-        }
-
-        return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
     }
 
     public Task ReevaluateProblemsOrder(int contestId)
@@ -236,6 +222,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         }
 
         AddSubmissionTypes(problem, model);
+
+        await this.problemsCache.ClearProblemsCacheByContestId(problem.ProblemGroup.ContestId);
 
         this.problemsData.Update(problem);
 

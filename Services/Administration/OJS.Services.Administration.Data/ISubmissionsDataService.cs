@@ -13,17 +13,9 @@
 
         IQueryable<Submission> GetByIdQuery(int id);
 
-        IQueryable<Submission> GetAllWithParticipantProblemAndSubmissionType();
-
         IQueryable<Submission> GetAllByProblem(int problemId);
 
         IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
-
-        IQueryable<Submission> GetByIds(IEnumerable<int> ids);
-
-        IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
-
-        IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId);
 
         IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
             DateTime createdBeforeDate,
@@ -32,10 +24,6 @@
         IQueryable<Submission> GetAllHavingPointsExceedingLimit();
 
         IQueryable<Submission> GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(int submissionTypeId, int monthsCount);
-
-        IQueryable<int> GetIdsByProblem(int problemId);
-
-        bool IsOfficialById(int id);
 
         Task SetAllToUnprocessedByProblem(int problemId);
 

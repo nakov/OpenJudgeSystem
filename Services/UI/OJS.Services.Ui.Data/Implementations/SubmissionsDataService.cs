@@ -52,37 +52,14 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .ThenByDescending(s => s.Id)
             .FirstOrDefault();
 
-    public IQueryable<Submission> GetAllByProblem(int problemId)
-        => this.GetQuery(s => s.ProblemId == problemId);
-
     public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
         => this.GetQuery(
             filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
             orderBy: q => q.CreatedOn,
             descending: true);
 
-    public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId)
-        => this.GetQuery(s =>
-                (s.IsPublic.HasValue && s.IsPublic.Value) ||
-                s.Problem!.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
-                s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(l =>
-                    l.LecturerId == lecturerId))
-            .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
-            .Include(s => s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories);
-
-    public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
-        DateTime createdBeforeDate,
-        DateTime nonBestCreatedBeforeDate) =>
-        this.GetQuery(s => s.CreatedOn < createdBeforeDate ||
-                           (s.CreatedOn < nonBestCreatedBeforeDate &&
-                            s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)));
-
     public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
         => this.GetQuery(s => s.Points > s.Problem!.MaximumPoints);
-
-    public IQueryable<int> GetIdsByProblem(int problemId)
-        => this.GetAllByProblem(problemId)
-            .Select(s => s.Id);
 
     public IQueryable<Submission> GetAllForUserByContest(int contestId, string userId)
         => this.GetQuery(
@@ -90,25 +67,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                      && s.Problem.ProblemGroup.ContestId == contestId,
         orderBy: s => s.Id,
         descending: true);
-
-    public IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids)
-        => this.GetQuery()
-            .Where(s => ids.Contains(s.Id));
-
-    public bool IsOfficialById(int id) =>
-        this.GetByIdQuery(id)
-            .Any(s => s.Participant!.IsOfficial);
-
-    public void SetAllToUnprocessedByProblem(int problemId) =>
-        this.GetAllByProblem(problemId)
-            .UpdateFromQueryAsync(s => new Submission { Processed = false });
-
-    public void DeleteByProblem(int problemId) =>
-        this.Delete(s => s.ProblemId == problemId);
-
-    public void RemoveTestRunsCacheByProblem(int problemId) =>
-        this.GetAllByProblem(problemId)
-            .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
 
     public async Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
     {
@@ -140,11 +98,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.Exists(s => s.Problem.ProblemGroup.ContestId == contestId
                            && s.Participant!.UserId == userId && !s.Processed);
 
-    public async Task<int> GetProblemIdBySubmission(int submissionId)
-        => await this.GetByIdQuery(submissionId)
-            .Select(p => p.Problem.Id)
-            .FirstOrDefaultAsync();
-
     public async Task<int> GetSubmissionsPerDayCount()
         => await this.GetQuery().AnyAsync()
             ? await this.GetQuery().GroupBy(x => new { x.CreatedOn.Year, x.CreatedOn.DayOfYear })
@@ -152,11 +105,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .AverageAsync()
                 .ToInt()
             : 0;
-
-    public async Task<int> GetParticipantIdBySubmission(int submissionId)
-        => await this.GetByIdQuery(submissionId)
-            .Select(p => p.Participant!.Id)
-            .FirstOrDefaultAsync();
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.GetQuery(s => s.Id == id);

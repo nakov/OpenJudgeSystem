@@ -12,8 +12,4 @@ public interface IProblemsBusinessService : IAdministrationOperationService<Prob
     Task DeleteByContest(int contestId);
 
     Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId);
-
-    Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin);
-
-    Task ReevaluateProblemsOrder(int contestId);
 }

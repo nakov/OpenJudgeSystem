@@ -9,13 +9,9 @@ namespace OJS.Services.Ui.Data
     {
         Task<Problem?> GetWithSubmissionTypesById(int id);
 
-        Task<double> GetNewOrderByProblemGroup(int problemGroupId);
-
-        Task<double> GetNewOrderByContest(int contestId);
+        IQueryable<Problem> GetAllNonDeletedProblems();
 
         IQueryable<Problem> GetAllByContest(int contestId);
-
-        IQueryable<Problem> GetAllNonDeletedProblems();
 
         Task<Problem?> GetWithProblemGroupById(int problemId);
     }

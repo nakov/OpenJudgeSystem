@@ -7,14 +7,8 @@
 
     public interface ISubmissionsBusinessService : IAdministrationOperationService<Submission, int, SubmissionAdministrationServiceModel>
     {
-        Task RecalculatePointsByProblem(int problemId);
-
-        Task<ServiceResult> Retest(Submission submission);
-
         Task<ServiceResult> Retest(int id);
 
         Task<SubmissionAdministrationServiceModel> Download(int id);
-
-        Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId);
     }
 }

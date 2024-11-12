@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Worker.Business.Extensions;
 
 using OJS.Services.Common.Models.Submissions;
-using System;
 using OJS.Workers.Common.Models;
 using System.Linq;
 

@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments.GridData;
 
 using OJS.Data.Models;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Excel;
 using OJS.Services.Administration.Data.Implementations;
 using OJS.Services.Common.Data;
