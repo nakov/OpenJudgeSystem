@@ -1,13 +1,18 @@
 ﻿namespace OJS.Services.Ui.Business.Cache;
 
 using System.Threading.Tasks;
-using OJS.Data.Models.Checkers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
+using OJS.Services.Ui.Models.Cache;
+using System.Collections.Generic;
 
 public interface ICheckersCacheService : IService
 {
-    Task<Checker?> GetById(
+    Task<CheckerCacheModel?> GetById(
         int checkerId,
-        int cacheSeconds = CacheConstants.OneHourInSeconds);
+        int cacheSeconds = CacheConstants.OneDayInSeconds);
+
+    Task<IDictionary<int, CheckerCacheModel?>> GetAllByIds(
+        int[] checkerIds,
+        int cacheSeconds = CacheConstants.OneDayInSeconds);
 }

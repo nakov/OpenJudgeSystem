@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 {
     using System.Collections.Generic;
-    using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models.Mappings;

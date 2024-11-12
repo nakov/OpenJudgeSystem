@@ -3,7 +3,6 @@ namespace OJS.Services.Infrastructure.BackgroundJobs.Implementations
     using Hangfire;
     using Hangfire.Common;
     using Hangfire.States;
-    using OJS.Common.Enumerations;
     using System;
     using System.Linq.Expressions;
 

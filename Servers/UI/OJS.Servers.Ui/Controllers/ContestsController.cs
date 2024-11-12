@@ -33,22 +33,6 @@ public class ContestsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
-    /// Gets the contest that the problem is part of.
-    /// </summary>
-    /// <param name="problemId">The id of the problem that is used to find the contest.</param>
-    /// <returns>Model containing information about the contest.</returns>
-    [HttpGet("{problemId:int}")]
-    [ProducesResponseType(typeof(ContestServiceModel), Status200OK)]
-    [SuppressMessage(
-        "Usage",
-        "ASP0023:Route conflict detected between controller actions",
-        Justification = "Base API controller Route handles different actions names.")]
-    public async Task<IActionResult> GetByProblem(int problemId)
-        => await this.contestsBusinessService
-            .GetContestByProblem(problemId)
-            .ToOkResult();
-
-    /// <summary>
     /// Submits a password value from the user and validates it against contest configurations.
     /// </summary>
     /// <param name="id">ID of the contest.</param>

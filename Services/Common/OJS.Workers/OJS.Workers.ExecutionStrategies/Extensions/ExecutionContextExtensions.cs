@@ -5,7 +5,6 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
     using System.Runtime.CompilerServices;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.CodeSanitizers;
     using OJS.Workers.ExecutionStrategies.CPlusPlus;
     using OJS.Workers.ExecutionStrategies.CSharp.DotNetCore;

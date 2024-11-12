@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
-using OJS.Common.Helpers;
 using OJS.Data;
+using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
 using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -268,122 +269,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .GroupBy(sfp => sfp.State)
             .ToDictionaryAsync(sfp => sfp.Key, sfp => sfp.Count());
 
-    public Task<IQueryable<Submission>> GetAllForArchiving()
-    {
-        var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
-            -GlobalConstants.BestSubmissionEligibleForArchiveAgeInYears);
-
-        var archiveNonBestSubmissionsLimit = DateTime.Now.AddYears(
-            -GlobalConstants.NonBestSubmissionEligibleForArchiveAgeInYears);
-
-        return Task.FromResult(this.submissionsData
-            .GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
-                archiveBestSubmissionsLimit,
-                archiveNonBestSubmissionsLimit));
-    }
-
-    public async Task RecalculatePointsByProblem(int problemId)
-    {
-        using (var scope = TransactionsHelper.CreateTransactionScope())
-        {
-            var problemSubmissions = this.submissionsData
-                .GetAllByProblem(problemId)
-                .Include(s => s.TestRuns)
-                .Include(s => s.TestRuns.Select(tr => tr.Test))
-                .ToList();
-
-            var submissionResults = problemSubmissions
-                .Select(s => new
-                {
-                    s.Id,
-                    s.ParticipantId,
-                    CorrectTestRuns = s.TestRuns.Count(t =>
-                        t.ResultType == TestRunResultType.CorrectAnswer &&
-                        !t.Test.IsTrialTest),
-                    AllTestRuns = s.TestRuns.Count(t => !t.Test.IsTrialTest),
-                    MaxPoints = s.Problem!.MaximumPoints,
-                })
-                .ToList();
-
-            var problemSubmissionsById = problemSubmissions.ToDictionary(s => s.Id);
-            var topResults = new Dictionary<int, ParticipantScoreModel>();
-
-            foreach (var submissionResult in submissionResults)
-            {
-                var submission = problemSubmissionsById[submissionResult.Id];
-                var points = 0;
-                if (submissionResult.AllTestRuns != 0)
-                {
-                    points = (submissionResult.CorrectTestRuns * submissionResult.MaxPoints) /
-                             submissionResult.AllTestRuns;
-                }
-
-                submission.Points = points;
-                submission.CacheTestRuns();
-
-                var participantId = submissionResult.ParticipantId;
-
-                if (!topResults.ContainsKey(participantId) || topResults[participantId].Points < points)
-                {
-                    topResults[participantId] = new ParticipantScoreModel
-                    {
-                        Points = points, SubmissionId = submission.Id,
-                    };
-                }
-                else if (topResults[participantId].Points == points)
-                {
-                    if (topResults[participantId].SubmissionId < submission.Id)
-                    {
-                        topResults[participantId].SubmissionId = submission.Id;
-                    }
-                }
-            }
-
-            await this.submissionsData.SaveChanges();
-
-            var participants = topResults.Keys.ToList();
-
-            var existingScores =
-                await this.participantScoresBusinessService.GetByProblemForParticipants(participants, problemId);
-
-            foreach (var existingScore in existingScores)
-            {
-                var topScore = topResults[existingScore.ParticipantId];
-
-                existingScore.Points = topScore.Points;
-                existingScore.SubmissionId = topScore.SubmissionId;
-            }
-
-            await this.submissionsData.SaveChanges();
-
-            scope.Complete();
-        }
-    }
-
-    // public async Task HardDeleteAllArchived() =>
-    //     (await this.archivedSubmissionsData
-    //         .GetAllUndeletedFromMainDatabase())
-    //         .Select(s => s.Id)
-    //         .AsEnumerable()
-    //         .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
-    //         .ForEach(submissionIds =>
-    //             this.HardDeleteByArchivedIds(new HashSet<int>(submissionIds)));
-
-    // private Task HardDeleteByArchivedIds(ICollection<int> ids)
-    // {
-    //     using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
-    //     {
-    //         this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(ids);
-    //         this.submissionsData.Delete(s => ids.Contains(s.Id));
-    //
-    //         this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(ids);
-    //
-    //         scope.Complete();
-    //     }
-    //
-    //     return Task.CompletedTask;
-    // }
-
     public async Task<PagedResult<TServiceModel>> GetByUsername<TServiceModel>(
         string? username,
         int page,
@@ -443,7 +328,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var checkerId = problem.CheckerId;
         problem.Checker = checkerId.HasValue
-            ? await this.checkersCache.GetById(checkerId.Value)
+            ? await this.checkersCache.GetById(checkerId.Value).Map<Checker?>()
             : null;
 
         var submissionType = await this.submissionTypesCache.GetById(model.SubmissionTypeId);
@@ -456,7 +341,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id,
                 model.Official);
 
-        var contest = await this.contestsData.OneById(model.ContestId);
+        var contest = await this.contestsCache
+            .GetContest(model.ContestId)
+            .Map<Contest>();
 
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));

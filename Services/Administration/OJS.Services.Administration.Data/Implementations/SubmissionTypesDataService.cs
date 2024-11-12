@@ -11,11 +11,6 @@
         {
         }
 
-        public IQueryable<SubmissionType> GetAllByProblem(int problemId)
-            => this.GetQuery(st => st.SubmissionTypesInProblems
-                    .Select(stp => stp.ProblemId)
-                    .Contains(problemId));
-
         public IQueryable<SubmissionType> GetAll() => this.GetQuery();
     }
 }

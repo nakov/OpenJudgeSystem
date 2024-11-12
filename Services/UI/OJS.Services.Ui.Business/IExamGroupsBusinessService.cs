@@ -6,12 +6,6 @@ namespace OJS.Services.Ui.Business
 
     public interface IExamGroupsBusinessService : IService
     {
-        Task AddUsersByIdAndUserIds(int id, IEnumerable<string> userIds);
-
-        Task AddUsersByIdAndUsernames(int id, IEnumerable<string> usernames);
-
-        Task RemoveUsersByIdAndUserIds(int id, IEnumerable<string> userIds);
-
         Task AddExternalUsersByIdAndUserIds(int id, IEnumerable<string> userIds);
 
         Task AddExternalUsersByIdAndUsernames(int id, IEnumerable<string> usernames);

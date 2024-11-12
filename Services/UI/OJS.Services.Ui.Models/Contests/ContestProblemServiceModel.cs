@@ -7,6 +7,7 @@
     using OJS.Services.Infrastructure.Models.Mapping;
     using System.Collections.Generic;
     using System.Linq;
+    using OJS.Services.Ui.Models.Cache;
 
     public class ContestProblemServiceModel : IMapExplicitly
     {
@@ -64,7 +65,7 @@
         public bool UserHasAdminRights { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration) =>
-            configuration.CreateMap<Problem, ContestProblemServiceModel>()
+            configuration.CreateMap<ProblemCacheModel, ContestProblemServiceModel>()
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ProblemGroup.ContestId))
                 .ForMember(
                     d => d.IsExcludedFromHomework,

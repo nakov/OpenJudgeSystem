@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Administration.Models.SubmissionTypes;
 
-using AutoMapper;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Infrastructure.Models.Mapping;
 

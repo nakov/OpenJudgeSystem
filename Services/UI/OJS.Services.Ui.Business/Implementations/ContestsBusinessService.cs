@@ -8,7 +8,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using X.PagedList;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
     using OJS.Services.Common.Models.Contests;
@@ -28,7 +27,6 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IContestsDataService contestsData;
         private readonly ISubmissionsDataService submissionsData;
         private readonly IContestsActivityService activityService;
-        private readonly IExamGroupsDataService examGroupsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantsBusinessService participantsBusiness;
         private readonly IContestCategoriesCacheService contestCategoriesCache;
@@ -44,7 +42,6 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestsDataService contestsData,
             ISubmissionsDataService submissionsData,
             IContestsActivityService activityService,
-            IExamGroupsDataService examGroupsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
             IUserProviderService userProviderService,
@@ -59,7 +56,6 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestsData = contestsData;
             this.submissionsData = submissionsData;
             this.activityService = activityService;
-            this.examGroupsData = examGroupsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
             this.userProviderService = userProviderService;
@@ -237,19 +233,6 @@ namespace OJS.Services.Ui.Business.Implementations
             return participant != null;
         }
 
-        public async Task<ContestServiceModel> GetContestByProblem(int problemId)
-        {
-           var contestServiceModel = await this.contestsData.GetByProblemId<ContestServiceModel>(problemId);
-           if (contestServiceModel == null)
-           {
-               throw new BusinessServiceException(GlobalConstants.ErrorMessages.ContestNotFound);
-           }
-
-           contestServiceModel.AllowedSubmissionTypes = contestServiceModel.AllowedSubmissionTypes.DistinctBy(st => st.Id);
-
-           return contestServiceModel;
-        }
-
         public async Task ValidateContestPassword(int id, bool official, string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -292,7 +275,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .MapCollection<ContestParticipationServiceModel>()
                 .FirstOrDefaultAsync() ?? throw new BusinessServiceException("Participant not found");
 
-            var contest = await this.contestParticipantsCacheService.GetContestServiceModelForContest(model.ContestId);
+            var contest = await this.contestsCacheService.GetContestServiceModel(model.ContestId);
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
@@ -322,11 +305,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Select(x => (DateTime?)x.CreatedOn)
                 .Max();
             participant.LastSubmissionTime = lastSubmissionTime;
-
-            participant.Contest!.AllowedSubmissionTypes = participant.Contest.Problems
-                .SelectMany(p => p.AllowedSubmissionTypes)
-                .DistinctBy(st => st.Id)
-                .ToList();
 
             participant.ParticipantId = participant.Id;
             participant.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;
@@ -383,12 +361,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             return modelResult;
         }
-
-        public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)
-            => this.contestsData
-                .Exists(c =>
-                    c.Id == contestId &&
-                    (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
 
         public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
             ContestFiltersServiceModel? model)
@@ -480,14 +452,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetAllExpired<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsPerPage);
-
-        public async Task DeleteById(int id)
-        {
-            await this.examGroupsData.RemoveContestByContest(id);
-
-            await this.contestsData.DeleteById(id);
-            await this.contestsData.SaveChanges();
-        }
 
         /// <summary>
         /// Maps activity properties, total results count and user participant results if any.
