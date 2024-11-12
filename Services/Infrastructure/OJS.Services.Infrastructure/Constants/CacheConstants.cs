@@ -23,7 +23,6 @@
         public const string LatestPublicSubmissions = "PublicSubmissions";
 
         public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
-        public const string SubmissionTypeById = "SubmissionType:{0}";
 
         public const string CheckerById = "Checker:{0}";
 
