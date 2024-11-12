@@ -25,5 +25,6 @@
         public const string CheckerById = "Checker:{0}";
 
         public const string ProblemsByContestId = "ProblemsByContestId:{0}";
+        public const string TestsByProblemId = "TestsByProblemId:{0}";
     }
 }

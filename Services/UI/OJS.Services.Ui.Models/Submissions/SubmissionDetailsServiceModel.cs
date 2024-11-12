@@ -12,6 +12,8 @@ public class SubmissionDetailsServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
+    public int ProblemId { get; set; }
+
     public ProblemServiceModel Problem { get; set; } = null!;
 
     public int Points { get; set; }
