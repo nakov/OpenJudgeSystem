@@ -6,4 +6,6 @@ using OJS.Services.Infrastructure;
 public interface IProblemsCacheService : IService
 {
     Task ClearProblemsCacheByContestId(int contestId);
+
+    Task ClearProblemCacheById(int problemId);
 }

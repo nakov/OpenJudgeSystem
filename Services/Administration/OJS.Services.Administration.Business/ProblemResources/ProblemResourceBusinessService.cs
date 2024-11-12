@@ -28,15 +28,16 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
     public override async Task Delete(int id)
     {
+        var problemResource = await this.problemResourcesDataService
+            .GetByIdQuery(id)
+            .Select(pr => new { pr.Problem.ProblemGroup.ContestId, pr.ProblemId})
+            .FirstAsync();
+
         await this.problemResourcesDataService.DeleteById(id);
         await this.problemResourcesDataService.SaveChanges();
 
-        var contestId = await this.problemResourcesDataService
-            .GetByIdQuery(id)
-            .Select(pr => pr.Problem.ProblemGroup.ContestId)
-            .FirstOrDefaultAsync();
-
-        await this.problemsCache.ClearProblemsCacheByContestId(contestId);
+        await this.problemsCache.ClearProblemsCacheByContestId(problemResource.ContestId);
+        await this.problemsCache.ClearProblemCacheById(problemResource.ProblemId);
     }
 
     public override async Task<ProblemResourceAdministrationModel> Create(ProblemResourceAdministrationModel model)
@@ -57,6 +58,7 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
             .FirstOrDefault();
 
         await this.problemsCache.ClearProblemsCacheByContestId(contestId);
+        await this.problemsCache.ClearProblemCacheById(problemResource.ProblemId);
 
         return model;
     }
@@ -112,6 +114,7 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
         await this.problemResourcesDataService.SaveChanges();
 
         await this.problemsCache.ClearProblemsCacheByContestId(resource.Problem.ProblemGroup.ContestId);
+        await this.problemsCache.ClearProblemCacheById(resource.ProblemId);
 
         return model;
     }

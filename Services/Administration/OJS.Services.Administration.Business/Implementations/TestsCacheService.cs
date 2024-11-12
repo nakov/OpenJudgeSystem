@@ -11,6 +11,9 @@ public class TestsCacheService : ITestsCacheService
     public TestsCacheService(ICacheService cache)
         => this.cache = cache;
 
-    public Task ClearTestsCacheByProblemId(int problemId)
-        => this.cache.Remove(string.Format(CacheConstants.TestsByProblemId, problemId));
+    public async Task ClearTestsCacheByProblemId(int problemId)
+    {
+        await this.cache.Remove(string.Format(CacheConstants.TestsByProblemId, problemId));
+        await this.cache.Remove(string.Format(CacheConstants.ProblemForSubmit, problemId));
+    }
 }
