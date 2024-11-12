@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
-using OJS.Common.Extensions;
 using OJS.Data;
 using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Participants;
@@ -59,8 +58,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IDatesService dates;
     private readonly ITransactionsProvider transactionsProvider;
     private readonly ICacheService cache;
-    private readonly IContestsDataService contestsData;
-    private readonly ITestsDataService testsData;
     private readonly ISubmissionTypesCacheService submissionTypesCache;
     private readonly ICheckersCacheService checkersCache;
     private readonly ITestRunsDataService testRunsDataService;
@@ -89,8 +86,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IDatesService dates,
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
-        IContestsDataService contestsData,
-        ITestsDataService testsData,
         ITestRunsDataService testRunsDataService,
         ISubmissionTypesCacheService submissionTypesCache,
         ICheckersCacheService checkersCache,
@@ -118,8 +113,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.dates = dates;
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
-        this.contestsData = contestsData;
-        this.testsData = testsData;
         this.testRunsDataService = testRunsDataService;
         this.submissionTypesCache = submissionTypesCache;
         this.checkersCache = checkersCache;
@@ -230,7 +223,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             }
             else
             {
-                testRun.Input = test?.InputDataAsString;
+                testRun.Input = test.InputDataAsString;
             }
         }
 
@@ -313,7 +306,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var user = this.userProviderService.GetCurrentUser();
 
         var participant = await this.participantsDataService
-                .GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial)
+                .GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id, isOfficial)
                 .Map<ParticipantServiceModel>();
 
         var validationResult =
@@ -373,8 +366,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         newSubmission.ParticipantId = participant!.Id;
         newSubmission.IpAddress = "model.UserHostAddress";
-        newSubmission.IsPublic = ((participant.IsOfficial && contest!.ContestPassword == null) ||
-                                  (!participant.IsOfficial && contest!.PracticePassword == null)) &&
+        newSubmission.IsPublic = ((participant.IsOfficial && contest.ContestPassword == null) ||
+                                  (!participant.IsOfficial && contest.PracticePassword == null)) &&
                                  (contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow()) &&
                                  !contest.IsDeleted &&
                                  problem.ShowResults;
@@ -417,34 +410,22 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .GetByIdQuery(submissionExecutionResult.SubmissionId)
             .IgnoreQueryFilters()
             .Include(s => s.TestRuns)
-            .FirstOrDefaultAsync();
-
-        if (submission == null)
-        {
-            throw new BusinessServiceException(
+            .FirstOrDefaultAsync()
+            ?? throw new BusinessServiceException(
                 $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
-        }
 
         var submissionForProcessing = await this.submissionsForProcessingData
-            .GetBySubmission(submission.Id);
-
-        if (submissionForProcessing == null)
-        {
-            throw new BusinessServiceException(
+            .GetBySubmission(submission.Id)
+            ?? throw new BusinessServiceException(
                 $"Submission for processing for Submission with ID {submissionExecutionResult.SubmissionId} not found in the database.");
-        }
 
         var participant = await this.participantsDataService
             .GetByIdQuery(submission.ParticipantId)
             .IgnoreQueryFilters()
             .Include(p => p.User)
-            .FirstOrDefaultAsync();
-
-        if (participant == null)
-        {
-            throw new BusinessServiceException(
+            .FirstOrDefaultAsync()
+            ?? throw new BusinessServiceException(
                 $"Participant with Id: \"{submission.ParticipantId}\" not found.");
-        }
 
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
@@ -575,7 +556,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.ProcessingComment = string.Format(ProcessingException, methodName, ex.Message);
         submission.IsCompiledSuccessfully = false;
         submission.CompilerComment = ProcessingExceptionCompilerComment;
-        submission.TestRuns = new List<TestRun>();
+        submission.TestRuns = [];
     }
 
     private static void CacheTestRuns(Submission submission)
