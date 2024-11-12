@@ -3,7 +3,6 @@
 using AutoMapper;
 using OJS.Data.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
-using System.Linq;
 
 public class ContestResultsModel : IMapExplicitly
 {
@@ -44,5 +43,6 @@ public class ContestResultsModel : IMapExplicitly
             .ForMember(d => d.IsExportResults, opt => opt.Ignore())
             .ForMember(d => d.Page, opt => opt.Ignore())
             .ForMember(d => d.ItemsPerPage, opt => opt.Ignore())
-            .ReverseMap();
+            .ReverseMap()
+            .ForMember(d => d.Problems, opt => opt.Ignore()); // Configuration for the reverse mapping
 }
