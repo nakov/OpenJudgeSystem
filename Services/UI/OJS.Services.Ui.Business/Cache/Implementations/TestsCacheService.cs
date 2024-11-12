@@ -22,13 +22,13 @@ public class TestsCacheService : ITestsCacheService
         this.cache = cache;
     }
 
-    public async Task<ICollection<TestCacheModel>> GetByProblemId(int problemId)
+    public async Task<IDictionary<int, TestCacheModel>> GetByProblemId(int problemId)
         => await this.cache.Get(
             string.Format(CacheConstants.TestsByProblemId, problemId),
             async () => await this.testsData
                 .GetAllByProblem(problemId)
                 .MapCollection<TestCacheModel>()
-                .ToListAsync(),
+                .ToDictionaryAsync(t => t.Id, t => t),
             cacheSeconds: CacheConstants.OneDayInSeconds,
             slidingExpirationSeconds: CacheConstants.FiveMinutesInSeconds);
 }

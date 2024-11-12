@@ -7,5 +7,5 @@ using OJS.Services.Ui.Models.Cache;
 
 public interface ITestsCacheService : IService
 {
-    Task<ICollection<TestCacheModel>> GetByProblemId(int problemId);
+    Task<IDictionary<int, TestCacheModel>> GetByProblemId(int problemId);
 }

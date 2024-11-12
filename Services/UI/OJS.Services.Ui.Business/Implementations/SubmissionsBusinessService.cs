@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
+using OJS.Common.Extensions;
 using OJS.Data;
 using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Participants;
@@ -198,25 +199,40 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<TestRunDetailsServiceModel>()
             .ToListAsync();
 
+        var tests = await this.testsCache.GetByProblemId(submissionDetailsServiceModel.ProblemId);
+
         foreach (var testRun in testRuns)
         {
-            var test = testRun.Test;
-            submissionDetailsServiceModel.Tests.Add(test);
+            bool displayShowInput;
+            bool showExecutionComment;
 
-            if (userIsAdminOrLecturerInContest)
+            var test = tests.GetValueOrDefault(testRun.TestId)?.Map<TestDetailsServiceModel>();
+
+            if (test != null)
             {
-                continue;
-            }
+                testRun.Test = test;
+                submissionDetailsServiceModel.Tests.Add(test);
 
-            var displayShowInput = test is { HideInput: false }
+                if (userIsAdminOrLecturerInContest)
+                {
+                    continue;
+                }
+
+                displayShowInput = test is { HideInput: false }
                                    && (test.IsTrialTest
                                        || test.IsOpenTest
                                        || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
 
-            var showExecutionComment = !string.IsNullOrEmpty(testRun.ExecutionComment)
+                showExecutionComment = !string.IsNullOrEmpty(testRun.ExecutionComment)
                                        && (test.IsOpenTest
                                            || test.IsTrialTest
                                            || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+            }
+            else
+            {
+                displayShowInput = false;
+                showExecutionComment = false;
+            }
 
             if (!showExecutionComment)
             {
@@ -395,8 +411,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.SaveChanges();
         });
 
-        problem.Tests = (await this.testsCache
-            .GetByProblemId(problem.Id))
+        problem.Tests = (await this.testsCache.GetByProblemId(problem.Id))
+            .Values
             .MapCollection<Test>()
             .ToList();
 

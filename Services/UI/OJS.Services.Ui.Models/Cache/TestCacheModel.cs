@@ -12,11 +12,7 @@ public class TestCacheModel : IMapExplicitly
 
     public byte[] InputData { get; set; } = [];
 
-    public string InputDataAsString { get; set; } = string.Empty;
-
     public byte[] OutputData { get; set; } = [];
-
-    public string OutputDataAsString { get; set; } = string.Empty;
 
     public bool IsTrialTest { get; set; }
 
