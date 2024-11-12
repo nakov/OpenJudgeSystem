@@ -2,10 +2,12 @@
 {
     public static class CacheConstants
     {
-        public const int OneHourInSeconds = 60 * 60;
-        public const int OneDayInSeconds = 86400;
-        public const int TwoMinutesInSeconds = 120;
-        public const int FiveMinutesInSeconds = 300;
+        public const int OneMinuteInSeconds = 60;
+        public const int OneHourInSeconds = OneMinuteInSeconds * 60;
+        public const int OneDayInSeconds = OneHourInSeconds * 24;
+        public const int TwoMinutesInSeconds = OneMinuteInSeconds * 2;
+        public const int FiveMinutesInSeconds = OneMinuteInSeconds * 5;
+        public const int TenMinutesInSeconds = OneMinuteInSeconds * 10;
 
         public const string MainContestCategoriesDropDown = "MainContestCategoriesDropDown";
         public const string ParticipantsCountByContest = "ParticipantsCountByContest:{0}";

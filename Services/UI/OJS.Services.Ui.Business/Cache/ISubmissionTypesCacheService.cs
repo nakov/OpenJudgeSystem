@@ -10,9 +10,9 @@ using OJS.Services.Infrastructure.Constants;
 public interface ISubmissionTypesCacheService : IService
 {
     Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage(
-        int? cacheSeconds = CacheConstants.OneHourInSeconds);
+        int cacheSeconds = CacheConstants.OneDayInSeconds);
 
     Task<SubmissionType?> GetById(
         int submissionTypeId,
-        int cacheSeconds = CacheConstants.OneHourInSeconds);
+        int cacheSeconds = CacheConstants.OneDayInSeconds);
 }
