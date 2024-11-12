@@ -13,14 +13,30 @@ using System.Linq;
 public class ProblemResourceBusinessService : AdministrationOperationService<ProblemResource, int, ProblemResourceAdministrationModel>, IProblemResourcesBusinessService
 {
     private readonly IProblemResourcesDataService problemResourcesDataService;
+    private readonly IProblemsDataService problemsData;
+    private readonly IProblemsCacheService problemsCache;
 
-    public ProblemResourceBusinessService(IProblemResourcesDataService problemResourcesDataService)
-        => this.problemResourcesDataService = problemResourcesDataService;
+    public ProblemResourceBusinessService(
+        IProblemResourcesDataService problemResourcesDataService,
+        IProblemsDataService problemsData,
+        IProblemsCacheService problemsCache)
+    {
+        this.problemResourcesDataService = problemResourcesDataService;
+        this.problemsData = problemsData;
+        this.problemsCache = problemsCache;
+    }
 
     public override async Task Delete(int id)
     {
         await this.problemResourcesDataService.DeleteById(id);
         await this.problemResourcesDataService.SaveChanges();
+
+        var contestId = await this.problemResourcesDataService
+            .GetByIdQuery(id)
+            .Select(pr => pr.Problem.ProblemGroup.ContestId)
+            .FirstOrDefaultAsync();
+
+        await this.problemsCache.ClearProblemsCacheByContestId(contestId);
     }
 
     public override async Task<ProblemResourceAdministrationModel> Create(ProblemResourceAdministrationModel model)
@@ -35,6 +51,13 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
         await this.problemResourcesDataService.Add(problemResource);
         await this.problemResourcesDataService.SaveChanges();
 
+        var contestId = this.problemsData
+            .GetByIdQuery(model.ProblemId)
+            .Select(p => p.ProblemGroup.ContestId)
+            .FirstOrDefault();
+
+        await this.problemsCache.ClearProblemsCacheByContestId(contestId);
+
         return model;
     }
 
@@ -45,6 +68,7 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
     {
         var resource = await this.problemResourcesDataService.GetByIdQuery(model.Id)
             .Include(pr => pr.Problem)
+            .ThenInclude(pr => pr.ProblemGroup)
             .FirstOrDefaultAsync();
 
         var areFileAndLinkNull = model is { File: null, Link: null };
@@ -86,6 +110,8 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
         this.problemResourcesDataService.Update(resource);
         await this.problemResourcesDataService.SaveChanges();
+
+        await this.problemsCache.ClearProblemsCacheByContestId(resource.Problem.ProblemGroup.ContestId);
 
         return model;
     }
