@@ -5,7 +5,6 @@
     using OJS.Data.Models.Problems;
     using OJS.Services.Ui.Models.SubmissionTypes;
     using OJS.Services.Infrastructure.Models.Mapping;
-    using OJS.Services.Ui.Models.Cache;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -27,15 +26,13 @@
 
         public double ProblemGroupOrderBy { get; set; }
 
-        public ProblemGroupCacheModel? ProblemGroup { get; set; }
-
         public short MaximumPoints { get; set; }
 
         public bool ShowResults { get; set; }
 
         public int? Points { get; set; }
 
-        public bool IsExcludedFromHomework => this.ProblemGroup?.Type == ProblemGroupType.ExcludedFromHomework;
+        public bool IsExcludedFromHomework { get; set; }
 
         public double MemoryLimit { get; set; }
 
@@ -69,7 +66,7 @@
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ProblemGroup.ContestId))
                 .ForMember(
                     d => d.IsExcludedFromHomework,
-                    opt => opt.Ignore())
+                    opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
                 .ForMember(
                     d => d.FileSizeLimit,
                     opt => opt.MapFrom(s => s.SourceCodeSizeLimit.HasValue ? (double)s.SourceCodeSizeLimit : default))
