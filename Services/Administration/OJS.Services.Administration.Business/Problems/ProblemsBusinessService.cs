@@ -123,6 +123,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
         }
 
+        await this.problemsCache.ClearProblemCacheById(id);
+
         await this.problemsData.DeleteById(id);
         await this.problemsData.SaveChanges();
         await this.testRunsData.DeleteByProblem(id);
@@ -130,8 +132,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemResourcesData.DeleteByProblem(id);
 
         this.submissionsData.DeleteByProblem(id);
-
-        await this.problemsCache.ClearProblemCacheById(id);
 
         scope.Complete();
     }

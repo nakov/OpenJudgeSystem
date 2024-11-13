@@ -13,16 +13,13 @@ using System.Linq;
 public class ProblemResourceBusinessService : AdministrationOperationService<ProblemResource, int, ProblemResourceAdministrationModel>, IProblemResourcesBusinessService
 {
     private readonly IProblemResourcesDataService problemResourcesDataService;
-    private readonly IProblemsDataService problemsData;
     private readonly IProblemsCacheService problemsCache;
 
     public ProblemResourceBusinessService(
         IProblemResourcesDataService problemResourcesDataService,
-        IProblemsDataService problemsData,
         IProblemsCacheService problemsCache)
     {
         this.problemResourcesDataService = problemResourcesDataService;
-        this.problemsData = problemsData;
         this.problemsCache = problemsCache;
     }
 

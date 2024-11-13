@@ -30,7 +30,8 @@ public class ContestsCacheService : IContestsCacheService
         => await this.cache.Get(
             string.Format(CacheConstants.ContestDetailsById, contestId),
             async () => await this.GetContestDetails(contestId),
-            CacheConstants.FiveMinutesInSeconds);
+            CacheConstants.OneHourInSeconds,
+            slidingExpirationSeconds: CacheConstants.FiveMinutesInSeconds);
 
     private async Task<ContestDetailsServiceModel?> GetContestDetails(int contestId)
     {
