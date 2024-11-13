@@ -12,7 +12,7 @@ public class ProblemCacheModel : IMapExplicitly
 
     public int ProblemGroupId { get; set; }
 
-    public virtual ProblemGroupCacheModel ProblemGroup { get; set; } = null!;
+    public ProblemGroupCacheModel ProblemGroup { get; set; } = null!;
 
     public string Name { get; set; } = string.Empty;
 
@@ -26,7 +26,7 @@ public class ProblemCacheModel : IMapExplicitly
 
     public int? CheckerId { get; set; }
 
-    public virtual CheckerCacheModel? Checker { get; set; }
+    public CheckerCacheModel? Checker { get; set; }
 
     public double OrderBy { get; set; }
 
@@ -36,9 +36,9 @@ public class ProblemCacheModel : IMapExplicitly
 
     public bool ShowDetailedFeedback { get; set; }
 
-    public virtual ICollection<ProblemResourceCacheModel> Resources { get; set; } = [];
+    public ICollection<ProblemResourceCacheModel> Resources { get; set; } = [];
 
-    public virtual ICollection<SubmissionTypeInProblemCacheModel> SubmissionTypesInProblems { get; set; } = [];
+    public ICollection<SubmissionTypeInProblemCacheModel> SubmissionTypesInProblems { get; set; } = [];
 
     public bool IsDeleted { get; set; }
 
@@ -47,6 +47,5 @@ public class ProblemCacheModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<Problem, ProblemCacheModel>()
-            .ForMember(m => m.Checker, opt => opt.Ignore()) // Checker is mapped separately, as it's cached separately.
             .ReverseMap();
 }
