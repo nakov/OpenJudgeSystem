@@ -20,17 +20,13 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Task<int> GetSubmissionsPerDayCount();
 
-    Submission? GetBestForParticipantByProblem(int participantId, int problemId);
-
     IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
-
-    IQueryable<Submission> GetAllHavingPointsExceedingLimit();
 
     IQueryable<Submission> GetAllForUserByContest(int contestId, string userId);
 
     Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
 
-    Task<bool> HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
+    Task<bool> HasParticipantNotProcessedSubmissionForProblem(int problemId, int participantId);
 
-    Task<bool> HasUserNotProcessedSubmissionForContest(int contestId, string userId);
+    Task<bool> HasParticipantNotProcessedSubmissionForContest(int contestId, int participantId);
 }

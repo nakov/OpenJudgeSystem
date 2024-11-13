@@ -70,20 +70,18 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         var problemIdToString = problem.Id.ToString();
 
-        var userHasUnprocessedSubmissionForProblem =
-            await this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, participant.UserId);
+        var participantHasUnprocessedSubmissionForProblem =
+            await this.submissionsData.HasParticipantNotProcessedSubmissionForProblem(problem.Id, participant.Id);
 
-        var userHasUnprocessedSubmissionForContest =
-            await this.submissionsData.HasUserNotProcessedSubmissionForContest(contest.Id, participant.UserId);
-
-        if (userHasUnprocessedSubmissionForProblem)
+        if (participantHasUnprocessedSubmissionForProblem)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem,
                 problemIdToString);
         }
 
-        if (!contest.AllowParallelSubmissionsInTasks && userHasUnprocessedSubmissionForContest)
+        if (!contest.AllowParallelSubmissionsInTasks &&
+            await this.submissionsData.HasParticipantNotProcessedSubmissionForContest(contest.Id, participant.Id))
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,

@@ -45,21 +45,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(submissionsPerPage, pageNumber);
 
-    public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
-        this.GetAllByProblemAndParticipant(problemId, participantId)
-            .Where(s => s.Processed)
-            .OrderByDescending(s => s.Points)
-            .ThenByDescending(s => s.Id)
-            .FirstOrDefault();
-
     public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
         => this.GetQuery(
             filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
             orderBy: q => q.CreatedOn,
             descending: true);
-
-    public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
-        => this.GetQuery(s => s.Points > s.Problem!.MaximumPoints);
 
     public IQueryable<Submission> GetAllForUserByContest(int contestId, string userId)
         => this.GetQuery(
@@ -91,12 +81,13 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         return 0;
     }
 
-    public Task<bool> HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
-        this.Exists(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
+    public Task<bool> HasParticipantNotProcessedSubmissionForProblem(int problemId, int participantId)
+        => this.Exists(s => s.ProblemId == problemId && s.ParticipantId == participantId && !s.Processed);
 
-    public Task<bool> HasUserNotProcessedSubmissionForContest(int contestId, string userId) =>
-        this.Exists(s => s.Problem.ProblemGroup.ContestId == contestId
-                           && s.Participant!.UserId == userId && !s.Processed);
+    public Task<bool> HasParticipantNotProcessedSubmissionForContest(int contestId, int participantId)
+        => this.Exists(s =>
+            s.Problem.ProblemGroup.ContestId == contestId &&
+            s.ParticipantId == participantId && !s.Processed);
 
     public async Task<int> GetSubmissionsPerDayCount()
         => await this.GetQuery().AnyAsync()
