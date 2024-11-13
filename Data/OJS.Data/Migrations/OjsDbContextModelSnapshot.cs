@@ -507,6 +507,59 @@ namespace OJS.Data.Migrations
                     b.ToTable("LecturersInContestCategories");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.Mentor.MentorPromptTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MentorPromptTemplates");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Mentor.UserMentor", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("QuotaLimit")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("QuotaResetTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("RequestsMade")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("UsersMentors");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Participants.Participant", b =>
                 {
                     b.Property<int>("Id")
@@ -1397,6 +1450,17 @@ namespace OJS.Data.Migrations
                     b.Navigation("ContestCategory");
 
                     b.Navigation("Lecturer");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Mentor.UserMentor", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Participants.Participant", b =>

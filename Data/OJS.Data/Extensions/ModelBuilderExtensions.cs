@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
 using OJS.Data.Models.Checkers;
 using OJS.Data.Models.Contests;
+using OJS.Data.Models.Mentor;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
@@ -121,6 +122,9 @@ public static class ModelBuilderExtensions
 
         builder.Entity<UserProfile>()
             .HasQueryFilter(x => !x.IsDeleted);
+
+        builder.Entity<UserMentor>()
+            .HasQueryFilter(x => !x.User.IsDeleted);
 
         builder.Entity<AccessLog>()
             .HasQueryFilter(x => !x.User.IsDeleted);
