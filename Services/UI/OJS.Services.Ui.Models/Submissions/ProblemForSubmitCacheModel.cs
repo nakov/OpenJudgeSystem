@@ -10,11 +10,7 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public int ProblemGroupId { get; set; }
-
-    public ProblemGroupCacheModel ProblemGroup { get; set; } = null!;
-
-    public ContestCacheModel? Contest { get; set; } = null!;
+    public ContestCacheModel? Contest { get; set; }
 
     public string Name { get; set; } = string.Empty;
 
@@ -26,9 +22,9 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
 
     public int? SourceCodeSizeLimit { get; set; }
 
-    public int? CheckerId { get; set; }
-
     public bool ShowResults { get; set; }
+
+    public int? CheckerId { get; set; }
 
     public CheckerCacheModel? Checker { get; set; }
 
@@ -39,8 +35,7 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<Problem, ProblemForSubmitCacheModel>()
-            .ForMember(m => m.Contest, opt => opt.Ignore())
+            .ForMember(m => m.Contest, opt => opt.MapFrom(src => src.ProblemGroup.Contest))
             .ForMember(m => m.Tests, opt => opt.Ignore())
-            .ForMember(m => m.Checker, opt => opt.Ignore())
             .ReverseMap();
 }

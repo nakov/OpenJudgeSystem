@@ -15,23 +15,20 @@ using System.Linq;
 public class ProblemsCache : IProblemsCacheService
 {
     private readonly IProblemsDataService problemsData;
-    private readonly IContestsDataService contestsData;
     private readonly ICacheService cache;
     private readonly ICheckersCacheService checkersCache;
-    private readonly ITestsCacheService testsCache;
+    private readonly ITestsDataService testsData;
 
     public ProblemsCache(
         IProblemsDataService problemsData,
-        IContestsDataService contestsData,
         ICacheService cache,
         ICheckersCacheService checkersCache,
-        ITestsCacheService testsCache)
+        ITestsDataService testsData)
     {
         this.problemsData = problemsData;
-        this.contestsData = contestsData;
         this.cache = cache;
         this.checkersCache = checkersCache;
-        this.testsCache = testsCache;
+        this.testsData = testsData;
     }
 
     public async Task<ICollection<ProblemCacheModel>> GetByContestId(
@@ -72,8 +69,8 @@ public class ProblemsCache : IProblemsCacheService
         => this.cache.Get(
             string.Format(CacheConstants.ProblemForSubmit, problemId),
             async () => await this.GetProblemForSubmitById(problemId),
-            CacheConstants.TenMinutesInSeconds,
-            slidingExpirationSeconds: CacheConstants.OneMinuteInSeconds);
+            CacheConstants.OneHourInSeconds,
+            slidingExpirationSeconds: CacheConstants.TenMinutesInSeconds);
 
     private async Task<ProblemForSubmitCacheModel?> GetProblemForSubmitById(int problemId)
     {
@@ -87,9 +84,10 @@ public class ProblemsCache : IProblemsCacheService
             return null;
         }
 
-        problem.Contest = await this.contestsData.OneByIdTo<ContestCacheModel>(problem.ProblemGroup.ContestId);
-        problem.Tests = (await this.testsCache.GetByProblemId(problemId)).Values;
-        problem.Checker = await this.checkersCache.GetById(problem.CheckerId ?? 0);
+        problem.Tests = await this.testsData
+            .GetAllByProblem(problemId)
+            .MapCollection<TestCacheModel>()
+            .ToListAsync();
 
         return problem;
     }
