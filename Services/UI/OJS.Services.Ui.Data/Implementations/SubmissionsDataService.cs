@@ -5,22 +5,14 @@ using OJS.Common.Extensions;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
-using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
+public class SubmissionsDataService(OjsDbContext db) : DataService<Submission>(db), ISubmissionsDataService
 {
-    private readonly IDatesService datesService;
-
-    public SubmissionsDataService(OjsDbContext db, IDatesService datesService)
-        : base(db)
-        => this.datesService = datesService;
-
     public Task<TServiceModel?> GetSubmissionById<TServiceModel>(int id)
         => this.GetByIdQuery(id)
             .AsNoTracking()
@@ -51,36 +43,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             orderBy: q => q.CreatedOn,
             descending: true);
 
-    public IQueryable<Submission> GetAllForUserByContest(int contestId, string userId)
-        => this.GetQuery(
-        filter: s => s.Participant!.UserId == userId
-                     && s.Problem.ProblemGroup.ContestId == contestId,
-        orderBy: s => s.Id,
-        descending: true);
-
-    public async Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
-    {
-        if (limitBetweenSubmissions <= 0)
-        {
-            return 0;
-        }
-
-        var lastSubmissionCreatedOn = await this.GetLastSubmitForParticipant(participantId);
-
-        if (lastSubmissionCreatedOn != default)
-        {
-            // check if the submission was sent after the submission time limit has passed
-            var differenceBetweenSubmissions = this.datesService.GetUtcNow() - lastSubmissionCreatedOn;
-            // Adding 5 seconds to compensate for potential difference between server and client time
-            if (differenceBetweenSubmissions.TotalSeconds + 5 < limitBetweenSubmissions)
-            {
-                return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
-            }
-        }
-
-        return 0;
-    }
-
     public Task<bool> HasParticipantNotProcessedSubmissionForProblem(int problemId, int participantId)
         => this.Exists(s => s.ProblemId == problemId && s.ParticipantId == participantId && !s.Processed);
 
@@ -96,13 +58,4 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .AverageAsync()
                 .ToInt()
             : 0;
-
-    private IQueryable<Submission> GetByIdQuery(int id) =>
-        this.GetQuery(s => s.Id == id);
-
-    private async Task<DateTime> GetLastSubmitForParticipant(int participantId)
-        => await this.GetQuery(s => s.ParticipantId == participantId)
-            .OrderByDescending(s => s.CreatedOn)
-            .Select(s => s.CreatedOn)
-            .FirstOrDefaultAsync();
 }

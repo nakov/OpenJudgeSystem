@@ -22,10 +22,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
 
-    IQueryable<Submission> GetAllForUserByContest(int contestId, string userId);
-
-    Task<int> GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
-
     Task<bool> HasParticipantNotProcessedSubmissionForProblem(int problemId, int participantId);
 
     Task<bool> HasParticipantNotProcessedSubmissionForContest(int contestId, int participantId);
