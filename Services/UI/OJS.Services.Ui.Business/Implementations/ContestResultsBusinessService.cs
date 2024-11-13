@@ -2,6 +2,7 @@ namespace OJS.Services.Ui.Business.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
+using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Exceptions;
@@ -10,7 +11,6 @@ using OJS.Services.Ui.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Cache;
@@ -27,7 +27,6 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
     private readonly IUserProviderService userProvider;
     private readonly IParticipantsDataService participantsData;
     private readonly IContestsCacheService contestsCache;
-    private readonly IProblemsCacheService problemsCache;
 
     public ContestResultsBusinessService(
         IContestResultsAggregatorCommonService contestResultsAggregator,
@@ -36,8 +35,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         ILecturersInContestsBusinessService lecturersInContestsBusinessService,
         IUserProviderService userProvider,
         IParticipantsDataService participantsData,
-        IContestsCacheService contestsCache,
-        IProblemsCacheService problemsCache)
+        IContestsCacheService contestsCache)
     {
         this.contestResultsAggregator = contestResultsAggregator;
         this.contestsData = contestsData;
@@ -46,12 +44,11 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         this.userProvider = userProvider;
         this.participantsData = participantsData;
         this.contestsCache = contestsCache;
-        this.problemsCache = problemsCache;
     }
 
     public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults, int page)
     {
-        var contest = await this.contestsCache.GetContest(contestId).Map<Contest>()
+        var contest = await this.contestsCache.GetContestDetailsServiceModel(contestId)
             ?? throw new BusinessServiceException("Contest does not exist or is deleted.");
 
         var validationResult = this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
@@ -62,11 +59,11 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         }
 
         var user = this.userProvider.GetCurrentUser();
-        var problems = (await this.problemsCache.GetByContestId(contestId).MapCollection<Problem>()).ToList();
+        var problems = contest.Problems.MapCollection<Problem>().ToList();
 
         var contestResultsModel = new ContestResultsModel
         {
-            Contest = contest,
+            Contest = contest.Map<Contest>(),
             Problems = problems,
             CategoryId = contest.CategoryId.GetValueOrDefault(),
             Official = official,

@@ -5,9 +5,9 @@
     using OJS.Data.Models.Problems;
     using OJS.Services.Ui.Models.SubmissionTypes;
     using OJS.Services.Infrastructure.Models.Mapping;
+    using OJS.Services.Ui.Models.Cache;
     using System.Collections.Generic;
     using System.Linq;
-    using OJS.Services.Ui.Models.Cache;
 
     public class ContestProblemServiceModel : IMapExplicitly
     {
@@ -27,13 +27,15 @@
 
         public double ProblemGroupOrderBy { get; set; }
 
+        public ProblemGroupCacheModel? ProblemGroup { get; set; }
+
         public short MaximumPoints { get; set; }
 
         public bool ShowResults { get; set; }
 
         public int? Points { get; set; }
 
-        public bool IsExcludedFromHomework { get; set; }
+        public bool IsExcludedFromHomework => this.ProblemGroup?.Type == ProblemGroupType.ExcludedFromHomework;
 
         public double MemoryLimit { get; set; }
 
@@ -62,18 +64,15 @@
 
         public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
 
-        public bool UserHasAdminRights { get; set; }
-
         public void RegisterMappings(IProfileExpression configuration) =>
-            configuration.CreateMap<ProblemCacheModel, ContestProblemServiceModel>()
+            configuration.CreateMap<Problem, ContestProblemServiceModel>()
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ProblemGroup.ContestId))
                 .ForMember(
                     d => d.IsExcludedFromHomework,
-                    opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
+                    opt => opt.Ignore())
                 .ForMember(
                     d => d.FileSizeLimit,
                     opt => opt.MapFrom(s => s.SourceCodeSizeLimit.HasValue ? (double)s.SourceCodeSizeLimit : default))
-                .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(
                     d => d.AllowedSubmissionTypes,
                     opt => opt.MapFrom(s => s.SubmissionTypesInProblems))
@@ -88,6 +87,7 @@
                     opt => opt.MapFrom(s => s.Resources.OrderBy(x => x.OrderBy)))
                 .ForMember(
                     d => d.TimeLimit,
-                    opt => opt.MapFrom(s => (double?)s.TimeLimit));
+                    opt => opt.MapFrom(s => (double?)s.TimeLimit))
+                .ReverseMap();
     }
 }

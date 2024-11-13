@@ -97,7 +97,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.problemsData.SaveChanges();
 
         await this.ReevaluateProblemsOrder(contestId);
-        await this.problemsCache.ClearProblemsCacheByContestId(contestId);
         await this.problemsCache.ClearProblemCacheById(problem.Id);
 
         return model;
@@ -132,7 +131,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         this.submissionsData.DeleteByProblem(id);
 
-        await this.problemsCache.ClearProblemsCacheByContestId(problem.ContestId);
         await this.problemsCache.ClearProblemCacheById(id);
 
         scope.Complete();
@@ -226,7 +224,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         AddSubmissionTypes(problem, model);
 
-        await this.problemsCache.ClearProblemsCacheByContestId(problem.ProblemGroup.ContestId);
         await this.problemsCache.ClearProblemCacheById(problem.Id);
 
         this.problemsData.Update(problem);

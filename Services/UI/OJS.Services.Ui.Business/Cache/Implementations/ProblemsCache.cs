@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Infrastructure.Cache;
@@ -8,35 +7,22 @@ using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Cache;
-using OJS.Services.Ui.Models.Submissions;
 
 public class ProblemsCache : IProblemsCacheService
 {
-    private readonly IProblemsDataService problemsData;
     private readonly ICacheService cache;
+    private readonly IProblemsDataService problemsData;
     private readonly ITestsDataService testsData;
 
     public ProblemsCache(
-        IProblemsDataService problemsData,
         ICacheService cache,
+        IProblemsDataService problemsData,
         ITestsDataService testsData)
     {
-        this.problemsData = problemsData;
         this.cache = cache;
+        this.problemsData = problemsData;
         this.testsData = testsData;
     }
-
-    public async Task<ICollection<ProblemCacheModel>> GetByContestId(
-        int contestId,
-        int cacheSeconds)
-        => await this.cache.Get(
-            string.Format(CacheConstants.ProblemsByContestId, contestId),
-            async () => await this.problemsData
-                .GetAllByContest(contestId)
-                .AsNoTracking()
-                .MapCollection<ProblemCacheModel>()
-                .ToListAsync(),
-            cacheSeconds);
 
     public Task<ProblemForSubmitCacheModel?> GetForSubmitById(int problemId)
         => this.cache.Get(
