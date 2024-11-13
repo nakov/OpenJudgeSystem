@@ -13,7 +13,6 @@ public class TestsCacheService : ITestsCacheService
 
     public async Task ClearTestsCacheByProblemId(int problemId)
     {
-        await this.cache.Remove(string.Format(CacheConstants.TestsByProblemId, problemId));
         await this.cache.Remove(string.Format(CacheConstants.ProblemForSubmit, problemId));
     }
 }

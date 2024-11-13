@@ -1,10 +1,9 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions;
 
+using OJS.Data.Models.Tests;
 using OJS.Services.Infrastructure.Models.Mapping;
-using OJS.Services.Ui.Models.Cache;
-using OJS.Workers.Common.Extensions;
 
-public class TestDetailsServiceModel : IMapFrom<TestCacheModel>
+public class TestDetailsServiceModel : IMapFrom<Test>
 {
     public int Id { get; set; }
 
@@ -16,7 +15,7 @@ public class TestDetailsServiceModel : IMapFrom<TestCacheModel>
 
     public byte[] InputData { get; set; } = [];
 
-    public string InputDataAsString => this.InputData.Decompress();
+    public string? InputDataAsString { get; set; }
 
     public double OrderBy { get; set; }
 }

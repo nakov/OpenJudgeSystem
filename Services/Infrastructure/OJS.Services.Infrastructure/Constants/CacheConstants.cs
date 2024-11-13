@@ -9,7 +9,6 @@
         public const int FiveMinutesInSeconds = OneMinuteInSeconds * 5;
         public const int TenMinutesInSeconds = OneMinuteInSeconds * 10;
 
-        public const string MainContestCategoriesDropDown = "MainContestCategoriesDropDown";
         public const string ParticipantsCountByContest = "ParticipantsCountByContest:{0}";
         public const string ParticipantsCountByContestsPage = "ParticipantsCountByContestsPage:{0}:{1}";
         public const string ContestDetailsById = "Contest:{0}:Details";
@@ -23,7 +22,5 @@
         public const string LatestPublicSubmissions = "PublicSubmissions";
 
         public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
-
-        public const string TestsByProblemId = "TestsByProblemId:{0}";
     }
 }

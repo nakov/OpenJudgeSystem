@@ -59,7 +59,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ITransactionsProvider transactionsProvider;
     private readonly ICacheService cache;
     private readonly ITestRunsDataService testRunsDataService;
-    private readonly ITestsCacheService testsCache;
     private readonly IProblemsCacheService problemsCache;
 
     public SubmissionsBusinessService(
@@ -85,7 +84,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         ITestRunsDataService testRunsDataService,
-        ITestsCacheService testsCache,
         IProblemsCacheService problemsCache)
     {
         this.logger = logger;
@@ -110,7 +108,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
         this.testRunsDataService = testRunsDataService;
-        this.testsCache = testsCache;
         this.problemsCache = problemsCache;
     }
 
@@ -127,16 +124,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<TestRunDetailsServiceModel>()
             .ToListAsync();
 
-        var tests = (await this.testsCache.GetByProblemId(submission.ProblemId))
-            .ToDictionary(t => t.Key, t => t.Value.Map<TestDetailsServiceModel>());
-
-        foreach (var testRun in testRuns)
-        {
-            testRun.Test = tests[testRun.TestId];
-        }
-
         submission.TestRuns = testRuns;
-        submission.Tests = tests.Values;
 
         var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
             .IsCurrentUserAdminOrLecturerInContest(submission.ContestId);
@@ -180,17 +168,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<TestRunDetailsServiceModel>()
             .ToListAsync();
 
-        var tests = (await this.testsCache.GetByProblemId(submissionDetailsServiceModel.ProblemId))
-            .ToDictionary(t => t.Key, t => t.Value.Map<TestDetailsServiceModel>());
-
         foreach (var testRun in testRuns)
         {
-            if (!tests.TryGetValue(testRun.TestId, out var test))
-            {
-                throw new BusinessServiceException($"Test #{testRun.TestId} for test run #{testRun.Id} not found.");
-            }
-
-            testRun.Test = test;
+            var test = testRun.Test;
             submissionDetailsServiceModel.Tests.Add(test);
 
             var displayShowInput = userIsAdminOrLecturerInContest || (test is { HideInput: false }
@@ -222,7 +202,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         submissionDetailsServiceModel.TestRuns = [.. testRuns.OrderBy(tr => tr.OrderBy).ThenBy(tr => tr.IsTrialTest)];
-        submissionDetailsServiceModel.Tests = tests.Values;
 
         submissionDetailsServiceModel.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
