@@ -5,9 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
@@ -18,28 +16,31 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 {
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionsDataService submissionsData;
-    private readonly IContestsActivityService activityService;
 
     public SubmitSubmissionValidationService(
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
-        ISubmissionsDataService submissionsData,
-        IContestsActivityService activityService)
+        ISubmissionsDataService submissionsData)
     {
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
-        this.activityService = activityService;
         this.submissionsData = submissionsData;
     }
 
-    public async Task<ValidationResult> GetValidationResult((ProblemForSubmitCacheModel?, Participant?, SubmitSubmissionServiceModel, ContestCacheModel?, SubmissionType?) item)
+    public async Task<ValidationResult> GetValidationResult(
+        (ProblemForSubmitCacheModel?,
+        Participant?,
+        ParticipantActivityServiceModel?,
+        SubmitSubmissionServiceModel,
+        ContestCacheModel?,
+        SubmissionType?) item)
     {
-        var (problem, participant, submitSubmissionServiceModel, contest, submissionType) = item;
+        var (problem, participant, participantActivity, submitSubmissionServiceModel, contest, submissionType) = item;
 
         if (problem == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
-        if (participant == null)
+        if (participant == null || participantActivity == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
         }
@@ -51,8 +52,6 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         var isAdminOrLecturer = await this.lecturersInContestsBusiness
             .IsCurrentUserAdminOrLecturerInContest(contest.Id);
-
-        var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
 
         if (participantActivity.IsInvalidated)
         {
