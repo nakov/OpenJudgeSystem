@@ -70,7 +70,7 @@ public class ProblemsCache : IProblemsCacheService
             string.Format(CacheConstants.ProblemForSubmit, problemId),
             async () => await this.GetProblemForSubmitById(problemId),
             CacheConstants.OneHourInSeconds,
-            slidingExpirationSeconds: CacheConstants.TenMinutesInSeconds);
+            slidingExpirationSeconds: CacheConstants.FiveMinutesInSeconds);
 
     private async Task<ProblemForSubmitCacheModel?> GetProblemForSubmitById(int problemId)
     {

@@ -336,10 +336,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
             (problem, participant, model, contest, submissionType));
 
-        if (participant != null)
-        {
-            participant.Contest = problem.Contest!.Map<Contest>();
-        }
+        participant!.Contest = contest!.Map<Contest>();
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -360,8 +357,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         newSubmission.ParticipantId = participant!.Id;
         newSubmission.IpAddress = "model.UserHostAddress";
-        newSubmission.IsPublic = ((participant.IsOfficial && contest.ContestPassword == null) ||
-                                  (!participant.IsOfficial && contest.PracticePassword == null)) &&
+        newSubmission.IsPublic = ((participant.IsOfficial && contest!.ContestPassword == null) ||
+                                  (!participant.IsOfficial && contest!.PracticePassword == null)) &&
                                  (contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow()) &&
                                  !contest.IsDeleted &&
                                  problem.ShowResults;
