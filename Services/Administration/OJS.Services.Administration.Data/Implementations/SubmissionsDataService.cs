@@ -101,8 +101,8 @@
                              submission.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
                              submission.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == user.Id);
 
-        private static IQueryable<Submission> IncludeProblemTestsAndSubmissionTypes(IQueryable<Submission> queryable) =>
-            queryable
+        private static IQueryable<Submission> IncludeProblemTestsAndSubmissionTypes(IQueryable<Submission> queryable)
+            => queryable
                 .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
                     .ThenInclude(p => p.Checker)
