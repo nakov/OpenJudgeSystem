@@ -1,8 +1,9 @@
-import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
-import { DataGrid, GridPaginationModel } from '@mui/x-data-grid';
+import { DataGrid, GridFilterModel, GridLogicOperator, GridPaginationModel } from '@mui/x-data-grid';
+import { GridFilterItem } from '@mui/x-data-grid/models/gridFilterItem';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -193,6 +194,89 @@ const AdministrationGridView = <T extends object>(props: IAdministrationGridView
         },
     };
 
+    // const [ filterModel, setFilterModel ] = useState<GridFilterModel>({
+    //     items: [
+    //         { id: '1', field: 'name', operator: 'contains', value: 'Test' } as GridFilterItem,
+    //         { id: '2', field: 'id', operator: '>', value: '30' } as GridFilterItem,
+    //     ] as GridFilterItem[],
+    // });
+
+    const [ filterModel, setFilterModel ] = useState<GridFilterModel>({
+        items: [],
+        logicOperator: GridLogicOperator.And,
+        quickFilterValues: [],
+        quickFilterLogicOperator: GridLogicOperator.And,
+    });
+
+    // const handleFilterModelChange = useCallback(
+    //     (newFilterModel: GridFilterModel) => {
+    //         setFilterModel((prevFilterModel) => {
+    //             // Create a copy of previous filter items
+    //             const updatedItems = [ ...prevFilterModel.items ];
+    //
+    //             // Loop through new filter items
+    //             newFilterModel.items.forEach((newItem) => {
+    //                 // Check if a filter for the same column already exists
+    //                 const existingIndex = updatedItems.findIndex((item) => item.field === newItem.field);
+    //
+    //                 if (existingIndex >= 0) {
+    //                     // Update the existing filter item
+    //                     updatedItems[existingIndex] = newItem;
+    //                 } else {
+    //                     // Add the new filter item if it doesn't already exist
+    //                     updatedItems.push(newItem);
+    //                 }
+    //             });
+    //
+    //             // Return the updated filter model with merged items
+    //             return {
+    //                 ...prevFilterModel,
+    //                 items: updatedItems,
+    //             };
+    //         });
+    //     },
+    //     [],
+    // );
+
+    const handleFilterModelChange = useCallback(
+        (newFilterModel: GridFilterModel) => {
+            setFilterModel((prevFilterModel) => {
+                const updatedItems = [ ...prevFilterModel.items ];
+                let hasChanges = false;
+
+                newFilterModel.items.forEach((newItem) => {
+                    const existingIndex = updatedItems.findIndex((item) => item.field === newItem.field);
+
+                    if (existingIndex >= 0) {
+                        if (
+                            updatedItems[existingIndex].value !== newItem.value
+                        ) {
+                            updatedItems[existingIndex] = newItem;
+                            hasChanges = true;
+                        }
+                    } else {
+                        updatedItems.push(newItem);
+                        hasChanges = true;
+                    }
+                });
+
+                if (hasChanges) {
+                    return {
+                        ...prevFilterModel,
+                        items: updatedItems,
+                    };
+                }
+
+                return prevFilterModel;
+            });
+        },
+        [ setFilterModel ],
+    );
+
+    useEffect(() => {
+        console.log(filterModel);
+    }, [ filterModel ]);
+
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div>
@@ -219,6 +303,9 @@ const AdministrationGridView = <T extends object>(props: IAdministrationGridView
                           rows={data?.items ?? []}
                           rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
+                          filterMode="server"
+                          filterModel={filterModel}
+                          onFilterModelChange={handleFilterModelChange}
                           autoHeight
                           onPaginationModelChange={handlePaginationModelChange}
                           pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}

@@ -59,12 +59,12 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'name',
         headerName: `${NAME}`,
-        flex: 3,
-        minWidth: 380,
+        /// flex: 3,
+        // minWidth: 380,
         headerAlign: 'center',
         type: 'string',
         align: 'center',
-        filterable: false,
+        filterable: true,
         sortable: false,
     },
     {
@@ -74,6 +74,7 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
         type: 'string',
         filterable: false,
         headerAlign: 'center',
+        filterable: true,
         sortable: false,
         flex: 2,
         minWidth: 200,
