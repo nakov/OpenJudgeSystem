@@ -275,7 +275,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .MapCollection<ContestParticipationServiceModel>()
                 .FirstOrDefaultAsync() ?? throw new BusinessServiceException("Participant not found");
 
-            var contest = await this.contestsCacheService.GetContestServiceModel(model.ContestId);
+            var contest = await this.contestsCacheService.GetContestDetailsServiceModel(model.ContestId);
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((

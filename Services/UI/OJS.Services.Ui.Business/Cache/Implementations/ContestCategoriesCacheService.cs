@@ -7,7 +7,6 @@ using OJS.Services.Ui.Models.Contests;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ContestCategoryListViewModel = OJS.Services.Common.Models.Cache.ContestCategoryListViewModel;
 
 public class ContestCategoriesCacheService : IContestCategoriesCacheService
 {
@@ -28,11 +27,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         => this.GetFromCache(
             string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId),
             () => this.contestCategoriesBusiness.GetAllSubcategories(categoryId),
-            cacheSeconds);
-    public Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(int? cacheSeconds)
-        => this.GetFromCache(
-            CacheConstants.MainContestCategoriesDropDown,
-            this.contestCategoriesBusiness.GetAllMain,
             cacheSeconds);
 
     public Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(int? cacheSeconds)

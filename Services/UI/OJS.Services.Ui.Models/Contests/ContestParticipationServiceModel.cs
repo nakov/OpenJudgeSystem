@@ -12,7 +12,7 @@ public class ContestParticipationServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public ContestServiceModel? Contest { get; set; }
+    public ContestDetailsServiceModel? Contest { get; set; }
 
     public bool IsRegisteredParticipant { get; set; }
 

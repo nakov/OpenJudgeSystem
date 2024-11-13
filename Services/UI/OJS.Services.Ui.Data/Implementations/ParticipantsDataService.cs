@@ -23,6 +23,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public Task<Participant?> GetWithProblemsForParticipantByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
+                .AsNoTracking()
                 .Include(p => p.User)
                 .Include(p => p.ProblemsForParticipants)
                 .FirstOrDefaultAsync();

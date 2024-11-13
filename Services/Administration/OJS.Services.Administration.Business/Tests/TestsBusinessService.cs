@@ -30,7 +30,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
     private readonly ISubmissionsDataService submissionsDataService;
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IZipArchivesService zipArchivesService;
-    private readonly ITestsCacheService testsCache;
+    private readonly IProblemsCacheService problemsCache;
 
     public TestsBusinessService(
         ITestsDataService testsDataService,
@@ -41,7 +41,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         ISubmissionsDataService submissionsDataService,
         IProblemsBusinessService problemsBusinessService,
         IZipArchivesService zipArchivesService,
-        ITestsCacheService testsCache)
+        IProblemsCacheService problemsCache)
     {
         this.testsDataService = testsDataService;
         this.testRunsDataService = testRunsDataService;
@@ -51,7 +51,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         this.submissionsDataService = submissionsDataService;
         this.problemsBusinessService = problemsBusinessService;
         this.zipArchivesService = zipArchivesService;
-        this.testsCache = testsCache;
+        this.problemsCache = problemsCache;
     }
 
     public override async Task<TestAdministrationModel> Get(int id)
@@ -94,7 +94,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
 
         test.MapFrom(model);
 
-        await this.testsCache.ClearTestsCacheByProblemId(test.ProblemId);
+        await this.problemsCache.ClearProblemCacheById(test.ProblemId);
 
         UpdateInputAndOutput(test, model);
         UpdateType(test, model);
@@ -128,14 +128,14 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
 
         await this.testsDataService.DeleteById(id);
         await this.testsDataService.SaveChanges();
-        await this.testsCache.ClearTestsCacheByProblemId(problemId);
+        await this.problemsCache.ClearProblemCacheById(problemId);
     }
 
     public async Task DeleteAll(int problemId)
     {
         await this.testRunsDataService.DeleteByProblem(problemId);
         await this.testsDataService.DeleteByProblem(problemId);
-        await this.testsCache.ClearTestsCacheByProblemId(problemId);
+        await this.problemsCache.ClearProblemCacheById(problemId);
     }
 
     public async Task<string> Import(TestsImportRequestModel model)

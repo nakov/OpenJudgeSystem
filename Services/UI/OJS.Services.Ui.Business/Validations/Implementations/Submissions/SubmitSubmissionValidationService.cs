@@ -1,11 +1,9 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
-using OJS.Data.Models.Contests;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OJS.Data.Models.Participants;
-using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
@@ -13,6 +11,7 @@ using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Cache;
 using OJS.Services.Ui.Models.Submissions;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
@@ -31,7 +30,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         this.submissionsData = submissionsData;
     }
 
-    public async Task<ValidationResult> GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel, Contest?, SubmissionType?) item)
+    public async Task<ValidationResult> GetValidationResult((ProblemForSubmitCacheModel?, Participant?, SubmitSubmissionServiceModel, ContestCacheModel?, SubmissionType?) item)
     {
         var (problem, participant, submitSubmissionServiceModel, contest, submissionType) = item;
 

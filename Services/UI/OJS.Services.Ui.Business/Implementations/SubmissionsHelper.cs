@@ -7,6 +7,6 @@ public class SubmissionsHelper(ISubmissionsForProcessingBusinessService submissi
     : ISubmissionsHelper
 {
     public async Task<bool> IsEligibleForRetest(SubmissionDetailsServiceModel detailsModel)
-        => detailsModel is { IsProcessed: true, IsCompiledSuccessfully: true, TestRuns.Count: 0, Tests.Count: > 0 } &&
+        => detailsModel is { IsProcessed: true, IsCompiledSuccessfully: true, TestRuns.Count: 0 } &&
            !await submissionsForProcessingBusinessService.IsSubmissionProcessing(detailsModel.Id);
 }
