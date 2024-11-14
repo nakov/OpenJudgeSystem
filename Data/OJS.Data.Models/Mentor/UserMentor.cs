@@ -3,9 +3,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using OJS.Data.Models.Common;
 using OJS.Data.Models.Users;
 
-public class UserMentor
+public class UserMentor : IEntity
 {
     [Key]
     [ForeignKey(nameof(User))]
