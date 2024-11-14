@@ -103,6 +103,8 @@
 
         private static IQueryable<Submission> IncludeProblemTestsAndSubmissionTypes(IQueryable<Submission> queryable)
             => queryable
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
                     .ThenInclude(p => p.Checker)
