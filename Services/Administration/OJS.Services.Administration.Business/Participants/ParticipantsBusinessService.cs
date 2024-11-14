@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Participants;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Enumerations;
 using OJS.Data.Models.Participants;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Participants;
@@ -50,7 +49,7 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
     public async Task RemoveDuplicateParticipantScores()
     {
         var duplicateGroups = await this.scoresDataService
-            .GetAll()
+            .GetQuery()
             .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
             .Where(psGroup => psGroup.Count() > 1)
             .Select(psGroup => new
@@ -68,9 +67,6 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
 
         await this.scoresDataService.Delete(participantScoresToRemove);
     }
-
-    public IQueryable<Participant> GetByContest(int contestId)
-        => this.participantsData.GetAllByContest(contestId);
 
     public async Task<string> UpdateParticipationTimeForMultipleParticipants(
         ChangeParticipationTimeForMultipleParticipantsModel model)

@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Worker.Business.Implementations;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using OJS.Workers.Common;
 using OJS.Workers.ExecutionStrategies.Models;

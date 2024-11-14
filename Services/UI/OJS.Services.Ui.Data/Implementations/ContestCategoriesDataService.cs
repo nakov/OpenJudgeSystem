@@ -24,8 +24,8 @@
                 .MapCollection<T>()
                 .ToEnumerableAsync();
 
-        public IEnumerable<T> GetAllowedStrategyTypesById<T>(int id)
-            => this.GetQuery(cc => cc.Id == id)
+        public async Task<IEnumerable<T>> GetAllowedStrategyTypesById<T>(int id)
+            => await this.GetQuery(cc => cc.Id == id)
                 .SelectMany(c => c.Contests)
                     .Where(c => !c.IsDeleted && c.IsVisible)
                 .SelectMany(pg => pg.ProblemGroups)
@@ -35,23 +35,7 @@
                 .SelectMany(stp => stp.SubmissionTypesInProblems)
                 .Select(st => st.SubmissionType)
                 .MapCollection<T>()
-                .ToList();
-
-        public IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId)
-            => this.GetAllVisible()
-                .Where(cc =>
-                    cc.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId) ||
-                    cc.Contests.Any(c => c.LecturersInContests.Any(l => l.LecturerId == lecturerId)));
-
-        public Task<string?> GetNameById(int id)
-            => this.GetQuery(cc => cc.Id == id)
-                .Select(cc => cc.Name)
-                .FirstOrDefaultAsync();
-
-        public Task<bool> HasContestsById(int id)
-            => this.GetAllVisible()
-                .Where(cc => cc.Id == id)
-                .AnyAsync(cc => cc.Contests.Any());
+                .ToListAsync();
 
         public IQueryable<ContestCategory> GetAllVisibleOrdered() =>
             this.GetQuery(cc => cc.IsVisible)

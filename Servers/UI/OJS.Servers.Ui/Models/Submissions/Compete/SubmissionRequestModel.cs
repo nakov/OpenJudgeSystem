@@ -8,6 +8,8 @@ public class SubmissionRequestModel : IMapExplicitly
 {
     public int ProblemId { get; set; }
 
+    public int ContestId { get; set; }
+
     public int SubmissionTypeId { get; set; }
 
     public string? Content { get; set; }

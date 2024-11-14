@@ -1,12 +1,9 @@
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using Microsoft.Extensions.Logging;

@@ -3,8 +3,7 @@
     using System;
     using System.Collections.Generic;
     using AutoMapper;
-    using Data.Models;
-    using Infrastructure.Extensions;
+    using OJS.Data.Models;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Infrastructure.Models.Mapping;
 
@@ -66,7 +65,8 @@
                             ? s.SubmissionType.AllowedFileExtensions.Split(
                                 this.allowedFileExtensionsDelimiters,
                                 StringSplitOptions.RemoveEmptyEntries)
-                            : Array.Empty<string>()));
+                            : Array.Empty<string>()))
+                .ReverseMap();
         }
     }
 }

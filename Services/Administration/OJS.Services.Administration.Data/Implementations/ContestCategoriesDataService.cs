@@ -39,12 +39,6 @@ namespace OJS.Services.Administration.Data.Implementations
         public IQueryable<ContestCategory> GetAllVisibleAndNotDeleted()
             => this.GetQuery(cc => cc.IsVisible && !cc.IsDeleted);
 
-        public IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId)
-            => this.GetAllVisible()
-                .Where(cc =>
-                    cc.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId) ||
-                    cc.Contests.Any(c => c.LecturersInContests.Any(l => l.LecturerId == lecturerId)));
-
         public async Task<ContestCategory> GetById(int? id)
             => await this.GetByIdQuery(id!)
                 .FirstAsync();
@@ -54,23 +48,16 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Include(c => c.Parent)
                 .FirstOrDefaultAsync();
 
-        public Task<string?> GetNameById(int id)
-            => this.GetQuery(cc => cc.Id == id)
-                .Select(cc => cc.Name)
-                .FirstOrDefaultAsync();
-
-        public Task<bool> HasContestsById(int id)
-            => this.GetAllVisible()
-                .Where(cc => cc.Id == id)
-                .AnyAsync(cc => cc.Contests.Any());
-
-        public void LoadChildrenRecursively(ContestCategory category)
+        public async Task LoadChildrenRecursively(ContestCategory category)
         {
-            this.dbContext.Entry(category).Collection(c => c.Children).Load();
+            await this.dbContext
+                .Entry(category)
+                .Collection(c => c.Children)
+                .LoadAsync();
 
             foreach (var child in category.Children)
             {
-                this.LoadChildrenRecursively(child);
+                await this.LoadChildrenRecursively(child);
             }
         }
 

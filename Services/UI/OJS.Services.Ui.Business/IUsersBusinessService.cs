@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business
 {
-    using System.Security.Claims;
     using System.Threading.Tasks;
     using OJS.Data.Models.Users;
     using OJS.Services.Ui.Models.Search;
@@ -15,7 +14,7 @@
 
         Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model);
 
-        bool IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles);
+        Task<bool> IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles);
 
         Task AddOrUpdateUser(UserProfile userEntity);
 

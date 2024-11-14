@@ -7,9 +7,7 @@
     {
         Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback);
 
-        Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, DateTime absoluteExpiration);
-
-        Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds);
+        Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds, int slidingExpirationSeconds = 0);
 
         Task Remove(string cacheId);
     }

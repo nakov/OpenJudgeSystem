@@ -1,9 +1,7 @@
 namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
-using System.Linq;
-using OJS.Services.Common.Models;
+using System.Threading.Tasks;
 using OJS.Services.Common.Models.Users;
-using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
@@ -21,7 +19,7 @@ public class RetestSubmissionValidationService : IRetestSubmissionValidationServ
         this.submissionsHelper = submissionsHelper;
     }
 
-    public ValidationResult GetValidationResult((SubmissionDetailsServiceModel, UserInfoModel, bool) item)
+    public async Task<ValidationResult> GetValidationResult((SubmissionDetailsServiceModel, UserInfoModel, bool) item)
     {
         var (detailsModel, user, isInRole) = item;
         // Checks if user is submissions participant or is admin/lecturer
@@ -34,7 +32,7 @@ public class RetestSubmissionValidationService : IRetestSubmissionValidationServ
             return permissionsValidationResult;
         }
 
-        if (permissionsValidationResult.IsValid || this.submissionsHelper.IsEligibleForRetest(detailsModel))
+        if (permissionsValidationResult.IsValid || await this.submissionsHelper.IsEligibleForRetest(detailsModel))
         {
             return ValidationResult.Valid();
         }

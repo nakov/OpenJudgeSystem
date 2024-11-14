@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Administration.Business.Settings;
 
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
 using OJS.Services.Administration.Models.Settings;

@@ -17,11 +17,6 @@
         {
         }
 
-        public Problem? GetWithProblemGroupById(int id) =>
-            this.GetByIdQuery(id)
-                .Include(p => p.ProblemGroup)
-                .FirstOrDefault();
-
         public Problem? GetWithTestsAndProblemGroupById(int id) =>
             this.GetByIdQuery(id)
                 .Include(p => p.Tests)
@@ -34,11 +29,6 @@
                 .Include(p => p.ProblemGroup)
                 .Include(p => p.SubmissionTypesInProblems)
                     .ThenInclude(stp => stp.SubmissionType)
-                .FirstOrDefault();
-
-        public Problem? GetWithContestById(int id) =>
-            this.GetByIdQuery(id)
-                .Include(p => p.ProblemGroup.Contest)
                 .FirstOrDefault();
 
         public IQueryable<Problem> GetAllByContest(int contestId) =>
@@ -63,11 +53,6 @@
                 .Select(p => new { p.OrderBy })
                 .FirstOrDefaultAsync())
             ?.OrderBy + 1 ?? GlobalConstants.ProblemDefaultOrderBy;
-
-        public string? GetNameById(int id) =>
-            this.GetByIdQuery(id)
-                .Select(p => p.Name)
-                .FirstOrDefault();
 
         protected override Expression<Func<Problem, bool>> GetUserFilter(UserInfoModel user)
             => problem => user.IsAdmin ||

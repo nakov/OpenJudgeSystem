@@ -6,7 +6,6 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
-using System.Linq;
 using OJS.Services.Ui.Models.Submissions;
 using System;
 
@@ -25,8 +24,6 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
     public bool IsDeleted { get; set; }
 
     public int? CategoryId { get; set; }
-
-    public ContestDetailsCategoryServiceModel? Category { get; set; }
 
     public ContestType Type { get; set; }
 
@@ -60,21 +57,24 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public int PracticeParticipantsCount { get; set; }
 
-    public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } =
-        new HashSet<ContestDetailsSubmissionTypeServiceModel>();
+    public int LimitBetweenSubmissions { get; set; }
 
-    public ICollection<ContestProblemServiceModel> Problems { get; set; } = new HashSet<ContestProblemServiceModel>();
+    public bool AllowParallelSubmissionsInTasks { get; set; }
+
+    public string? ContestPassword { get; set; }
+
+    public string? PracticePassword { get; set; }
+
+    public bool UserIsAdminOrLecturerInContest { get; set; }
+
+    public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = [];
+
+    public ICollection<ContestProblemServiceModel> Problems { get; set; } = [];
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration
             .CreateMap<Contest, ContestDetailsServiceModel>()
-            .ForMember(
-                d => d.Problems,
-                opt => opt.MapFrom(s =>
-                    s.ProblemGroups
-                        .SelectMany(pg => pg.Problems)
-                        .OrderBy(p => p.ProblemGroup.OrderBy)
-                        .ThenBy(p => p.OrderBy)))
+            .ForMember(d => d.Problems, opt => opt.Ignore())
             .ForMember(d => d.IsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.CanViewCompeteResults, opt => opt.Ignore())
             .ForMember(d => d.CanViewPracticeResults, opt => opt.Ignore())
@@ -83,5 +83,7 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
             .ForMember(d => d.PracticeParticipantsCount, opt => opt.Ignore())
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
             .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
-            .ForMember(d => d.IsActive, opt => opt.Ignore());
+            .ForMember(d => d.IsActive, opt => opt.Ignore())
+            .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
+            .ReverseMap();
 }
