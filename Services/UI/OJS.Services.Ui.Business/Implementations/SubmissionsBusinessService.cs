@@ -166,6 +166,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
+        if (!submissionDetailsServiceModel.IsCompiledSuccessfully)
+        {
+            return submissionDetailsServiceModel;
+        }
+
         var testRuns = await this.testRunsDataService
             .GetAllBySubmission(submissionId)
             .AsNoTracking()
