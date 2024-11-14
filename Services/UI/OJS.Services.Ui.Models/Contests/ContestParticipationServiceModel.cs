@@ -53,7 +53,6 @@ public class ContestParticipationServiceModel : IMapExplicitly
             .ForMember(m => m.IsRegisteredParticipant, opt => opt.Ignore())
             .ForMember(m => m.IsActiveParticipant, opt => opt.Ignore())
             .ForMember(m => m.ParticipantId, opt => opt.Ignore())
-            .ForMember(m => m.LastSubmissionTime, opt => opt.Ignore())
             .ForMember(m => m.UserSubmissionsTimeLimit, opt => opt.Ignore())
             .ForMember(m => m.ParticipantsCount, opt => opt.Ignore());
 

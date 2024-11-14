@@ -299,15 +299,8 @@ namespace OJS.Services.Ui.Business.Implementations
             participant.EndDateTimeForParticipantOrContest = participantActivity.ParticipationEndTime;
             participant.IsActiveParticipant = participantActivity.IsActive || userIsAdminOrLecturerInContest;
 
-            // explicitly setting lastSubmissionTime to avoid including all submissions for participant
-            var lastSubmissionTime = this.submissionsData
-                .GetAllForUserByContest(contest!.Id, user.Id)
-                .Select(x => (DateTime?)x.CreatedOn)
-                .Max();
-            participant.LastSubmissionTime = lastSubmissionTime;
-
             participant.ParticipantId = participant.Id;
-            participant.UserSubmissionsTimeLimit = contest.LimitBetweenSubmissions;
+            participant.UserSubmissionsTimeLimit = contest!.LimitBetweenSubmissions;
 
             var participantsList = new List<int> { participant.Id, };
 

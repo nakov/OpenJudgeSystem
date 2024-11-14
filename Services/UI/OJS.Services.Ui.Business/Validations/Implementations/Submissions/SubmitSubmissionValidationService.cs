@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models.Contests;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
@@ -16,13 +17,16 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 {
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionsDataService submissionsData;
+    private readonly IDatesService dates;
 
     public SubmitSubmissionValidationService(
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
-        ISubmissionsDataService submissionsData)
+        ISubmissionsDataService submissionsData,
+        IDatesService dates)
     {
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
         this.submissionsData = submissionsData;
+        this.dates = dates;
     }
 
     public async Task<ValidationResult> GetValidationResult(
@@ -70,20 +74,18 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         var problemIdToString = problem.Id.ToString();
 
-        var userHasUnprocessedSubmissionForProblem =
-            await this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, participant.UserId);
+        var participantHasUnprocessedSubmissionForProblem =
+            await this.submissionsData.HasParticipantNotProcessedSubmissionForProblem(problem.Id, participant.Id);
 
-        var userHasUnprocessedSubmissionForContest =
-            await this.submissionsData.HasUserNotProcessedSubmissionForContest(contest.Id, participant.UserId);
-
-        if (userHasUnprocessedSubmissionForProblem)
+        if (participantHasUnprocessedSubmissionForProblem)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem,
                 problemIdToString);
         }
 
-        if (!contest.AllowParallelSubmissionsInTasks && userHasUnprocessedSubmissionForContest)
+        if (!contest.AllowParallelSubmissionsInTasks &&
+            await this.submissionsData.HasParticipantNotProcessedSubmissionForContest(contest.Id, participant.Id))
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
@@ -143,7 +145,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemIdToString);
         }
 
-        var userSubmissionTimeLimit = await this.submissionsData.GetUserSubmissionTimeLimit(participant.Id, contest.LimitBetweenSubmissions);
+        var userSubmissionTimeLimit = this.GetUserSubmissionTimeLimit(participant, contest.LimitBetweenSubmissions);
 
         if (userSubmissionTimeLimit != 0)
         {
@@ -151,5 +153,27 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         return ValidationResult.Valid();
+    }
+
+    private int GetUserSubmissionTimeLimit(Participant participant, int limitBetweenSubmissions)
+    {
+        if (limitBetweenSubmissions <= 0)
+        {
+            return 0;
+        }
+
+        var lastSubmissionCreatedOn = participant.LastSubmissionTime ?? default;
+
+        if (lastSubmissionCreatedOn == default)
+        {
+            return 0;
+        }
+
+        // check if the submission was sent after the submission time limit has passed
+        var differenceBetweenSubmissions = this.dates.GetUtcNow() - lastSubmissionCreatedOn;
+        // Adding 5 seconds to compensate for potential difference between server and client time
+        return differenceBetweenSubmissions.TotalSeconds + 5 < limitBetweenSubmissions
+            ? limitBetweenSubmissions - (int)differenceBetweenSubmissions.TotalSeconds
+            : 0;
     }
 }

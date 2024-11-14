@@ -355,6 +355,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         SubmissionForProcessing? submissionForProcessing = null;
         await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
+            participant.LastSubmissionTime = this.dates.GetUtcNow();
+
             if (submissionType!.ExecutionStrategyType
                 is ExecutionStrategyType.NotFound
                 or ExecutionStrategyType.DoNothing)

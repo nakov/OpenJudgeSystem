@@ -35,6 +35,7 @@ public class ProblemsCache : IProblemsCacheService
     {
         var problem = await this.problemsData
             .GetByIdQuery(problemId)
+            .AsNoTracking()
             .MapCollection<ProblemForSubmitCacheModel>()
             .FirstOrDefaultAsync();
 
@@ -45,6 +46,7 @@ public class ProblemsCache : IProblemsCacheService
 
         problem.Tests = await this.testsData
             .GetAllByProblem(problemId)
+            .AsNoTracking()
             .MapCollection<TestCacheModel>()
             .ToListAsync();
 
