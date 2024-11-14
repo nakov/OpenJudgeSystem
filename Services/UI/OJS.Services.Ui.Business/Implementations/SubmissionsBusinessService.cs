@@ -205,7 +205,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             }
         }
 
-        submissionDetailsServiceModel.TestRuns = [.. testRuns.OrderBy(tr => tr.OrderBy).ThenBy(tr => tr.IsTrialTest)];
+        submissionDetailsServiceModel.TestRuns = [.. testRuns.OrderBy(tr => !tr.IsTrialTest).ThenBy(tr => tr.OrderBy)];
 
         submissionDetailsServiceModel.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
