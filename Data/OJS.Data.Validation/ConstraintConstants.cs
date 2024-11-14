@@ -84,5 +84,11 @@
         {
             public const int WorkerNameMaxLength = 100;
         }
+
+        public static class MentorPromptTemplate
+        {
+            public const int TitleMaxLength = 200;
+            public const int TitleMinLength = 1;
+        }
     }
 }

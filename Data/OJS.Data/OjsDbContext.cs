@@ -6,6 +6,7 @@ namespace OJS.Data
     using OJS.Data.Models;
     using OJS.Data.Models.Checkers;
     using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Mentor;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Submissions;
@@ -73,6 +74,10 @@ namespace OJS.Data
         public DbSet<Ip> Ips { get; set; } = null!;
 
         public DbSet<AccessLog> AccessLogs { get; set; } = null!;
+
+        public DbSet<MentorPromptTemplate> MentorPromptTemplates { get; set; }
+
+        public DbSet<UserMentor> UsersMentors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
