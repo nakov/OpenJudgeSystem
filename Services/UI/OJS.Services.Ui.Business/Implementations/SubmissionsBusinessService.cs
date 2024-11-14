@@ -168,6 +168,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (!submissionDetailsServiceModel.IsCompiledSuccessfully)
         {
+            // If the submission is not compiled successfully, we do not need to load the test runs.
             return submissionDetailsServiceModel;
         }
 
