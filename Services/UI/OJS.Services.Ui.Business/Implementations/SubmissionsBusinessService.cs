@@ -166,6 +166,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
+        if (!submissionDetailsServiceModel.IsCompiledSuccessfully)
+        {
+            // If the submission is not compiled successfully, we do not need to load the test runs.
+            return submissionDetailsServiceModel;
+        }
+
         var testRuns = await this.testRunsDataService
             .GetAllBySubmission(submissionId)
             .AsNoTracking()
@@ -205,7 +211,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             }
         }
 
-        submissionDetailsServiceModel.TestRuns = [.. testRuns.OrderBy(tr => tr.OrderBy).ThenBy(tr => tr.IsTrialTest)];
+        submissionDetailsServiceModel.TestRuns = [.. testRuns.OrderBy(tr => !tr.IsTrialTest).ThenBy(tr => tr.OrderBy)];
 
         submissionDetailsServiceModel.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
