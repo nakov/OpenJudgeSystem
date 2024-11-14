@@ -42,6 +42,5 @@ public class TestRunDetailsServiceModel : IMapExplicitly
             .ForMember(d => d.Input, opt => opt.Ignore())
             .ForMember(d => d.IsTrialTest, opt => opt.Ignore())
             .ForMember(d => d.OrderBy, opt => opt.Ignore())
-            .ForMember(d => d.Test, opt => opt.Ignore())
             .ForMember(d => d.ShowInput, opt => opt.Ignore());
 }

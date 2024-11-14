@@ -13,5 +13,5 @@ public class ContestsCacheService : IContestsCacheService
         => this.cache = cache;
 
     public async Task ClearContestsCacheByContestId(int contestId)
-        => await this.cache.Remove(string.Format(CacheConstants.ContestById, contestId));
+        => await this.cache.Remove(string.Format(CacheConstants.ContestDetailsById, contestId));
 }

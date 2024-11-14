@@ -111,6 +111,15 @@ const participantsFilteringColumns: AdministrationGridColDef[] = [
         sortable: false,
         valueFormatter: (params) => adminFormatDate(params.value),
     },
+    {
+        field: 'lastSubmissionTime',
+        headerName: 'Last Submission Time',
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
 ];
 
 export const returnparticipantsNonFilterableColumns = (onSuccessFullDelete: () => void) => [

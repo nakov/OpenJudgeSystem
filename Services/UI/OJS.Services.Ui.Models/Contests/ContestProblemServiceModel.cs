@@ -7,7 +7,6 @@
     using OJS.Services.Infrastructure.Models.Mapping;
     using System.Collections.Generic;
     using System.Linq;
-    using OJS.Services.Ui.Models.Cache;
 
     public class ContestProblemServiceModel : IMapExplicitly
     {
@@ -62,10 +61,8 @@
 
         public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
 
-        public bool UserHasAdminRights { get; set; }
-
         public void RegisterMappings(IProfileExpression configuration) =>
-            configuration.CreateMap<ProblemCacheModel, ContestProblemServiceModel>()
+            configuration.CreateMap<Problem, ContestProblemServiceModel>()
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ProblemGroup.ContestId))
                 .ForMember(
                     d => d.IsExcludedFromHomework,
@@ -73,7 +70,6 @@
                 .ForMember(
                     d => d.FileSizeLimit,
                     opt => opt.MapFrom(s => s.SourceCodeSizeLimit.HasValue ? (double)s.SourceCodeSizeLimit : default))
-                .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(
                     d => d.AllowedSubmissionTypes,
                     opt => opt.MapFrom(s => s.SubmissionTypesInProblems))
@@ -88,6 +84,7 @@
                     opt => opt.MapFrom(s => s.Resources.OrderBy(x => x.OrderBy)))
                 .ForMember(
                     d => d.TimeLimit,
-                    opt => opt.MapFrom(s => (double?)s.TimeLimit));
+                    opt => opt.MapFrom(s => (double?)s.TimeLimit))
+                .ReverseMap();
     }
 }

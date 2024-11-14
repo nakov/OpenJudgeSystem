@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
-using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation.Helpers;
@@ -8,6 +7,7 @@ using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Contests;
 
 public class ContestResultsValidationService : IContestResultsValidationService
 {
@@ -34,7 +34,7 @@ public class ContestResultsValidationService : IContestResultsValidationService
         this.userProvider = userProvider;
     }
 
-    public ValidationResult GetValidationResult((Contest?, bool, bool) item)
+    public ValidationResult GetValidationResult((ContestDetailsServiceModel?, bool, bool) item)
     {
         var (contest, fullResults, isOfficial) = item;
 
