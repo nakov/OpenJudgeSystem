@@ -166,6 +166,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
+        if (!submissionDetailsServiceModel.IsCompiledSuccessfully)
+        {
+            // If the submission is not compiled successfully, we do not need to load the test runs.
+            return submissionDetailsServiceModel;
+        }
+
         var testRuns = await this.testRunsDataService
             .GetAllBySubmission(submissionId)
             .AsNoTracking()
