@@ -2,12 +2,11 @@
 
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
 using OJS.Services.Ui.Models.Cache;
 using OJS.Services.Ui.Models.Submissions;
 
 public interface ISubmitSubmissionValidationService
-    : IValidationServiceAsync<(ProblemForSubmitCacheModel?, Participant?, ParticipantActivityServiceModel?, SubmitSubmissionServiceModel, ContestCacheModel?, SubmissionType?)>
+    : IValidationServiceAsync<(ProblemForSubmitCacheModel?, Participant?, SubmitSubmissionServiceModel, SubmissionType?)>
 {
 }
