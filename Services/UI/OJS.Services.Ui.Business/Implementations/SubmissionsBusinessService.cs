@@ -165,12 +165,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<TestRunDetailsServiceModel>()
             .ToListAsync();
 
-        foreach (var testRun in submission.TestRuns)
+        foreach (var testRun in testRuns)
         {
             var test = testRun.Test;
             submission.Tests.Add(test);
 
-            var displayShowInput = submission.UserIsInRoleForContest || (test is { HideInput: false }
+            testRun.ShowInput = submission.UserIsInRoleForContest || (test is { HideInput: false }
                                && (test.IsTrialTest
                                    || test.IsOpenTest
                                    || submission.Problem.ShowDetailedFeedback));
@@ -185,9 +185,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 testRun.ExecutionComment = string.Empty;
             }
 
-            if (displayShowInput)
+            if (testRun.ShowInput)
             {
-                testRun.ShowInput = true;
                 testRun.Input = test.InputDataAsString;
             }
             else
