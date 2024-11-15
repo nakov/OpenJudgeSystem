@@ -185,16 +185,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 testRun.ExecutionComment = string.Empty;
             }
 
-            if (!displayShowInput)
+            if (displayShowInput)
             {
-                testRun.ShowInput = false;
-                testRun.Input = string.Empty;
-                testRun.ExpectedOutputFragment = string.Empty;
-                testRun.UserOutputFragment = string.Empty;
+                testRun.ShowInput = true;
+                testRun.Input = test.InputDataAsString;
             }
             else
             {
-                testRun.Input = test.InputDataAsString;
+                testRun.Input = string.Empty;
+                testRun.ExpectedOutputFragment = string.Empty;
+                testRun.UserOutputFragment = string.Empty;
             }
         }
 
