@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
@@ -17,45 +19,45 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 {
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionsDataService submissionsData;
+    private readonly IContestsActivityService contestsActivity;
     private readonly IDatesService dates;
 
     public SubmitSubmissionValidationService(
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
         ISubmissionsDataService submissionsData,
+        IContestsActivityService contestsActivity,
         IDatesService dates)
     {
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
         this.submissionsData = submissionsData;
+        this.contestsActivity = contestsActivity;
         this.dates = dates;
     }
 
     public async Task<ValidationResult> GetValidationResult(
         (ProblemForSubmitCacheModel?,
         Participant?,
-        ParticipantActivityServiceModel?,
         SubmitSubmissionServiceModel,
-        ContestCacheModel?,
         SubmissionType?) item)
     {
-        var (problem, participant, participantActivity, submitSubmissionServiceModel, contest, submissionType) = item;
+        var (problem, participant, submitSubmissionServiceModel, submissionType) = item;
 
         if (problem == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
-        if (participant == null || participantActivity == null)
+        if (participant == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
         }
 
-        if (contest == null)
-        {
-            return ValidationResult.Invalid("Contest not found");
-        }
+        var contest = participant.Contest;
 
         var isAdminOrLecturer = await this.lecturersInContestsBusiness
             .IsCurrentUserAdminOrLecturerInContest(contest.Id);
+
+        var participantActivity = this.contestsActivity.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
 
         if (participantActivity.IsInvalidated)
         {

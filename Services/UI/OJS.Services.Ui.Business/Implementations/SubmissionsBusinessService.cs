@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Data;
-using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -31,7 +30,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Problems;
-using OJS.Services.Common.Models.Contests;
 using OJS.Services.Ui.Business.Cache;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -62,6 +60,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICacheService cache;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly IProblemsCacheService problemsCache;
+    private readonly IContestsDataService contestsData;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -87,7 +86,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         ITestRunsDataService testRunsDataService,
-        IProblemsCacheService problemsCache)
+        IProblemsCacheService problemsCache,
+        IContestsDataService contestsData)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -113,6 +113,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.cache = cache;
         this.testRunsDataService = testRunsDataService;
         this.problemsCache = problemsCache;
+        this.contestsData = contestsData;
     }
 
     public async Task Retest(int submissionId)
@@ -316,22 +317,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id,
                 model.Official);
 
-        var contest = problem.Contest;
         var submissionType = problem.SubmissionTypesInProblems
             .Select(p => p.SubmissionType)
             .MapCollection<SubmissionType>()
             .FirstOrDefault(st => st.Id == model.SubmissionTypeId);
 
-        ParticipantActivityServiceModel? participantActivity = null;
-        if (participant != null && contest != null)
-        {
-            participant.Contest = contest.Map<Contest>();
-            var participantForActivityServiceModel = participant.Map<ParticipantForActivityServiceModel>();
-            participantActivity = this.contestsActivity.GetParticipantActivity(participantForActivityServiceModel);
-        }
-
         var submitSubmissionValidationServiceResult = await this.submitSubmissionValidationService.GetValidationResult(
-            (problem, participant, participantActivity, model, contest, submissionType));
+            (problem, participant, model, submissionType));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -339,6 +331,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submitSubmissionValidationServiceResult.Message,
                 JsonConvert.SerializeObject(new { ProblemId = submitSubmissionValidationServiceResult.PropertyName }));
         }
+
+        var contest = participant!.Contest;
 
         var newSubmission = model.Map<Submission>();
         if (model.StringContent != null)
