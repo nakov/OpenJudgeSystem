@@ -40,7 +40,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsCommonDataService submissionsCommonData;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
-    private readonly IContestsActivityService contestsActivity;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
@@ -60,7 +59,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICacheService cache;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly IProblemsCacheService problemsCache;
-    private readonly IContestsDataService contestsData;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -79,15 +77,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
         IRetestSubmissionValidationService retestSubmissionValidationService,
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
-        IContestsActivityService contestsActivity,
         IPublisherService publisher,
         ISubmissionsHelper submissionsHelper,
         IDatesService dates,
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         ITestRunsDataService testRunsDataService,
-        IProblemsCacheService problemsCache,
-        IContestsDataService contestsData)
+        IProblemsCacheService problemsCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -106,14 +102,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.retestSubmissionValidationService = retestSubmissionValidationService;
         this.publisher = publisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
-        this.contestsActivity = contestsActivity;
         this.submissionsHelper = submissionsHelper;
         this.dates = dates;
         this.transactionsProvider = transactionsProvider;
         this.cache = cache;
         this.testRunsDataService = testRunsDataService;
         this.problemsCache = problemsCache;
-        this.contestsData = contestsData;
     }
 
     public async Task Retest(int submissionId)
