@@ -33,8 +33,6 @@
         public IQueryable<Submission> GetAllByProblem(int problemId)
             => this.GetQuery(s => s.ProblemId == problemId);
 
-        public Task<int> GetCountByProblem(int problemId) => this.GetAllByProblem(problemId).CountAsync();
-
         public IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds)
             => this.GetQuery(s => problemIds.Contains(s.ProblemId));
 

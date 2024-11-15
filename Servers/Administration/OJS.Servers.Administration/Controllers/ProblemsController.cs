@@ -72,20 +72,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         return response;
     }
 
-    [HttpPost("{problemId:int}")]
-    [ProtectedEntityAction]
-    public async Task<IActionResult> ValidateRetest(int problemId)
-    {
-        if (!await this.problemsDataService.ExistsById(problemId))
-        {
-            return this.UnprocessableEntity();
-        }
-
-        var validationModel = await this.problemsBusinessService.ValidateRetest(problemId);
-
-        return this.Ok(validationModel);
-    }
-
     [HttpPost]
     [ProtectedEntityAction]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)

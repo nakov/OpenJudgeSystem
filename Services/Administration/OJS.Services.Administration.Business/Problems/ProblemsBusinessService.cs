@@ -1,7 +1,6 @@
 namespace OJS.Services.Administration.Business.Problems;
 
 using FluentExtensions.Extensions;
-using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
@@ -42,10 +41,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ITransactionsProvider transactionsProvider;
     private readonly IProblemsCacheService problemsCache;
-    private readonly IUserProviderService userProviderService;
-
-    private const int MaxSubmissionsCountAllowedForBatchRetest = 100;
-    private const int MaxSubmissionTimeToExecuteAllowedForBatchRetest = 20;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -60,8 +55,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         IProblemGroupsDataService problemGroupsDataService,
         IZippedTestsParserService zippedTestsParser,
         ITransactionsProvider transactionsProvider,
-        IProblemsCacheService problemsCache,
-        IUserProviderService userProviderService)
+        IProblemsCacheService problemsCache)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -76,7 +70,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.zippedTestsParser = zippedTestsParser;
         this.transactionsProvider = transactionsProvider;
         this.problemsCache = problemsCache;
-        this.userProviderService = userProviderService;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -240,49 +233,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.ReevaluateProblemsOrder(problem.ProblemGroup.ContestId);
 
         return model;
-    }
-
-    public async Task<ProblemRetestValidationModel> ValidateRetest(int id)
-    {
-        var submissionsCount = await this.submissionsData.GetCountByProblem(id);
-
-        if (submissionsCount == 0)
-        {
-            return new ProblemRetestValidationModel
-            {
-                SubmissionsCount = 0,
-                AverageExecutionTime = 0,
-                RetestAllowed = false,
-            };
-        }
-
-        var relevantSubmissions = this.submissionsData.GetAllByProblem(id)
-            .Where(s => s.IsCompiledSuccessfully && s.StartedExecutionOn.HasValue && s.CompletedExecutionOn.HasValue)
-            .GroupBy(s => s.Points)
-            .Select(g => g.FirstOrDefault())
-            .Take(3);
-
-        var averageTimeDifferenceInSeconds = relevantSubmissions
-            .AsEnumerable()
-            .Select(s => (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds)
-            .Average();
-
-        var canRetest = submissionsCount < MaxSubmissionsCountAllowedForBatchRetest &&
-                        averageTimeDifferenceInSeconds < MaxSubmissionTimeToExecuteAllowedForBatchRetest;
-
-        var validationModel = new ProblemRetestValidationModel
-        {
-            SubmissionsCount = submissionsCount,
-            AverageExecutionTime = Math.Round(averageTimeDifferenceInSeconds),
-            RetestAllowed = true,
-        };
-
-        if (!this.userProviderService.GetCurrentUser().IsDeveloper && !canRetest)
-        {
-            validationModel.RetestAllowed = false;
-        }
-
-        return validationModel;
     }
 
     public async Task RetestById(int id)

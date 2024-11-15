@@ -15,8 +15,6 @@
 
         IQueryable<Submission> GetAllByProblem(int problemId);
 
-        Task<int> GetCountByProblem(int problemId);
-
         IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
 
         IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
