@@ -1,15 +1,12 @@
-﻿namespace OJS.Data.Models.Mentor;
+﻿namespace OJS.Services.Administration.Models.UsersMentors;
 
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using OJS.Data.Models.Common;
+using OJS.Data.Models.Mentor;
 using OJS.Data.Models.Users;
+using OJS.Services.Infrastructure.Models.Mapping;
 
-public class UserMentor : IEntity<string>
+public class UserMentorInListModel : IMapFrom<UserMentor>
 {
-    [Key]
-    [ForeignKey(nameof(User))]
     public string Id { get; set; } = default!;
 
     public virtual UserProfile User { get; set; } = null!;
