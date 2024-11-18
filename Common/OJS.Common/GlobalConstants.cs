@@ -143,5 +143,16 @@ namespace OJS.Common
         {
             public const string SubmissionDownloadFileName = "Submission_{0}.{1}";
         }
+
+        public static class Settings
+        {
+            public const string Mentor = "Mentor";
+            public const string MentorModel = "MentorModel";
+            public const int MentorMessagesSentCount = 6;
+            public const int MentorMaxInputTokenCount = 4096;
+            public const int MentorMaxOutputTokenCount = 1024;
+            public const int MentorQuotaLimit = 10;
+            public const int MentorQuotaResetTimeInMinutes = 60;
+        }
     }
 }
