@@ -248,12 +248,14 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     {
         var submissionsCount = await this.submissionsData.GetCountByProblem(id);
 
-
         if (submissionsCount == 0)
         {
             return new ProblemRetestValidationModel
             {
-                SubmissionsCount = 0, AverageExecutionTime = 0, RetestAllowed = false,
+                SubmissionsCount = 0,
+                AverageExecutionTime = 0,
+                RetestAllowed = false,
+                Message = "No submissions could be taken for validation."
             };
         }
 
@@ -267,7 +269,10 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         {
             return new ProblemRetestValidationModel
             {
-                SubmissionsCount = submissionsCount, AverageExecutionTime = 0, RetestAllowed = false,
+                SubmissionsCount = submissionsCount,
+                AverageExecutionTime = 0,
+                RetestAllowed = false,
+                Message = "No successfully compiled submissions could be taken for validation."
             };
         }
 
@@ -301,17 +306,19 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         var validationModel = new ProblemRetestValidationModel
         {
-            SubmissionsCount = submissionsCount, AverageExecutionTime = averageTimeDifferenceInSeconds, RetestAllowed = false,
+            SubmissionsCount = submissionsCount,
+            AverageExecutionTime = averageTimeDifferenceInSeconds,
+            RetestAllowed = false,
         };
 
-        var canRetest = !submissionsTimeToExecuteExceedsMaxAllowedLimit || (!submissionsCountExceedsMaxAllowedLimit &&
-                                                                            !submissionsTimeToExecuteExceedsMaxAllowedLimit);
+        var canRetest = !allSubmissionsWorkingTimeExceedsMaxAllowedTime ||
+                        (!submissionsCountExceedsMaxAllowedLimit && !submissionsTimeToExecuteExceedsMaxAllowedLimit);
 
         if (this.userProviderService.GetCurrentUser().IsDeveloper && !canRetest)
         {
             if (allSubmissionsWorkingTimeExceedsMaxAllowedTime)
             {
-                validationModel.Message = $"Submissions will take {allSubmissionsWorkingTime / 60} minutes to execute.";
+                validationModel.Message = $"Submissions will take {Math.Round(allSubmissionsWorkingTime / 60)} minutes to execute.";
             }
             else if (submissionsCountExceedsMaxAllowedLimit)
             {
@@ -320,7 +327,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             else if (submissionsTimeToExecuteExceedsMaxAllowedLimit)
             {
                 validationModel.Message =
-                    $"Submissions time to execute exceeds max allowed limit {maxSubmissionTimeToExecuteAllowedForBatchRetest.Value}";
+                    $"Submissions time to execute ({averageTimeDifferenceInSeconds}) exceeds max allowed limit {maxSubmissionTimeToExecuteAllowedForBatchRetest.Value}";
             }
         }
         else if (!canRetest)

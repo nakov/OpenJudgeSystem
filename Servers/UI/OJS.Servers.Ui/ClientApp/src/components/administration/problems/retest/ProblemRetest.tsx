@@ -96,7 +96,7 @@ const ProblemRetest = (props: IProblemRetestProps) => {
     const retestAllowedMessage = `You are about to retest ${validationModel?.submissionsCount} submissions
         with an average execution time of ${validationModel?.averageExecutionTime} seconds.
         This will impact the execution of other submissions during the time it takes
-        for the submissions to be processed. Are you sure you want to proceed?`;
+        for the submissions to be processed. ${validationModel?.message} Are you sure you want to proceed?`;
 
     const retestNotAllowedDefaultMessage = `Unable to retest
                         ${validationModel?.submissionsCount}
