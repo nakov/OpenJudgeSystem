@@ -31,7 +31,7 @@ public class TestRunDetailsServiceModel : IMapExplicitly
 
     public double OrderBy => this.Test.OrderBy;
 
-    public bool ShowInput { get; set; } = true;
+    public bool ShowInput { get; set; }
 
     public int TestId { get; set; }
 

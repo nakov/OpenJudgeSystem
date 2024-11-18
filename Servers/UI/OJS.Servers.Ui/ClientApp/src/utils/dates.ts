@@ -1,7 +1,7 @@
 import moment, { Duration, unitOfTime } from 'moment';
 
-const defaultDateTimeFormat = 'HH:MM, DD/MMM/YYYY';
-const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
+const defaultDateTimeFormat = 'HH:mm, DD/MMM/YYYY';
+const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:mm';
 const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
 const submissionsGridDateFormat = 'DD.MM.YYYY';

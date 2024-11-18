@@ -9,8 +9,6 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public ContestCacheModel? Contest { get; set; }
-
     public string Name { get; set; } = string.Empty;
 
     public short MaximumPoints { get; set; }
@@ -34,7 +32,6 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<Problem, ProblemForSubmitCacheModel>()
-            .ForMember(m => m.Contest, opt => opt.MapFrom(src => src.ProblemGroup.Contest))
             .ForMember(m => m.Tests, opt => opt.Ignore())
             .ReverseMap();
 }
