@@ -87,10 +87,6 @@ const ProblemRetest = (props: IProblemRetestProps) => {
         }
     };
 
-    if (isRetesting || isValidationLoading) {
-        <SpinningLoader />;
-    }
-
     const dialogTitle = `Retest ${problemName}`;
 
     const retestAllowedMessage = `You are about to retest ${validationModel?.submissionsCount} submissions
@@ -126,6 +122,10 @@ const ProblemRetest = (props: IProblemRetestProps) => {
           declineFunction={declineFunction}
         />
     ), [ dialogTitle, validationModel, retestNotAllowedDefaultMessage, declineFunction ]);
+
+    if (isRetesting) {
+        <SpinningLoader />;
+    }
 
     return (
         <>
