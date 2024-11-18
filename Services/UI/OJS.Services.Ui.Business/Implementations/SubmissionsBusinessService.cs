@@ -31,6 +31,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Business.Cache;
+using OJS.Workers.Common.Extensions;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
@@ -187,7 +188,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             if (testRun.ShowInput)
             {
-                testRun.Input = test.InputDataAsString;
+                testRun.Input = test.InputData?.Decompress();
             }
             else
             {
