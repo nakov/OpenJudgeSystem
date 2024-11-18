@@ -1,12 +1,11 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
 using System.Threading.Tasks;
-using OJS.Services.Ui.Models.Submissions;
 
 public class SubmissionsHelper(ISubmissionsForProcessingBusinessService submissionsForProcessingBusinessService)
     : ISubmissionsHelper
 {
-    public async Task<bool> IsEligibleForRetest(SubmissionDetailsServiceModel detailsModel)
-        => detailsModel is { IsProcessed: true, IsCompiledSuccessfully: true, TestRuns.Count: 0 } &&
-           !await submissionsForProcessingBusinessService.IsSubmissionProcessing(detailsModel.Id);
+    public async Task<bool> IsEligibleForRetest(int submissionId, bool isProcessed, bool isCompiledSuccessfully, int testRunsCount)
+        => isProcessed && isCompiledSuccessfully && testRunsCount == 0 &&
+           !await submissionsForProcessingBusinessService.IsSubmissionProcessing(submissionId);
 }
