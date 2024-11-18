@@ -4,6 +4,7 @@ using FluentExtensions.Extensions;
 using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
 using OJS.Data;
@@ -17,8 +18,10 @@ using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Extensions;
+using Settings;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,9 +46,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly ITransactionsProvider transactionsProvider;
     private readonly IProblemsCacheService problemsCache;
     private readonly IUserProviderService userProviderService;
-
-    private const int MaxSubmissionsCountAllowedForBatchRetest = 100;
-    private const int MaxSubmissionTimeToExecuteAllowedForBatchRetest = 20;
+    private readonly ISettingsBusinessService settingsBusinessService;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -61,7 +62,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         IZippedTestsParserService zippedTestsParser,
         ITransactionsProvider transactionsProvider,
         IProblemsCacheService problemsCache,
-        IUserProviderService userProviderService)
+        IUserProviderService userProviderService, ISettingsBusinessService settingsBusinessService)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -77,6 +78,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.transactionsProvider = transactionsProvider;
         this.problemsCache = problemsCache;
         this.userProviderService = userProviderService;
+        this.settingsBusinessService = settingsBusinessService;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -246,13 +248,12 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     {
         var submissionsCount = await this.submissionsData.GetCountByProblem(id);
 
+
         if (submissionsCount == 0)
         {
             return new ProblemRetestValidationModel
             {
-                SubmissionsCount = 0,
-                AverageExecutionTime = 0,
-                RetestAllowed = false,
+                SubmissionsCount = 0, AverageExecutionTime = 0, RetestAllowed = false,
             };
         }
 
@@ -262,26 +263,75 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             .Select(g => g.FirstOrDefault())
             .Take(3);
 
+        if (!relevantSubmissions.Any())
+        {
+            return new ProblemRetestValidationModel
+            {
+                SubmissionsCount = submissionsCount, AverageExecutionTime = 0, RetestAllowed = false,
+            };
+        }
+
         var averageTimeDifferenceInSeconds = relevantSubmissions
             .AsEnumerable()
             .Select(s => (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds)
             .Average();
 
-        var canRetest = submissionsCount < MaxSubmissionsCountAllowedForBatchRetest &&
-                        averageTimeDifferenceInSeconds < MaxSubmissionTimeToExecuteAllowedForBatchRetest;
+        var maxWorkersWorkingTime =
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxWorkersWorkingTimeInSeconds);
+        var maxSubmissionsCountAllowedForBatchRetest =
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings
+                .MaxSubmissionsCountAllowedForBatchRetest);
+        var maxSubmissionTimeToExecuteAllowedForBatchRetest =
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings
+                .MaxSubmissionTimeToExecuteAllowedForBatchRetest);
+
+        var allSubmissionsWorkingTime = submissionsCount * averageTimeDifferenceInSeconds;
+
+        var allSubmissionsWorkingTimeExceedsMaxAllowedTime = allSubmissionsWorkingTime >
+                                                          double.Parse(maxWorkersWorkingTime.Value,
+                                                              CultureInfo.InvariantCulture);
+
+        var submissionsCountExceedsMaxAllowedLimit = submissionsCount >
+                                                     int.Parse(maxSubmissionsCountAllowedForBatchRetest.Value!,
+                                                         CultureInfo.InvariantCulture);
+
+        var submissionsTimeToExecuteExceedsMaxAllowedLimit = averageTimeDifferenceInSeconds < int.Parse(
+            maxSubmissionTimeToExecuteAllowedForBatchRetest.Value!,
+            CultureInfo.InvariantCulture);
 
         var validationModel = new ProblemRetestValidationModel
         {
-            SubmissionsCount = submissionsCount,
-            AverageExecutionTime = Math.Round(averageTimeDifferenceInSeconds),
-            RetestAllowed = true,
+            SubmissionsCount = submissionsCount, AverageExecutionTime = averageTimeDifferenceInSeconds, RetestAllowed = false,
         };
 
-        if (!this.userProviderService.GetCurrentUser().IsDeveloper && !canRetest)
+        var canRetest = !submissionsTimeToExecuteExceedsMaxAllowedLimit || (!submissionsCountExceedsMaxAllowedLimit &&
+                                                                            !submissionsTimeToExecuteExceedsMaxAllowedLimit);
+
+        if (this.userProviderService.GetCurrentUser().IsDeveloper && !canRetest)
         {
-            validationModel.RetestAllowed = false;
+            if (allSubmissionsWorkingTimeExceedsMaxAllowedTime)
+            {
+                validationModel.Message = $"Submissions will take {allSubmissionsWorkingTime / 60} minutes to execute.";
+            }
+            else if (submissionsCountExceedsMaxAllowedLimit)
+            {
+                validationModel.Message = $"Submissions count exceeds max allowed limit {maxSubmissionsCountAllowedForBatchRetest.Value}.";
+            }
+            else if (submissionsTimeToExecuteExceedsMaxAllowedLimit)
+            {
+                validationModel.Message =
+                    $"Submissions time to execute exceeds max allowed limit {maxSubmissionTimeToExecuteAllowedForBatchRetest.Value}";
+            }
+        }
+        else if (!canRetest)
+        {
+            validationModel.Message =
+                $"Unable to retest {submissionsCount} submissions for this problem. Contact a developer for this action.";
+
+            return validationModel;
         }
 
+        validationModel.RetestAllowed = true;
         return validationModel;
     }
 

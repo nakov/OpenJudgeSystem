@@ -143,5 +143,12 @@ namespace OJS.Common
         {
             public const string SubmissionDownloadFileName = "Submission_{0}.{1}";
         }
+
+        public static class Settings
+        {
+            public const string MaxSubmissionTimeToExecuteAllowedForBatchRetest = "MaxSubmissionTimeToExecuteAllowedForBatchRetest";
+            public const string MaxSubmissionsCountAllowedForBatchRetest = "MaxSubmissionsCountAllowedForBatchRetest";
+            public const string MaxWorkersWorkingTimeInSeconds = "MaxWorkersWorkingTimeInSeconds";
+        }
     }
 }

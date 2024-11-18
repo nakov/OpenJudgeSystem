@@ -7,4 +7,6 @@ public class ProblemRetestValidationModel
     public double AverageExecutionTime { get; set; }
 
     public bool RetestAllowed { get; set; }
+
+    public string Message { get; set; } = string.Empty;
 }

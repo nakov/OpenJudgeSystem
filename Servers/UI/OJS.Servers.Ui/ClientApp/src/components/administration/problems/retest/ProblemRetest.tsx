@@ -13,6 +13,8 @@ import {
     Typography,
 } from '@mui/material';
 import { CANCEL } from 'src/common/labels';
+import SimpleDialog from 'src/components/guidelines/dialog/simple-dialog/SimpleDialog';
+import isNilOrEmpty from 'src/utils/check-utils';
 
 import styles from "src/components/guidelines/dialog/ConfirmDialog.module.scss";
 import { IIndexProblemsType, IPagedResultType, IProblemRetestValidationType } from '../../../../common/types';
@@ -96,58 +98,34 @@ const ProblemRetest = (props: IProblemRetestProps) => {
         This will impact the execution of other submissions during the time it takes
         for the submissions to be processed. Are you sure you want to proceed?`;
 
+    const retestNotAllowedDefaultMessage = `Unable to retest
+                        ${validationModel?.submissionsCount}
+                        submissions for this problem. Contact a developer for this action.`;
+
     const renderLoadingDialog = useCallback(() => (
-        <div className={styles.position}>
-            <Dialog
-              open
-              onClose={() => {}}
-              aria-labelledby="responsive-dialog-title"
-            >
-                <DialogTitle id="responsive-dialog-title">
-                    {dialogTitle}
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Validating retest limits. Please wait.
-                    </DialogContentText>
-                    <SpinningLoader />
-                </DialogContent>
-                <DialogActions>
-                    <Button autoFocus onClick={() => declineFunction()}>
-                        {CANCEL}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
+        <SimpleDialog
+          title={dialogTitle}
+          content={(
+              <>
+                  <DialogContentText>
+                      Validating retest limits. Please wait.
+                  </DialogContentText>
+                  <SpinningLoader />
+              </>
+            )}
+          declineFunction={declineFunction}
+        />
     ), [ declineFunction, dialogTitle ]);
 
     const renderRetestNotAllowedDialog = useCallback(() => (
-        <div className={styles.position}>
-            <Dialog
-              open
-              onClose={() => {}}
-              aria-labelledby="responsive-dialog-title"
-            >
-                <DialogTitle id="responsive-dialog-title">
-                    {dialogTitle}
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Unable to retest
-                        {' '}
-                        {validationModel?.submissionsCount}
-                        {' '}
-                        submissions for this problem. Contact a developer for this action.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button autoFocus onClick={() => declineFunction()}>
-                        {CANCEL}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    ), [ declineFunction, dialogTitle, validationModel ]);
+        <SimpleDialog
+          title={dialogTitle}
+          content={isNilOrEmpty(validationModel?.message)
+              ? retestNotAllowedDefaultMessage
+              : validationModel?.message}
+          declineFunction={declineFunction}
+        />
+    ), [ dialogTitle, validationModel, retestNotAllowedDefaultMessage, declineFunction ]);
 
     return (
         <>

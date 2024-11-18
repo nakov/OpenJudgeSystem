@@ -307,6 +307,7 @@ interface IProblemRetestValidationType {
     submissionsCount: number;
     averageExecutionTime: number;
     retestAllowed: boolean;
+    message: boolean;
 }
 
 interface IIndexContestCategoriesType {
