@@ -259,6 +259,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             };
         }
 
+        // Take 3 submissions with different results so an average execution time can be obtained
         var relevantSubmissions = this.submissionsData.GetAllByProblem(id)
             .Where(s => s.IsCompiledSuccessfully && s.StartedExecutionOn.HasValue && s.CompletedExecutionOn.HasValue)
             .GroupBy(s => s.Points)
@@ -284,25 +285,15 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         var maxWorkersWorkingTime =
             await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxWorkersWorkingTimeInSeconds);
         var maxSubmissionsCountAllowedForBatchRetest =
-            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings
-                .MaxSubmissionsCountAllowedForBatchRetest);
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxSubmissionsCountAllowedForBatchRetest);
         var maxSubmissionTimeToExecuteAllowedForBatchRetest =
-            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings
-                .MaxSubmissionTimeToExecuteAllowedForBatchRetest);
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxSubmissionTimeToExecuteAllowedForBatchRetest);
 
         var allSubmissionsWorkingTime = submissionsCount * averageTimeDifferenceInSeconds;
 
-        var allSubmissionsWorkingTimeExceedsMaxAllowedTime = allSubmissionsWorkingTime >
-                                                          double.Parse(maxWorkersWorkingTime.Value,
-                                                              CultureInfo.InvariantCulture);
-
-        var submissionsCountExceedsMaxAllowedLimit = submissionsCount >
-                                                     int.Parse(maxSubmissionsCountAllowedForBatchRetest.Value!,
-                                                         CultureInfo.InvariantCulture);
-
-        var submissionsTimeToExecuteExceedsMaxAllowedLimit = averageTimeDifferenceInSeconds < int.Parse(
-            maxSubmissionTimeToExecuteAllowedForBatchRetest.Value!,
-            CultureInfo.InvariantCulture);
+        var allSubmissionsWorkingTimeExceedsMaxAllowedTime = allSubmissionsWorkingTime > double.Parse(maxWorkersWorkingTime.Value, CultureInfo.InvariantCulture);
+        var submissionsCountExceedsMaxAllowedLimit = submissionsCount > int.Parse(maxSubmissionsCountAllowedForBatchRetest.Value!, CultureInfo.InvariantCulture);
+        var submissionsTimeToExecuteExceedsMaxAllowedLimit = averageTimeDifferenceInSeconds < int.Parse(maxSubmissionTimeToExecuteAllowedForBatchRetest.Value!, CultureInfo.InvariantCulture);
 
         var validationModel = new ProblemRetestValidationModel
         {
@@ -311,11 +302,12 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             RetestAllowed = false,
         };
 
-        var canRetest = !allSubmissionsWorkingTimeExceedsMaxAllowedTime ||
-                        (!submissionsCountExceedsMaxAllowedLimit && !submissionsTimeToExecuteExceedsMaxAllowedLimit);
+        var canRetest = !allSubmissionsWorkingTimeExceedsMaxAllowedTime || (!submissionsCountExceedsMaxAllowedLimit && !submissionsTimeToExecuteExceedsMaxAllowedLimit);
 
         if (this.userProviderService.GetCurrentUser().IsDeveloper && !canRetest)
         {
+            // Developers can retest even if validations fail
+            // Adding messages for developers for better understanding why retest fails
             if (allSubmissionsWorkingTimeExceedsMaxAllowedTime)
             {
                 validationModel.Message = $"Submissions will take {Math.Round(allSubmissionsWorkingTime / 60)} minutes to execute.";
