@@ -18,7 +18,7 @@ public class SettingsCommonDataService(ILogger<SettingsCommonDataService> logger
 
         if (exists)
         {
-            logger.LogSettingExistsSkipSeed(model.Name);
+            logger.LogSettingExistsSkipAdding(model.Name);
 
             return;
         }
@@ -26,6 +26,6 @@ public class SettingsCommonDataService(ILogger<SettingsCommonDataService> logger
         await this.Add(model.Map<Setting>());
         await this.SaveChanges();
 
-        logger.LogSeedSetting(model.Name);
+        logger.LogAddedSetting(model.Name);
     }
 }
