@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 public class SettingsCommonDataService(ILogger<SettingsCommonDataService> logger, OjsDbContext db)
     : DataService<Setting>(db), ISettingsCommonDataService
 {
-    public async Task AddIfNotExists(SettingServiceModel model)
+    public async Task CreateIfNotExists(SettingServiceModel model)
     {
         var exists = await this.Exists(s => model.Name == s.Name);
 

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 public interface ISettingsCommonDataService : IDataService<Setting>
 {
-    Task AddIfNotExists(SettingServiceModel model);
+    Task CreateIfNotExists(SettingServiceModel model);
 }

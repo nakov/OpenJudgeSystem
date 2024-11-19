@@ -69,7 +69,7 @@ public static class ServiceProviderExtensions
 
         foreach (var s in settings)
         {
-            await dataService.AddIfNotExists(s);
+            await dataService.CreateIfNotExists(s);
         }
     }
 }
