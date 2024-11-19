@@ -237,7 +237,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
     public async Task RetestById(int id)
     {
-        var submissions = (await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(id)).ToList();
+        var submissions = await this.submissionsData.GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(id);
 
         var submissionIds = submissions.Select(s => s.Id).ToList();
 
@@ -252,7 +252,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             await this.submissionsForProcessingData.AddOrUpdateMany(submissionIds);
         });
 
-        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
+        var serviceModels = submissions
+                .Select(this.submissionsCommonBusinessService.BuildSubmissionForProcessing)
+                .ToList();
+
+        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(serviceModels);
     }
 
     private static void AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
