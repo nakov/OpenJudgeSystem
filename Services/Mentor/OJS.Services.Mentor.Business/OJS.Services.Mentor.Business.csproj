@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Servers\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\UI\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
+      <ProjectReference Include="..\OJS.Services.Mentor.Models\OJS.Services.Mentor.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenAI" Version="2.0.0" />
+      <PackageReference Include="TiktokenSharp" Version="1.1.5" />
+    </ItemGroup>
+
+</Project>

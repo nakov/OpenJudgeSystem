@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\..\Data\OJS.Data\OJS.Data.csproj" />
     <ProjectReference Include="..\..\..\PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj" />
     <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+    <ProjectReference Include="..\..\..\Services\Mentor\OJS.Services.Mentor.Business\OJS.Services.Mentor.Business.csproj" />
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Business\OJS.Services.Ui.Business.csproj" />
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
     <ProjectReference Include="..\..\..\Services\UI\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
