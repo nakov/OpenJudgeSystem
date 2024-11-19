@@ -1,29 +1,18 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { useCallback, useEffect, useState } from 'react';
-import { SiPicardsurgeles } from 'react-icons/all';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
     DialogContentText,
-    DialogTitle,
-    TextField,
-    Typography,
 } from '@mui/material';
-import { CANCEL } from 'src/common/labels';
 import SimpleDialog from 'src/components/guidelines/dialog/simple-dialog/SimpleDialog';
 import isNilOrEmpty from 'src/utils/check-utils';
 
-import styles from "src/components/guidelines/dialog/ConfirmDialog.module.scss";
 import { IIndexProblemsType, IPagedResultType, IProblemRetestValidationType } from '../../../../common/types';
 import { useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import ConfirmDialogWithAdditionalProtection from '../../../guidelines/dialog/dialog-with-additional-protection/ConfirmDialogWithAdditionalProtection';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-
 
 interface IProblemRetestProps {
     index: number;

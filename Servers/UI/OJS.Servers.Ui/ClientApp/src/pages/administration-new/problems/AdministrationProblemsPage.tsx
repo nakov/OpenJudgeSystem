@@ -44,7 +44,6 @@ const AdministrationProblemsPage = () => {
         {
             data: validateResult,
             isLoading: isValidateLoading,
-            error: validateError,
         } ] = useValidateRetestMutation();
 
     const onEditClick = (id: number) => {

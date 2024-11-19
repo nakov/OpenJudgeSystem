@@ -8,7 +8,7 @@ import {
     IProblemAdministration,
     IProblemResouceInLinstModel,
     IProblemRetestValidationType,
-    ITestsDropdownData
+    ITestsDropdownData,
 } from '../../../common/types';
 import { IGetByContestId, IGetByProblemId, IProblemUrlById } from '../../../common/url-types';
 import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
