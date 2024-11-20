@@ -13,6 +13,12 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 [Authorize]
 public class TestsController(ITestsBusinessService testsBusiness) : BaseApiController
 {
+    /// <summary>
+    /// Gets the test details for a submission's test run for the provided test id.
+    /// </summary>
+    /// <param name="id">The ID of the test.</param>
+    /// <param name="submissionId">The ID of the submission.</param>
+    /// <returns>Details model.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(TestDetailsResponseModel), Status200OK)]
     public async Task<IActionResult> GetDetailsForSubmission(int id, int submissionId)
