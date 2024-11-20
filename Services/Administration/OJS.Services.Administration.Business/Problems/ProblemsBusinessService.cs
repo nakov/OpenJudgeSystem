@@ -278,9 +278,9 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             };
         }
 
-        var averageTimeDifferenceInSeconds = relevantSubmissions
+        var averageTimeDifferenceInSeconds = Math.Round(relevantSubmissions
             .Select(s => (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds)
-            .Average();
+            .Average());
 
         var maxWorkersWorkingTime =
             await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxWorkersWorkingTimeInSeconds);
