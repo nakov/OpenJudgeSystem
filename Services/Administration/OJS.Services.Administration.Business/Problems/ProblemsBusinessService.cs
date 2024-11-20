@@ -325,7 +325,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         else if (!canRetest)
         {
             validationModel.Message =
-                $"Unable to retest {submissionsCount} submissions for this problem. Contact a developer for this action.";
+                $"Retesting {submissionsCount} submissions will take {Math.Round(allSubmissionsWorkingTime / 60)} minutes to complete, exceeding the maximum allowed time limit ({Math.Round(double.Parse(maxWorkersWorkingTime.Value) / 60)} minutes). Contact a developer.";
 
             return validationModel;
         }
