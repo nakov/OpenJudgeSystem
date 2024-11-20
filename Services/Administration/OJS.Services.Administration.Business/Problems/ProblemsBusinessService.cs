@@ -348,6 +348,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
             await this.submissionsData.SetAllToUnprocessedByProblem(id);
 
+            await this.submissionsData.RemoveTestRunsCacheByProblem(id);
+
             await this.submissionsForProcessingData.AddOrUpdateMany(submissionIds);
         });
 

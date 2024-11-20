@@ -37,7 +37,7 @@
 
         new void Update(Submission submission);
 
-        void RemoveTestRunsCacheByProblem(int problemId);
+        Task RemoveTestRunsCacheByProblem(int problemId);
 
         Task<IEnumerable<int>> GetIdsByProblemId(int problemId);
     }

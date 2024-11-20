@@ -89,7 +89,7 @@
         public void DeleteByProblem(int problemId)
             => this.Delete(s => s.ProblemId == problemId);
 
-        public void RemoveTestRunsCacheByProblem(int problemId)
+        public Task RemoveTestRunsCacheByProblem(int problemId)
             => this.GetAllByProblem(problemId)
                 .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
 

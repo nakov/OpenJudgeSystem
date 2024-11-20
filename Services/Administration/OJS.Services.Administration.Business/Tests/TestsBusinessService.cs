@@ -185,7 +185,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
                    IsolationLevel.RepeatableRead,
                    TransactionScopeAsyncFlowOption.Enabled))
         {
-            this.submissionsDataService.RemoveTestRunsCacheByProblem(problemId);
+            await this.submissionsDataService.RemoveTestRunsCacheByProblem(problemId);
 
             if (model.DeleteOldTests)
             {
