@@ -1,6 +1,15 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IFileModel, IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel, ITestsDropdownData } from '../../../common/types';
+import {
+    IFileModel,
+    IGetAllAdminParams,
+    IIndexProblemsType,
+    IPagedResultType,
+    IProblemAdministration,
+    IProblemResouceInLinstModel,
+    IProblemRetestValidationType,
+    ITestsDropdownData,
+} from '../../../common/types';
 import { IGetByContestId, IGetByProblemId, IProblemUrlById } from '../../../common/url-types';
 import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -54,6 +63,13 @@ const problemsAdminService = createApi({
                     itemsPerPage,
                     sorting,
                 },
+            }),
+        }),
+
+        validateRetest: builder.mutation<IProblemRetestValidationType, number>({
+            query: (problemId) => ({
+                url: `/ValidateRetest/${problemId}`,
+                method: 'POST',
             }),
         }),
 
@@ -127,6 +143,7 @@ export const {
     useDeleteProblemMutation,
     useUpdateProblemMutation,
     useGetContestProblemsQuery,
+    useValidateRetestMutation,
     useRetestByIdMutation,
     useDeleteByContestMutation,
     useCopyAllMutation,

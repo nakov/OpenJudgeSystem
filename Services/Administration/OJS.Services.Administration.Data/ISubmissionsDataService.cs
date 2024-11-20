@@ -15,6 +15,8 @@
 
         IQueryable<Submission> GetAllByProblem(int problemId);
 
+        Task<int> GetCountByProblem(int problemId);
+
         IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
 
         Task<Submission?> GetWithProblemTestsAndSubmissionTypes(int id);
