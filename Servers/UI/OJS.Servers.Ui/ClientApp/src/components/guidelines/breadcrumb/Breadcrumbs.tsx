@@ -46,6 +46,7 @@ const Breadcrumbs = ({
 
             const renderItemContent = (item: IPageBreadcrumbsItem, isLast: boolean) => (
                 <div
+                  key={`${keyPrefix}-breadcrumb-item-${item.text}`}
                   className={concatClassNames(
                       styles.item,
                       isLast

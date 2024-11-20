@@ -113,7 +113,6 @@ interface IAllowedStrategyType {
 }
 
 interface IContestCategory {
-    allowedStrategyTypes: Array<IAllowedStrategyType>;
     children: Array<IContestCategory>;
     id: number;
     name: string;
@@ -767,6 +766,7 @@ export type {
     IContestDetailsResponseType,
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
+    IAllowedStrategyType,
     IContestCategory,
     IContestCategoryHierarchy,
     IGetAllAdminParams,

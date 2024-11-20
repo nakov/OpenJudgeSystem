@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import { useSearchParams } from 'react-router-dom';
+import { IAllowedStrategyType } from 'src/common/types';
+import { useGetSubmissionTypesForCategoryQuery } from 'src/redux/services/submissionTypesService';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
@@ -15,6 +17,9 @@ const ContestStrategies = () => {
     const [ searchParams ] = useSearchParams();
     const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
     const [ selectValue, setSelectValue ] = useState<string>('');
+    const [ strategiesForSelectedCategory, setStrategiesForSelectedCategory ] = useState<IAllowedStrategyType[]>([]);
+
+    const { data: strategiesForCategory } = useGetSubmissionTypesForCategoryQuery({ contestCategoryId: selectedCategory?.id ?? 0 });
 
     const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
     const {
@@ -43,16 +48,22 @@ const ContestStrategies = () => {
         }
     }, [ selectedStrategy ]);
 
+    useEffect(() => {
+        if (strategiesForCategory && strategiesForCategory.length > 0) {
+            setStrategiesForSelectedCategory(strategiesForCategory);
+        }
+    }, [ strategiesForCategory, setStrategiesForSelectedCategory ]);
+
     const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({
         id: el.id,
         name: el.name,
     });
 
     const dropdownItems = useMemo(
-        () => !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
+        () => !selectedCategory || strategiesForSelectedCategory.length === 0
             ? (contestStrategies || []).map(mapDataToDropdownItem)
-            : selectedCategory?.allowedStrategyTypes?.map(mapDataToDropdownItem),
-        [ contestStrategies, selectedCategory ],
+            : strategiesForSelectedCategory.map(mapDataToDropdownItem),
+        [ contestStrategies, selectedCategory, strategiesForSelectedCategory ],
     );
 
     const removeSelectedStrategy = () => {
