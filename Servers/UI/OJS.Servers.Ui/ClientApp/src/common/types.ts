@@ -107,11 +107,6 @@ interface IGetContestParticipationsForUserQueryParams extends IContestsSortAndFi
     username: string;
 }
 
-interface IAllowedStrategyType {
-    id: number;
-    name: string;
-}
-
 interface IContestCategory {
     children: Array<IContestCategory>;
     id: number;
@@ -766,7 +761,6 @@ export type {
     IContestDetailsResponseType,
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
-    IAllowedStrategyType,
     IContestCategory,
     IContestCategoryHierarchy,
     IGetAllAdminParams,

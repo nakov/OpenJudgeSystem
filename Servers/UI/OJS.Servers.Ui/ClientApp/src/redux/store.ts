@@ -6,7 +6,6 @@ import storage from 'redux-persist/lib/storage';
 
 // features
 import testsService from 'src/redux/services/testsService';
-import submissionTypesService from 'src/redux/services/submissionTypesService';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
 import searchSlice from './features/searchSlice';
@@ -52,7 +51,6 @@ const rootReducer = combineReducers({
     [usersService.reducerPath]: usersService.reducer,
     [submissionsService.reducerPath]: submissionsService.reducer,
     [testsService.reducerPath]: testsService.reducer,
-    [submissionTypesService.reducerPath]: submissionTypesService.reducer,
     [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
     [searchService.reducerPath]: searchService.reducer,
@@ -98,7 +96,6 @@ const store = configureStore({
         usersService.middleware,
         submissionsService.middleware,
         testsService.middleware,
-        submissionTypesService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
         problemGroupsAdminService.middleware,

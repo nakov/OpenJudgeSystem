@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Ui.Models.SubmissionTypes;
@@ -20,13 +19,7 @@ public class SubmissionTypesCacheService : ISubmissionTypesCacheService
         this.submissionTypesBusiness = submissionTypesBusiness;
     }
 
-    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage(int cacheSeconds)
-        => this.cache.Get(
-            CacheConstants.SubmissionTypesByUsage,
-            this.submissionTypesBusiness.GetAllOrderedByLatestUsage,
-            cacheSeconds);
-
-    public Task<IEnumerable<AllowedContestStrategiesServiceModel>> GetAllForContestCategory(
+    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllForContestCategory(
         int contestCategoryId,
         int cacheSeconds = CacheConstants.OneDayInSeconds)
         => this.cache.Get(

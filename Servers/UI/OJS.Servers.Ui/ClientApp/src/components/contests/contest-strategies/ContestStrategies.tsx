@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import { useSearchParams } from 'react-router-dom';
-import { IAllowedStrategyType } from 'src/common/types';
-import { useGetSubmissionTypesForCategoryQuery } from 'src/redux/services/submissionTypesService';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
@@ -17,16 +15,14 @@ const ContestStrategies = () => {
     const [ searchParams ] = useSearchParams();
     const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
     const [ selectValue, setSelectValue ] = useState<string>('');
-    const [ strategiesForSelectedCategory, setStrategiesForSelectedCategory ] = useState<IAllowedStrategyType[]>([]);
-
-    const { data: strategiesForCategory } = useGetSubmissionTypesForCategoryQuery({ contestCategoryId: selectedCategory?.id ?? 0 });
+    const [ strategiesForSelectedCategory, setStrategiesForSelectedCategory ] = useState<IContestStrategyFilter[]>([]);
 
     const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
     const {
         data: contestStrategies,
         isLoading: areStrategiesLoading,
         error: strategiesError,
-    } = useGetContestStrategiesQuery();
+    } = useGetContestStrategiesQuery({ contestCategoryId: selectedCategory?.id ?? 0 });
 
     useEffect(() => {
         if (selectedId && contestStrategies) {
@@ -49,10 +45,10 @@ const ContestStrategies = () => {
     }, [ selectedStrategy ]);
 
     useEffect(() => {
-        if (strategiesForCategory && strategiesForCategory.length > 0) {
-            setStrategiesForSelectedCategory(strategiesForCategory);
+        if (contestStrategies && contestStrategies.length > 0) {
+            setStrategiesForSelectedCategory(contestStrategies);
         }
-    }, [ strategiesForCategory, setStrategiesForSelectedCategory ]);
+    }, [ contestStrategies, setStrategiesForSelectedCategory ]);
 
     const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({
         id: el.id,

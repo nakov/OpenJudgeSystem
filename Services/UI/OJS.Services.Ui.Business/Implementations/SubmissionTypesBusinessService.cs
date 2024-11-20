@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.SubmissionTypes;
 
@@ -30,7 +29,22 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
         this.contestCategoriesData = contestCategoriesData;
     }
 
-    public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
+    public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllForContestCategory(int contestCategoryId)
+    {
+        if (contestCategoryId == 0)
+        {
+            // If the contest category is not specified, return all submission types ordered by latest usage.
+            return await this.GetAllOrderedByLatestUsage();
+        }
+
+        var subcategories = await this.contestCategoriesBusiness.GetAllSubcategories(contestCategoryId);
+        var categoryIds = subcategories.Select(x => x.Id).Append(contestCategoryId).ToList();
+
+        return await this.contestCategoriesData
+            .GetAllowedStrategyTypesByIds<SubmissionTypeFilterServiceModel>(categoryIds);
+    }
+
+    private async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
     {
         var latestSubmissions = await this.submissionsData
             .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
@@ -48,14 +62,5 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
         return allSubmissionTypes
             .OrderByDescending(x => submissionTypesUsageGroups.GetValueOrDefault(x.Id));
-    }
-
-    public async Task<IEnumerable<AllowedContestStrategiesServiceModel>> GetAllForContestCategory(int contestCategoryId)
-    {
-        var subcategories = await this.contestCategoriesBusiness.GetAllSubcategories(contestCategoryId);
-        var categoryIds = subcategories.Select(x => x.Id).Append(contestCategoryId).ToList();
-
-        return await this.contestCategoriesData
-            .GetAllowedStrategyTypesByIds<AllowedContestStrategiesServiceModel>(categoryIds);
     }
 }
