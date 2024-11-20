@@ -51,7 +51,7 @@ const ContestStrategies = () => {
     const dropdownItems = useMemo(
         () => !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
             ? (contestStrategies || []).map(mapDataToDropdownItem)
-            : selectedCategory?.allowedStrategyTypes.map(mapDataToDropdownItem),
+            : selectedCategory?.allowedStrategyTypes?.map(mapDataToDropdownItem),
         [ contestStrategies, selectedCategory ],
     );
 
