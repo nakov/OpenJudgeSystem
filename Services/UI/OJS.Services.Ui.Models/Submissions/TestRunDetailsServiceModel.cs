@@ -31,7 +31,7 @@ public class TestRunDetailsServiceModel : IMapExplicitly
 
     public double OrderBy => this.Test.OrderBy;
 
-    public bool ShowInput { get; set; } = true;
+    public bool ShowInput { get; set; }
 
     public int TestId { get; set; }
 
@@ -42,6 +42,5 @@ public class TestRunDetailsServiceModel : IMapExplicitly
             .ForMember(d => d.Input, opt => opt.Ignore())
             .ForMember(d => d.IsTrialTest, opt => opt.Ignore())
             .ForMember(d => d.OrderBy, opt => opt.Ignore())
-            .ForMember(d => d.Test, opt => opt.Ignore())
             .ForMember(d => d.ShowInput, opt => opt.Ignore());
 }

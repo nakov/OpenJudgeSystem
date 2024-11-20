@@ -12,7 +12,7 @@ public class ContestParticipationServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
-    public ContestServiceModel? Contest { get; set; }
+    public ContestDetailsServiceModel? Contest { get; set; }
 
     public bool IsRegisteredParticipant { get; set; }
 
@@ -53,7 +53,6 @@ public class ContestParticipationServiceModel : IMapExplicitly
             .ForMember(m => m.IsRegisteredParticipant, opt => opt.Ignore())
             .ForMember(m => m.IsActiveParticipant, opt => opt.Ignore())
             .ForMember(m => m.ParticipantId, opt => opt.Ignore())
-            .ForMember(m => m.LastSubmissionTime, opt => opt.Ignore())
             .ForMember(m => m.UserSubmissionsTimeLimit, opt => opt.Ignore())
             .ForMember(m => m.ParticipantsCount, opt => opt.Ignore());
 

@@ -6,15 +6,11 @@ using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Models.Contests;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ContestCategoryListViewModel = OJS.Services.Common.Models.Cache.ContestCategoryListViewModel;
 
 public interface IContestCategoriesCacheService : IService
 {
     Task<IEnumerable<ContestCategoryTreeViewModel>> GetContestSubCategoriesList(
         int categoryId,
-        int? cacheSeconds = CacheConstants.OneDayInSeconds);
-
-    Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
     Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(

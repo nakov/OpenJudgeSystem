@@ -97,7 +97,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.problemsData.SaveChanges();
 
         await this.ReevaluateProblemsOrder(contestId);
-        await this.problemsCache.ClearProblemsCacheByContestId(contestId);
+        await this.problemsCache.ClearProblemCacheById(problem.Id);
 
         return model;
     }
@@ -123,6 +123,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
         }
 
+        await this.problemsCache.ClearProblemCacheById(id);
+
         await this.problemsData.DeleteById(id);
         await this.problemsData.SaveChanges();
         await this.testRunsData.DeleteByProblem(id);
@@ -130,8 +132,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemResourcesData.DeleteByProblem(id);
 
         this.submissionsData.DeleteByProblem(id);
-
-        await this.problemsCache.ClearProblemsCacheByContestId(problem.ContestId);
 
         scope.Complete();
     }
@@ -224,7 +224,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         AddSubmissionTypes(problem, model);
 
-        await this.problemsCache.ClearProblemsCacheByContestId(problem.ProblemGroup.ContestId);
+        await this.problemsCache.ClearProblemCacheById(problem.Id);
 
         this.problemsData.Update(problem);
 
@@ -237,7 +237,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
     public async Task RetestById(int id)
     {
-        var submissions = (await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(id)).ToList();
+        var submissions = await this.submissionsData.GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(id);
 
         var submissionIds = submissions.Select(s => s.Id).ToList();
 
@@ -252,7 +252,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             await this.submissionsForProcessingData.AddOrUpdateMany(submissionIds);
         });
 
-        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
+        var serviceModels = submissions
+                .Select(this.submissionsCommonBusinessService.BuildSubmissionForProcessing)
+                .ToList();
+
+        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(serviceModels);
     }
 
     private static void AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)

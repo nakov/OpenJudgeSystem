@@ -7,7 +7,7 @@ using System;
 
 public class ContestParticipationValidationServiceModel
     : IMapFrom<ContestRegistrationDetailsServiceModel>,
-    IMapFrom<ContestServiceModel>,
+    IMapFrom<ContestDetailsServiceModel>,
     IMapTo<ContestForActivityServiceModel>
 {
     public int Id { get; set; }

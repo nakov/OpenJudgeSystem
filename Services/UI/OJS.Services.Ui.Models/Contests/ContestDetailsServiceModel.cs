@@ -2,12 +2,12 @@
 
 using AutoMapper;
 using OJS.Common.Enumerations;
+using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
 using OJS.Services.Ui.Models.Submissions;
 using System;
-using OJS.Services.Ui.Models.Cache;
 
 public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed, IMapTo<ContestForActivityServiceModel>
 {
@@ -65,13 +65,15 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public string? PracticePassword { get; set; }
 
+    public bool UserIsAdminOrLecturerInContest { get; set; }
+
     public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = [];
 
     public ICollection<ContestProblemServiceModel> Problems { get; set; } = [];
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration
-            .CreateMap<ContestCacheModel, ContestDetailsServiceModel>()
+            .CreateMap<Contest, ContestDetailsServiceModel>()
             .ForMember(d => d.Problems, opt => opt.Ignore())
             .ForMember(d => d.IsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.CanViewCompeteResults, opt => opt.Ignore())
@@ -82,5 +84,6 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
             .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
             .ForMember(d => d.IsActive, opt => opt.Ignore())
+            .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
             .ReverseMap();
 }
