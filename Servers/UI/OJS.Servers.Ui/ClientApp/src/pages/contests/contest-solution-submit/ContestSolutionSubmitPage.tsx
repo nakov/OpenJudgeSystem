@@ -11,6 +11,7 @@ import isNil from 'lodash/isNil';
 import moment from 'moment';
 import { SUBMISSION_SENT } from 'src/common/messages';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
+import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -335,6 +336,25 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         isCompete,
     ]);
+
+    useEffect(() => {
+        if (!selectedSubmissionType) {
+            return;
+        }
+
+        const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
+
+        const isCodeStrategyAndCodeIsEmptyOrTooShort =
+            !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
+        const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
+
+        if (isCodeStrategyAndCodeIsEmptyOrTooShort || isFileUploadAndFileIsEmpty) {
+            setIsSubmitButtonDisabled(true);
+            return;
+        }
+
+        setIsSubmitButtonDisabled(false);
+    }, [ selectedSubmissionType, submissionCode, uploadedFile ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
