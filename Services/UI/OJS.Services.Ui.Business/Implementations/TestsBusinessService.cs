@@ -36,6 +36,8 @@ public class TestsBusinessService(
             })
             .FirstOrDefaultAsync() ?? throw new BusinessServiceException("Submission not found.");
 
+        var test = submission.Test ?? throw new BusinessServiceException("Test not found.");
+
         var isCurrentUserAdminOrLecturerInContest = currentUser.IsAdmin ||
             await contestsData.IsUserLecturerInByContestAndUser(submission.ContestId, currentUser.Id);
 
@@ -43,8 +45,6 @@ public class TestsBusinessService(
         {
             throw new BusinessServiceException("You are not authorized to view this test.");
         }
-
-        var test = submission.Test ?? throw new BusinessServiceException("Test not found.");
 
         var canViewTest = isCurrentUserAdminOrLecturerInContest ||
             (!test.HideInput &&
