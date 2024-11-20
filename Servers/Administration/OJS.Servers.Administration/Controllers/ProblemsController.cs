@@ -95,6 +95,13 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
             return this.UnprocessableEntity();
         }
 
+        var validationModel = await this.problemsBusinessService.ValidateRetest(model.Id);
+
+        if (!validationModel.RetestAllowed)
+        {
+            return this.UnprocessableEntity(validationModel.Message);
+        }
+
         await this.problemsBusinessService.RetestById(model.Id);
 
         return this.Ok("Problem successfully retested.");

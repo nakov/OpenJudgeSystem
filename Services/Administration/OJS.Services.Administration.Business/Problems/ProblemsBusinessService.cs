@@ -264,9 +264,10 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             .Where(s => s.IsCompiledSuccessfully && s.StartedExecutionOn.HasValue && s.CompletedExecutionOn.HasValue)
             .GroupBy(s => s.Points)
             .Select(g => g.FirstOrDefault())
-            .Take(3);
+            .Take(3)
+            .ToList();
 
-        if (!relevantSubmissions.Any())
+        if (relevantSubmissions.Count == 0)
         {
             return new ProblemRetestValidationModel
             {
@@ -278,7 +279,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         }
 
         var averageTimeDifferenceInSeconds = relevantSubmissions
-            .AsEnumerable()
             .Select(s => (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds)
             .Average();
 
