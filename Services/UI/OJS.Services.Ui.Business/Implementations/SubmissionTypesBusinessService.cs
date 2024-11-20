@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.SubmissionTypes;
 
@@ -14,13 +15,19 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
     private const int LatestSubmissionsCountForSubmissionTypesUsage = 10_000;
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly ISubmissionsDataService submissionsData;
+    private readonly IContestCategoriesBusinessService contestCategoriesBusiness;
+    private readonly IContestCategoriesDataService contestCategoriesData;
 
     public SubmissionTypesBusinessService(
         ISubmissionTypesDataService submissionTypesData,
-        ISubmissionsDataService submissionsData)
+        ISubmissionsDataService submissionsData,
+        IContestCategoriesBusinessService contestCategoriesBusiness,
+        IContestCategoriesDataService contestCategoriesData)
     {
         this.submissionTypesData = submissionTypesData;
         this.submissionsData = submissionsData;
+        this.contestCategoriesBusiness = contestCategoriesBusiness;
+        this.contestCategoriesData = contestCategoriesData;
     }
 
     public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
@@ -41,5 +48,14 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
         return allSubmissionTypes
             .OrderByDescending(x => submissionTypesUsageGroups.GetValueOrDefault(x.Id));
+    }
+
+    public async Task<IEnumerable<AllowedContestStrategiesServiceModel>> GetAllForContestCategory(int contestCategoryId)
+    {
+        var subcategories = await this.contestCategoriesBusiness.GetAllSubcategories(contestCategoryId);
+        var categoryIds = subcategories.Select(x => x.Id).Append(contestCategoryId).ToList();
+
+        return await this.contestCategoriesData
+            .GetAllowedStrategyTypesByIds<AllowedContestStrategiesServiceModel>(categoryIds);
     }
 }

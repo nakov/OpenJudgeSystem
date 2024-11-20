@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
-using ContestCategoryListViewModel = OJS.Services.Common.Models.Cache.ContestCategoryListViewModel;
 
 public class ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData)
     : IContestCategoriesBusinessService
@@ -31,11 +30,6 @@ public class ContestCategoriesBusinessService(IContestCategoriesDataService cont
 
         return mainCategories;
     }
-
-    public async Task<IEnumerable<ContestCategoryListViewModel>> GetAllMain()
-        => await contestCategoriesData
-            .GetAllVisibleMainOrdered<ContestCategoryListViewModel>()
-            .ToListAsync();
 
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllSubcategories(int categoryId)
     {
