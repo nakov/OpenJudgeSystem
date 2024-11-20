@@ -1,6 +1,7 @@
 // Submissions
 const submissionsServiceName = 'submissionsService';
 const testsServiceName = 'testsService';
+
 // Users
 const authorizationServiceName = 'authorizationService';
 
