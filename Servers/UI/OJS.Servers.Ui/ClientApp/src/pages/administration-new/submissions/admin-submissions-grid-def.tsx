@@ -39,6 +39,24 @@ const dataColumns: AdministrationGridColDef[] = [
         sortable: false,
     },
     {
+        field: 'problemId',
+        headerName: 'ProblemId',
+        type: 'number',
+        align: 'center',
+        headerAlign: 'center',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        hidden: true,
+        renderCell: (params: GridRenderCellParams) => (
+            <Link
+              to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${Number(params.row?.problemId)}`}
+            >
+                {params.row?.problemId}
+            </Link>
+        ),
+    },
+    {
         field: 'problemName',
         headerName: 'Problem Name',
         align: 'center',
