@@ -15,7 +15,6 @@ const ContestStrategies = () => {
     const [ searchParams ] = useSearchParams();
     const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
     const [ selectValue, setSelectValue ] = useState<string>('');
-    const [ strategiesForSelectedCategory, setStrategiesForSelectedCategory ] = useState<IContestStrategyFilter[]>([]);
 
     const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
     const {
@@ -44,22 +43,14 @@ const ContestStrategies = () => {
         }
     }, [ selectedStrategy ]);
 
-    useEffect(() => {
-        if (contestStrategies && contestStrategies.length > 0) {
-            setStrategiesForSelectedCategory(contestStrategies);
-        }
-    }, [ contestStrategies, setStrategiesForSelectedCategory ]);
-
     const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({
         id: el.id,
         name: el.name,
     });
 
     const dropdownItems = useMemo(
-        () => !selectedCategory || strategiesForSelectedCategory.length === 0
-            ? (contestStrategies || []).map(mapDataToDropdownItem)
-            : strategiesForSelectedCategory.map(mapDataToDropdownItem),
-        [ contestStrategies, selectedCategory, strategiesForSelectedCategory ],
+        () => (contestStrategies || []).map(mapDataToDropdownItem),
+        [ contestStrategies ],
     );
 
     const removeSelectedStrategy = () => {
