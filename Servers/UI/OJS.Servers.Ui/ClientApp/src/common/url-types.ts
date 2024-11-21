@@ -94,6 +94,11 @@ interface IRegisterUserForContestParams {
     hasConfirmedParticipation: boolean;
 }
 
+interface IGetTestDetailsParams {
+    id: number;
+    submissionId: number;
+}
+
 export type {
     IContestDetailsUrlParams,
     IContestCategoriesUrlParams,
@@ -114,4 +119,5 @@ export type {
     ISubmitContestSolutionParams,
     IGetSubmissionsByUserParams,
     IRegisterUserForContestParams,
+    IGetTestDetailsParams,
 };
