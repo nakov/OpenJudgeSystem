@@ -11,4 +11,6 @@ public class ConversationRequestModel
     public string ProblemName { get; set; } = default!;
 
     public ICollection<MentorProblemResourceModel> ProblemResources { get; set; } = [];
+
+    public int ContestId { get; set; }
 }

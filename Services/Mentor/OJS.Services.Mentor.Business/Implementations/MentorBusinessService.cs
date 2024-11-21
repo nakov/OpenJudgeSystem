@@ -32,19 +32,22 @@ public class MentorBusinessService : IMentorBusinessService
     private readonly OpenAIClient openAiClient;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly IDataService<Setting> settingData;
+    private readonly IContestsDataService contestsData;
 
     public MentorBusinessService(
         IDataService<UserMentor> userMentorData,
         IDataService<MentorPromptTemplate> mentorPromptTemplateData,
         IHttpClientFactory httpClientFactory,
         IDataService<Setting> settingData,
+        IContestsDataService contestsData,
         OpenAIClient openAiClient)
     {
         this.userMentorData = userMentorData;
         this.mentorPromptTemplateData = mentorPromptTemplateData;
-        this.openAiClient = openAiClient;
         this.httpClientFactory = httpClientFactory;
         this.settingData = settingData;
+        this.contestsData = contestsData;
+        this.openAiClient = openAiClient;
     }
 
     public async Task<ConversationResponseModel> StartConversation(ConversationRequestModel model)
@@ -101,8 +104,15 @@ public class MentorBusinessService : IMentorBusinessService
                 .GetQuery()
                 .FirstOrDefaultAsync();
 
+            var problemsResources = await this.contestsData.GetByIdQuery(model.ContestId)
+                .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                .ThenInclude(p => p.Resources)
+                .SelectMany(c => c.ProblemGroups.SelectMany(pg => pg.Problems).SelectMany(p => p.Resources))
+                .ToListAsync();
+
             // AllProblemResources + type is problem desc
-            var wordFiles = model.ProblemResources
+            var wordFiles = problemsResources
                 .Where(pr =>
                        pr is { File: not null, FileExtension: Docx } ||
                        pr.Link is not null && pr.Link.Split('.').Last().Equals(Docx, StringComparison.Ordinal))
