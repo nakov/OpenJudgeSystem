@@ -95,7 +95,7 @@ namespace OJS.Services.Administration.Business.Submissions
             var submission = await this.submissionsData.GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(id);
             if (submission == null || submission.Id == 0)
             {
-                return new ServiceResult("Submission doesn't exist or either the submission or problem is deleted.");
+                throw new BusinessServiceException("Submission doesn't exist or either the submission or problem is deleted.");
             }
 
             return await this.Retest(submission!);
