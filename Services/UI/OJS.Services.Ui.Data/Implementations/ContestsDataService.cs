@@ -44,8 +44,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     {
         var contests = model.CategoryIds.Any()
             ? this.GetAllVisibleByCategories(model.CategoryIds)
-            : this.GetAllVisible()
-                .Include(c => c.Category);
+            : this.GetAllVisible();
 
         return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
     }
@@ -185,10 +184,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     private IQueryable<Contest> GetAllVisibleByCategories(IEnumerable<int> categoryIds)
         => this.GetAllVisible()
-            .Include(c => c.Category)
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-                    .ThenInclude(p => p.SubmissionTypesInProblems)
             .Where(c => c.CategoryId.HasValue && categoryIds.Contains(c.CategoryId.Value));
 
     private IQueryable<Contest> GetAllCompetableQuery()

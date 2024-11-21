@@ -1,14 +1,11 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Data.Implementations;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Threading.Tasks;
 
     public class ParticipantsDataService(OjsDbContext db) : DataService<Participant>(db), IParticipantsDataService
@@ -58,24 +55,9 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.GetAllByContest(contestId)
                 .Where(p => p.IsOfficial);
 
-        public IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
-            int contestId,
-            DateTime participationStartTimeRangeStart,
-            DateTime participationStartTimeRangeEnd)
-            => this.GetAllOfficialByContest(contestId)
-                    .Where(p =>
-                        p.ParticipationStartTime >= participationStartTimeRangeStart &&
-                        p.ParticipationStartTime <= participationStartTimeRangeEnd &&
-                        p.Contest.Type == ContestType.OnlinePracticalExam);
-
         public Task<bool> ExistsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .AnyAsync();
-
-        public Task<bool> IsOfficialById(int id)
-            => this.GetByIdQuery(id)
-                .Select(p => p.IsOfficial)
-                .FirstOrDefaultAsync();
 
         public async Task<IDictionary<int, int>> GetParticipantsCountInContests(IEnumerable<int> contestIds, bool isOfficial)
             => await this.GetQuery(p => contestIds.Contains(p.ContestId) && p.IsOfficial == isOfficial)
@@ -83,11 +65,6 @@ namespace OJS.Services.Ui.Data.Implementations
                 .GroupBy(p => p.ContestId)
                 .Select(g => new { ContestId = g.Key, ParticipantsCount = g.Count() })
                 .ToDictionaryAsync(p => p.ContestId, p => p.ParticipantsCount);
-
-        public Task Update(
-            IQueryable<Participant> participantsQuery,
-            Expression<Func<Participant, Participant>> updateExpression)
-            => participantsQuery.UpdateFromQueryAsync(updateExpression);
 
         private IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
             this.GetAllByContest(contestId)
