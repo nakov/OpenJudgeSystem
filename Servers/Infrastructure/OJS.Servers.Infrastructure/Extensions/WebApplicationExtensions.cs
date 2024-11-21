@@ -93,6 +93,14 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
+        public static WebApplication SeedSettings(this WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            scope.ServiceProvider.SeedSettings().GetAwaiter().GetResult();
+
+            return app;
+        }
+
         public static IApplicationBuilder UseAutoMapper(this IApplicationBuilder app)
         {
             var services = app.ApplicationServices;

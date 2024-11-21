@@ -297,6 +297,13 @@ interface IIndexProblemsType {
     modifiedOn: Date;
 }
 
+interface IProblemRetestValidationType {
+    submissionsCount: number;
+    averageExecutionTime: number;
+    retestAllowed: boolean;
+    message: boolean;
+}
+
 interface IIndexContestCategoriesType {
     id: number;
     name: string;
@@ -771,6 +778,7 @@ export type {
     IContestCategories,
     ExceptionData,
     IIndexProblemsType,
+    IProblemRetestValidationType,
     IProblemAdministration,
     IProblemSubmissionType,
     ISubmissionTypeInProblem,
