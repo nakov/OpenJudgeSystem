@@ -255,7 +255,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
                 SubmissionsCount = 0,
                 AverageExecutionTime = 0,
                 RetestAllowed = false,
-                Message = "No submissions could be taken for validation."
+                Message = "No submissions have been submitted for this problem."
             };
         }
 
@@ -274,7 +274,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
                 SubmissionsCount = submissionsCount,
                 AverageExecutionTime = 0,
                 RetestAllowed = false,
-                Message = "No successfully compiled submissions could be taken for validation."
+                Message = "No submissions have been successfully compiled for this problem."
             };
         }
 
@@ -347,6 +347,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             await this.participantScoresData.DeleteAllByProblem(id);
 
             await this.submissionsData.SetAllToUnprocessedByProblem(id);
+
+            await this.submissionsData.RemoveTestRunsCacheByProblem(id);
 
             await this.submissionsForProcessingData.AddOrUpdateMany(submissionIds);
         });
