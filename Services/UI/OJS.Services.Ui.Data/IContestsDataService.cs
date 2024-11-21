@@ -10,7 +10,7 @@ namespace OJS.Services.Ui.Data
 
     public interface IContestsDataService : IDataService<Contest>
     {
-        public Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
+        Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
             IQueryable<Contest> contests,
             ContestFiltersServiceModel model);
 

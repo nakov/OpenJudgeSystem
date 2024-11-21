@@ -107,13 +107,7 @@ interface IGetContestParticipationsForUserQueryParams extends IContestsSortAndFi
     username: string;
 }
 
-interface IAllowedStrategyType {
-    id: number;
-    name: string;
-}
-
 interface IContestCategory {
-    allowedStrategyTypes: Array<IAllowedStrategyType>;
     children: Array<IContestCategory>;
     id: number;
     name: string;

@@ -8,6 +8,7 @@ using OJS.Services.Infrastructure.Constants;
 
 public interface ISubmissionTypesCacheService : IService
 {
-    Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage(
+    Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllForContestCategory(
+        int contestCategoryId,
         int cacheSeconds = CacheConstants.OneDayInSeconds);
 }

@@ -30,5 +30,5 @@ public interface IEntityPermissionsService<in TEntity, in TValue> : IScopedServi
     /// <param name="value">The input that will be validated.</param>
     /// <param name="operation">The administration operation being executed.</param>
     /// <returns>True if the user can do the operation on the entity.</returns>
-    public Task<bool> HasPermission(UserInfoModel user, TValue value, string operation);
+    Task<bool> HasPermission(UserInfoModel user, TValue value, string operation);
 }
