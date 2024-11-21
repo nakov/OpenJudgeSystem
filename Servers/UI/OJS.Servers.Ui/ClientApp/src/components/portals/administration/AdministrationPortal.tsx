@@ -18,6 +18,7 @@ import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import TableViewIcon from '@mui/icons-material/TableView';
 import {
     Box,
@@ -39,6 +40,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import UserActions from 'src/components/administration/common/user-actions/UserActions';
+import AdministrationUsersMentorsPage from 'src/pages/administration-new/mentor/AdministrationUsersMentorsPage';
 
 import 'dayjs/locale/bg';
 
@@ -62,7 +64,7 @@ import {
     SUBMISSIONS_FOR_PROCESSING_PATH,
     SUBMISSIONS_PATH,
     SUBMISSIONS_SIMILLARITY,
-    TESTS_PATH,
+    TESTS_PATH, USERS_MENTORS_PATH,
     USERS_PATH,
 } from '../../../common/urls/administration-urls';
 import {
@@ -183,6 +185,12 @@ const administrationItems = [
         name: 'Submission Type Documents',
         icon: <ArticleIcon className={styles.iconSize} />,
         path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}`,
+        visibleOnlyForAdmin: true,
+    },
+    {
+        name: 'Mentor',
+        icon: <SmartToyIcon className={styles.iconSize} />,
+        path: `${USERS_MENTORS_PATH}`,
         visibleOnlyForAdmin: true,
     },
     {
@@ -464,6 +472,11 @@ const AdministrationPortal = () => {
         {
             path: `${SUBMISSION_TYPE_DOCUMENTS_PATH}/:id`,
             Element: AdministrationSubmissionTypeDocumentPage,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${USERS_MENTORS_PATH}`,
+            Element: AdministrationUsersMentorsPage,
             visibleOnlyForAdmin: true,
         },
         {

@@ -137,6 +137,15 @@ enum SubmissionStrategyType {
     // SolidityCompiler = 11,
     GolangCompiler = 12,
 }
+
+enum ChatMessageRole {
+    System = 0,
+    User = 1,
+    Assistant = 2,
+    Tool = 3,
+    Function = 4,
+}
+
 export {
     ThemeMode,
     FilterColumnTypeEnum,
@@ -149,4 +158,5 @@ export {
     SubmissionStrategyType,
     CompilerType,
     CheckboxSearchValues,
+    ChatMessageRole,
 };

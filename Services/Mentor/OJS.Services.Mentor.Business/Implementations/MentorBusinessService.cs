@@ -15,6 +15,7 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Mentor.Business;
 using OJS.Services.Mentor.Models;
+using OJS.Services.Ui.Data;
 using OpenAI;
 using OpenAI.Chat;
 using TiktokenSharp;
@@ -24,7 +25,7 @@ using static OJS.Common.GlobalConstants.Settings;
 public class MentorBusinessService : IMentorBusinessService
 {
     private const string Docx = "docx";
-    private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please copy and paste the problem description directly into the chat for the mentor to assist you.";
+    private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please contact an administratior and report the problem.";
 
     private readonly IDataService<UserMentor> userMentorData;
     private readonly IDataService<MentorPromptTemplate> mentorPromptTemplateData;
@@ -100,6 +101,7 @@ public class MentorBusinessService : IMentorBusinessService
                 .GetQuery()
                 .FirstOrDefaultAsync();
 
+            // AllProblemResources + type is problem desc
             var wordFiles = model.ProblemResources
                 .Where(pr =>
                        pr is { File: not null, FileExtension: Docx } ||
@@ -196,6 +198,8 @@ public class MentorBusinessService : IMentorBusinessService
         return model.Map<ConversationResponseModel>();
     }
 
+    // If the problem is not found by name - instruct the model to ask the user for its description
+    // Handle case 2 with .StartsWith and trimming
     private static string ExtractSectionFromDocument(byte[] bytes, string problemName, int problemNumber)
     {
         using var memoryStream = new MemoryStream(bytes);

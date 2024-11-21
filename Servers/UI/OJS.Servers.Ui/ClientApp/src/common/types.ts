@@ -3,7 +3,7 @@ import { Dayjs } from 'dayjs';
 import { ITestRun } from '../hooks/submissions/types';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
+import { ChatMessageRole, CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
 interface ISubmissionTypeType {
     id: number;
@@ -752,6 +752,44 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
     username: string;
 }
 
+interface IMentorConversationMessage {
+    content: string;
+    role: ChatMessageRole;
+    sequenceNumber: number;
+}
+
+interface IMentorConversationRequestModel {
+    userId: string;
+    conversationMessages: IMentorConversationMessage[];
+    problemId: number;
+    problemName: string;
+    problemResources: IProblemResourceType[];
+    contestId: number;
+}
+
+interface IMentorConversationResponseModel {
+    userId: string;
+    conversationMessages: IMentorConversationMessage[];
+}
+
+interface IUserMentorInListModel {
+    id: string;
+    quotaResetTime: Date;
+    requestsMade: number;
+    quotaLimit: number | null;
+    createdOn: Date;
+    modifiedOne: Date;
+}
+
+interface IUserMentorAdministrationModel {
+    id: string;
+    quotaResetTime: Date;
+    requestsMade: number;
+    quotaLimit: number | null;
+    createdOn: Date;
+    modifiedOne: Date;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -828,4 +866,9 @@ export type {
     IContestCategoryHierarchyEdit,
     IChangeParticipationTimeForMultipleParticipants,
     IChangeParticipationTimeForSingleParticipant,
+    IMentorConversationMessage,
+    IMentorConversationRequestModel,
+    IMentorConversationResponseModel,
+    IUserMentorInListModel,
+    IUserMentorAdministrationModel,
 };

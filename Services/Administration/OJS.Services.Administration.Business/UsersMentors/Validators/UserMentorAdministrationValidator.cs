@@ -31,7 +31,8 @@ public class UserMentorAdministrationValidator : BaseAdministrationModelValidato
             .WithMessage("The user does not exist.");
 
         this.RuleFor(model => model.QuotaLimit)
-            .Must(x => x is >= 0 and <= MentorQuotaLimit)
+            .Must(x => x is >= 0 and <= MentorQuotaLimit or null)
+            .When(model => model is { OperationType: CrudOperationType.Create } or { OperationType: CrudOperationType.Update })
             .WithMessage($"The quota limit must be between 0 and {MentorQuotaLimit} (inclusive).");
 
         this.RuleFor(model => model)

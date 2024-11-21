@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
+import Mentor from 'src/components/mentor/Mentor';
 
 import { sortTestRunsByTrialTest } from '../../../common/submissions-utils';
 import { getContestsDetailsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
@@ -397,6 +398,12 @@ const SubmissionDetailsPage = () => {
                 </div>
             )}
             <ContestBreadcrumbs />
+            <Mentor
+              problemId={problem?.id}
+              problemName={problem?.name}
+              problemResources={[]}
+              contestId={contestId}
+            />
             <div>
                 <div className={styles.submissionTitle}>
                     {renderSolutionTitle()}

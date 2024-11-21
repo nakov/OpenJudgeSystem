@@ -10,6 +10,7 @@ import Popover from '@mui/material/Popover';
 import isNil from 'lodash/isNil';
 import moment from 'moment';
 import { SUBMISSION_SENT } from 'src/common/messages';
+import Mentor from 'src/components/mentor/Mentor';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
 import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
@@ -430,6 +431,14 @@ const ContestSolutionSubmitPage = () => {
         ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest, updatedProblems ]);
 
+    const problemResources = useMemo(
+        () => problems.reduce((acc, curr) => {
+            acc.push(...curr.resources);
+            return acc;
+        }, [] as IProblemResourceType[]),
+        [ problems ],
+    );
+
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
         <div className={styles.adminButtonsContainer}>
@@ -838,6 +847,12 @@ const ContestSolutionSubmitPage = () => {
                         />
                     )}
             </div>
+            <Mentor
+              problemId={selectedContestDetailsProblem?.id}
+              problemName={selectedContestDetailsProblem?.name}
+              problemResources={problemResources}
+              contestId={Number(contestId)}
+            />
         </div>
     );
 };

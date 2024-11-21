@@ -24,6 +24,7 @@ export const PROBLEM_RESOURCES_PATH = 'problem-resources';
 export const SUBMISSION_TYPES_PATH = 'submission-types';
 export const SUBMISSION_TYPE_DOCUMENTS_PATH = 'submission-type-documents';
 export const SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH = 'submission-type-documents-view';
+export const USERS_MENTORS_PATH = 'users-mentors';
 export const PARTICIPANTS_PATH = 'participants';
 export const CHECKERS_PATH = 'checkers';
 export const ROLES_PATH = 'roles';

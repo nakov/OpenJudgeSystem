@@ -120,3 +120,9 @@ export const SUBMISSION_TYPE_DOCUMENT = 'Submission type document';
 export const SUBMISSION_TYPE_DOCUMENT_ID = 'Submission Type Document Id';
 export const SUBMISSION_TYPE_DOCUMENT_TITLE = 'Submission Type Document Title';
 export const TITLE = 'Title';
+
+// Mentor
+export const USER_ID = 'User Id';
+export const QUOTA_RESET_TIME = 'Quota Reset Time';
+export const REQUESTS_MADE = 'Requests Made';
+export const QUOTA_LIMIT = 'Quota Limit';

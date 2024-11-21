@@ -9,8 +9,6 @@ using OJS.Services.Infrastructure.Models.Mapping;
 
 public class UserMentorAdministrationModel : BaseAdministrationModel<string>, IMapExplicitly
 {
-    public string Id { get; set; } = default!;
-
     public virtual UserProfile User { get; set; } = null!;
 
     public DateTimeOffset QuotaResetTime { get; set; }
