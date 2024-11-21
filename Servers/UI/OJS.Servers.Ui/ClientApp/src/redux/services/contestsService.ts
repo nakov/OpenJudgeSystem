@@ -76,8 +76,8 @@ export const contestsService = createApi({
             query: () => ({ url: '/ContestCategories/GetCategoriesTree' }),
             /* eslint-disable object-curly-newline */
         }),
-        getContestStrategies: builder.query<IContestStrategyFilter[], void>({
-            query: () => ({ url: '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+        getContestStrategies: builder.query<IContestStrategyFilter[], { contestCategoryId: number }>({
+            query: ({ contestCategoryId }) => ({ url: `/SubmissionTypes/GetAllForContestCategory?contestCategoryId=${contestCategoryId}` }),
             /* eslint-disable object-curly-newline */
         }),
         getContestsParticipationsForUser: builder.query<
