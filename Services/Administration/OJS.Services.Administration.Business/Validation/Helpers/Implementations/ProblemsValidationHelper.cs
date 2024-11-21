@@ -27,8 +27,6 @@ public class ProblemsValidationHelper : IProblemsValidationHelper
         => await this.ValidatePermissionsOfCurrentUser(
             await this.problemsData.OneByIdTo<ProblemShortDetailsServiceModel>(problemId));
 
-    public Task<ValidationResult> ValidateRetest() => throw new System.NotImplementedException();
-
     public Task<ValidationResult> ValidatePermissionsOfCurrentUser(ProblemShortDetailsServiceModel? problem)
     {
         this.notDefaultValueValidationHelper
