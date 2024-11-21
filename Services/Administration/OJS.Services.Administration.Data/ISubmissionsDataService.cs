@@ -19,7 +19,7 @@
 
         IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
 
-        Task<Submission?> GetWithProblemTestsAndSubmissionTypes(int id);
+        Task<Submission?> GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(int id);
 
         Task<IEnumerable<Submission>> GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(int problemId);
 

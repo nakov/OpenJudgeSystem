@@ -38,9 +38,11 @@
         public IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds)
             => this.GetQuery(s => problemIds.Contains(s.ProblemId));
 
-        public Task<Submission?> GetWithProblemTestsAndSubmissionTypes(int id)
+        public Task<Submission?> GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(int id)
         {
-            var queryable = this.GetByIdQuery(id);
+            var queryable = this.GetByIdQuery(id)
+                .Include(s => s.Problem)
+                .Where(s => !s.IsDeleted && !s.Problem.IsDeleted);
 
             queryable = IncludeProblemTestsAndSubmissionTypes(queryable);
 
@@ -105,6 +107,7 @@
 
         private static IQueryable<Submission> IncludeProblemTestsAndSubmissionTypes(IQueryable<Submission> queryable)
             => queryable
+                .AsNoTracking()
                 .AsSplitQuery()
                 .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
