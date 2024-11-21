@@ -365,7 +365,7 @@ const ContestSolutionSubmitPage = () => {
     useEffect(() => {
         // Disable submit button when code is updated
         handleSubmitButtonShouldBeDisabled();
-    }, [ handleSubmitButtonShouldBeDisabled, submissionCode, uploadedFile ]);
+    }, [ handleSubmitButtonShouldBeDisabled, selectedSubmissionType, submissionCode, uploadedFile ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
