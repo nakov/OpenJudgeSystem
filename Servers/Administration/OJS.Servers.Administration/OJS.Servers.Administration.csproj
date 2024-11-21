@@ -6,8 +6,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Business\OJS.Services.Administration.Business.csproj" />
     <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Data\OJS.Services.Administration.Data.csproj" />
-    <ProjectReference Include="..\..\..\Services\Mentor\OJS.Services.Mentor.Business\OJS.Services.Mentor.Business.csproj" />
-    <ProjectReference Include="..\..\..\Services\Mentor\OJS.Services.Mentor.Models\OJS.Services.Mentor.Models.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

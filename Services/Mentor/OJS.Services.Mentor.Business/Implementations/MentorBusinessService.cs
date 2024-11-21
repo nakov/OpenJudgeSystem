@@ -151,12 +151,12 @@ public class MentorBusinessService : IMentorBusinessService
             message.Content = RemoveRedundantWhitespace(message.Content);
         }
 
-        var mentorModel = Enum.Parse<OpenAIModels>(settings[MentorModel]).ToModelString();
-
-        if (mentorModel is null)
+        if (!Enum.TryParse<OpenAIModels>(settings[MentorModel], out var openAiModel))
         {
             throw new BusinessServiceException($"The provided mentor model \"{settings[MentorModel]}\" is invalid.");
         }
+
+        var mentorModel = openAiModel.ToModelString();
 
         var encoding = await TikToken.EncodingForModelAsync(mentorModel);
         var allContent = systemMessage.Content + string.Join("", recentMessages.Select(m => m.Content));
@@ -170,7 +170,7 @@ public class MentorBusinessService : IMentorBusinessService
 
         messagesToSend.AddRange(recentMessages.Select(cm => CreateChatMessage(cm.Role, cm.Content)));
 
-        var chat = this.openAiClient.GetChatClient(mentorModel!);
+        var chat = this.openAiClient.GetChatClient(mentorModel);
         var response = await chat.CompleteChatAsync(messagesToSend, new ChatCompletionOptions
         {
             MaxOutputTokenCount = GetNumericValue(settings, nameof(MentorMaxOutputTokenCount)),
@@ -181,7 +181,7 @@ public class MentorBusinessService : IMentorBusinessService
             throw new BusinessServiceException("Unable to process your request at this time. Please try again in a few moments.");
         }
 
-        var assistantContent = string.Join("\n", response.Value.Content.Select(part => part.Text).Where(text => !string.IsNullOrEmpty(text)));
+        var assistantContent = string.Join(Environment.NewLine, response.Value.Content.Select(part => part.Text).Where(text => !string.IsNullOrEmpty(text)));
 
         model.ConversationMessages.Add(new ConversationMessageModel
         {
