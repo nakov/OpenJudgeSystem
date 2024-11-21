@@ -55,6 +55,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Security.Claims;
     using System.Text.Json;
     using System.Threading.Tasks;
+    using OpenAI;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
@@ -438,6 +439,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddPolicy(ApiKeyPolicyName, policy => policy.AddRequirements(new ApiKeyRequirement(HeaderKeys.ApiKey)));
 
             services.AddSingleton<IAuthorizationHandler, ApiKeyHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddOpenAiClient(this IServiceCollection services, IConfiguration configuration)
+        {
+            var apiKey = configuration.GetSectionWithValidation<MentorConfig>().ApiKey;
+
+            services.AddSingleton(new OpenAIClient(apiKey));
 
             return services;
         }

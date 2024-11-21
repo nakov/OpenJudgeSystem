@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OJS.Data;
 
@@ -11,9 +12,11 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    partial class OjsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241118160308_RenameUserMentorPKAndMakeQuotaLimitNullable")]
+    partial class RenameUserMentorPKAndMakeQuotaLimitNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -312,9 +315,6 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("AllowMentor")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -582,9 +582,6 @@ namespace OJS.Data.Migrations
 
                     b.Property<bool>("IsOfficial")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastSubmissionTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
