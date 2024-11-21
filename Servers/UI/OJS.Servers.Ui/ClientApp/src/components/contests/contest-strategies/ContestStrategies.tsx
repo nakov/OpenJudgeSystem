@@ -74,7 +74,7 @@ const ContestStrategies = () => {
         <div className={styles.selectWrapper}>
             {selectedStrategy && <IoMdClose onClick={removeSelectedStrategy} />}
             <Dropdown
-              dropdownItems={dropdownItems || []}
+              dropdownItems={dropdownItems}
               value={selectValue}
               placeholder="Select strategy"
               handleDropdownItemClick={handleStrategySelect}
