@@ -6,14 +6,11 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Build.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Data.Models.Mentor;
-using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Data;
-using OJS.Services.Infrastructure.Configurations;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Mentor.Business;
@@ -40,11 +37,11 @@ public class MentorBusinessService : IMentorBusinessService
         IDataService<MentorPromptTemplate> mentorPromptTemplateData,
         IHttpClientFactory httpClientFactory,
         IDataService<Setting> settingData,
-        IConfiguration configuration)
+        OpenAIClient openAiClient)
     {
         this.userMentorData = userMentorData;
         this.mentorPromptTemplateData = mentorPromptTemplateData;
-        this.openAiClient = new OpenAIClient(configuration.GetSectionWithValidation<MentorConfig>().ApiKey);
+        this.openAiClient = openAiClient;
         this.httpClientFactory = httpClientFactory;
         this.settingData = settingData;
     }
@@ -86,8 +83,19 @@ public class MentorBusinessService : IMentorBusinessService
             throw new BusinessServiceException($"You have reached your message limit, please try again after {GetTimeUntilNextMessage(userMentor.QuotaResetTime)}.");
         }
 
+        /*
+         *  If the system message is not present, we should add it.
+         *  The system message contains how the model should act
+         *  and the problem's description.
+         */
         if (model.ConversationMessages.All(cm => cm.Role != ChatMessageRole.System))
         {
+            /*
+             *  In the first version of the mentor, there will be only a single
+             *  template in the database. This is why we can be sure that
+             *  .FirstOrDefaultAsync() will always return a template. This
+             *  will be changed in the future.
+             */
             var template = await this.mentorPromptTemplateData
                 .GetQuery()
                 .FirstOrDefaultAsync();
@@ -98,19 +106,22 @@ public class MentorBusinessService : IMentorBusinessService
                        pr.Link is not null && pr.Link.Split('.').Last().Equals(Docx, StringComparison.Ordinal))
                 .ToList();
 
-            var problemResource = wordFiles
-                                    .FirstOrDefault(pr => pr.ProblemId == model.ProblemId) ??
-                                wordFiles.FirstOrDefault();
+            /*
+             *  There are 2 cases when it comes to document retrieval:
+             *  1. The problem has its own problem resource ( Word file ) ( e.g. online / onsite exam ).
+             *  2. All the problems' descriptions are in a single Word file ( e.g. Lab / Exercise ).
+             */
+            var problemsDescription = wordFiles.FirstOrDefault(pr => pr.ProblemId == model.ProblemId) ?? wordFiles.FirstOrDefault();
 
-            if (problemResource is null)
+            if (problemsDescription is null)
             {
                 throw new BusinessServiceException(DocumentNotFoundOrEmpty);
             }
 
-            var file = problemResource.File ??
-                (problemResource.Link is not null ?
-                await this.DownloadDocument(problemResource.Link) :
-                []);
+            var file = problemsDescription.File ??
+                (problemsDescription.Link is not null
+                ? await this.DownloadDocument(problemsDescription.Link)
+                : []);
 
             var number = GetProblemNumber(model.ProblemName);
             var text = ExtractSectionFromDocument(file, model.ProblemName, number);
@@ -140,9 +151,14 @@ public class MentorBusinessService : IMentorBusinessService
             message.Content = RemoveRedundantWhitespace(message.Content);
         }
 
-        var mentorModel = Enum.Parse<OpenAIModels>(settings[MentorModel]).ToModelString() ?? OpenAIModels.Gpt4o.ToModelString();
+        var mentorModel = Enum.Parse<OpenAIModels>(settings[MentorModel]).ToModelString();
 
-        var encoding = await TikToken.EncodingForModelAsync(mentorModel!);
+        if (mentorModel is null)
+        {
+            throw new BusinessServiceException($"The provided mentor model \"{settings[MentorModel]}\" is invalid.");
+        }
+
+        var encoding = await TikToken.EncodingForModelAsync(mentorModel);
         var allContent = systemMessage.Content + string.Join("", recentMessages.Select(m => m.Content));
         var tokenCount = encoding.Encode(allContent).Count;
 

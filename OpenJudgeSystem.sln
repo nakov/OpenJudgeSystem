@@ -92,8 +92,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployEmailGenerator", "Too
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Mentor.Business", "Services\Mentor\OJS.Services.Mentor.Business\OJS.Services.Mentor.Business.csproj", "{536892CE-278B-4FDE-935B-B33736F6A021}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Mentor", "Servers\Mentor\OJS.Servers.Mentor\OJS.Servers.Mentor.csproj", "{55B96CF0-D3A2-40D8-A603-C12AEA43316C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Mentor.Models", "Services\Mentor\OJS.Services.Mentor.Models\OJS.Services.Mentor.Models.csproj", "{D04B099B-AA9D-4668-B4E8-85C0692CB3A8}"
 EndProject
 Global

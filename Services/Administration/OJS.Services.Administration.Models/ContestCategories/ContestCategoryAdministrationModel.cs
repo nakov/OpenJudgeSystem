@@ -20,6 +20,8 @@ public class ContestCategoryAdministrationModel : BaseAdministrationModel<int>, 
 
     public bool IsVisible { get; set; }
 
+    public bool AllowMentor { get; set; }
+
     public DateTime? DeletedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
