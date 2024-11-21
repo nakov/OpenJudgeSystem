@@ -16,9 +16,6 @@
         {
         }
 
-        public IQueryable<ContestCategory> GetAllVisible()
-            => this.GetQuery(cc => cc.IsVisible);
-
         public Task<IEnumerable<T>> GetAllVisible<T>()
             => this.GetQuery(cc => cc.IsVisible)
                 .MapCollection<T>()
@@ -37,15 +34,5 @@
                 .Distinct()
                 .MapCollection<T>()
                 .ToListAsync();
-
-        public IQueryable<ContestCategory> GetAllVisibleOrdered() =>
-            this.GetQuery(cc => cc.IsVisible)
-                .OrderBy(x => x.OrderBy);
-
-        public Task<IEnumerable<TServiceModel>> GetAllVisibleMainOrdered<TServiceModel>()
-            => this.GetAllVisibleOrdered()
-                .Where(x => !x.ParentId.HasValue)
-                .MapCollection<TServiceModel>()
-                .ToEnumerableAsync();
     }
 }
