@@ -41,7 +41,6 @@
         public Task<Submission?> GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(int id)
         {
             var queryable = this.GetByIdQuery(id)
-                .Include(s => s.Problem)
                 .Where(s => !s.IsDeleted && !s.Problem.IsDeleted);
 
             queryable = IncludeProblemTestsAndSubmissionTypes(queryable);
