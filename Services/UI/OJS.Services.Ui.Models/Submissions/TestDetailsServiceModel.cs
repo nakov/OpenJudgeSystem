@@ -22,5 +22,8 @@ public class TestDetailsServiceModel : IMapExplicitly
         => configuration
             .CreateMap<Test, TestDetailsServiceModel>()
             .ForMember(m => m.InputData,
-                opt => opt.MapFrom(src => src.IsTrialTest && !src.HideInput ? src.InputData : null));
+                opt => opt.MapFrom(src =>
+                    (src.IsTrialTest || src.IsOpenTest) && !src.HideInput
+                        ? src.InputData
+                        : null));
 }

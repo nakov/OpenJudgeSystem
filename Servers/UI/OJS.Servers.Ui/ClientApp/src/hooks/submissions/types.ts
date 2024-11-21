@@ -10,6 +10,7 @@ interface IProblemType {
 
 interface ITestRunType {
     id: number;
+    submissionId: number;
     timeUsed: number;
     memoryUsed: number;
     executionComment: string;
@@ -80,9 +81,15 @@ interface ITestRun {
     testId: number;
 }
 
+interface ITestDetails {
+    id: number;
+    input: string;
+}
+
 export type {
     ITestRunType,
     ITestRunIcon,
     ISubmissionDetailsResponseType,
     ITestRun,
+    ITestDetails,
 };
