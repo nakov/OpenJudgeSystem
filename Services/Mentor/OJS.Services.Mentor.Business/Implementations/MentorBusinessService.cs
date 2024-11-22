@@ -2,6 +2,7 @@
 
 using System.Globalization;
 using System.Text;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Build.Exceptions;
@@ -25,7 +26,9 @@ using static OJS.Common.GlobalConstants.Settings;
 public class MentorBusinessService : IMentorBusinessService
 {
     private const string Docx = "docx";
-    private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please copy and paste the problem description directly into the chat for the mentor to assist you.";
+    private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please contact an administrator and report the problem.";
+    private const string ProblemDescriptionNotFound = "Не успях да намеря описанието на задачата. Можете ли да го предоставите, за да мога да Ви помогна?";
+
 
     private readonly IDataService<UserMentor> userMentorData;
     private readonly IDataService<MentorPromptTemplate> mentorPromptTemplateData;
@@ -84,7 +87,14 @@ public class MentorBusinessService : IMentorBusinessService
 
         if (userMentor.RequestsMade > (userMentor.QuotaLimit ?? GetNumericValue(settings, nameof(MentorQuotaLimit))))
         {
-            throw new BusinessServiceException($"You have reached your message limit, please try again after {GetTimeUntilNextMessage(userMentor.QuotaResetTime)}.");
+            model.ConversationMessages.Add(new ConversationMessageModel
+            {
+                Content = $"Достигнахте лимита на съобщенията си, моля опитайте отново след {GetTimeUntilNextMessage(userMentor.QuotaResetTime)}.",
+                Role = MentorMessageRole.Information,
+                SequenceNumber = model.ConversationMessages.Max(cm => cm.SequenceNumber) + 1,
+            });
+
+            return model.Map<ConversationResponseModel>();
         }
 
         /*
@@ -92,7 +102,7 @@ public class MentorBusinessService : IMentorBusinessService
          *  The system message contains how the model should act
          *  and the problem's description.
          */
-        if (model.ConversationMessages.All(cm => cm.Role != ChatMessageRole.System))
+        if (model.ConversationMessages.All(cm => cm.Role != MentorMessageRole.System))
         {
             /*
              *  In the first version of the mentor, there will be only a single
@@ -137,22 +147,38 @@ public class MentorBusinessService : IMentorBusinessService
             var number = GetProblemNumber(model.ProblemName);
             var text = ExtractSectionFromDocument(file, model.ProblemName, number);
 
-            model.ConversationMessages.Add(new ConversationMessageModel
+            if (string.IsNullOrWhiteSpace(text))
             {
-                Content = string.Format(CultureInfo.InvariantCulture, template!.Template, model.ProblemName, text),
-                Role = ChatMessageRole.System,
-                SequenceNumber = int.MinValue,
-            });
+                // If we could not extract the message, prompt the user to send it himself.
+                model.ConversationMessages.Add(new ConversationMessageModel
+                {
+                    Content = ProblemDescriptionNotFound,
+                    Role = MentorMessageRole.Information,
+                    SequenceNumber = model.ConversationMessages.Max(cm => cm.SequenceNumber) + 1,
+                });
+
+                return model.Map<ConversationResponseModel>();
+            }
+            else
+            {
+                model.ConversationMessages.Add(new ConversationMessageModel
+                {
+                    Content = string.Format(CultureInfo.InvariantCulture, template!.Template, model.ProblemName, text),
+                    Role = MentorMessageRole.System,
+                    // The system message should always be first ( in ascending order )
+                    SequenceNumber = int.MinValue,
+                });
+            }
         }
 
         var messagesToSend = new List<ChatMessage>();
 
-        var systemMessage = model.ConversationMessages.First(cm => cm.Role == ChatMessageRole.System);
+        var systemMessage = model.ConversationMessages.First(cm => cm.Role == MentorMessageRole.System);
         systemMessage.Content = RemoveRedundantWhitespace(systemMessage.Content);
         messagesToSend.Add(CreateChatMessage(systemMessage.Role, systemMessage.Content));
 
         var recentMessages = model.ConversationMessages
-            .Where(cm => cm.Role != ChatMessageRole.System)
+            .Where(cm => cm.Role != MentorMessageRole.System && cm.Role != MentorMessageRole.Information)
             .OrderByDescending(cm => cm.SequenceNumber)
             .Take(GetNumericValue(settings, nameof(MentorMessagesSentCount)))
             .ToList();
@@ -173,7 +199,7 @@ public class MentorBusinessService : IMentorBusinessService
         var allContent = systemMessage.Content + string.Join("", recentMessages.Select(m => m.Content));
         var tokenCount = encoding.Encode(allContent).Count;
 
-        var maxInputTokens = GetNumericValue(settings, nameof(MentorQuotaResetTimeInMinutes));
+        var maxInputTokens = GetNumericValue(settings, nameof(MentorMaxInputTokenCount));
         if (tokenCount > maxInputTokens)
         {
             TrimMessages(recentMessages, encoding, tokenCount - maxInputTokens);
@@ -197,7 +223,7 @@ public class MentorBusinessService : IMentorBusinessService
         model.ConversationMessages.Add(new ConversationMessageModel
         {
             Content = assistantContent,
-            Role = ChatMessageRole.Assistant,
+            Role = MentorMessageRole.Assistant,
             SequenceNumber = model.ConversationMessages.Max(cm => cm.SequenceNumber) + 1
         });
 
@@ -218,16 +244,11 @@ public class MentorBusinessService : IMentorBusinessService
             throw new BusinessServiceException(DocumentNotFoundOrEmpty);
         }
 
-        var sectionCount = 0;
+        var sections = new Dictionary<string, (int Index, List<string> Data, OpenXmlElement Element)>();
         string? currentHeading = null;
-        var resultContent = new StringBuilder();
-        var shouldCollectContent = false;
-        /*
-         *  Cases for extracting the document's data:
-         *      1. The heading's name matches the problem's name
-         *      2. The heading's name does not match the problem's name, but the number of sections matches the problem's number
-         *      3. No matching section has been found, return the document's whole data
-         */
+        var sectionCount = 0;
+
+        // First pass: Extract all sections into the dictionary
         foreach (var element in body.Elements())
         {
             if (element is Paragraph paragraph)
@@ -240,67 +261,73 @@ public class MentorBusinessService : IMentorBusinessService
                     continue;
                 }
 
-                var isHeading = !string.IsNullOrEmpty(styleId) && (styleId.StartsWith("Heading1", StringComparison.Ordinal) || styleId.StartsWith("Heading2", StringComparison.Ordinal));
+                var isHeading = !string.IsNullOrEmpty(styleId) && (styleId.StartsWith("Heading2", StringComparison.Ordinal) || styleId == "2");
 
                 if (isHeading)
                 {
-                    // Case 1: Check if this heading matches the problem name
-                    if (problemName.Contains(text, StringComparison.OrdinalIgnoreCase))
-                    {
-                        currentHeading = text;
-                        shouldCollectContent = true;
-                        resultContent.Clear(); // Clear any previous content
-                        continue;
-                    }
-
-                    // If we were collecting content for a matching heading, we're done
-                    if (shouldCollectContent && currentHeading != null && sectionCount < problemNumber)
-                    {
-                        return resultContent.ToString().Trim();
-                    }
-
                     sectionCount++;
-
-                    // Case 2: Check if we should start collecting from this section based on problem number
-                    if (sectionCount == problemNumber)
-                    {
-                        shouldCollectContent = true;
-                        resultContent.AppendLine($"## {text}");
-                    }
-                    else if (sectionCount > problemNumber)
-                    {
-                        resultContent.AppendLine($"## {text}");
-                    }
-
                     currentHeading = text;
+                    if (!sections.ContainsKey(currentHeading))
+                    {
+                        sections[currentHeading] = (sectionCount, new List<string>(), paragraph);
+                    }
                 }
-                else
+                else if (currentHeading != null)
                 {
-                    // For Case 3, collect everything
-                    if (problemNumber > sectionCount)
-                    {
-                        resultContent.AppendLine(text);
-                    }
-                    // For other cases, collect only when flagged
-                    else if (shouldCollectContent)
-                    {
-                        resultContent.AppendLine(text);
-                    }
+                    sections[currentHeading].Data.Add(text);
                 }
             }
-            else if (element is Table table)
+        }
+
+        // Second pass: Find the matching section and process it fully
+        foreach (var section in sections)
+        {
+            // Case 1: Match by name
+            if (problemName.Contains(section.Key, StringComparison.OrdinalIgnoreCase))
             {
-                // For Case 3, collect all tables
-                if (problemNumber > sectionCount)
+                return ProcessMatchedSection(section.Value.Element, section.Key);
+            }
+            // Case 2: Match by section number
+            else if (section.Value.Index == problemNumber)
+            {
+                return ProcessMatchedSection(section.Value.Element, section.Key);
+            }
+        }
+
+        return string.Empty;
+    }
+
+    private static string ProcessMatchedSection(OpenXmlElement sectionElement, string sectionHeading)
+    {
+        var resultContent = new StringBuilder();
+        resultContent.AppendLine($"## {sectionHeading}");
+
+        // Process all content until the next heading of same or higher level
+        var currentElement = sectionElement.NextSibling();
+        while (currentElement != null)
+        {
+            if (currentElement is Paragraph paragraph)
+            {
+                var styleId = paragraph.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
+                var isHeading = !string.IsNullOrEmpty(styleId) && (styleId.StartsWith("Heading2", StringComparison.Ordinal) || styleId == "2");
+
+                if (isHeading)
                 {
-                    ProcessTable(table, resultContent);
+                    break;
                 }
-                // For other cases, collect only when flagged
-                else if (shouldCollectContent)
+
+                var text = paragraph.InnerText.Trim();
+                if (!string.IsNullOrEmpty(text))
                 {
-                    ProcessTable(table, resultContent);
+                    resultContent.AppendLine(text);
                 }
             }
+            else if (currentElement is Table table)
+            {
+                ProcessTable(table, resultContent);
+            }
+
+            currentElement = currentElement.NextSibling();
         }
 
         return resultContent.ToString().Trim();
@@ -396,12 +423,12 @@ public class MentorBusinessService : IMentorBusinessService
         return fileBytes;
     }
 
-    private static ChatMessage CreateChatMessage(ChatMessageRole role, string content)
+    private static ChatMessage CreateChatMessage(MentorMessageRole role, string content)
         => role switch
         {
-            ChatMessageRole.System => ChatMessage.CreateSystemMessage(content),
-            ChatMessageRole.User => ChatMessage.CreateUserMessage(content),
-            ChatMessageRole.Assistant => ChatMessage.CreateAssistantMessage(content),
+            MentorMessageRole.System => ChatMessage.CreateSystemMessage(content),
+            MentorMessageRole.User => ChatMessage.CreateUserMessage(content),
+            MentorMessageRole.Assistant => ChatMessage.CreateAssistantMessage(content),
             _ => throw new BuildAbortedException("The provided message role is not supported."),
         };
 
