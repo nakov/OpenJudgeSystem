@@ -120,6 +120,7 @@ interface IContestCategory {
     nameUrl: string;
     orderBy: number;
     parentId: null | number;
+    allowMentor: boolean;
 }
 
 interface IContestCategoryHierarchy {
@@ -326,6 +327,7 @@ interface IContestCategoryAdministration {
     orderBy: number;
     deletedOn: Date | null;
     modifiedOn: Date | null;
+    allowMentor: boolean;
 }
 
 interface IRegisterUserForContestResponseType {

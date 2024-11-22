@@ -19,11 +19,11 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
 
     public double OrderBy { get; set; }
 
-    public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; }
-        = Enumerable.Empty<ContestCategoryTreeViewModel>();
+    public bool AllowMentor { get; set; }
 
-    public IEnumerable<AllowedContestStrategiesServiceModel> AllowedStrategyTypes { get; set; }
-        = Enumerable.Empty<AllowedContestStrategiesServiceModel>();
+    public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; } = [];
+
+    public IEnumerable<AllowedContestStrategiesServiceModel> AllowedStrategyTypes { get; set; } = [];
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration

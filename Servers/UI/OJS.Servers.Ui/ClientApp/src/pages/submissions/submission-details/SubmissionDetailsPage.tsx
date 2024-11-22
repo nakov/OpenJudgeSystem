@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import Mentor from 'src/components/mentor/Mentor';
@@ -41,8 +41,7 @@ const SubmissionDetailsPage = () => {
     const [ isRetestingStarted, setIsRetestingStarted ] = useState(false);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
-    const { contestDetails } = useAppSelector((state) => state.contests);
-
+    const { contestDetails, breadcrumbItems } = useAppSelector((state) => state.contests);
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     const [ downloadSolutionErrorMessage, setDownloadSolutionErrorMessage ] = useState<string>('');
@@ -98,6 +97,8 @@ const SubmissionDetailsPage = () => {
         maxPoints,
         processingComment,
     } = data || {};
+
+    const isMentorAllowed = useMemo(() => breadcrumbItems.at(-1)?.allowMentor ?? false, [ breadcrumbItems ]);
 
     const handleRetestSubmission = useCallback(() => {
         setIsRetestingStarted(true);
@@ -403,6 +404,7 @@ const SubmissionDetailsPage = () => {
               problemName={problem?.name}
               problemResources={[]}
               contestId={contestId}
+              isMentorAllowed={isMentorAllowed}
             />
             <div>
                 <div className={styles.submissionTitle}>

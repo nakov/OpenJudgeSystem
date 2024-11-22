@@ -77,7 +77,7 @@ const ContestSolutionSubmitPage = () => {
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
     const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
 
-    const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
+    const { selectedContestDetailsProblem, contestDetails, breadcrumbItems } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
     // Get the participationType type from route params or path (if not in params)
@@ -151,6 +151,8 @@ const ContestSolutionSubmitPage = () => {
         checkerName,
         allowedSubmissionTypes: problemAllowedSubmissionTypes,
     } = selectedContestDetailsProblem || {};
+
+    const isMentorAllowed = useMemo(() => breadcrumbItems.at(-1)?.allowMentor ?? false, [ breadcrumbItems ]);
 
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
         const submissionType = selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
@@ -852,6 +854,7 @@ const ContestSolutionSubmitPage = () => {
               problemName={selectedContestDetailsProblem?.name}
               problemResources={problemResources}
               contestId={Number(contestId)}
+              isMentorAllowed={isMentorAllowed}
             />
         </div>
     );

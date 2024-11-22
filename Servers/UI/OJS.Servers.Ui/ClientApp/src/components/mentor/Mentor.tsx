@@ -22,11 +22,12 @@ interface IMentorProps {
     problemId?: number;
     problemName?: string;
     contestId?: number;
+    isMentorAllowed: boolean;
     problemResources: IProblemResourceType[];
 }
 
 const Mentor = (props: IMentorProps) => {
-    const { problemId, problemName, contestId, problemResources } = props;
+    const { problemId, problemName, contestId, isMentorAllowed, problemResources } = props;
     const [ isOpen, setIsOpen ] = useState(false);
     const [ showBubble, setShowBubble ] = useState(true);
     const [ inputMessage, setInputMessage ] = useState('');
@@ -122,6 +123,11 @@ const Mentor = (props: IMentorProps) => {
         setIsOpen(!isOpen);
         setShowBubble(false);
     };
+
+    if (!isMentorAllowed) {
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        return <></>;
+    }
 
     return (
         <div className={styles.mentor} aria-hidden={false}>
