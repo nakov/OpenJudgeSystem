@@ -49,6 +49,9 @@ const ProfilePage = () => {
 
     useEffect(() => {
         if (isGetUserInfoCompleted && !isNilOrEmpty(profileUsername)) {
+            // currentUserIsProfileOwner should be cleared and updated between each profile query
+            // in the case where the user makes consecutive profile requests for different users
+            setCurrentUserIsProfileOwner(null);
             getProfileQuery({ username: profileUsername });
         }
     }, [ getProfileQuery, isGetUserInfoCompleted, profileUsername ]);
@@ -104,7 +107,7 @@ const ProfilePage = () => {
                 isProfileInfoLoading ||
                 !isGetUserInfoCompleted ||
                 // Wait until currentUserIsProfileOwner is set as render operations depend on it
-                isNil(currentUserIsProfileOwner)
+                (isLoggedIn && isNil(currentUserIsProfileOwner))
                     ? (
                         <SpinningLoader />
                     )
