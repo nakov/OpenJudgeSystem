@@ -31,7 +31,7 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         const isProfileAvailable = !isNil(profile);
         const canAccess = isLoggedIn && isProfileAvailable;
         const hasAdminAccess = internalUser.canAccessAdministration;
-        const isOwnerAccessNotAllowed = userIsProfileOwner && !isChosenInToggle && !hasAdminAccess;
+        const isOwnerAccessNotAllowed = userIsProfileOwner && !isChosenInToggle;
         const isNonOwnerAccessNotAllowed = !userIsProfileOwner && (!hasAdminAccess || !isChosenInToggle);
 
         if (!canAccess || isOwnerAccessNotAllowed || isNonOwnerAccessNotAllowed) {
