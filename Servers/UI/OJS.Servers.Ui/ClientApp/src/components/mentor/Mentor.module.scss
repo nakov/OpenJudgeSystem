@@ -364,7 +364,7 @@
 
 .mentorMessage {
   background-color: colors.$light-base-color-100;
-  color: colors.$dark-base-color-500;
+  color: colors.$dark-base-color-500 !important;
 }
 
 .dialogActions {
@@ -507,4 +507,102 @@
   align-items: center;
   font-weight: 500;
   bottom: 0;
+}
+
+.markdownContent {
+
+  font-family: inherit;
+  line-height: 1.5;
+  word-wrap: break-word;
+
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: spacings.$sp-16;
+    margin-bottom: spacings.$sp-8;
+    font-weight: bold;
+    line-height: 1.4;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+
+  h5, h6 {
+    font-size: 14px;
+  }
+
+  code {
+    background-color: colors.$dark-base-color-300;
+    color: colors.$light-base-color-100;
+    padding: spacings.$sp-4 spacings.$sp-8;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  pre {
+    background-color: colors.$dark-base-color-300;
+    color: colors.$light-base-color-100;
+    padding: spacings.$sp-12;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 14px;
+  }
+
+  ul, ol {
+    padding-left: spacings.$sp-8;
+
+    ul, ol {
+      padding-left: spacings.$sp-16;
+    }
+  }
+
+  a {
+    color: colors.$primary-blue;
+    text-decoration: underline;
+
+    &:hover {
+      color: colors.$primary-blue;
+    }
+  }
+
+  blockquote {
+    border-left: 4px solid colors.$primary-blue;
+    padding-left: spacings.$sp-16;
+    margin: spacings.$sp-16 0;
+    font-style: italic;
+    color: colors.$dark-base-color-300;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: spacings.$sp-16 0;
+
+    th, td {
+      border: 1px solid colors.$dark-base-color-200;
+      padding: spacings.$sp-8;
+      text-align: left;
+    }
+
+    th {
+      background-color: colors.$dark-base-color-100;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: colors.$light-base-color-200;
+    }
+  }
 }

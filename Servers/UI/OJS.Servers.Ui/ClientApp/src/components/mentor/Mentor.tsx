@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { IoMdSend } from 'react-icons/io';
+import ReactMarkdown from 'react-markdown';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -198,7 +199,9 @@ const Mentor = (props: IMentorProps) => {
                                           : styles.mentorMessage
                                   }`}
                                 >
-                                    {message.content}
+                                    <ReactMarkdown className={styles.markdownContent}>
+                                        {message.content}
+                                    </ReactMarkdown>
                                 </div>
                             </div>
                         ))}
