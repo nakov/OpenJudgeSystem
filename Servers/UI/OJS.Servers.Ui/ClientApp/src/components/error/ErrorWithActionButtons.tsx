@@ -22,7 +22,7 @@ const ErrorWithActionButtons = ({ message, backToUrl, backToText }: IErrorProps)
                 {
                     isNilOrEmpty(message)
                         ? 'Something went wrong, please try again!'
-                        : JSON.stringify(message)
+                        : message
                 }
             </div>
             <div className={styles.buttonsWrapper}>
