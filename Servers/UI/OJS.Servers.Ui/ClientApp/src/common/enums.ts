@@ -144,6 +144,7 @@ enum ChatMessageRole {
     Assistant = 2,
     Tool = 3,
     Function = 4,
+    Information = 5,
 }
 
 export {

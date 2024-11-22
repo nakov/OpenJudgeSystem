@@ -36,19 +36,9 @@ const Mentor = (props: IMentorProps) => {
 
     const [ conversationMessages, setConversationMessages ] = useState<IMentorConversationMessage[]>([
         {
-            content: 'Welcome to the mentor chat! How can I assist you today?',
+            content: 'Здравейте, аз съм Вашият ментор за писане на код, как мога да Ви помогна?',
             role: ChatMessageRole.Assistant,
             sequenceNumber: 1,
-        },
-        {
-            content: 'Can you help me with this problem? I’m stuck on the implementation.',
-            role: ChatMessageRole.User,
-            sequenceNumber: 2,
-        },
-        {
-            content: 'Sure, please provide more details about the issue you are facing.',
-            role: ChatMessageRole.Assistant,
-            sequenceNumber: 3,
         },
     ]);
 
@@ -134,7 +124,7 @@ const Mentor = (props: IMentorProps) => {
     };
 
     return (
-        <div className={styles.mentor}>
+        <div className={styles.mentor} aria-hidden={false}>
             {showBubble && !isOpen && (
                 <div className={styles.bubbleMessage}>
                     <div className={styles.primaryText}>The Code Wizard</div>
@@ -190,7 +180,7 @@ const Mentor = (props: IMentorProps) => {
                         </div>
                         {conversationMessages.map((message) => (
                             <div className={styles.messageContainer} key={message.sequenceNumber}>
-                                {message.role === ChatMessageRole.Assistant && (
+                                {(message.role === ChatMessageRole.Assistant || message.role === ChatMessageRole.Information) && (
                                     <div className={styles.mentorMessageAvatar}>
                                         <img src={mentorAvatar} alt="Mentor Avatar" />
                                     </div>
