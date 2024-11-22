@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { IoMdSend } from 'react-icons/io';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -25,8 +25,6 @@ interface IMentorProps {
     problemResources: IProblemResourceType[];
 }
 
-// TODO: Implement the logic for contest categories
-// TODO: Fix error message
 const Mentor = (props: IMentorProps) => {
     const { problemId, problemName, contestId, problemResources } = props;
     const [ isOpen, setIsOpen ] = useState(false);
@@ -34,8 +32,8 @@ const Mentor = (props: IMentorProps) => {
     const [ inputMessage, setInputMessage ] = useState('');
     const [ conversationDate, setConversationDate ] = useState<Date | null>(null);
     const { isDarkMode } = useTheme();
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // The test messages will be removed when we merge the FE and BE.
     const [ conversationMessages, setConversationMessages ] = useState<IMentorConversationMessage[]>([
         {
             content: 'Welcome to the mentor chat! How can I assist you today?',
@@ -56,20 +54,26 @@ const Mentor = (props: IMentorProps) => {
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
-    const [ startConversation, {
-        data: conversationData,
-        error,
-        isLoading,
-    } ] = useStartConversationMutation();
+    const [ startConversation, { data: conversationData, error, isLoading } ] =
+        useStartConversationMutation();
 
-    const isChatDisabled = useMemo(() => inputMessage.trim() === '' ||
-        isLoading ||
-        problemId === undefined ||
-        problemName === undefined, [ inputMessage, isLoading, problemId, problemName ]);
+    const isChatDisabled = useMemo(
+        () => inputMessage.trim() === '' ||
+            isLoading ||
+            problemId === undefined ||
+            problemName === undefined,
+        [ inputMessage, isLoading, problemId, problemName ],
+    );
+
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [ conversationMessages ]);
 
     useEffect(() => {
         if (conversationData) {
-            setConversationMessages(conversationData.conversationMessages);
+            setConversationMessages(conversationData.conversationMessages.filter((cm) => cm.role !== ChatMessageRole.System));
         }
     }, [ conversationData ]);
 
@@ -142,10 +146,7 @@ const Mentor = (props: IMentorProps) => {
               className={styles.mentorButton}
               onClick={handleToggleChat}
             >
-                <img
-                  src={mentorAvatar}
-                  alt="Assistant Avatar"
-                />
+                <img src={mentorAvatar} alt="Mentor Avatar" />
             </Button>
             <Dialog
               open={isOpen}
@@ -171,31 +172,27 @@ const Mentor = (props: IMentorProps) => {
             >
                 <DialogTitle className={styles.dialogTitle}>
                     <div className={styles.mentorTitleAvatar}>
-                        <img
-                          src={mentorAvatar}
-                          alt="Ментор Avatar"
-                        />
+                        <img src={mentorAvatar} alt="Mentor Avatar" />
                     </div>
                     The Code Wizard
                 </DialogTitle>
-                <DialogContent className={concatClassNames(styles.dialogContent, isDarkMode
-                    ? styles.darkDialogContent
-                    : styles.lightDialogContent)}
+                <DialogContent
+                  className={concatClassNames(
+                      styles.dialogContent,
+                      isDarkMode
+                          ? styles.darkDialogContent
+                          : styles.lightDialogContent,
+                  )}
                 >
                     <div className={styles.messagesContainer}>
-                        <div
-                          className={styles.conversationStartDate}
-                        >
+                        <div className={styles.conversationStartDate}>
                             {conversationDate !== null && getMentorConversationDate(conversationDate)}
                         </div>
                         {conversationMessages.map((message) => (
                             <div className={styles.messageContainer} key={message.sequenceNumber}>
                                 {message.role === ChatMessageRole.Assistant && (
                                     <div className={styles.mentorMessageAvatar}>
-                                        <img
-                                          src={mentorAvatar}
-                                          alt="Assistant Avatar"
-                                        />
+                                        <img src={mentorAvatar} alt="Mentor Avatar" />
                                     </div>
                                 )}
                                 <div
@@ -224,6 +221,8 @@ const Mentor = (props: IMentorProps) => {
                                 Failed to send message. Please try again.
                             </div>
                         )}
+                        <div ref={messagesEndRef} />
+                        {' '}
                     </div>
                 </DialogContent>
                 <DialogActions className={styles.dialogActions}>
@@ -247,9 +246,11 @@ const Mentor = (props: IMentorProps) => {
                     >
                         <IoMdSend
                           onClick={handleSendMessage}
-                          className={isChatDisabled
-                              ? styles.sendIconDisabled
-                              : styles.sendIconActive}
+                          className={
+                                isChatDisabled
+                                    ? styles.sendIconDisabled
+                                    : styles.sendIconActive
+                            }
                         />
                     </Button>
                 </DialogActions>

@@ -338,6 +338,8 @@
   border-radius: 8px;
   max-width: 70%;
   word-break: break-word;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   line-height: 1.4rem;
 
   @media (max-width: 768px) {
