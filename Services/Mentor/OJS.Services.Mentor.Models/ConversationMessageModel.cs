@@ -1,12 +1,12 @@
 ﻿namespace OJS.Services.Mentor.Models;
 
-using OpenAI.Chat;
+using OJS.Common.Enumerations;
 
 public class ConversationMessageModel
 {
     public string Content { get; set; } = default!;
 
-    public ChatMessageRole Role { get; set; }
+    public MentorMessageRole Role { get; set; }
 
     public int SequenceNumber { get; set; }
 }
