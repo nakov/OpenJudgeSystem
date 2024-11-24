@@ -10,6 +10,8 @@ public class SubmissionRequestModel : IMapExplicitly
 
     public int ContestId { get; set; }
 
+    public bool IsOnlineExam { get; set; }
+
     public int SubmissionTypeId { get; set; }
 
     public string? Content { get; set; }

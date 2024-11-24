@@ -10,6 +10,8 @@ public class SubmitSubmissionServiceModel : IMapExplicitly
 
     public int ContestId { get; set; }
 
+    public bool IsOnlineExam { get; set; }
+
     public int SubmissionTypeId { get; set; }
 
     public bool Official { get; set; }
@@ -47,12 +49,10 @@ public class SubmitSubmissionServiceModel : IMapExplicitly
             .ForMember(m => m.SolutionSkeleton, opt => opt.Ignore())
             .ForMember(m => m.StartedExecutionOn, opt => opt.Ignore())
             .ForMember(m => m.CompletedExecutionOn, opt => opt.Ignore())
-            .ForMember(m => m.IpAddress, opt => opt.Ignore())
             .ForMember(m => m.WorkerName, opt => opt.Ignore())
             .ForMember(m => m.ContentAsString, opt => opt.Ignore())
             .ForMember(m => m.IsCompiledSuccessfully, opt => opt.Ignore())
             .ForMember(m => m.CompilerComment, opt => opt.Ignore())
-            .ForMember(m => m.IsPublic, opt => opt.Ignore())
             .ForMember(m => m.TestRuns, opt => opt.Ignore())
             .ForMember(m => m.TestRunsCache, opt => opt.Ignore())
             .ForMember(m => m.Processed, opt => opt.Ignore())

@@ -297,11 +297,35 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
-        var participant = await this.participantsDataService
-            .GetWithProblemsForParticipantByContestByUserAndIsOfficial(
-                model.ContestId,
-                currentUser.Id,
-                model.Official);
+       var participant = await this.participantsDataService
+            .GetAllByContestByUserAndIsOfficial(model.ContestId, currentUser.Id, model.Official)
+            .AsNoTracking()
+            .Select(p => new ParticipantSubmitServiceModel
+            {
+                Id = p.Id,
+                IsInvalidated = p.IsInvalidated,
+                IsOfficial = p.IsOfficial,
+                ContestId = p.ContestId,
+                ContestType = p.Contest.Type,
+                LastSubmissionTime = p.LastSubmissionTime,
+                ParticipationStartTime = p.ParticipationStartTime,
+                ParticipationEndTime = p.ParticipationEndTime,
+                ContestStartTime = p.Contest.StartTime,
+                ContestEndTime = p.Contest.EndTime,
+                ContestPracticeStartTime = p.Contest.PracticeStartTime,
+                ContestPracticeEndTime = p.Contest.PracticeEndTime,
+                ContestLimitBetweenSubmissions = p.Contest.LimitBetweenSubmissions,
+                ContestAllowParallelSubmissionsInTasks = p.Contest.AllowParallelSubmissionsInTasks,
+                Problems = model.Official && model.IsOnlineExam
+                    ? p.ProblemsForParticipants
+                        .Select(pfp => new ProblemForParticipantServiceModel
+                        {
+                            ProblemId = pfp.ProblemId,
+                            ParticipantId = pfp.ParticipantId,
+                        })
+                    : null,
+            })
+            .FirstOrDefaultAsync();
 
         var submissionType = problem.SubmissionTypesInProblems
             .Select(p => p.SubmissionType)
@@ -318,8 +342,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 JsonConvert.SerializeObject(new { ProblemId = submitSubmissionValidationServiceResult.PropertyName }));
         }
 
-        var contest = participant!.Contest;
-
         var newSubmission = model.Map<Submission>();
         if (model.StringContent != null)
         {
@@ -331,27 +353,30 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         newSubmission.ParticipantId = participant!.Id;
-        newSubmission.IpAddress = "model.UserHostAddress";
-        newSubmission.IsPublic = ((participant.IsOfficial && contest!.ContestPassword == null) ||
-                                  (!participant.IsOfficial && contest!.PracticePassword == null)) &&
-                                 (contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow()) &&
-                                 !contest.IsDeleted &&
-                                 problem.ShowResults;
+
+        var updatedParticipant = new Participant
+        {
+            Id = participant.Id,
+            LastSubmissionTime = this.dates.GetUtcNow(),
+        };
+
+        this.participantsDataService.Attach(updatedParticipant);
+        this.participantsDataService
+            .GetEntry(updatedParticipant)
+            .Property(p => p.LastSubmissionTime).IsModified = true;
+
+        if (submissionType!.ExecutionStrategyType
+            is ExecutionStrategyType.NotFound
+            or ExecutionStrategyType.DoNothing)
+        {
+            // Submission is just uploaded and should not be processed
+            await this.AddNewDefaultProcessedSubmission(participant.Id, newSubmission);
+            return;
+        }
 
         SubmissionForProcessing? submissionForProcessing = null;
         await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
-            participant.LastSubmissionTime = this.dates.GetUtcNow();
-
-            if (submissionType!.ExecutionStrategyType
-                is ExecutionStrategyType.NotFound
-                or ExecutionStrategyType.DoNothing)
-            {
-                // Submission is just uploaded and should not be processed
-                await this.AddNewDefaultProcessedSubmission(participant, newSubmission);
-                return;
-            }
-
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
 
@@ -361,7 +386,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submissionServiceModel =
             this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem.Map<Problem>(),
-                submissionType!);
+                submissionType);
 
         await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel,
             submissionForProcessing!);
@@ -534,8 +559,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task AddNewDefaultProcessedSubmission(Participant participant, Submission submission)
+    private async Task AddNewDefaultProcessedSubmission(int participantId, Submission submission)
     {
+        var participant = await this.participantsDataService
+            .GetByIdQuery(participantId)
+            .Include(p => p.User)
+            .FirstOrDefaultAsync()
+            ?? throw new BusinessServiceException($"Participant with Id: \"{participantId}\" not found.");
+
         submission.Processed = true;
         submission.IsCompiledSuccessfully = true;
         submission.Points = 0;
