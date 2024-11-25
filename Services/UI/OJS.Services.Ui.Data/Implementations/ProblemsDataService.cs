@@ -19,12 +19,6 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Include(p => p.ProblemGroup)
                 .FirstOrDefaultAsync();
 
-        public async Task<Problem?> GetWithSubmissionTypesById(int id)
-            => await this.GetByIdQuery(id)
-                .AsNoTracking()
-                .Include(p => p.SubmissionTypesInProblems)
-                .FirstOrDefaultAsync();
-
         public IQueryable<Problem> GetAllByContest(int contestId) =>
             this.GetQuery(p => p.ProblemGroup.ContestId == contestId);
 

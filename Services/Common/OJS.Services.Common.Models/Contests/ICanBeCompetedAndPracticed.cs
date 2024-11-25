@@ -2,9 +2,9 @@
 
 public interface ICanBeCompetedAndPracticed
 {
-    public int Id { get; set; }
+    int Id { get; set; }
 
-    public bool CanBeCompeted { get; set; }
+    bool CanBeCompeted { get; set; }
 
-    public bool CanBePracticed { get; set; }
+    bool CanBePracticed { get; set; }
 }

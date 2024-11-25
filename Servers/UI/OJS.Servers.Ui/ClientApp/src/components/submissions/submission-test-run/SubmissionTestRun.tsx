@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
 import { Popover } from '@mui/material';
+import { useLazyGetTestDetailsQuery } from 'src/redux/services/testsService';
+import isNilOrEmpty from 'src/utils/check-utils';
 import concatClassNames from 'src/utils/class-names';
 
 import { TestRunResultType } from '../../../common/constants';
@@ -31,6 +33,8 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
     const [ timeAnchorEl, setTimeAnchorEl ] = useState<HTMLElement | null>(null);
+    const [ input, setInput ] = useState(testRun.input);
+    const [ getTestDetails ] = useLazyGetTestDetailsQuery();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const backgroundColorClassName = getColorClassName(isDarkMode
@@ -41,7 +45,6 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
     const isTimeModalOpen = Boolean(timeAnchorEl);
 
     const {
-        input,
         testId,
         resultType,
         isTrialTest,
@@ -68,7 +71,12 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
         }
     };
 
-    const onShowHideInputButtonClick = () => {
+    const onShowHideInputButtonClick = async () => {
+        if (isNilOrEmpty(input)) {
+            const details = await getTestDetails({ id: testId, submissionId: testRun.submissionId });
+            setInput(details?.data?.input ?? '');
+        }
+
         setTestShowInput(!testShowInput);
     };
 

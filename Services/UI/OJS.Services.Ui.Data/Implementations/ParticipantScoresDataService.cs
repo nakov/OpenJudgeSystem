@@ -5,7 +5,6 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Ui.Models.Participations;
     using System;
     using System.Collections.Generic;
@@ -22,17 +21,6 @@ namespace OJS.Services.Ui.Data.Implementations
             : base(db)
             => this.participantsData = participantsData;
 
-        public Task<IEnumerable<ParticipantScore>> GetWithSubmissionsAndTestsByParticipantId(int participantId)
-            => this.GetQuery(ps => ps.ParticipantId == participantId)
-                .Include(ps => ps.Submission)
-                    .ThenInclude(s => s!.TestRuns)
-                .ToEnumerableAsync();
-
-        public Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId)
-            => this.GetQuery(ps => ps.ProblemId == problemId)
-                .Where(p => participantIds.Contains(p.ParticipantId))
-                .ToEnumerableAsync();
-
         public Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
             this.One(ps =>
                     ps.ParticipantId == participantId &&
@@ -41,55 +29,6 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public IQueryable<ParticipantScore> GetAll() =>
             this.GetQuery();
-
-        public IQueryable<ParticipantScore> GetAllHavingPointsExceedingLimit() =>
-            this.GetAll()
-                .Where(ps => ps.Points > ps.Problem.MaximumPoints);
-
-        public async Task ResetBySubmission(Submission submission)
-        {
-            var participant = await this.participantsData
-                .GetByIdQuery(submission.ParticipantId)
-                .Select(p => new
-                {
-                    p.IsOfficial,
-                    p.User.UserName,
-                    Participant = p,
-                })
-                .FirstOrDefaultAsync();
-
-            if (participant == null)
-            {
-                return;
-            }
-
-            var existingScore = await this.GetByParticipantIdProblemIdAndIsOfficial(
-                submission.ParticipantId,
-                submission.ProblemId,
-                participant.IsOfficial);
-
-            if (existingScore == null)
-            {
-                await this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName!, participant.IsOfficial, participant.Participant);
-            }
-            else
-            {
-                await this.UpdateBySubmissionAndPoints(existingScore, submission.Id, submission.Points, participant.Participant);
-            }
-        }
-
-        public async Task DeleteForParticipantByProblem(int participantId, int problemId)
-        {
-            var isOfficial = await this.participantsData.IsOfficialById(participantId);
-
-            var existingScore = await this.GetByParticipantIdProblemIdAndIsOfficial(participantId, problemId, isOfficial);
-
-            if (existingScore != null)
-            {
-                this.Delete(existingScore);
-                await this.SaveChanges();
-            }
-        }
 
         public async Task AddBySubmissionByUsernameAndIsOfficial(Submission submission, string username, bool isOfficial, Participant participant)
         {
@@ -141,7 +80,7 @@ namespace OJS.Services.Ui.Data.Implementations
                     new ParticipationForProblemMaxScoreServiceModel
                     {
                         ProblemId = ps.Key,
-                        Points = ps.Select(ps => ps.Points)
+                        Points = ps.Select(score => score.Points)
                             .Max(),
                     })
                 .ToDictionaryAsync(

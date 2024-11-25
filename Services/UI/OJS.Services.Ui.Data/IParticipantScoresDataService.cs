@@ -9,19 +9,9 @@ namespace OJS.Services.Ui.Data
 
     public interface IParticipantScoresDataService : IDataService<ParticipantScore>
     {
-        Task<IEnumerable<ParticipantScore>> GetWithSubmissionsAndTestsByParticipantId(int participantId);
-
-        Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId);
-
         Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial);
 
         IQueryable<ParticipantScore> GetAll();
-
-        IQueryable<ParticipantScore> GetAllHavingPointsExceedingLimit();
-
-        Task ResetBySubmission(Submission submission);
-
-        Task DeleteForParticipantByProblem(int participantId, int problemId);
 
         Task AddBySubmissionByUsernameAndIsOfficial(Submission submission, string username, bool isOfficial, Participant participant);
 

@@ -1,13 +1,12 @@
 namespace OJS.Services.Common.Models.Cache;
 
-using AutoMapper;
 using OJS.Common.Extensions.Strings;
 using OJS.Data.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ContestCategoryTreeViewModel : IMapExplicitly
+public class ContestCategoryTreeViewModel : IMapFrom<ContestCategory>
 {
     public int Id { get; set; }
 
@@ -21,14 +20,6 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
 
     public bool AllowMentor { get; set; }
 
-    public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; } = [];
-
-    public IEnumerable<AllowedContestStrategiesServiceModel> AllowedStrategyTypes { get; set; } = [];
-
-    public void RegisterMappings(IProfileExpression configuration)
-        => configuration
-            .CreateMap<ContestCategory, ContestCategoryTreeViewModel>()
-            .ForMember(
-                m => m.AllowedStrategyTypes,
-                opt => opt.Ignore());
+    public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; }
+        = Enumerable.Empty<ContestCategoryTreeViewModel>();
 }

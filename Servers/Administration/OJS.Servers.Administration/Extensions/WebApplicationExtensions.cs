@@ -16,7 +16,10 @@ internal static class WebApplicationExtensions
 
         app.UseMiddleware<AdministrationExceptionMiddleware>();
         app.MigrateDatabase<OjsDbContext>(configuration);
+
         app.SeedRoles();
+        app.SeedSettings();
+        app.SeedMentorPromptTemplates();
 
         app
             .MapHealthChecksUI()

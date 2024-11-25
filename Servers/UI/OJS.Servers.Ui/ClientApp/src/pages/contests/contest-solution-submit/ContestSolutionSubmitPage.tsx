@@ -176,6 +176,31 @@ const ContestSolutionSubmitPage = () => {
         });
     };
 
+    const handleSubmitButtonShouldBeDisabled = useCallback((force?: boolean) => {
+        if (force) {
+            // Submit button is forcefully disabled when timer is active
+            setIsSubmitButtonDisabled(true);
+            return;
+        }
+
+        if (!selectedSubmissionType) {
+            return;
+        }
+
+        const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
+
+        const isCodeStrategyAndCodeIsEmptyOrTooShort =
+            !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
+        const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
+
+        if (isCodeStrategyAndCodeIsEmptyOrTooShort || isFileUploadAndFileIsEmpty) {
+            setIsSubmitButtonDisabled(true);
+            return;
+        }
+
+        setIsSubmitButtonDisabled(false);
+    }, [ selectedSubmissionType, submissionCode, uploadedFile ]);
+
     useSuccessMessageEffect({
         data: [
             { message: SUBMISSION_SENT, shouldGet: submitSolutionSuccess },
@@ -230,19 +255,19 @@ const ContestSolutionSubmitPage = () => {
             const newRemainingTime = userSubmissionsTimeLimit - elapsedTimeInSeconds;
 
             if (newRemainingTime <= 0) {
-                setIsSubmitButtonDisabled(false);
+                handleSubmitButtonShouldBeDisabled();
                 setRemainingTime(0);
                 clearInterval(intervalId);
             } else {
                 setRemainingTime(newRemainingTime);
-                setIsSubmitButtonDisabled(true);
+                handleSubmitButtonShouldBeDisabled(true);
             }
         });
 
         return () => {
             clearInterval(intervalId);
         };
-    }, [ lastSubmissionTime, userSubmissionsTimeLimit ]);
+    }, [ lastSubmissionTime, userSubmissionsTimeLimit, handleSubmitButtonShouldBeDisabled ]);
 
     // managing the proper display of remaining time in compete contest
     useEffect(() => {
@@ -342,23 +367,9 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     useEffect(() => {
-        if (!selectedSubmissionType) {
-            return;
-        }
-
-        const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
-
-        const isCodeStrategyAndCodeIsEmptyOrTooShort =
-            !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
-        const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
-
-        if (isCodeStrategyAndCodeIsEmptyOrTooShort || isFileUploadAndFileIsEmpty) {
-            setIsSubmitButtonDisabled(true);
-            return;
-        }
-
-        setIsSubmitButtonDisabled(false);
-    }, [ selectedSubmissionType, submissionCode, uploadedFile ]);
+        // Disable submit button when code is updated
+        handleSubmitButtonShouldBeDisabled();
+    }, [ handleSubmitButtonShouldBeDisabled, selectedSubmissionType, submissionCode, uploadedFile ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);

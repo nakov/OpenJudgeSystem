@@ -15,9 +15,11 @@
 
         IQueryable<Submission> GetAllByProblem(int problemId);
 
+        Task<int> GetCountByProblem(int problemId);
+
         IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
 
-        Task<Submission?> GetWithProblemTestsAndSubmissionTypes(int id);
+        Task<Submission?> GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(int id);
 
         Task<IEnumerable<Submission>> GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(int problemId);
 
@@ -35,7 +37,7 @@
 
         new void Update(Submission submission);
 
-        void RemoveTestRunsCacheByProblem(int problemId);
+        Task RemoveTestRunsCacheByProblem(int problemId);
 
         Task<IEnumerable<int>> GetIdsByProblemId(int problemId);
     }
