@@ -33,8 +33,29 @@
         public IQueryable<Submission> GetAllByProblem(int problemId)
             => this.GetQuery(s => s.ProblemId == problemId);
 
+        public Task<int> GetCountByProblem(int problemId) => this.GetAllByProblem(problemId).CountAsync();
+
         public IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds)
             => this.GetQuery(s => problemIds.Contains(s.ProblemId));
+
+        public Task<Submission?> GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(int id)
+        {
+            var queryable = this.GetByIdQuery(id)
+                .Where(s => !s.IsDeleted && !s.Problem.IsDeleted);
+
+            queryable = IncludeProblemTestsAndSubmissionTypes(queryable);
+
+            return queryable.FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Submission>> GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(int problemId)
+        {
+            var queryable = this.GetAllByProblem(problemId).Where(s => !s.IsDeleted);
+
+            queryable = IncludeProblemTestsAndSubmissionTypes(queryable);
+
+            return await queryable.ToListAsync();
+        }
 
         public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
             => this.GetQuery(s => s.ParticipantId == participantId && s.ProblemId == problemId);
@@ -69,15 +90,9 @@
         public void DeleteByProblem(int problemId)
             => this.Delete(s => s.ProblemId == problemId);
 
-        public void RemoveTestRunsCacheByProblem(int problemId)
+        public Task RemoveTestRunsCacheByProblem(int problemId)
             => this.GetAllByProblem(problemId)
                 .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
-
-        public async Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId)
-            => await this.GetAllByProblem(problemId)
-                .Where(s => !s.IsDeleted)
-                .MapCollection<TServiceModel>()
-                .ToListAsync();
 
         public async Task<IEnumerable<int>> GetIdsByProblemId(int problemId)
             => await this.GetAllByProblem(problemId)
@@ -88,5 +103,16 @@
             => submission => user.IsAdmin ||
                              submission.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
                              submission.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == user.Id);
+
+        private static IQueryable<Submission> IncludeProblemTestsAndSubmissionTypes(IQueryable<Submission> queryable)
+            => queryable
+                .AsSplitQuery()
+                .Include(s => s.SubmissionType)
+                .Include(s => s.Problem)
+                    .ThenInclude(p => p.Checker)
+                .Include(s => s.Problem)
+                    .ThenInclude(p => p.Tests)
+                .Include(s => s.Problem)
+                    .ThenInclude(p => p.SubmissionTypesInProblems);
     }
 }

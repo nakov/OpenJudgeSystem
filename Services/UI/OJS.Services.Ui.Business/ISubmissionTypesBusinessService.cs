@@ -7,5 +7,5 @@ using OJS.Services.Infrastructure;
 
 public interface ISubmissionTypesBusinessService : IService
 {
-    Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage();
+    Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllForContestCategory(int contestCategoryId);
 }

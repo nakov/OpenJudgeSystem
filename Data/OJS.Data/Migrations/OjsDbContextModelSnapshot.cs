@@ -580,6 +580,9 @@ namespace OJS.Data.Migrations
                     b.Property<bool>("IsOfficial")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastSubmissionTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 

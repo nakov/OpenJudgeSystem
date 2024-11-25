@@ -1,7 +1,6 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
 using System;
-using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Cache;
@@ -24,9 +23,7 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
     }
 
     public async Task ClearMainContestCategoriesCache()
-        => await this.RemoveCaches([
-            CacheConstants.MainContestCategoriesDropDown,
-            CacheConstants.ContestCategoriesTree ]);
+        => await this.cache.Remove(CacheConstants.ContestCategoriesTree);
 
     public async Task ClearContestCategoryParentsAndChildren(int categoryId)
     {
@@ -55,8 +52,10 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
                 .FirstOrDefaultAsync();
         }
 
-        // Remove cache for all collected category IDs
-        await allCategoryIds.ForEachAsync(this.RemoveCacheFromCategory);
+        foreach (var id in allCategoryIds)
+        {
+            await this.cache.Remove(string.Format(CacheConstants.ContestSubCategoriesFormat, id));
+        }
     }
 
     /// <summary>
@@ -97,14 +96,4 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             }
         }
     }
-
-    private async Task RemoveCacheFromCategory(int contestCategoryId)
-        => await this.RemoveCaches([
-            string.Format(
-                CacheConstants.ContestSubCategoriesFormat,
-                contestCategoryId),
-        ]);
-
-    private async Task RemoveCaches(IEnumerable<string> keys)
-        => await keys.ForEachAsync(this.cache.Remove);
 }

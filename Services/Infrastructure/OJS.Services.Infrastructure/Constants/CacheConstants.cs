@@ -2,15 +2,17 @@
 {
     public static class CacheConstants
     {
-        public const int OneHourInSeconds = 60 * 60;
-        public const int OneDayInSeconds = 86400;
-        public const int TwoMinutesInSeconds = 120;
-        public const int FiveMinutesInSeconds = 300;
+        public const int OneMinuteInSeconds = 60;
+        public const int OneHourInSeconds = OneMinuteInSeconds * 60;
+        public const int OneDayInSeconds = OneHourInSeconds * 24;
+        public const int TwoMinutesInSeconds = OneMinuteInSeconds * 2;
+        public const int FiveMinutesInSeconds = OneMinuteInSeconds * 5;
+        public const int TenMinutesInSeconds = OneMinuteInSeconds * 10;
 
-        public const string MainContestCategoriesDropDown = "MainContestCategoriesDropDown";
         public const string ParticipantsCountByContest = "ParticipantsCountByContest:{0}";
         public const string ParticipantsCountByContestsPage = "ParticipantsCountByContestsPage:{0}:{1}";
-        public const string ContestById = "Contest:{0}";
+        public const string ContestDetailsById = "Contest:{0}:Details";
+        public const string ProblemForSubmit = "Problem:{0}:Submit";
         public const string ContestCategoriesTree = "ContestCategoriesTree";
         public const string ContestCategoryDetails = "ContestCategoryDetails:{0}";
 
@@ -19,12 +21,6 @@
         public const string TotalSubmissionsCount = "TotalSubmissionsCount";
         public const string LatestPublicSubmissions = "PublicSubmissions";
 
-        public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
-        public const string SubmissionTypeById = "SubmissionType:{0}";
-
-        public const string CheckerById = "Checker:{0}";
-
-        public const string ProblemsByContestId = "ProblemsByContestId:{0}";
-        public const string TestsByProblemId = "TestsByProblemId:{0}";
+        public const string SubmissionTypesByContestCategory = "SubmissionTypesByCategory:{0}";
     }
 }

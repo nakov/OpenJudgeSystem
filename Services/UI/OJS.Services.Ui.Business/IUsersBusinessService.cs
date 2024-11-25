@@ -8,9 +8,9 @@
 
     public interface IUsersBusinessService : IService
     {
-        public Task<UserProfileServiceModel?> GetUserShortOrFullProfileByLoggedInUserIsAdminOrProfileOwner(string? username);
+        Task<UserProfileServiceModel?> GetUserShortOrFullProfileByLoggedInUserIsAdminOrProfileOwner(string? username);
 
-        public Task<string?> GetUserIdByUsername(string? username);
+        Task<string?> GetUserIdByUsername(string? username);
 
         Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model);
 

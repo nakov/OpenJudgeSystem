@@ -24,6 +24,8 @@ public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMap
 
     public DateTime? ParticipationEndTime { get; set; }
 
+    public DateTime? LastSubmissionTime { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<Participant, ParticipantAdministrationModel>()

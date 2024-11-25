@@ -4,21 +4,21 @@ using System;
 
 public interface IParticipantForActivityServiceModel
 {
-    public bool IsInvalidated { get; set; }
+    bool IsInvalidated { get; set; }
 
-    public bool IsOfficial { get; set; }
+    bool IsOfficial { get; set; }
 
-    public int ContestId { get; set; }
+    int ContestId { get; set; }
 
-    public DateTime? ParticipationStartTime { get; set; }
+    DateTime? ParticipationStartTime { get; set; }
 
-    public DateTime? ParticipationEndTime { get; set; }
+    DateTime? ParticipationEndTime { get; set; }
 
-    public DateTime? ContestStartTime { get; set; }
+    DateTime? ContestStartTime { get; set; }
 
-    public DateTime? ContestEndTime { get; set; }
+    DateTime? ContestEndTime { get; set; }
 
-    public DateTime? ContestPracticeStartTime { get; set; }
+    DateTime? ContestPracticeStartTime { get; set; }
 
-    public DateTime? ContestPracticeEndTime { get; set; }
+    DateTime? ContestPracticeEndTime { get; set; }
 }

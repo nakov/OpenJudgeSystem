@@ -1,11 +1,11 @@
 ﻿namespace OJS.Services.Ui.Models.Contests
 {
+    using AutoMapper;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Problems;
     using OJS.Services.Infrastructure.Models.Mapping;
-    using OJS.Services.Ui.Models.Cache;
 
-    public class ContestProblemResourceServiceModel : IMapFrom<ProblemResourceCacheModel>
+    public class ContestProblemResourceServiceModel : IMapExplicitly
     {
         public int Id { get; set; }
 
@@ -14,5 +14,10 @@
         public string Link { get; set; } = null!;
 
         public ProblemResourceType Type { get; set; }
+
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration
+                .CreateMap<ProblemResource, ContestProblemResourceServiceModel>()
+                .ReverseMap();
     }
 }
