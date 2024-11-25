@@ -510,37 +510,42 @@
 }
 
 .markdownContent {
-
   font-family: inherit;
-  line-height: 1.5;
+  line-height: 1.4;
   word-wrap: break-word;
-
+  display: flex;
+  flex-direction: column;
 
   h1, h2, h3, h4, h5, h6 {
-    margin-top: spacings.$sp-16;
-    margin-bottom: spacings.$sp-8;
+    margin-top: spacings.$sp-4;
+    margin-bottom: spacings.$sp-4;
     font-weight: bold;
     line-height: 1.4;
   }
 
-  h1 {
-    font-size: 24px;
-  }
+  ul, ol {
+    padding: 1rem 0 1rem spacings.$sp-24;
+    list-style-position: outside;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    list-style-type: decimal !important;
 
-  h2 {
-    font-size: 20px;
-  }
+    li {
+      margin: 0;
+      padding-left: spacings.$sp-4;
+      line-height: 1.4;
 
-  h3 {
-    font-size: 18px;
-  }
+      &::marker {
+        font-weight: bold;
+      }
+    }
 
-  h4 {
-    font-size: 16px;
-  }
-
-  h5, h6 {
-    font-size: 14px;
+    ul, ol {
+      padding-left: spacings.$sp-48;
+      margin: 0;
+      list-style-type: disc !important;
+    }
   }
 
   code {
@@ -558,14 +563,6 @@
     border-radius: 8px;
     overflow-x: auto;
     font-size: 14px;
-  }
-
-  ul, ol {
-    padding-left: spacings.$sp-8;
-
-    ul, ol {
-      padding-left: spacings.$sp-16;
-    }
   }
 
   a {
