@@ -22,6 +22,7 @@ public class UserMentorAdministrationModel : BaseAdministrationModel<string>, IM
     public DateTime CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<UserMentor, UserMentorAdministrationModel>()
             .ForMember(d => d.OperationType, opt => opt.Ignore())

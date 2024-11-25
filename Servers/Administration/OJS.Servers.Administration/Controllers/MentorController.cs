@@ -3,6 +3,7 @@
 using FluentValidation;
 using OJS.Data.Models.Mentor;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Business.UsersMentors;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.UsersMentors;
 
@@ -10,9 +11,9 @@ public class MentorController : BaseAdminApiController<UserMentor, string, UserM
 {
     public MentorController(
         IGridDataService<UserMentor> gridDataService,
-        IAdministrationOperationService<UserMentor, string, UserMentorAdministrationModel> operationService,
+        IUsersMentorsBusinessService usersMentorsBusinessService,
         IValidator<UserMentorAdministrationModel> validator)
-        : base(gridDataService, operationService, validator)
+        : base(gridDataService, usersMentorsBusinessService, validator)
     {
     }
 }
