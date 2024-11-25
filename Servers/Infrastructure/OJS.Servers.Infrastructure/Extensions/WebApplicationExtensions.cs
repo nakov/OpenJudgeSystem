@@ -96,7 +96,21 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static WebApplication SeedSettings(this WebApplication app)
         {
             using var scope = app.Services.CreateScope();
-            scope.ServiceProvider.SeedSettings().GetAwaiter().GetResult();
+            scope.ServiceProvider
+                .SeedSettings()
+                .GetAwaiter()
+                .GetResult();
+
+            return app;
+        }
+
+        public static WebApplication SeedMentorPromptTemplates(this WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            scope.ServiceProvider
+                .SeedMentorPromptTemplates()
+                .GetAwaiter()
+                .GetResult();
 
             return app;
         }
