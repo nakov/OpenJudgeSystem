@@ -27,7 +27,8 @@ public class UsersMentorsBusinessService : AdministrationOperationService<UserMe
             .GetByIdQuery(id)
             .MapCollection<UserMentorAdministrationModel>()
             .FirstAsync();
-    public override async Task<UserMentorAdministrationModel> Create(UserMentorAdministrationModel model)
+
+    public async Task<UserMentorAdministrationModel> Create(UserMentorAdministrationModel model)
     {
         var userMentor = model.Map<UserMentor>();
 
