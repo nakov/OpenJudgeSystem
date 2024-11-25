@@ -1,42 +1,46 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
-using System.Linq;
+using OJS.Common.Enumerations;
+using OJS.Data.Models;
 using System.Text;
 using System.Threading.Tasks;
-using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common;
-using OJS.Services.Common.Models.Contests;
+using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure;
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Cache;
+using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
+using System.Linq;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsActivityService contestsActivity;
+    private readonly IDataService<ProblemForParticipant> problemsForParticipantsData;
     private readonly IDatesService dates;
 
     public SubmitSubmissionValidationService(
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
         ISubmissionsDataService submissionsData,
         IContestsActivityService contestsActivity,
+        IDataService<ProblemForParticipant> problemsForParticipantsData,
         IDatesService dates)
     {
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
         this.submissionsData = submissionsData;
         this.contestsActivity = contestsActivity;
+        this.problemsForParticipantsData = problemsForParticipantsData;
         this.dates = dates;
     }
 
     public async Task<ValidationResult> GetValidationResult(
         (ProblemForSubmitCacheModel?,
-        Participant?,
+        ParticipantSubmitServiceModel?,
         SubmitSubmissionServiceModel,
         SubmissionType?) item)
     {
@@ -52,12 +56,10 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
         }
 
-        var contest = participant.Contest;
-
         var isAdminOrLecturer = await this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(contest.Id);
+            .IsCurrentUserAdminOrLecturerInContest(participant.ContestId);
 
-        var participantActivity = this.contestsActivity.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
+        var participantActivity = this.contestsActivity.GetParticipantActivity(participant);
 
         if (participantActivity.IsInvalidated)
         {
@@ -86,8 +88,8 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 problemIdToString);
         }
 
-        if (!contest.AllowParallelSubmissionsInTasks &&
-            await this.submissionsData.HasParticipantNotProcessedSubmissionForContest(contest.Id, participant.Id))
+        if (!participant.ContestAllowParallelSubmissionsInTasks &&
+            await this.submissionsData.HasParticipantNotProcessedSubmissionForContest(participant.ContestId, participant.Id))
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
@@ -101,11 +103,17 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         if (submitSubmissionServiceModel.Official &&
-            contest.IsOnlineExam &&
-            !isAdminOrLecturer &&
-            participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
+            participant.ContestType == ContestType.OnlinePracticalExam &&
+            !isAdminOrLecturer)
         {
-            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemIdToString);
+            var problemIsAssignedToParticipant = participant.Problems?.Any(pp => pp.ProblemId == problem.Id)
+                ?? await this.problemsForParticipantsData
+                    .Exists(pfp => pfp.ParticipantId == participant.Id && pfp.ProblemId == problem.Id);
+
+            if (!problemIsAssignedToParticipant)
+            {
+                return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemIdToString);
+            }
         }
 
         if (submissionType == null)
@@ -147,7 +155,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemIdToString);
         }
 
-        var userSubmissionTimeLimit = this.GetUserSubmissionTimeLimit(participant, contest.LimitBetweenSubmissions);
+        var userSubmissionTimeLimit = this.GetUserSubmissionTimeLimit(participant);
 
         if (userSubmissionTimeLimit != 0)
         {
@@ -157,8 +165,10 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         return ValidationResult.Valid();
     }
 
-    private int GetUserSubmissionTimeLimit(Participant participant, int limitBetweenSubmissions)
+    private int GetUserSubmissionTimeLimit(ParticipantSubmitServiceModel participant)
     {
+        var limitBetweenSubmissions = participant.ContestLimitBetweenSubmissions;
+
         if (limitBetweenSubmissions <= 0)
         {
             return 0;
