@@ -8,7 +8,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { ChatMessageRole } from 'src/common/enums';
-import { ExceptionData, IMentorConversationMessage } from 'src/common/types';
+import { IMentorConversationMessage } from 'src/common/types';
 import useTheme from 'src/hooks/use-theme';
 import { useStartConversationMutation } from 'src/redux/services/mentorService';
 import { useAppSelector } from 'src/redux/store';
@@ -229,7 +229,7 @@ const Mentor = (props: IMentorProps) => {
                     </div>
                     {error && (
                         <div className={styles.errorMessage}>
-                            {(error as ExceptionData)?.message || 'Failed to send the message. Please try again.'}
+                            {((error as any)?.data?.detail ?? 'Failed to send the message. Please try again.')}
                         </div>
                     )}
                 </DialogContent>

@@ -31,7 +31,6 @@ interface IUserMentorEditProps {
     onSuccess?: Function;
     setParentSuccessMessage: Function;
 }
-
 const UserMentorEdit = (props: IUserMentorEditProps) => {
     const {
         userMentorId,
