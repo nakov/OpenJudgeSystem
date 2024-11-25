@@ -18,7 +18,7 @@ import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import styles from './ProfileContestParticipations.module.scss';
 
 interface IProfileContestParticipationsProps {
-    userIsProfileOwner: boolean;
+    userIsProfileOwner: boolean | null;
     isChosenInToggle: boolean;
 }
 

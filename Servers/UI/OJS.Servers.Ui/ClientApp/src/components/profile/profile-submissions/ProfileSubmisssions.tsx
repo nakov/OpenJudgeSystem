@@ -8,7 +8,7 @@ import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid'
 import styles from './ProfileSubmissions.module.scss';
 
 interface IProfileSubmissionsProps {
-    userIsProfileOwner: boolean;
+    userIsProfileOwner: boolean | null;
     isChosenInToggle: boolean;
 }
 
