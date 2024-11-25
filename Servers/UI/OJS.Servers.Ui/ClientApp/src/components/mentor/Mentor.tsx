@@ -30,25 +30,25 @@ interface IMentorProps {
 
 const Mentor = (props: IMentorProps) => {
     const { problemId, problemName, contestId, contestName, categoryName, isMentorAllowed } = props;
+    const { internalUser: user } = useAppSelector((state) => state.authorization);
+    const { isDarkMode } = useTheme();
+
     const [ isOpen, setIsOpen ] = useState(false);
     const [ showBubble, setShowBubble ] = useState(true);
     const [ inputMessage, setInputMessage ] = useState('');
     const [ conversationDate, setConversationDate ] = useState<Date | null>(null);
-    const { isDarkMode } = useTheme();
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
     const [ conversationMessages, setConversationMessages ] = useState<IMentorConversationMessage[]>([
         {
             content: 'Здравейте, аз съм Вашият ментор за писане на код, как мога да Ви помогна?',
             role: ChatMessageRole.Assistant,
             sequenceNumber: 1,
+            // Using an invalid problemId on purpose, this is just a placeholder message.
+            problemId: -1,
         },
     ]);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const { internalUser: user } = useAppSelector((state) => state.authorization);
-
-    const [ startConversation, { data: conversationData, error, isLoading } ] =
-        useStartConversationMutation();
+    const [ startConversation, { data: conversationData, error, isLoading } ] = useStartConversationMutation();
 
     const isChatDisabled = useMemo(
         () => inputMessage.trim() === '' ||
@@ -69,7 +69,7 @@ const Mentor = (props: IMentorProps) => {
 
     useEffect(() => {
         if (conversationData) {
-            setConversationMessages(conversationData.conversationMessages.filter((cm) => cm.role !== ChatMessageRole.System));
+            setConversationMessages(conversationData.messages.filter((m) => m.role !== ChatMessageRole.System));
         }
     }, [ conversationData ]);
 
@@ -104,6 +104,7 @@ const Mentor = (props: IMentorProps) => {
             content: inputMessage,
             role: ChatMessageRole.User,
             sequenceNumber: Math.max(...conversationMessages.map((cm) => cm.sequenceNumber)) + 1,
+            problemId,
         };
 
         const updatedConversationMessages = [ ...conversationMessages, message ];
@@ -111,7 +112,7 @@ const Mentor = (props: IMentorProps) => {
 
         startConversation({
             userId: user.id,
-            conversationMessages: updatedConversationMessages,
+            messages: updatedConversationMessages,
             problemId,
             problemName,
             contestId,
@@ -223,15 +224,14 @@ const Mentor = (props: IMentorProps) => {
                                 </div>
                             </div>
                         )}
-                        {error && (
-                            <div className={styles.errorMessage}>
-                                {(error as ExceptionData).message}
-                                Failed to send message. Please try again.
-                            </div>
-                        )}
                         <div ref={messagesEndRef} />
                         {' '}
                     </div>
+                    {error && (
+                        <div className={styles.errorMessage}>
+                            {(error as ExceptionData)?.message || 'Failed to send the message. Please try again.'}
+                        </div>
+                    )}
                 </DialogContent>
                 <DialogActions className={styles.dialogActions}>
                     <TextField
