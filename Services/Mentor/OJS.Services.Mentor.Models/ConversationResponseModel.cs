@@ -6,5 +6,5 @@ public class ConversationResponseModel : IMapFrom<ConversationRequestModel>
 {
     public string UserId { get; set; } = default!;
 
-    public ICollection<ConversationMessageModel> ConversationMessages { get; set; } = [];
+    public ICollection<ConversationMessageModel> Messages { get; set; } = [];
 }

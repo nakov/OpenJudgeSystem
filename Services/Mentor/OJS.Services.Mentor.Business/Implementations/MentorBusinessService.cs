@@ -85,13 +85,13 @@ public class MentorBusinessService : IMentorBusinessService
             userMentor.QuotaResetTime = DateTime.UtcNow.AddMinutes(GetNumericValue(settings, nameof(MentorQuotaResetTimeInMinutes)));
         }
 
-        if (userMentor.RequestsMade > (userMentor.QuotaLimit ?? GetNumericValue(settings, nameof(MentorQuotaLimit))))
+        if (userMentor.RequestsMade >= (userMentor.QuotaLimit ?? GetNumericValue(settings, nameof(MentorQuotaLimit))))
         {
-            model.ConversationMessages.Add(new ConversationMessageModel
+            model.Messages.Add(new ConversationMessageModel
             {
                 Content = $"Достигнахте лимита на съобщенията си, моля опитайте отново след {GetTimeUntilNextMessage(userMentor.QuotaResetTime)}.",
                 Role = MentorMessageRole.Information,
-                SequenceNumber = model.ConversationMessages.Max(cm => cm.SequenceNumber) + 1,
+                SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
             });
 
             return model.Map<ConversationResponseModel>();
@@ -102,7 +102,7 @@ public class MentorBusinessService : IMentorBusinessService
          *  The system message contains how the model should act
          *  and the problem's description.
          */
-        if (model.ConversationMessages.All(cm => cm.Role != MentorMessageRole.System))
+        if (model.Messages.All(cm => cm.Role != MentorMessageRole.System))
         {
             /*
              *  In the first version of the mentor, there will be only a single
@@ -150,20 +150,26 @@ public class MentorBusinessService : IMentorBusinessService
             if (string.IsNullOrWhiteSpace(text))
             {
                 // If we could not extract the message, prompt the user to send it himself.
-                model.ConversationMessages.Add(new ConversationMessageModel
+                model.Messages.Add(new ConversationMessageModel
                 {
                     Content = ProblemDescriptionNotFound,
                     Role = MentorMessageRole.Information,
-                    SequenceNumber = model.ConversationMessages.Max(cm => cm.SequenceNumber) + 1,
+                    SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
                 });
 
                 return model.Map<ConversationResponseModel>();
             }
             else
             {
-                model.ConversationMessages.Add(new ConversationMessageModel
+                model.Messages.Add(new ConversationMessageModel
                 {
-                    Content = string.Format(CultureInfo.InvariantCulture, template!.Template, model.ProblemName, text),
+                    Content = string.Format(
+                        CultureInfo.InvariantCulture,
+                        template!.Template,
+                        model.ProblemName,
+                        text,
+                        model.ContestName,
+                        model.CategoryName),
                     Role = MentorMessageRole.System,
                     // The system message should always be first ( in ascending order )
                     SequenceNumber = int.MinValue,
@@ -173,12 +179,12 @@ public class MentorBusinessService : IMentorBusinessService
 
         var messagesToSend = new List<ChatMessage>();
 
-        var systemMessage = model.ConversationMessages.First(cm => cm.Role == MentorMessageRole.System);
+        var systemMessage = model.Messages.First(cm => cm.Role == MentorMessageRole.System);
         systemMessage.Content = RemoveRedundantWhitespace(systemMessage.Content);
         messagesToSend.Add(CreateChatMessage(systemMessage.Role, systemMessage.Content));
 
-        var recentMessages = model.ConversationMessages
-            .Where(cm => cm.Role != MentorMessageRole.System && cm.Role != MentorMessageRole.Information)
+        var recentMessages = model.Messages
+            .Where(cm => cm.Role is not MentorMessageRole.System and not MentorMessageRole.Information)
             .OrderByDescending(cm => cm.SequenceNumber)
             .Take(GetNumericValue(settings, nameof(MentorMessagesSentCount)))
             .ToList();
@@ -220,11 +226,11 @@ public class MentorBusinessService : IMentorBusinessService
 
         var assistantContent = string.Join(Environment.NewLine, response.Value.Content.Select(part => part.Text).Where(text => !string.IsNullOrEmpty(text)));
 
-        model.ConversationMessages.Add(new ConversationMessageModel
+        model.Messages.Add(new ConversationMessageModel
         {
             Content = assistantContent,
             Role = MentorMessageRole.Assistant,
-            SequenceNumber = model.ConversationMessages.Max(cm => cm.SequenceNumber) + 1
+            SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1
         });
 
         userMentor.RequestsMade++;
@@ -440,22 +446,22 @@ public class MentorBusinessService : IMentorBusinessService
 
         if (timeUntilReset.Days > 0)
         {
-            timeComponents.Add($"{timeUntilReset.Days} day{(timeUntilReset.Days > 1 ? "s" : "")}");
+            timeComponents.Add($"{timeUntilReset.Days} {(timeUntilReset.Days > 1 ? "дни" : "ден")}");
         }
 
         if (timeUntilReset.Hours > 0)
         {
-            timeComponents.Add($"{timeUntilReset.Hours} hour{(timeUntilReset.Hours > 1 ? "s" : "")}");
+            timeComponents.Add($"{timeUntilReset.Hours} {(timeUntilReset.Hours > 1 ? "часа" : "час")}");
         }
 
         if (timeUntilReset.Minutes > 0)
         {
-            timeComponents.Add($"{timeUntilReset.Minutes} minute{(timeUntilReset.Minutes > 1 ? "s" : "")}");
+            timeComponents.Add($"{timeUntilReset.Minutes} {(timeUntilReset.Minutes > 1 ? "минути" : "минута")}");
         }
 
         if (timeUntilReset.Seconds > 0)
         {
-            timeComponents.Add($"{timeUntilReset.Seconds} second{(timeUntilReset.Seconds > 1 ? "s" : "")}");
+            timeComponents.Add($"{timeUntilReset.Seconds} {(timeUntilReset.Seconds > 1 ? "секунди" : "секунда")}");
         }
 
         return string.Join(", ", timeComponents);
