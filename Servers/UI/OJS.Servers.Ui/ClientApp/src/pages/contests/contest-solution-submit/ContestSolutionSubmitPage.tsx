@@ -234,7 +234,7 @@ const ContestSolutionSubmitPage = () => {
         if (!submissionsDataFetching) {
             setTimeout(() => {
                 setIsRotating(false);
-            }, 900);
+            }, 1000);
         }
     }, [ submissionsDataFetching, setIsRotating ]);
 
