@@ -88,24 +88,22 @@ public class MentorBusinessService : IMentorBusinessService
             userMentor.QuotaResetTime = DateTime.UtcNow.AddMinutes(GetNumericValue(settings, nameof(MentorQuotaResetTimeInMinutes)));
         }
 
-        var currentProblemMessages = new List<ConversationMessageModel>();
-        if (model.Messages.TryGetValue(model.ProblemId, out var previousMessages))
-        {
-            currentProblemMessages.AddRange(previousMessages);
-        }
-
         if (userMentor.RequestsMade >= (userMentor.QuotaLimit ?? GetNumericValue(settings, nameof(MentorQuotaLimit))))
         {
-            currentProblemMessages.Add(new ConversationMessageModel
+            model.Messages.Add(new ConversationMessageModel
             {
                 Content = $"Достигнахте лимита на съобщенията си, моля опитайте отново след {GetTimeUntilNextMessage(userMentor.QuotaResetTime)}.",
                 Role = MentorMessageRole.Information,
-                SequenceNumber = currentProblemMessages.Max(cm => cm.SequenceNumber) + 1,
+                SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
+                ProblemId = model.ProblemId,
             });
 
-            model.Messages[model.ProblemId] = currentProblemMessages;
             return model.Map<ConversationResponseModel>();
         }
+
+        var currentProblemMessages = model.Messages
+            .Where(m => m.ProblemId == model.ProblemId && m.Role != MentorMessageRole.Information)
+            .ToList();
 
         var messagesToSend = new List<ChatMessage>();
 
@@ -159,17 +157,17 @@ public class MentorBusinessService : IMentorBusinessService
 
         var assistantContent = string.Join(Environment.NewLine, response.Value.Content.Select(part => part.Text).Where(text => !string.IsNullOrEmpty(text)));
 
-        currentProblemMessages.Add(new ConversationMessageModel
+        model.Messages.Add(new ConversationMessageModel
         {
             Content = assistantContent,
             Role = MentorMessageRole.Assistant,
-            SequenceNumber = currentProblemMessages.Max(cm => cm.SequenceNumber) + 1
+            SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
+            ProblemId = model.ProblemId,
         });
 
         userMentor.RequestsMade++;
         await this.userMentorData.SaveChanges();
 
-        model.Messages[model.ProblemId] = currentProblemMessages;
         return model.Map<ConversationResponseModel>();
     }
 
@@ -472,7 +470,10 @@ public class MentorBusinessService : IMentorBusinessService
             .Include(c => c.ProblemGroups)
             .ThenInclude(pg => pg.Problems)
             .ThenInclude(p => p.Resources)
-            .SelectMany(c => c.ProblemGroups.SelectMany(pg => pg.Problems).SelectMany(p => p.Resources))
+            .SelectMany(c => c.ProblemGroups
+                .SelectMany(pg => pg.Problems)
+                .SelectMany(p => p.Resources)
+                .Where(pr => pr.Type == ProblemResourceType.ProblemDescription))
             .ToListAsync();
 
         var wordFiles = problemsResources
@@ -513,6 +514,7 @@ public class MentorBusinessService : IMentorBusinessService
             Role = MentorMessageRole.System,
             // The system message should always be first ( in ascending order )
             SequenceNumber = int.MinValue,
+            ProblemId = model.ProblemId,
         };
     }
 }
