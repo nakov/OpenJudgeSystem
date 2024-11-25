@@ -7,8 +7,6 @@ namespace OJS.Services.Ui.Data
 
     public interface IProblemsDataService : IDataService<Problem>
     {
-        Task<Problem?> GetWithSubmissionTypesById(int id);
-
         IQueryable<Problem> GetAllNonDeletedProblems();
 
         IQueryable<Problem> GetAllByContest(int contestId);

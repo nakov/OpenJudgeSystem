@@ -5,40 +5,25 @@ using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OJS.Data.Models.Submissions;
-using OJS.Services.Ui.Data;
 
 public class SubmissionTypesCacheService : ISubmissionTypesCacheService
 {
     private readonly ICacheService cache;
     private readonly ISubmissionTypesBusinessService submissionTypesBusiness;
-    private readonly ISubmissionTypesDataService submissionTypesData;
 
     public SubmissionTypesCacheService(
         ICacheService cache,
-        ISubmissionTypesBusinessService submissionTypesBusiness,
-        ISubmissionTypesDataService submissionTypesData)
+        ISubmissionTypesBusinessService submissionTypesBusiness)
     {
         this.cache = cache;
         this.submissionTypesBusiness = submissionTypesBusiness;
-        this.submissionTypesData = submissionTypesData;
     }
 
-    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage(int? cacheSeconds)
-        => cacheSeconds.HasValue
-            ? this.cache.Get(
-                CacheConstants.SubmissionTypesByUsage,
-                this.submissionTypesBusiness.GetAllOrderedByLatestUsage,
-                cacheSeconds.Value)
-            : this.cache.Get(
-                CacheConstants.SubmissionTypesByUsage,
-                this.submissionTypesBusiness.GetAllOrderedByLatestUsage);
-
-    public async Task<SubmissionType?> GetById(
-        int submissionTypeId,
-        int cacheSeconds = CacheConstants.OneHourInSeconds)
-        => await this.cache.Get(
-            string.Format(CacheConstants.SubmissionTypeById, submissionTypeId),
-            async () => await this.submissionTypesData.OneById(submissionTypeId),
+    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllForContestCategory(
+        int contestCategoryId,
+        int cacheSeconds = CacheConstants.OneDayInSeconds)
+        => this.cache.Get(
+            string.Format(CacheConstants.SubmissionTypesByContestCategory, contestCategoryId),
+            async () => await this.submissionTypesBusiness.GetAllForContestCategory(contestCategoryId),
             cacheSeconds);
 }

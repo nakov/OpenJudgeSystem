@@ -2,10 +2,8 @@ namespace OJS.Services.Ui.Data
 {
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Data;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Threading.Tasks;
 
     public interface IParticipantsDataService : IDataService<Participant>
@@ -22,19 +20,8 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Participant> GetAllByContestWithScoresAndProblems(int contestId);
 
-        IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
-            int contestId,
-            DateTime participationStartTimeRangeStart,
-            DateTime participationStartTimeRangeEnd);
-
         Task<bool> ExistsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
-        Task<bool> IsOfficialById(int id);
-
         Task<IDictionary<int, int>> GetParticipantsCountInContests(IEnumerable<int> contestIds, bool isOfficial);
-
-        Task Update(
-            IQueryable<Participant> participantsQuery,
-            Expression<Func<Participant, Participant>> updateExpression);
     }
 }

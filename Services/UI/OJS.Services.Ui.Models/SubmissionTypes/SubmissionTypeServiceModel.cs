@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using AutoMapper;
+    using OJS.Data.Models;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Infrastructure.Models.Mapping;
-    using OJS.Services.Ui.Models.Cache;
 
     public class SubmissionTypeServiceModel : IMapExplicitly
     {
@@ -39,7 +39,7 @@
                 .ForMember(d => d.TimeLimit, opt => opt.Ignore())
                 .ForMember(d => d.MemoryLimit, opt => opt.Ignore());
 
-            configuration.CreateMap<SubmissionTypeInProblemCacheModel, SubmissionTypeServiceModel>()
+            configuration.CreateMap<SubmissionTypeInProblem, SubmissionTypeServiceModel>()
                 .ForMember(
                     d => d.Id,
                     opt => opt.MapFrom(s => s.SubmissionType.Id))
@@ -65,7 +65,8 @@
                             ? s.SubmissionType.AllowedFileExtensions.Split(
                                 this.allowedFileExtensionsDelimiters,
                                 StringSplitOptions.RemoveEmptyEntries)
-                            : Array.Empty<string>()));
+                            : Array.Empty<string>()))
+                .ReverseMap();
         }
     }
 }

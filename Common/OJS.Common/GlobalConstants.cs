@@ -153,6 +153,9 @@ namespace OJS.Common
             public const int MentorMaxOutputTokenCount = 1024;
             public const int MentorQuotaLimit = 10;
             public const int MentorQuotaResetTimeInMinutes = 60;
+            public const string MaxSubmissionTimeToExecuteAllowedForBatchRetest = "MaxSubmissionTimeToExecuteAllowedForBatchRetest";
+            public const string MaxSubmissionsCountAllowedForBatchRetest = "MaxSubmissionsCountAllowedForBatchRetest";
+            public const string MaxWorkersWorkingTimeInSeconds = "MaxWorkersWorkingTimeInSeconds";
         }
     }
 }

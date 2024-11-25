@@ -107,13 +107,7 @@ interface IGetContestParticipationsForUserQueryParams extends IContestsSortAndFi
     username: string;
 }
 
-interface IAllowedStrategyType {
-    id: number;
-    name: string;
-}
-
 interface IContestCategory {
-    allowedStrategyTypes: Array<IAllowedStrategyType>;
     children: Array<IContestCategory>;
     id: number;
     name: string;
@@ -301,6 +295,13 @@ interface IIndexProblemsType {
     contestId: number;
     createdOn: Date;
     modifiedOn: Date;
+}
+
+interface IProblemRetestValidationType {
+    submissionsCount: number;
+    averageExecutionTime: number;
+    retestAllowed: boolean;
+    message: boolean;
 }
 
 interface IIndexContestCategoriesType {
@@ -777,6 +778,7 @@ export type {
     IContestCategories,
     ExceptionData,
     IIndexProblemsType,
+    IProblemRetestValidationType,
     IProblemAdministration,
     IProblemSubmissionType,
     ISubmissionTypeInProblem,

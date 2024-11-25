@@ -15,7 +15,13 @@
 
         IQueryable<Submission> GetAllByProblem(int problemId);
 
+        Task<int> GetCountByProblem(int problemId);
+
         IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
+
+        Task<Submission?> GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(int id);
+
+        Task<IEnumerable<Submission>> GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(int problemId);
 
         IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
             DateTime createdBeforeDate,
@@ -31,9 +37,7 @@
 
         new void Update(Submission submission);
 
-        void RemoveTestRunsCacheByProblem(int problemId);
-
-        Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId);
+        Task RemoveTestRunsCacheByProblem(int problemId);
 
         Task<IEnumerable<int>> GetIdsByProblemId(int problemId);
     }
