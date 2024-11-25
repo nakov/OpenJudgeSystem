@@ -18,13 +18,6 @@ namespace OJS.Services.Ui.Data.Implementations
                 .GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
-        public Task<Participant?> GetWithProblemsForParticipantByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
-            => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
-                .Include(p => p.User)
-                .Include(p => p.Contest)
-                .Include(p => p.ProblemsForParticipants)
-                .FirstOrDefaultAsync();
-
         public IQueryable<Participant> GetWithProblemsForParticipantsByContestAndUser(int contestId,
             string userId)
             => this.GetAllByContestAndUser(contestId, userId)
@@ -33,6 +26,11 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public IQueryable<Participant> GetAllByUser(string? userId)
             => this.GetQuery(p => p.UserId == userId);
+
+        public IQueryable<Participant> GetAllByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
+            => this
+                .GetAllByContestAndUser(contestId, userId)
+                .Where(p => p.IsOfficial == isOfficial);
 
         public IQueryable<Participant> GetAllByUsernameAndContests(string username, IEnumerable<int> contestIds)
         {
@@ -69,13 +67,5 @@ namespace OJS.Services.Ui.Data.Implementations
         private IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
             this.GetAllByContest(contestId)
                 .Where(p => p.UserId == userId);
-
-        private IQueryable<Participant> GetAllByContestByUserAndIsOfficial(
-            int contestId,
-            string userId,
-            bool isOfficial)
-            => this
-                .GetAllByContestAndUser(contestId, userId)
-                .Where(p => p.IsOfficial == isOfficial);
     }
 }

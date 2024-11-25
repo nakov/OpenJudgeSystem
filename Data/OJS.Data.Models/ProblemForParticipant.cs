@@ -1,9 +1,10 @@
 namespace OJS.Data.Models
 {
+    using OJS.Data.Models.Common;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
 
-    public class ProblemForParticipant
+    public class ProblemForParticipant : IEntity
     {
         public int ProblemId { get; set; }
 
