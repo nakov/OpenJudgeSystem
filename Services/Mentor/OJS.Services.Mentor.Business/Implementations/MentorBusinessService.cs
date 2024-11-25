@@ -12,6 +12,7 @@ using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Data.Models.Mentor;
 using OJS.Services.Common.Data;
+using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Mentor.Business;
@@ -27,7 +28,6 @@ public class MentorBusinessService : IMentorBusinessService
 {
     private const string Docx = "docx";
     private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please contact an administrator and report the problem.";
-    private const string ProblemDescriptionNotFound = "Не успях да намеря описанието на задачата. Можете ли да го предоставите, за да мога да Ви помогна?";
 
     private readonly IDataService<UserMentor> userMentorData;
     private readonly IDataService<MentorPromptTemplate> mentorPromptTemplateData;
@@ -84,15 +84,22 @@ public class MentorBusinessService : IMentorBusinessService
             userMentor.QuotaResetTime = DateTime.UtcNow.AddMinutes(GetNumericValue(settings, nameof(MentorQuotaResetTimeInMinutes)));
         }
 
+        var currentProblemMessages = new List<ConversationMessageModel>();
+        if (model.Messages.TryGetValue(model.ProblemId, out var previousMessages))
+        {
+            currentProblemMessages.AddRange(previousMessages);
+        }
+
         if (userMentor.RequestsMade >= (userMentor.QuotaLimit ?? GetNumericValue(settings, nameof(MentorQuotaLimit))))
         {
-            model.Messages.Add(new ConversationMessageModel
+            currentProblemMessages.Add(new ConversationMessageModel
             {
                 Content = $"Достигнахте лимита на съобщенията си, моля опитайте отново след {GetTimeUntilNextMessage(userMentor.QuotaResetTime)}.",
                 Role = MentorMessageRole.Information,
-                SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
+                SequenceNumber = currentProblemMessages.Max(cm => cm.SequenceNumber) + 1,
             });
 
+            model.Messages[model.ProblemId] = currentProblemMessages;
             return model.Map<ConversationResponseModel>();
         }
 
@@ -101,7 +108,7 @@ public class MentorBusinessService : IMentorBusinessService
          *  The system message contains how the model should act
          *  and the problem's description.
          */
-        if (model.Messages.All(cm => cm.Role != MentorMessageRole.System))
+        if (currentProblemMessages.All(cm => cm.Role != MentorMessageRole.System))
         {
             /*
              *  In the first version of the mentor, there will be only a single
@@ -146,43 +153,28 @@ public class MentorBusinessService : IMentorBusinessService
             var number = GetProblemNumber(model.ProblemName);
             var text = ExtractSectionFromDocument(file, model.ProblemName, number);
 
-            if (string.IsNullOrWhiteSpace(text))
+            currentProblemMessages.Add(new ConversationMessageModel
             {
-                // If we could not extract the message, prompt the user to send it himself.
-                model.Messages.Add(new ConversationMessageModel
-                {
-                    Content = ProblemDescriptionNotFound,
-                    Role = MentorMessageRole.Information,
-                    SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
-                });
-
-                return model.Map<ConversationResponseModel>();
-            }
-            else
-            {
-                model.Messages.Add(new ConversationMessageModel
-                {
-                    Content = string.Format(
-                        CultureInfo.InvariantCulture,
-                        template!.Template,
-                        model.ProblemName,
-                        text,
-                        model.ContestName,
-                        model.CategoryName),
-                    Role = MentorMessageRole.System,
-                    // The system message should always be first ( in ascending order )
-                    SequenceNumber = int.MinValue,
-                });
-            }
+                Content = string.Format(
+                    CultureInfo.InvariantCulture,
+                    template!.Template,
+                    model.ProblemName,
+                    text,
+                    model.ContestName,
+                    model.CategoryName),
+                Role = MentorMessageRole.System,
+                // The system message should always be first ( in ascending order )
+                SequenceNumber = int.MinValue,
+            });
         }
 
         var messagesToSend = new List<ChatMessage>();
 
-        var systemMessage = model.Messages.First(cm => cm.Role == MentorMessageRole.System);
+        var systemMessage = currentProblemMessages.First(cm => cm.Role == MentorMessageRole.System);
         systemMessage.Content = RemoveRedundantWhitespace(systemMessage.Content);
         messagesToSend.Add(CreateChatMessage(systemMessage.Role, systemMessage.Content));
 
-        var recentMessages = model.Messages
+        var recentMessages = currentProblemMessages
             .Where(cm => cm.Role is not MentorMessageRole.System and not MentorMessageRole.Information)
             .OrderByDescending(cm => cm.SequenceNumber)
             .Take(GetNumericValue(settings, nameof(MentorMessagesSentCount)))
@@ -225,16 +217,17 @@ public class MentorBusinessService : IMentorBusinessService
 
         var assistantContent = string.Join(Environment.NewLine, response.Value.Content.Select(part => part.Text).Where(text => !string.IsNullOrEmpty(text)));
 
-        model.Messages.Add(new ConversationMessageModel
+        currentProblemMessages.Add(new ConversationMessageModel
         {
             Content = assistantContent,
             Role = MentorMessageRole.Assistant,
-            SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1
+            SequenceNumber = currentProblemMessages.Max(cm => cm.SequenceNumber) + 1
         });
 
         userMentor.RequestsMade++;
         await this.userMentorData.SaveChanges();
 
+        model.Messages[model.ProblemId] = currentProblemMessages;
         return model.Map<ConversationResponseModel>();
     }
 

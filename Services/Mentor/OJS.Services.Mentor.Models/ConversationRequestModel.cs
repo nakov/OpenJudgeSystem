@@ -4,7 +4,7 @@ public class ConversationRequestModel
 {
     public string UserId { get; set; } = default!;
 
-    public ICollection<ConversationMessageModel> Messages { get; set; } = [];
+    public Dictionary<int, ICollection<ConversationMessageModel>> Messages { get; set; } = [];
 
     public int ProblemId { get; set; }
 
