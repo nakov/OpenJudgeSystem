@@ -13,6 +13,7 @@ using OJS.Data.Models;
 using OJS.Data.Models.Mentor;
 using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Cache;
+using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Mentor.Business;
@@ -31,10 +32,11 @@ public class MentorBusinessService : IMentorBusinessService
 
     private readonly IDataService<UserMentor> userMentorData;
     private readonly IDataService<MentorPromptTemplate> mentorPromptTemplateData;
-    private readonly OpenAIClient openAiClient;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly IDataService<Setting> settingData;
     private readonly IContestsDataService contestsData;
+    private readonly ICacheService cache;
+    private readonly OpenAIClient openAiClient;
 
     public MentorBusinessService(
         IDataService<UserMentor> userMentorData,
@@ -42,6 +44,7 @@ public class MentorBusinessService : IMentorBusinessService
         IHttpClientFactory httpClientFactory,
         IDataService<Setting> settingData,
         IContestsDataService contestsData,
+        ICacheService cache,
         OpenAIClient openAiClient)
     {
         this.userMentorData = userMentorData;
@@ -49,6 +52,7 @@ public class MentorBusinessService : IMentorBusinessService
         this.httpClientFactory = httpClientFactory;
         this.settingData = settingData;
         this.contestsData = contestsData;
+        this.cache = cache;
         this.openAiClient = openAiClient;
     }
 
@@ -103,74 +107,12 @@ public class MentorBusinessService : IMentorBusinessService
             return model.Map<ConversationResponseModel>();
         }
 
-        /*
-         *  If the system message is not present, we should add it.
-         *  The system message contains how the model should act
-         *  and the problem's description.
-         */
-        if (currentProblemMessages.All(cm => cm.Role != MentorMessageRole.System))
-        {
-            /*
-             *  In the first version of the mentor, there will be only a single
-             *  template in the database. This is why we can be sure that
-             *  .FirstOrDefaultAsync() will always return a template. This
-             *  will be changed in the future.
-             */
-            var template = await this.mentorPromptTemplateData
-                .GetQuery()
-                .FirstOrDefaultAsync();
-
-            var problemsResources = await this.contestsData.GetByIdQuery(model.ContestId)
-                .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-                .ThenInclude(p => p.Resources)
-                .SelectMany(c => c.ProblemGroups.SelectMany(pg => pg.Problems).SelectMany(p => p.Resources))
-                .ToListAsync();
-
-            var wordFiles = problemsResources
-                .Where(pr =>
-                       pr is { File: not null, FileExtension: Docx } ||
-                       pr.Link is not null && pr.Link.Split('.').Last().Equals(Docx, StringComparison.Ordinal))
-                .ToList();
-
-            /*
-             *  There are 2 cases when it comes to document retrieval:
-             *  1. The problem has its own problem resource ( Word file ) ( e.g. online / onsite exam ).
-             *  2. All the problems' descriptions are in a single Word file ( e.g. Lab / Exercise ).
-             */
-            var problemsDescription = wordFiles.FirstOrDefault(pr => pr.ProblemId == model.ProblemId) ?? wordFiles.FirstOrDefault();
-
-            if (problemsDescription is null)
-            {
-                throw new BusinessServiceException(DocumentNotFoundOrEmpty);
-            }
-
-            var file = problemsDescription.File ??
-                (problemsDescription.Link is not null
-                ? await this.DownloadDocument(problemsDescription.Link)
-                : []);
-
-            var number = GetProblemNumber(model.ProblemName);
-            var text = ExtractSectionFromDocument(file, model.ProblemName, number);
-
-            currentProblemMessages.Add(new ConversationMessageModel
-            {
-                Content = string.Format(
-                    CultureInfo.InvariantCulture,
-                    template!.Template,
-                    model.ProblemName,
-                    text,
-                    model.ContestName,
-                    model.CategoryName),
-                Role = MentorMessageRole.System,
-                // The system message should always be first ( in ascending order )
-                SequenceNumber = int.MinValue,
-            });
-        }
-
         var messagesToSend = new List<ChatMessage>();
 
-        var systemMessage = currentProblemMessages.First(cm => cm.Role == MentorMessageRole.System);
+        var systemMessage = await this.cache.Get(
+            string.Format(CacheConstants.MentorSystemMessage, model.UserId, model.ProblemId),
+            async () => await this.GetSystemMessage(model),
+            CacheConstants.OneHourInSeconds);
         systemMessage.Content = RemoveRedundantWhitespace(systemMessage.Content);
         messagesToSend.Add(CreateChatMessage(systemMessage.Role, systemMessage.Content));
 
@@ -513,4 +455,64 @@ public class MentorBusinessService : IMentorBusinessService
 
     private static int GetNumericValue(Dictionary<string, string> settings, string key)
         => int.Parse(settings[key], CultureInfo.InvariantCulture);
+
+    private async Task<ConversationMessageModel> GetSystemMessage(ConversationRequestModel model)
+    {
+        /*
+         *  In the first version of the mentor, there will be only a single
+         *  template in the database. This is why we can be sure that
+         *  .FirstOrDefaultAsync() will always return a template. This
+         *  will be changed in the future.
+         */
+        var template = await this.mentorPromptTemplateData
+            .GetQuery()
+            .FirstOrDefaultAsync();
+
+        var problemsResources = await this.contestsData.GetByIdQuery(model.ContestId)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.Resources)
+            .SelectMany(c => c.ProblemGroups.SelectMany(pg => pg.Problems).SelectMany(p => p.Resources))
+            .ToListAsync();
+
+        var wordFiles = problemsResources
+            .Where(pr =>
+                   pr is { File: not null, FileExtension: Docx } ||
+                   pr.Link is not null && pr.Link.Split('.').Last().Equals(Docx, StringComparison.Ordinal))
+            .ToList();
+
+        /*
+         *  There are 2 cases when it comes to document retrieval:
+         *  1. The problem has its own problem resource ( Word file ) ( e.g. online / onsite exam ).
+         *  2. All the problems' descriptions are in a single Word file ( e.g. Lab / Exercise ).
+         */
+        var problemsDescription = wordFiles.FirstOrDefault(pr => pr.ProblemId == model.ProblemId) ?? wordFiles.FirstOrDefault();
+
+        if (problemsDescription is null)
+        {
+            throw new BusinessServiceException(DocumentNotFoundOrEmpty);
+        }
+
+        var file = problemsDescription.File ??
+            (problemsDescription.Link is not null
+            ? await this.DownloadDocument(problemsDescription.Link)
+            : []);
+
+        var number = GetProblemNumber(model.ProblemName);
+        var text = ExtractSectionFromDocument(file, model.ProblemName, number);
+
+        return new ConversationMessageModel
+        {
+            Content = string.Format(
+                CultureInfo.InvariantCulture,
+                template!.Template,
+                model.ProblemName,
+                text,
+                model.ContestName,
+                model.CategoryName),
+            Role = MentorMessageRole.System,
+            // The system message should always be first ( in ascending order )
+            SequenceNumber = int.MinValue,
+        };
+    }
 }
