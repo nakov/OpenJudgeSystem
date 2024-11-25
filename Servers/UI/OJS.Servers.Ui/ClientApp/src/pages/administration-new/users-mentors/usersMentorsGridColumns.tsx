@@ -11,7 +11,7 @@ import {
 } from '../../../common/labels';
 import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
-const submissionTypeDocumentsFilterableColumns: AdministrationGridColDef[] = [
+const usersMentorsFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: USER_ID,
@@ -75,4 +75,4 @@ export const returnNonFilterableColumns = (onEditClick: (id: string) => void) =>
     },
 ] as GridColDef[];
 
-export default submissionTypeDocumentsFilterableColumns;
+export default usersMentorsFilterableColumns;

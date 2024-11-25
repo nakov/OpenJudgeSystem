@@ -5,7 +5,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import {
     QUOTA_LIMIT,
     QUOTA_RESET_TIME,
-    REQUESTS_MADE, USER_ID,
+    REQUESTS_MADE,
 } from 'src/common/labels';
 import { IUserMentorAdministrationModel } from 'src/common/types';
 import SpinningLoader from 'src/components/guidelines/spinning-loader/SpinningLoader';
@@ -26,7 +26,7 @@ import AdministrationFormButtons from '../common/administration-form-buttons/Adm
 import formStyles from '../common/styles/FormStyles.module.scss';
 
 interface IUserMentorEditProps {
-    userMentorId: string;
+    userMentorId?: string;
     currentUserMentor?: IUserMentorAdministrationModel;
     onSuccess?: Function;
     setParentSuccessMessage: Function;
@@ -56,7 +56,7 @@ const UserMentorEdit = (props: IUserMentorEditProps) => {
         isQuotaLimitValid: true,
     });
 
-    const { data, isLoading } = useGetUserMentorByIdQuery(userMentorId);
+    const { data, isLoading } = useGetUserMentorByIdQuery(userMentorId!, { skip: !!userMentorId });
 
     const [
         updateUserMentor,
@@ -170,19 +170,6 @@ const UserMentorEdit = (props: IUserMentorEditProps) => {
                     </Typography>
                     <div className={formStyles.fieldBoxDivider} />
                     <Box className={formStyles.fieldBoxElement}>
-                        <Box className={formStyles.row}>
-                            <TextField
-                              className={formStyles.inputRow}
-                              type="text"
-                              label={USER_ID}
-                              variant="standard"
-                              name="requestsMade"
-                              onChange={onChange}
-                              value={userMentor.id}
-                              InputLabelProps={{ shrink: true }}
-                              disabled
-                            />
-                        </Box>
                         <Box className={formStyles.row}>
                             <DateTimePicker
                               className={formStyles.inputRow}

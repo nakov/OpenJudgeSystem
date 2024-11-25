@@ -795,6 +795,22 @@ interface IUserMentorAdministrationModel {
     modifiedOne: Date;
 }
 
+interface IMentorPromptTemplateAdministrationModel {
+    id: number;
+    title: string;
+    template: string;
+    createdOn: Date;
+    modifiedOne: Date;
+}
+
+interface IMentorPromptTemplateInListModel {
+    id: number;
+    title: string;
+    template: string;
+    createdOn: Date;
+    modifiedOne: Date;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -877,4 +893,6 @@ export type {
     IMentorConversationResponseModel,
     IUserMentorInListModel,
     IUserMentorAdministrationModel,
+    IMentorPromptTemplateAdministrationModel,
+    IMentorPromptTemplateInListModel,
 };

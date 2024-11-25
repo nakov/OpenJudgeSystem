@@ -3,6 +3,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
+import { HiChatBubbleLeft } from 'react-icons/hi2';
 import { IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
@@ -40,7 +41,9 @@ import MuiDrawer from '@mui/material/Drawer';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import UserActions from 'src/components/administration/common/user-actions/UserActions';
-import AdministrationUsersMentorsPage from 'src/pages/administration-new/mentor/AdministrationUsersMentorsPage';
+import AdministrationMentorPromptTemplatesPage
+    from 'src/pages/administration-new/mentor-prompt-templates/AdministrationMentorPromptTemplatesPage';
+import AdministrationUsersMentorsPage from 'src/pages/administration-new/users-mentors/AdministrationUsersMentorsPage';
 
 import 'dayjs/locale/bg';
 
@@ -50,7 +53,7 @@ import {
     CONTEST_CATEGORIES_HIERARCHY_PATH,
     CONTEST_CATEGORIES_PATH,
     CONTESTS_PATH,
-    EXAM_GROUPS_PATH,
+    EXAM_GROUPS_PATH, MENTOR_PROMPT_TEMPLATES_PATH,
     NEW_ADMINISTRATION_PATH,
     PARTICIPANTS_PATH,
     PROBLEM_GROUPS_PATH,
@@ -188,12 +191,6 @@ const administrationItems = [
         visibleOnlyForAdmin: true,
     },
     {
-        name: 'Mentor',
-        icon: <SmartToyIcon className={styles.iconSize} />,
-        path: `${USERS_MENTORS_PATH}`,
-        visibleOnlyForAdmin: true,
-    },
-    {
         name: 'Checkers',
         icon: <FaCheckDouble className={styles.iconSize} />,
         path: `${CHECKERS_PATH}`,
@@ -234,6 +231,18 @@ const administrationItems = [
         icon: <IoMdCheckbox className={styles.iconSize} />,
         path: `${SUBMISSIONS_SIMILLARITY}`,
         visibleOnlyForAdmin: false,
+    },
+    {
+        name: 'Mentor',
+        icon: <SmartToyIcon className={styles.iconSize} />,
+        path: `${USERS_MENTORS_PATH}`,
+        visibleOnlyForAdmin: true,
+    },
+    {
+        name: 'Mentor Prompt Templates',
+        icon: <HiChatBubbleLeft className={styles.iconSize} />,
+        path: `${MENTOR_PROMPT_TEMPLATES_PATH}`,
+        visibleOnlyForAdmin: true,
     },
 ];
 
@@ -475,11 +484,6 @@ const AdministrationPortal = () => {
             visibleOnlyForAdmin: true,
         },
         {
-            path: `${USERS_MENTORS_PATH}`,
-            Element: AdministrationUsersMentorsPage,
-            visibleOnlyForAdmin: true,
-        },
-        {
             path: `${SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH}`,
             Element: AdministrationSubmissionTypeDocumentViewPage,
             visibleOnlyForAdmin: true,
@@ -538,6 +542,16 @@ const AdministrationPortal = () => {
             path: `${SUBMISSIONS_SIMILLARITY}`,
             Element: SubmissionsSimillarity,
             visibleOnlyForAdmin: false,
+        },
+        {
+            path: `${USERS_MENTORS_PATH}`,
+            Element: AdministrationUsersMentorsPage,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${MENTOR_PROMPT_TEMPLATES_PATH}`,
+            Element: AdministrationMentorPromptTemplatesPage,
+            visibleOnlyForAdmin: true,
         },
     ];
 

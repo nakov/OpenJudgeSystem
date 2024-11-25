@@ -2,9 +2,9 @@
 import { useSearchParams } from 'react-router-dom';
 import AdministrationModal from 'src/components/administration/common/modals/administration-modal/AdministrationModal';
 import UserMentorEdit from 'src/components/administration/users-mentors/UserMentorEdit';
-import submissionTypeDocumentsFilterableColumns, {
+import usersMentorsFilterableColumns, {
     returnNonFilterableColumns,
-} from 'src/pages/administration-new/mentor/mentorGridColumns';
+} from 'src/pages/administration-new/users-mentors/usersMentorsGridColumns';
 import { useGetAllUsersMentorsQuery } from 'src/redux/services/admin/usersMentorsAdminService';
 import { getAndSetExceptionMessage } from 'src/utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from 'src/utils/render-utils';
@@ -68,7 +68,7 @@ const AdministrationUsersMentorsPage = () => {
             {renderSuccessfullAlert(successMessage)}
             {renderErrorMessagesAlert(errorMessages)}
             <AdministrationGridView
-              filterableGridColumnDef={submissionTypeDocumentsFilterableColumns}
+              filterableGridColumnDef={usersMentorsFilterableColumns}
               notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
               modals={[
                   { showModal: openUserMentorEditModal, modal: (i) => renderContestModal(i) },
@@ -80,18 +80,6 @@ const AdministrationUsersMentorsPage = () => {
               defaultSorter=""
               defaultFilter=""
             />
-            {/* <AdministrationModal */}
-            {/*  key={1} */}
-            {/*  index={1} */}
-            {/*  open */}
-            {/*  onClose={() => setOpenUserMentorEditModal(false)} */}
-            {/* > */}
-            {/*    <UserMentorEdit */}
-            {/*      userMentorId={userMentorId} */}
-            {/*      onSuccess={() => onSuccessfulEdit()} */}
-            {/*      setParentSuccessMessage={setSuccessMessage} */}
-            {/*    /> */}
-            {/* </AdministrationModal> */}
         </>
     );
 };
