@@ -297,7 +297,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
-       var participant = await this.participantsDataService
+        // Using .Select instead of AutoMapper due to conditional mapping, depending on model state.
+        // ProblemsForParticipants are not needed in most cases, so they are not included in the query.
+        var participant = await this.participantsDataService
             .GetAllByContestByUserAndIsOfficial(model.ContestId, currentUser.Id, model.Official)
             .AsNoTracking()
             .Select(p => new ParticipantSubmitServiceModel
