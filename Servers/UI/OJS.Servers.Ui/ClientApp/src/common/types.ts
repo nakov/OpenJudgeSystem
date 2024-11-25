@@ -763,7 +763,7 @@ interface IMentorConversationMessage {
 
 interface IMentorConversationRequestModel {
     userId: string;
-    conversationMessages: IMentorConversationMessage[];
+    messages: IMentorConversationMessage[];
     problemId: number;
     problemName: string;
     contestId: number;
@@ -773,7 +773,7 @@ interface IMentorConversationRequestModel {
 
 interface IMentorConversationResponseModel {
     userId: string;
-    conversationMessages: IMentorConversationMessage[];
+    messages: IMentorConversationMessage[];
 }
 
 interface IUserMentorInListModel {
