@@ -8,7 +8,7 @@ import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid'
 import styles from './ProfileSubmissions.module.scss';
 
 interface IProfileSubmissionsProps {
-    userIsProfileOwner: boolean;
+    userIsProfileOwner: boolean | null;
     isChosenInToggle: boolean;
 }
 
@@ -31,7 +31,7 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         const isProfileAvailable = !isNil(profile);
         const canAccess = isLoggedIn && isProfileAvailable;
         const hasAdminAccess = internalUser.canAccessAdministration;
-        const isOwnerAccessNotAllowed = userIsProfileOwner && !isChosenInToggle && !hasAdminAccess;
+        const isOwnerAccessNotAllowed = userIsProfileOwner && !isChosenInToggle;
         const isNonOwnerAccessNotAllowed = !userIsProfileOwner && (!hasAdminAccess || !isChosenInToggle);
 
         if (!canAccess || isOwnerAccessNotAllowed || isNonOwnerAccessNotAllowed) {
@@ -59,7 +59,7 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
             return (<span>Error fetching user submissions</span>);
         }
 
-        if (!shouldRender) {
+        if (!shouldRender || isNil(userIsProfileOwner)) {
             return null;
         }
 

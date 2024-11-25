@@ -18,7 +18,7 @@ import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import styles from './ProfileContestParticipations.module.scss';
 
 interface IProfileContestParticipationsProps {
-    userIsProfileOwner: boolean;
+    userIsProfileOwner: boolean | null;
     isChosenInToggle: boolean;
 }
 
@@ -40,7 +40,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         if (
             // If anonymous user but profile is not fetched
             (!isLoggedIn && isNil(profile)) ||
-            // User is profile owner but is not chosen in toggle
+            // User is admin/lecturer but is not chosen in toggle
             (isLoggedIn && !isNil(profile) && !isChosenInToggle && (!userIsProfileOwner && internalUser.canAccessAdministration)) ||
             // User is profile owner but has not chosen in toggle
             (isLoggedIn && !isNil(profile) && !isChosenInToggle && userIsProfileOwner) ||

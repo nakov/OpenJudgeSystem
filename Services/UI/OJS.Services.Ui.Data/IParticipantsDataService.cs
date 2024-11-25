@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Data
 {
+    using OJS.Common.Enumerations;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Data;
     using System.Collections.Generic;
@@ -10,11 +11,11 @@ namespace OJS.Services.Ui.Data
     {
         Task<Participant?> GetByContestByUserAndByIsOfficial(int contestId, string userId, bool isOfficial);
 
-        Task<Participant?> GetWithProblemsForParticipantByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
-
         IQueryable<Participant> GetWithProblemsForParticipantsByContestAndUser(int contestId, string userId);
 
         IQueryable<Participant> GetAllByUser(string? userId);
+
+        IQueryable<Participant> GetAllByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
         IQueryable<Participant> GetAllByUsernameAndContests(string username, IEnumerable<int> contestIds);
 
