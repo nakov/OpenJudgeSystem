@@ -29,7 +29,6 @@ public class MentorBusinessService : IMentorBusinessService
     private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please contact an administrator and report the problem.";
     private const string ProblemDescriptionNotFound = "Не успях да намеря описанието на задачата. Можете ли да го предоставите, за да мога да Ви помогна?";
 
-
     private readonly IDataService<UserMentor> userMentorData;
     private readonly IDataService<MentorPromptTemplate> mentorPromptTemplateData;
     private readonly OpenAIClient openAiClient;

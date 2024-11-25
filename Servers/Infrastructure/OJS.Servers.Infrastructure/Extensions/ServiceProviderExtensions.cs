@@ -2,6 +2,7 @@ namespace OJS.Servers.Infrastructure.Extensions;
 
 using Common.Enumerations;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +18,8 @@ public static class ServiceProviderExtensions
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<UserProfile>>();
-        string[] roleNames = { Administrator, Lecturer, Developer };
-        bool shouldCreateAdminUser = false;
+        string[] roleNames = [Administrator, Lecturer, Developer];
+        var shouldCreateAdminUser = false;
 
         foreach (var roleName in roleNames)
         {
@@ -62,9 +63,14 @@ public static class ServiceProviderExtensions
         var dataService = serviceProvider.GetRequiredService<ISettingsCommonDataService>();
         SettingServiceModel[] settings =
         [
-            new SettingServiceModel { Name = MaxWorkersWorkingTimeInSeconds, Value = "300", Type = SettingType.Numeric },
-            new SettingServiceModel { Name = MaxSubmissionsCountAllowedForBatchRetest, Value = "100", Type = SettingType.Numeric },
-            new SettingServiceModel { Name = MaxSubmissionTimeToExecuteAllowedForBatchRetest, Value = "20", Type = SettingType.Numeric }
+            new() { Name = MaxWorkersWorkingTimeInSeconds, Value = "300", Type = SettingType.Numeric },
+            new() { Name = MaxSubmissionsCountAllowedForBatchRetest, Value = "100", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorMessagesSentCount), Value = "6", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorMaxInputTokenCount), Value = "1600", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorMaxOutputTokenCount), Value = "800", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorQuotaLimit), Value = "10", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorQuotaResetTimeInMinutes), Value = "60", Type = SettingType.Numeric },
+            new() { Name = MentorModel, Value = "Gpt4oMini", Type = SettingType.ShortString },
         ];
 
         foreach (var s in settings)
