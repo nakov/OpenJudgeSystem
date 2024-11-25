@@ -234,7 +234,7 @@ const ContestSolutionSubmitPage = () => {
         if (!submissionsDataFetching) {
             setTimeout(() => {
                 setIsRotating(false);
-            }, 900);
+            }, 1000);
         }
     }, [ submissionsDataFetching, setIsRotating ]);
 
@@ -825,9 +825,14 @@ const ContestSolutionSubmitPage = () => {
                     <span className={styles.title}>Submissions</span>
                     <Tooltip
                       title="Refresh"
-                      onClick={handleRefreshClick}
+                      onClick={!isRotating
+                          ? handleRefreshClick
+                          : undefined}
                     >
-                        <span>
+                        <span className={isRotating
+                            ? styles.disabledSubmissionsRefreshButton
+                            : ''}
+                        >
                             <IoMdRefresh
                               size={24}
                               className={isRotating
