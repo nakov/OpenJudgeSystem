@@ -59,7 +59,7 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
             return (<span>Error fetching user submissions</span>);
         }
 
-        if (!shouldRender) {
+        if (!shouldRender || isNil(userIsProfileOwner)) {
             return null;
         }
 
