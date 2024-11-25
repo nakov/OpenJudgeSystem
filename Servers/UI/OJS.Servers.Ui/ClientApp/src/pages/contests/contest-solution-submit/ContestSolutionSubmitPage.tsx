@@ -153,6 +153,7 @@ const ContestSolutionSubmitPage = () => {
     } = selectedContestDetailsProblem || {};
 
     const isMentorAllowed = useMemo(() => breadcrumbItems.at(-1)?.allowMentor ?? false, [ breadcrumbItems ]);
+    const categoryName = useMemo(() => breadcrumbItems.at(-1)?.name ?? undefined, [ breadcrumbItems ]);
 
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
         const submissionType = selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
@@ -432,14 +433,6 @@ const ContestSolutionSubmitPage = () => {
     const sumAllContestPoints = useMemo(() => contest
         ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest, updatedProblems ]);
-
-    const problemResources = useMemo(
-        () => problems.reduce((acc, curr) => {
-            acc.push(...curr.resources);
-            return acc;
-        }, [] as IProblemResourceType[]),
-        [ problems ],
-    );
 
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
@@ -852,8 +845,9 @@ const ContestSolutionSubmitPage = () => {
             <Mentor
               problemId={selectedContestDetailsProblem?.id}
               problemName={selectedContestDetailsProblem?.name}
-              problemResources={problemResources}
               contestId={Number(contestId)}
+              contestName={contestDetails?.name}
+              categoryName={categoryName}
               isMentorAllowed={isMentorAllowed}
             />
         </div>

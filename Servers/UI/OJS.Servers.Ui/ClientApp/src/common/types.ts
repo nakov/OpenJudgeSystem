@@ -765,8 +765,9 @@ interface IMentorConversationRequestModel {
     conversationMessages: IMentorConversationMessage[];
     problemId: number;
     problemName: string;
-    problemResources: IProblemResourceType[];
     contestId: number;
+    contestName: string;
+    categoryName: string;
 }
 
 interface IMentorConversationResponseModel {

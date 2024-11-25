@@ -8,7 +8,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { ChatMessageRole } from 'src/common/enums';
-import { ExceptionData, IMentorConversationMessage, IProblemResourceType } from 'src/common/types';
+import { ExceptionData, IMentorConversationMessage } from 'src/common/types';
 import useTheme from 'src/hooks/use-theme';
 import { useStartConversationMutation } from 'src/redux/services/mentorService';
 import { useAppSelector } from 'src/redux/store';
@@ -23,12 +23,13 @@ interface IMentorProps {
     problemId?: number;
     problemName?: string;
     contestId?: number;
+    contestName?: string;
+    categoryName?: string;
     isMentorAllowed: boolean;
-    problemResources: IProblemResourceType[];
 }
 
 const Mentor = (props: IMentorProps) => {
-    const { problemId, problemName, contestId, isMentorAllowed, problemResources } = props;
+    const { problemId, problemName, contestId, contestName, categoryName, isMentorAllowed } = props;
     const [ isOpen, setIsOpen ] = useState(false);
     const [ showBubble, setShowBubble ] = useState(true);
     const [ inputMessage, setInputMessage ] = useState('');
@@ -53,8 +54,11 @@ const Mentor = (props: IMentorProps) => {
         () => inputMessage.trim() === '' ||
             isLoading ||
             problemId === undefined ||
-            problemName === undefined,
-        [ inputMessage, isLoading, problemId, problemName ],
+            problemName === undefined ||
+            contestId === undefined ||
+            contestName === undefined ||
+            categoryName === undefined,
+        [ categoryName, contestId, contestName, inputMessage, isLoading, problemId, problemName ],
     );
 
     useEffect(() => {
@@ -84,7 +88,11 @@ const Mentor = (props: IMentorProps) => {
             return;
         }
 
-        if (problemId === undefined || problemName === undefined || contestId === undefined) {
+        if (problemId === undefined ||
+            problemName === undefined ||
+            contestId === undefined ||
+            contestName === undefined ||
+            categoryName === undefined) {
             return;
         }
 
@@ -106,8 +114,9 @@ const Mentor = (props: IMentorProps) => {
             conversationMessages: updatedConversationMessages,
             problemId,
             problemName,
-            problemResources,
             contestId,
+            contestName,
+            categoryName,
         });
 
         setInputMessage('');

@@ -99,6 +99,7 @@ const SubmissionDetailsPage = () => {
     } = data || {};
 
     const isMentorAllowed = useMemo(() => breadcrumbItems.at(-1)?.allowMentor ?? false, [ breadcrumbItems ]);
+    const categoryName = useMemo(() => breadcrumbItems.at(-1)?.name ?? undefined, [ breadcrumbItems ]);
 
     const handleRetestSubmission = useCallback(() => {
         setIsRetestingStarted(true);
@@ -402,8 +403,9 @@ const SubmissionDetailsPage = () => {
             <Mentor
               problemId={problem?.id}
               problemName={problem?.name}
-              problemResources={[]}
               contestId={contestId}
+              contestName={contestName ?? undefined}
+              categoryName={categoryName}
               isMentorAllowed={isMentorAllowed}
             />
             <div>
