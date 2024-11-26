@@ -89,6 +89,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var userParticipants = await this.participantsData
                 .GetAllByContestAndUser(id, user.Id)
+                .AsNoTracking()
                 .Include(p => p.ProblemsForParticipants)
                 .ToListAsync();
 
