@@ -6,6 +6,8 @@ using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ContestCategoryServiceModel : IMapExplicitly
 {
+    public int? ParentId { get; set; }
+
     public bool IsVisible { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>

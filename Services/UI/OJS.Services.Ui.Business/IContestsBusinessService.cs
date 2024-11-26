@@ -2,9 +2,6 @@ namespace OJS.Services.Ui.Business
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Models;
-    using OJS.Services.Common.Models.Contests;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Infrastructure.Models;
@@ -24,25 +21,11 @@ namespace OJS.Services.Ui.Business
 
         Task<ContestDetailsServiceModel> GetContestDetails(int id);
 
-        Task<ContestLegacyExportServiceModel> Export(int id);
-
-        Task<IEnumerable<int>> GetExistingIds(IEnumerable<int> ids);
-
         Task<ContestParticipationServiceModel> GetParticipationDetails(StartContestParticipationServiceModel model);
 
         Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex();
 
-        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable();
-
-        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPastContests();
-
         Task<ContestSearchServiceResultModel> GetSearchContestsByName(SearchServiceModel model);
-
-        Task<ContestServiceModel> GetContestByProblem(int problemId);
-
-        Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
-
-        Task DeleteById(int id);
 
         Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
             string username,

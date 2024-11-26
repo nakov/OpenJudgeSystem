@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
@@ -10,7 +9,6 @@ using OJS.Servers.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -32,42 +30,6 @@ public class ContestsController : BaseApiController
     public async Task<IActionResult> Details(int id)
         => await this.contestsBusinessService
             .GetContestDetails(id)
-            .ToOkResult();
-
-    // /// <summary>
-    // /// Gets details of a contest by id.
-    // /// </summary>
-    // /// <param name="id">ID of the contest.</param>
-    // /// <returns>Model containing all information about the name, description and problems of the contest.</returns>
-    [HttpPost("{id:int}")]
-    [ProducesResponseType(typeof(ContestLegacyExportServiceModel), Status200OK)]
-    public async Task<IActionResult> Export(int id)
-        => await this.contestsBusinessService
-            .Export(id)
-            .ToOkResult();
-
-    [HttpPost]
-    public async Task<IActionResult> GetExistingIds(ContestsGetExistingIdsRequestModel requestModel)
-    {
-        var existingContestIds = await this.contestsBusinessService.GetExistingIds(requestModel.Ids);
-
-        return this.Content(JsonConvert.SerializeObject(existingContestIds));
-    }
-
-    /// <summary>
-    /// Gets the contest that the problem is part of.
-    /// </summary>
-    /// <param name="problemId">The id of the problem that is used to find the contest.</param>
-    /// <returns>Model containing information about the contest.</returns>
-    [HttpGet("{problemId:int}")]
-    [ProducesResponseType(typeof(ContestServiceModel), Status200OK)]
-    [SuppressMessage(
-        "Usage",
-        "ASP0023:Route conflict detected between controller actions",
-        Justification = "Base API controller Route handles different actions names.")]
-    public async Task<IActionResult> GetByProblem(int problemId)
-        => await this.contestsBusinessService
-            .GetContestByProblem(problemId)
             .ToOkResult();
 
     /// <summary>

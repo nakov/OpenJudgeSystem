@@ -27,8 +27,7 @@ public class ProblemForPublicSubmissionsServiceModel
                     y => y.ProblemGroup.Contest));
 }
 
-public class ContestForPublicSubmissionsServiceModel
-    : IMapFrom<Contest>
+public class ContestForPublicSubmissionsServiceModel : IMapFrom<Contest>
 {
     public int Id { get; set; }
 
@@ -74,10 +73,6 @@ public class PublicSubmissionsServiceModel : IMapExplicitly
                 x => x.User,
                 opt => opt.MapFrom(
                     y => y.Participant!.User.UserName))
-            .ForMember(
-                x => x.Result,
-                opt => opt.MapFrom(
-                    y => y))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(

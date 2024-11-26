@@ -40,6 +40,8 @@ namespace OJS.Data.Models.Participants
 
         public DateTime? TotalScoreSnapshotModifiedOn { get; set; }
 
+        public DateTime? LastSubmissionTime { get; set; }
+
         public virtual ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
 
         public virtual ICollection<ParticipantScore> Scores { get; set; } = new HashSet<ParticipantScore>();

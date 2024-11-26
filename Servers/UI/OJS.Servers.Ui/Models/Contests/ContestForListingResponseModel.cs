@@ -3,7 +3,6 @@ namespace OJS.Servers.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
-using System.Collections.Generic;
 
 public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceModel>
 {

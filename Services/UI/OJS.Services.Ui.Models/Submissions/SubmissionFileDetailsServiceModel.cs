@@ -1,11 +1,7 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using OJS.Data.Models.Tests;
     using OJS.Services.Ui.Models.Users;
     using OJS.Services.Infrastructure.Models.Mapping;
 

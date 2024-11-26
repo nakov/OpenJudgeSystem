@@ -8,7 +8,11 @@ import ProblemForm from '../../../components/administration/problems/problem-for
 import ProblemRetest from '../../../components/administration/problems/retest/ProblemRetest';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { getColors, useAdministrationTheme } from '../../../hooks/use-administration-theme-provider';
-import { useGetAllAdminProblemsQuery, useLazyExportProblemsToExcelQuery } from '../../../redux/services/admin/problemsAdminService';
+import {
+    useGetAllAdminProblemsQuery,
+    useLazyExportProblemsToExcelQuery,
+    useValidateRetestMutation,
+} from '../../../redux/services/admin/problemsAdminService';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
@@ -35,6 +39,13 @@ const AdministrationProblemsPage = () => {
         error,
     } = useGetAllAdminProblemsQuery(queryParams);
 
+    const [
+        validateRetest,
+        {
+            data: validateResult,
+            isLoading: isValidateLoading,
+        } ] = useValidateRetestMutation();
+
     const onEditClick = (id: number) => {
         setOpenEditProblemModal(true);
         setProblemId(id);
@@ -43,6 +54,7 @@ const AdministrationProblemsPage = () => {
     const openRetestModal = (id: number) => {
         setShowRetestModal(true);
         setProblemId(id);
+        validateRetest(id);
     };
 
     const onSuccessOperation = (message: string) => {
@@ -67,6 +79,8 @@ const AdministrationProblemsPage = () => {
           key={index}
           contestId={findProblemInData()?.contestId || 0}
           declineFunction={() => setShowRetestModal(!showRetestModal)}
+          isValidationLoading={isValidateLoading}
+          validationModel={validateResult}
           index={index}
           problemData={problemsData}
           problemName={problemsData?.items
@@ -105,6 +119,7 @@ const AdministrationProblemsPage = () => {
           problemToCopyName={findProblemInData()?.name || ''}
           problemToCopyId={problemId}
           setParentSuccessMessage={setSuccessMessage}
+          onClose={retakeProblems}
         />
     );
 

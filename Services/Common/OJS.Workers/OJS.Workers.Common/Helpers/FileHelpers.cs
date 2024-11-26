@@ -129,6 +129,18 @@
             }
         }
 
+        public static bool FileExistsInZip(string pathToArchive, string fileName)
+        {
+            using var zip = new ZipFile(pathToArchive);
+            var entryToExtract = zip.Entries.FirstOrDefault(f => f.FileName.EndsWith(fileName));
+            if (entryToExtract == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static string ProcessModulePath(string path) => path.Replace('\\', '/');
 
         public static string BuildPath(params string[] paths) => Path.Combine(paths);

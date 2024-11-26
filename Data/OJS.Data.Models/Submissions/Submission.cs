@@ -143,6 +143,8 @@ namespace OJS.Data.Models.Submissions
             {
                 var result = new StringBuilder();
                 var trialTests = 0;
+                double maxTimeUsed = 0;
+                double maxMemoryUsed = 0;
 
                 var orderedTestRuns = this.TestRuns
                     .OrderByDescending(tr => tr.IsTrialTest)
@@ -156,10 +158,17 @@ namespace OJS.Data.Models.Submissions
                     }
 
                     result.Append((int)testRun.ResultType);
-                }
 
-                var maxTimeUsed = this.TestRuns.Max(tr => tr.TimeUsed);
-                var maxMemoryUsed = this.TestRuns.Max(tr => tr.MemoryUsed);
+                    if (testRun.TimeUsed > maxTimeUsed)
+                    {
+                        maxTimeUsed = testRun.TimeUsed;
+                    }
+
+                    if (testRun.MemoryUsed > maxMemoryUsed)
+                    {
+                        maxMemoryUsed = testRun.MemoryUsed;
+                    }
+                }
 
                 this.TestRunsCache = $"{trialTests}{result}|{maxTimeUsed},{maxMemoryUsed}";
             }

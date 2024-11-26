@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Worker.Business.Validation.Implementations;
 
 using OJS.Common.Constants;
-using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions.ExecutionDetails;
 using OJS.Services.Infrastructure;

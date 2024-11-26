@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Administration.Business.Settings;
 
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
 using OJS.Services.Administration.Models.Settings;
@@ -44,4 +43,10 @@ public class SettingsBusinessService : AdministrationOperationService<Setting, i
         await this.settingsService.DeleteById(id);
         await this.settingsService.SaveChanges();
     }
+
+    public Task<SettingAdministrationModel> GetByKey(string settingKey)
+        => this.settingsService
+            .GetQuery(s => s.Name == settingKey)
+            .FirstOrDefaultAsync()
+            .Map<SettingAdministrationModel>();
 }

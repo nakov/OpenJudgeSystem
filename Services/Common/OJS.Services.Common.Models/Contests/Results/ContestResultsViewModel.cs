@@ -3,8 +3,6 @@ namespace OJS.Services.Common.Models.Contests.Results;
 using OJS.Common.Enumerations;
 using OJS.Services.Infrastructure.Models;
 using System.Collections.Generic;
-using System.Linq;
-using X.PagedList;
 
 public class ContestResultsViewModel
 {

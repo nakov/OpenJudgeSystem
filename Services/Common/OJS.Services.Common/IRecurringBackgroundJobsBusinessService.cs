@@ -26,5 +26,8 @@
 
         [Queue(AdministrationQueueName)]
         Task<object> RemoveParticipantMultipleScores();
+
+        [Queue(AdministrationQueueName)]
+        Task<object> NormalizeAllPointsThatExceedAllowedLimit();
     }
 }

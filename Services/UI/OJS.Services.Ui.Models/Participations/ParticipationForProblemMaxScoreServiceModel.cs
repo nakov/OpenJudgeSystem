@@ -5,6 +5,4 @@ public class ParticipationForProblemMaxScoreServiceModel
     public int ProblemId { get; set; }
 
     public int? Points { get; set; }
-
-    public int TestRunsCount { get; set; }
 }

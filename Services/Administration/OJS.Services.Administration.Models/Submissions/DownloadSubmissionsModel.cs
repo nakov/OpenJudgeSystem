@@ -1,7 +1,6 @@
 namespace OJS.Services.Administration.Models.Submissions
 {
     using OJS.Common.Enumerations;
-    using System.ComponentModel.DataAnnotations;
 
     public class DownloadSubmissionsModel
     {

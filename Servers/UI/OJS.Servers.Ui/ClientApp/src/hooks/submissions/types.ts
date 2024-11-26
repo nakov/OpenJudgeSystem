@@ -1,4 +1,4 @@
-import { ISubmissionTypeType, IUserProfileType } from '../../common/types';
+import { ISubmissionTypeType } from '../../common/types';
 
 interface IProblemType {
     id: number;
@@ -10,6 +10,7 @@ interface IProblemType {
 
 interface ITestRunType {
     id: number;
+    submissionId: number;
     timeUsed: number;
     memoryUsed: number;
     executionComment: string;
@@ -30,13 +31,17 @@ interface ITestRunIcon {
     resultType: number;
 }
 
+interface IUserResponseType {
+    userName: string;
+}
+
 interface ISubmissionDetailsResponseType {
     id: number;
     problem: IProblemType;
     points: number;
     content: string;
     testRuns: ITestRunType[];
-    user: IUserProfileType;
+    user: IUserResponseType;
     userIsInRoleForContest: boolean;
     submissionType: ISubmissionTypeType;
     maxUsedTime: number;
@@ -76,9 +81,15 @@ interface ITestRun {
     testId: number;
 }
 
+interface ITestDetails {
+    id: number;
+    input: string;
+}
+
 export type {
     ITestRunType,
     ITestRunIcon,
     ISubmissionDetailsResponseType,
     ITestRun,
+    ITestDetails,
 };

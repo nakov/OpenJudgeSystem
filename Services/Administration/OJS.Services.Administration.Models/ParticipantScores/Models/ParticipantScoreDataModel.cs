@@ -1,9 +1,7 @@
 namespace OJS.Services.Administration.Models.ParticipantScores.Models;
 
 using System;
-using System.Linq;
 using System.Linq.Expressions;
-using OJS.Data.Models;
 using OJS.Data.Models.Participants;
 
 public class ParticipantScoreDataModel
