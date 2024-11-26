@@ -37,7 +37,7 @@ public class ContestsActivityService : IContestsActivityService
     }
 
     public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest)
-        => this.GetContestActivity(contest, await this.GetCurrentUserParticipantsForContests(new[] { contest.Id }));
+        => this.GetContestActivity(contest, await this.GetCurrentUserParticipantsForContests([contest.Id]));
 
     public ParticipantActivityServiceModel GetParticipantActivity(IParticipantForActivityServiceModel participant)
     {
