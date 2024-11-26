@@ -41,10 +41,10 @@ public class ContestsActivityService : IContestsActivityService
 
     public IContestActivityServiceModel GetContestActivity(
         IContestForActivityServiceModel contest,
-        IReadOnlyCollection<IParticipantForActivityServiceModel> participants)
+        IReadOnlyCollection<IParticipantForActivityServiceModel?> contestParticipantsForUser)
     {
-        var officialParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
-        var practiceParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && !p.IsOfficial);
+        var officialParticipant = contestParticipantsForUser.SingleOrDefault(p => p?.ContestId == contest.Id && p.IsOfficial);
+        var practiceParticipant = contestParticipantsForUser.SingleOrDefault(p => p?.ContestId == contest.Id && !p.IsOfficial);
 
         var officialParticipantActivity = this.GetParticipantActivity(officialParticipant);
         var practiceParticipantActivity = this.GetParticipantActivity(practiceParticipant);
