@@ -49,11 +49,8 @@ public class ContestsActivityService : IContestsActivityService
         var officialParticipantActivity = this.GetParticipantActivity(officialParticipant);
         var practiceParticipantActivity = this.GetParticipantActivity(practiceParticipant);
 
-        var hasCompeteTimeLeft = officialParticipantActivity?.HasParticipationTimeLeft == true;
-        var hasPracticeTimeLeft = practiceParticipantActivity?.HasParticipationTimeLeft == true;
-
-        var canBeCompeted = this.CanBeCompeted(contest) || hasCompeteTimeLeft;
-        var canBePracticed = this.CanBePracticed(contest) || hasPracticeTimeLeft;
+        var canBeCompeted = officialParticipantActivity?.HasParticipationTimeLeft ?? this.CanBeCompeted(contest);
+        var canBePracticed = practiceParticipantActivity?.HasParticipationTimeLeft ?? this.CanBePracticed(contest);
 
         return new ContestActivityServiceModel
         {
