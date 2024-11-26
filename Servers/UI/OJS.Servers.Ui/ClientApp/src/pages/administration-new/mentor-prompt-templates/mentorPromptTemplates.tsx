@@ -1,7 +1,6 @@
 ﻿/* eslint-disable @typescript-eslint/ban-types,max-len */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import QuickEditButton from 'src/components/administration/common/edit/QuickEditButton';
-import { adminFormatDate } from 'src/utils/administration/administration-dates';
 
 import {
     MENTOR_PROMPT_TEMPLATE,
@@ -20,7 +19,7 @@ const mentorPromptTemplatesFilterableColumns: AdministrationGridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
-        valueFormatter: (params) => adminFormatDate(params.value),
+        valueFormatter: (params) => params.value.toString(),
     },
     {
         field: 'title',

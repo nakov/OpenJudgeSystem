@@ -45,7 +45,7 @@ const MentorPromptTemplateEdit = (props: IMentorPromptTemplateEditProps) => {
 
     const { data, isLoading } = useGetMentorPromptTemplateByIdQuery(
         mentorPromptTemplateId!,
-        { skip: !mentorPromptTemplateId },
+        { skip: mentorPromptTemplateId === undefined },
     );
 
     const [

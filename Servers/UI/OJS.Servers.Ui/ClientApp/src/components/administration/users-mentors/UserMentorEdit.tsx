@@ -56,7 +56,7 @@ const UserMentorEdit = (props: IUserMentorEditProps) => {
         isQuotaLimitValid: true,
     });
 
-    const { data, isLoading } = useGetUserMentorByIdQuery(userMentorId!, { skip: !!userMentorId });
+    const { data, isLoading } = useGetUserMentorByIdQuery(userMentorId!, { skip: userMentorId === undefined });
 
     const [
         updateUserMentor,

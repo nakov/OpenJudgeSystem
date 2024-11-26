@@ -8,8 +8,6 @@ using OJS.Services.Infrastructure.Models.Mapping;
 
 public class MentorPromptTemplateAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
-    public int Id { get; set; }
-
     public string Title { get; set; } = default!;
 
     public string Template { get; set; } = default!;
