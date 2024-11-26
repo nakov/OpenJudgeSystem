@@ -1,9 +1,11 @@
 namespace OJS.Services.Ui.Models.Participants;
 
+using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
-public class ParticipantForContestRegistrationServiceModel : IParticipantForActivityServiceModel
+public class ParticipantForContestRegistrationServiceModel : IMapFrom<Participant>, IParticipantForActivityServiceModel
 {
     public int Id { get; set; }
 
