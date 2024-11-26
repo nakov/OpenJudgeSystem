@@ -26,9 +26,12 @@ const ErrorWithActionButtons = ({ message, backToUrl, backToText }: IErrorProps)
             // There are a few cases where the error message is returned as json
             JSON.parse(message);
 
+            // JSON.stringify adds quotes to regular strings.
+            // Only JSON objects should be in quotes.
             return JSON.stringify(message);
         } catch (e) {
-            return message.replace('"', '');
+            // Message is string so no quotes should be added
+            return message;
         }
     };
 
