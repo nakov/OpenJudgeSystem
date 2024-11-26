@@ -12,12 +12,14 @@ interface IErrorDataType {
     extensions: IDictionary<object>;
 }
 
+const defaultErrorMessage = 'Something went wrong, please try again!';
+
 const getErrorMessage = (
     err: FetchBaseQueryError | SerializedError | ExceptionData[] | undefined,
-    defaultErrorMessage = 'Something went wrong, please try again!',
+    defaultMessage = defaultErrorMessage,
 ): string => {
     if (isNil(err) || !err) {
-        return defaultErrorMessage;
+        return defaultMessage;
     }
 
     if (Array.isArray(err) && err.length === 1) {
@@ -60,4 +62,5 @@ export type {
 
 export {
     getErrorMessage,
+    defaultErrorMessage,
 };
