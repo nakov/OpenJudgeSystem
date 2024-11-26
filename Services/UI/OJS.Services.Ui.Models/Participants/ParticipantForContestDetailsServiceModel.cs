@@ -1,14 +1,12 @@
 namespace OJS.Services.Ui.Models.Participants;
 
-using AutoMapper;
-using OJS.Common.Enumerations;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
 
-public class ParticipantForContestDetailsServiceModel : IMapExplicitly, IParticipantForActivityServiceModel
+public class ParticipantForContestDetailsServiceModel : IMapFrom<Participant>, IParticipantForActivityServiceModel
 {
     public bool IsInvalidated { get; set; }
 
@@ -28,14 +26,5 @@ public class ParticipantForContestDetailsServiceModel : IMapExplicitly, IPartici
 
     public DateTime? ContestPracticeEndTime { get; set; }
 
-    public IEnumerable<ProblemForParticipantServiceModel>? Problems { get; set; }
-
-    public void RegisterMappings(IProfileExpression configuration)
-        => configuration
-            .CreateMap<Participant, ParticipantForContestDetailsServiceModel>()
-            .ForMember(m => m.Problems,
-                opt => opt.MapFrom(src =>
-                    src.Contest.Type == ContestType.OnlinePracticalExam
-                        ? src.ProblemsForParticipants
-                        : null));
+    public IEnumerable<ProblemForParticipantServiceModel> ProblemsForParticipants { get; set; } = [];
 }

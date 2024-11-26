@@ -100,9 +100,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted && contest!.IsOnlineExam)
             {
-                var problemsForParticipantIds = participantToGetProblemsFrom.Problems?.Select(x => x.ProblemId);
+                var problemsForParticipantIds = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.ProblemId);
                 contest.Problems = contest.Problems
-                    .Where(p => problemsForParticipantIds != null && problemsForParticipantIds.Contains(p.Id))
+                    .Where(p => problemsForParticipantIds.Contains(p.Id))
                     .ToList();
             }
 
