@@ -43,6 +43,53 @@
   }
 }
 
+.mentorTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+  }
+}
+
+.titleTextContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.mentorTitleText {
+  font-size: 24px;
+  font-weight: bold;
+  color: colors.$white-color;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+  }
+}
+
+.problemNameText {
+  font-size: 16px;
+  color: colors.$light-base-color-100;
+  font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
+}
+
 .mentorTitleAvatar {
   width: 61px;
   height: 61px;

@@ -178,11 +178,19 @@ const Mentor = (props: IMentorProps) => {
               disableAutoFocus
             >
                 <DialogTitle className={styles.dialogTitle}>
-                    <div className={styles.mentorTitleAvatar}>
-                        <img src={mentorAvatar} alt="Mentor Avatar" />
+                    <div className={styles.mentorTitleContainer}>
+                        <div className={styles.mentorTitleAvatar}>
+                            <img src={mentorAvatar} alt="Mentor Avatar" />
+                        </div>
+                        <div className={styles.titleTextContainer}>
+                            <span className={styles.mentorTitleText}>The Code Wizard</span>
+                            {problemName && (
+                                <span className={styles.problemNameText}>{problemName}</span>
+                            )}
+                        </div>
                     </div>
-                    The Code Wizard
                 </DialogTitle>
+
                 <DialogContent
                   className={concatClassNames(
                       styles.dialogContent,
