@@ -151,7 +151,7 @@ namespace OJS.Common
             public const int MentorMessagesSentCount = 10;
             public const int MentorMaxInputTokenCount = 4096;
             public const int MentorMaxOutputTokenCount = 2048;
-            public const int MentorQuotaLimit = 15;
+            public const int MentorQuotaLimit = 60;
             public const int MentorQuotaResetTimeInMinutes = 120;
             public const string MaxSubmissionTimeToExecuteAllowedForBatchRetest = "MaxSubmissionTimeToExecuteAllowedForBatchRetest";
             public const string MaxSubmissionsCountAllowedForBatchRetest = "MaxSubmissionsCountAllowedForBatchRetest";
