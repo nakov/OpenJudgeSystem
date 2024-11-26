@@ -25,7 +25,6 @@ namespace OJS.Services.Ui.Business.Implementations
     public class ContestsBusinessService : IContestsBusinessService
     {
         private readonly IContestsDataService contestsData;
-        private readonly ISubmissionsDataService submissionsData;
         private readonly IContestsActivityService activityService;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantsBusinessService participantsBusiness;
@@ -40,7 +39,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
-            ISubmissionsDataService submissionsData,
             IContestsActivityService activityService,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
@@ -54,7 +52,6 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestDetailsValidationService contestDetailsValidationService)
         {
             this.contestsData = contestsData;
-            this.submissionsData = submissionsData;
             this.activityService = activityService;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
@@ -91,7 +88,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetContestActivity(activityServiceModel);
 
             var userParticipants = await this.participantsData
-                .GetWithProblemsForParticipantsByContestAndUser(id, user.Id)
+                .GetAllByContestAndUser(id, user.Id)
+                .Include(p => p.ProblemsForParticipants)
                 .ToListAsync();
 
             var competeParticipant = userParticipants.FirstOrDefault(p => p.IsOfficial);
@@ -103,11 +101,10 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted && contest!.IsOnlineExam)
             {
-                var problemsForParticipant = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.Problem);
-                contest.Problems = [.. problemsForParticipant
-                    .MapCollection<ContestProblemServiceModel>()
-                    .OrderBy(p => p.OrderBy)
-                    .ThenBy(p => p.Name)];
+                var problemsForParticipantIds = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.ProblemId);
+                contest.Problems = contest.Problems
+                    .Where(p => problemsForParticipantIds.Contains(p.Id))
+                    .ToList();
             }
 
             var (isActiveParticipantInCompete, isActiveParticipantInPractice) = this.GetParticipantsActivity(competeParticipant, practiceParticipant, contest!);
