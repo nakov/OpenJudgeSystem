@@ -19,6 +19,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
+    using OJS.Services.Ui.Models.Participants;
     using OJS.Services.Ui.Models.Search;
     using static OJS.Services.Common.Constants.PaginationConstants.Contests;
 
@@ -82,16 +83,13 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var activityServiceModel = contest!.Map<ContestForActivityServiceModel>();
-
-            var contestActivityEntity = await this.activityService
-                .GetContestActivity(activityServiceModel);
-
             var userParticipants = await this.participantsData
                 .GetAllByContestAndUser(id, user.Id)
                 .AsNoTracking()
-                .Include(p => p.ProblemsForParticipants)
+                .MapCollection<ParticipantForContestDetailsServiceModel>()
                 .ToListAsync();
+
+            var contestActivityEntity = this.activityService.GetContestActivity(contest!, userParticipants);
 
             var competeParticipant = userParticipants.FirstOrDefault(p => p.IsOfficial);
             var practiceParticipant = userParticipants.FirstOrDefault(p => !p.IsOfficial);
@@ -102,42 +100,40 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted && contest!.IsOnlineExam)
             {
-                var problemsForParticipantIds = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.ProblemId);
+                var problemsForParticipantIds = participantToGetProblemsFrom.Problems?.Select(x => x.ProblemId);
                 contest.Problems = contest.Problems
-                    .Where(p => problemsForParticipantIds.Contains(p.Id))
+                    .Where(p => problemsForParticipantIds != null && problemsForParticipantIds.Contains(p.Id))
                     .ToList();
             }
 
-            var (isActiveParticipantInCompete, isActiveParticipantInPractice) = this.GetParticipantsActivity(competeParticipant, practiceParticipant, contest!);
+            var competeParticipantActivity = this.activityService.GetParticipantActivity(competeParticipant);
+            var practiceParticipantActivity = this.activityService.GetParticipantActivity(practiceParticipant);
 
             var canShowProblemsInCompete =
-                (!contest!.HasContestPassword &&
-                 !contest!.IsOnlineExam &&
-                 contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null)
+                (!contest!.HasContestPassword && contestActivityEntity.CanBeCompeted)
                  || isLecturerInContestOrAdmin
-                 || isActiveParticipantInCompete;
+                 || competeParticipantActivity?.IsActive == true;
 
             var canShowProblemsInPractice =
-                (!contest.HasPracticePassword &&
-                 contestActivityEntity.CanBePracticed)
+                (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed)
                 || isLecturerInContestOrAdmin
-                || isActiveParticipantInPractice;
+                || practiceParticipantActivity?.IsActive == true;
 
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
             if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
-                contest.Problems = [];
+                contest!.Problems = [];
             }
 
             if (isLecturerInContestOrAdmin || competeParticipant != null)
             {
-                contest.CanViewCompeteResults = true;
+                contest!.CanViewCompeteResults = true;
             }
 
             if (isLecturerInContestOrAdmin || contestActivityEntity.CanBeCompeted || contestActivityEntity.CanBePracticed)
             {
-                contest.CanViewPracticeResults = true;
+                contest!.CanViewPracticeResults = true;
             }
 
             var participantsCount = await this.contestParticipantsCacheService.GetParticipantsCountForContest(id);
@@ -150,7 +146,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             contest.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
 
-            contest.IsActive = await this.activityService.IsContestActive(activityServiceModel);
+            contest.IsActive = await this.activityService.IsContestActive(contest);
 
             return contest;
         }
@@ -310,7 +306,7 @@ namespace OJS.Services.Ui.Business.Implementations
             participant.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
             var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
-            participant.EndDateTimeForParticipantOrContest = participantActivity.ParticipationEndTime;
+            participant.EndDateTimeForParticipantOrContest = participantActivity!.ParticipationEndTime;
             participant.IsActiveParticipant = participantActivity.IsActive || userIsAdminOrLecturerInContest;
 
             participant.ParticipantId = participant.Id;
@@ -580,37 +576,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 userId,
                 official,
                 isUserAdminOrLecturerInContest);
-        }
-
-        private (bool isActiveParticipantInCompete, bool isActiveParticipantInPractice) GetParticipantsActivity(
-            Participant? competeParticipant,
-            Participant? practiceParticipant,
-            ContestDetailsServiceModel contestDetailsServiceModel)
-        {
-            var isActiveParticipantInCompete = false;
-            var isActiveParticipantInPractice = false;
-
-            if (competeParticipant != null)
-            {
-                var competeParticipantActivityServiceModel = competeParticipant.Map<ParticipantForActivityServiceModel>();
-
-                competeParticipantActivityServiceModel.ContestStartTime = contestDetailsServiceModel.StartTime;
-                competeParticipantActivityServiceModel.ContestEndTime = contestDetailsServiceModel.EndTime;
-
-                isActiveParticipantInCompete = this.activityService.GetParticipantActivity(competeParticipantActivityServiceModel).IsActive;
-            }
-
-            if (practiceParticipant != null)
-            {
-                var practiceParticipantActivityServiceModel = practiceParticipant.Map<ParticipantForActivityServiceModel>();
-
-                practiceParticipantActivityServiceModel.ContestPracticeStartTime = contestDetailsServiceModel.PracticeStartTime;
-                practiceParticipantActivityServiceModel.ContestPracticeEndTime = contestDetailsServiceModel.PracticeEndTime;
-
-                isActiveParticipantInPractice = this.activityService.GetParticipantActivity(practiceParticipantActivityServiceModel).IsActive;
-            }
-
-            return (isActiveParticipantInCompete, isActiveParticipantInPractice);
         }
     }
 }
