@@ -104,7 +104,10 @@ namespace OJS.Services.Ui.Business.Implementations
             if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted && contest!.IsOnlineExam)
             {
                 var problemsForParticipant = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.Problem);
-                contest.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
+                contest.Problems = [.. problemsForParticipant
+                    .MapCollection<ContestProblemServiceModel>()
+                    .OrderBy(p => p.OrderBy)
+                    .ThenBy(p => p.Name)];
             }
 
             var (isActiveParticipantInCompete, isActiveParticipantInPractice) = this.GetParticipantsActivity(competeParticipant, practiceParticipant, contest!);
