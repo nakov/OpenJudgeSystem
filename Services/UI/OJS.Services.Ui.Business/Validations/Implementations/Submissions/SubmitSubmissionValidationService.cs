@@ -51,15 +51,15 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
-        if (participant == null)
+        var participantActivity = this.contestsActivity.GetParticipantActivity(participant);
+
+        if (participant == null || participantActivity == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
         }
 
         var isAdminOrLecturer = await this.lecturersInContestsBusiness
             .IsCurrentUserAdminOrLecturerInContest(participant.ContestId);
-
-        var participantActivity = this.contestsActivity.GetParticipantActivity(participant);
 
         if (participantActivity.IsInvalidated)
         {

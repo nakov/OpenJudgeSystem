@@ -19,6 +19,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
+    using OJS.Services.Ui.Models.Participants;
     using OJS.Services.Ui.Models.Search;
     using static OJS.Services.Common.Constants.PaginationConstants.Contests;
 
@@ -82,16 +83,13 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var activityServiceModel = contest!.Map<ContestForActivityServiceModel>();
-
-            var contestActivityEntity = await this.activityService
-                .GetContestActivity(activityServiceModel);
-
             var userParticipants = await this.participantsData
                 .GetAllByContestAndUser(id, user.Id)
                 .AsNoTracking()
-                .Include(p => p.ProblemsForParticipants)
+                .MapCollection<ParticipantForContestDetailsServiceModel>()
                 .ToListAsync();
+
+            var contestActivityEntity = this.activityService.GetContestActivity(contest!, userParticipants);
 
             var competeParticipant = userParticipants.FirstOrDefault(p => p.IsOfficial);
             var practiceParticipant = userParticipants.FirstOrDefault(p => !p.IsOfficial);
@@ -108,36 +106,34 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ToList();
             }
 
-            var (isActiveParticipantInCompete, isActiveParticipantInPractice) = this.GetParticipantsActivity(competeParticipant, practiceParticipant, contest!);
+            var competeParticipantActivity = this.activityService.GetParticipantActivity(competeParticipant);
+            var practiceParticipantActivity = this.activityService.GetParticipantActivity(practiceParticipant);
 
             var canShowProblemsInCompete =
-                (!contest!.HasContestPassword &&
-                 !contest!.IsOnlineExam &&
-                 contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null)
+                (!contest!.HasContestPassword && contestActivityEntity.CanBeCompeted)
                  || isLecturerInContestOrAdmin
-                 || isActiveParticipantInCompete;
+                 || competeParticipantActivity?.IsActive == true;
 
             var canShowProblemsInPractice =
-                (!contest.HasPracticePassword &&
-                 contestActivityEntity.CanBePracticed)
+                (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed)
                 || isLecturerInContestOrAdmin
-                || isActiveParticipantInPractice;
+                || practiceParticipantActivity?.IsActive == true;
 
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
             if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
-                contest.Problems = [];
+                contest!.Problems = [];
             }
 
             if (isLecturerInContestOrAdmin || competeParticipant != null)
             {
-                contest.CanViewCompeteResults = true;
+                contest!.CanViewCompeteResults = true;
             }
 
             if (isLecturerInContestOrAdmin || contestActivityEntity.CanBeCompeted || contestActivityEntity.CanBePracticed)
             {
-                contest.CanViewPracticeResults = true;
+                contest!.CanViewPracticeResults = true;
             }
 
             var participantsCount = await this.contestParticipantsCacheService.GetParticipantsCountForContest(id);
@@ -150,7 +146,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             contest.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
 
-            contest.IsActive = await this.activityService.IsContestActive(activityServiceModel);
+            contest.IsActive = await this.activityService.IsContestActive(contest);
 
             return contest;
         }
@@ -161,9 +157,16 @@ namespace OJS.Services.Ui.Business.Implementations
             var user = this.userProviderService.GetCurrentUser();
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
+            var participant = await this.participantsData
+                .GetAllByContestByUserAndIsOfficial(id,user.Id, isOfficial)
+                .AsNoTracking()
+                .MapCollection<ParticipantForContestRegistrationServiceModel>()
+                .FirstOrDefaultAsync();
+
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
+                participant,
                 user,
                 isOfficial));
 
@@ -171,12 +174,6 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 throw new BusinessServiceException(validationResult.Message);
             }
-
-            var participant = await this.participantsData
-                .GetByContestByUserAndByIsOfficial(
-                    id,
-                    user.Id,
-                    isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
@@ -197,10 +194,21 @@ namespace OJS.Services.Ui.Business.Implementations
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.OneByIdTo<ContestRegistrationDetailsServiceModel>(id);
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
+            var participant = await this.participantsData.GetByContestByUserAndByIsOfficial(id, user.Id, isOfficial);
+
+            var participantForActivity = participant?.Map<ParticipantForActivityServiceModel>();
+            if (participantForActivity != null)
+            {
+                participantForActivity.ContestStartTime = contest?.StartTime;
+                participantForActivity.ContestEndTime = contest?.EndTime;
+                participantForActivity.ContestPracticeStartTime = contest?.PracticeStartTime;
+                participantForActivity.ContestPracticeEndTime = contest?.PracticeEndTime;
+            }
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
+                participantForActivity,
                 user,
                 isOfficial));
 
@@ -209,16 +217,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var participant = await this.participantsData
-                .GetByContestByUserAndByIsOfficial(
-                    id,
-                    user.Id,
-                    isOfficial);
-
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-            var shouldRequirePassword = ShouldRequirePassword(contest!.HasContestPassword, contest!.HasPracticePassword, participant, isOfficial);
+            var shouldRequirePassword = ShouldRequirePassword(contest!.HasContestPassword, contest!.HasPracticePassword, participantForActivity, isOfficial);
             var shouldConfirmParticipation =
-                ShouldConfirmParticipation(participant, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
+                ShouldConfirmParticipation(participantForActivity, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
 
             var requiredPasswordIsValid = false;
 
@@ -292,9 +294,13 @@ namespace OJS.Services.Ui.Business.Implementations
             var contest = await this.contestsCacheService.GetContestDetailsServiceModel(model.ContestId);
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
+            participant.Contest = contest;
+            var participantForActivity = participant.Map<ParticipantForActivityServiceModel>();
+
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
+                participantForActivity,
                 user,
                 model.IsOfficial));
 
@@ -305,12 +311,11 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
-            participant.Contest = contest;
             participant.IsRegisteredParticipant = true;
             participant.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
-            var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
-            participant.EndDateTimeForParticipantOrContest = participantActivity.ParticipationEndTime;
+            var participantActivity = this.activityService.GetParticipantActivity(participantForActivity);
+            participant.EndDateTimeForParticipantOrContest = participantActivity!.ParticipationEndTime;
             participant.IsActiveParticipant = participantActivity.IsActive || userIsAdminOrLecturerInContest;
 
             participant.ParticipantId = participant.Id;
@@ -505,8 +510,8 @@ namespace OJS.Services.Ui.Business.Implementations
                     }
                 }
 
-                c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
-                c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
+                c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant, true);
+                c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant, false);
             });
 
             return pagedContests;
@@ -519,7 +524,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GroupBy(p => p.ContestId)
                 .ToDictionaryAsync(g => g.Key, g => g.ToList());
 
-        private static bool ShouldRequirePassword(bool hasContestPassword, bool hasPracticePassword, Participant? participant, bool official)
+        private static bool ShouldRequirePassword(bool hasContestPassword, bool hasPracticePassword, IParticipantForActivityServiceModel? participant, bool official)
         {
             if (participant != null && !participant.IsInvalidated)
             {
@@ -529,7 +534,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return (official && hasContestPassword) || (!official && hasPracticePassword);
         }
 
-        private static bool ShouldConfirmParticipation(Participant? participant, bool official, bool contestIsOnlineExam, bool userIsAdminOrLecturerInContest)
+        private static bool ShouldConfirmParticipation(IParticipantForActivityServiceModel? participant, bool official, bool contestIsOnlineExam, bool userIsAdminOrLecturerInContest)
             => contestIsOnlineExam &&
                official &&
                (participant == null || participant.IsInvalidated) &&
@@ -580,37 +585,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 userId,
                 official,
                 isUserAdminOrLecturerInContest);
-        }
-
-        private (bool isActiveParticipantInCompete, bool isActiveParticipantInPractice) GetParticipantsActivity(
-            Participant? competeParticipant,
-            Participant? practiceParticipant,
-            ContestDetailsServiceModel contestDetailsServiceModel)
-        {
-            var isActiveParticipantInCompete = false;
-            var isActiveParticipantInPractice = false;
-
-            if (competeParticipant != null)
-            {
-                var competeParticipantActivityServiceModel = competeParticipant.Map<ParticipantForActivityServiceModel>();
-
-                competeParticipantActivityServiceModel.ContestStartTime = contestDetailsServiceModel.StartTime;
-                competeParticipantActivityServiceModel.ContestEndTime = contestDetailsServiceModel.EndTime;
-
-                isActiveParticipantInCompete = this.activityService.GetParticipantActivity(competeParticipantActivityServiceModel).IsActive;
-            }
-
-            if (practiceParticipant != null)
-            {
-                var practiceParticipantActivityServiceModel = practiceParticipant.Map<ParticipantForActivityServiceModel>();
-
-                practiceParticipantActivityServiceModel.ContestPracticeStartTime = contestDetailsServiceModel.PracticeStartTime;
-                practiceParticipantActivityServiceModel.ContestPracticeEndTime = contestDetailsServiceModel.PracticeEndTime;
-
-                isActiveParticipantInPractice = this.activityService.GetParticipantActivity(practiceParticipantActivityServiceModel).IsActive;
-            }
-
-            return (isActiveParticipantInCompete, isActiveParticipantInPractice);
         }
     }
 }

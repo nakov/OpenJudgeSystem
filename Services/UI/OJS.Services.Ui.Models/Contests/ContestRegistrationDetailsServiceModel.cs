@@ -3,11 +3,12 @@
 using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Linq;
 
-public class ContestRegistrationDetailsServiceModel : IMapExplicitly
+public class ContestRegistrationDetailsServiceModel : IMapExplicitly, IContestForActivityServiceModel
 {
     public int Id { get; set; }
 
