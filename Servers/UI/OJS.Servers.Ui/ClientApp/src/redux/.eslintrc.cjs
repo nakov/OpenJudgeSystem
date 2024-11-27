@@ -5,6 +5,5 @@ module.exports = {
         "import/exports-last": "off",
         "no-unused-expressions": "off",
         "@typescript-eslint/ban-ts-comment": "off",
-        "import/no-unused-modules": "off",
     },
 };

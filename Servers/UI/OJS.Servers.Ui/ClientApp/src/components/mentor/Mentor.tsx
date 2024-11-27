@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { IoMdSend } from 'react-icons/io';
 import ReactMarkdown from 'react-markdown';
 import Button from '@mui/material/Button';

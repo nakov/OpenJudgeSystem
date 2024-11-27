@@ -1,8 +1,7 @@
-﻿import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { IMentorConversationRequestModel, IMentorConversationResponseModel } from '../../common/types';
-import getCustomBaseQuery from '../middlewares/customBaseQuery';
 
 const mentorService = createApi({
     reducerPath: 'mentorService',

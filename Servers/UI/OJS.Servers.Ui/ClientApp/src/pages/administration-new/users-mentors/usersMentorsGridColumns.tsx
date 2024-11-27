@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/ban-types,max-len */
+/* eslint-disable @typescript-eslint/ban-types,max-len */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import QuickEditButton from 'src/components/administration/common/edit/QuickEditButton';
 import { adminFormatDate } from 'src/utils/administration/administration-dates';
