@@ -125,6 +125,7 @@
   right: 0.5rem;
   background-color: #FFFFFF;
   padding: spacings.$sp-8 spacings.$sp-16;
+  border: colors.$dark-base-color-400 1px solid;
   border-radius: 16px;
   font-size: 18px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -143,7 +144,7 @@
 
   .secondaryText {
     color: #666666;
-    font-size: 15px;
+    font-size: 16px;
   }
 
   &:after {
@@ -156,7 +157,13 @@
     background-color: #FFFFFF;
     transform: rotate(45deg);
     box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.05);
+    border-bottom: colors.$dark-base-color-400 1px solid;
+    border-right: colors.$dark-base-color-400 1px solid;
   }
+}
+
+.errorBubble {
+  display: none;
 }
 
 @keyframes fadeIn {
@@ -648,5 +655,14 @@
     tr:nth-child(even) {
       background-color: colors.$light-base-color-200;
     }
+  }
+}
+
+.sendButtonContainer {
+  position: relative;
+  display: inline-block;
+
+  &:hover .errorBubble {
+    display: block;
   }
 }

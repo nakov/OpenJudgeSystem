@@ -775,6 +775,7 @@ interface IMentorConversationRequestModel {
 interface IMentorConversationResponseModel {
     userId: string;
     messages: IMentorConversationMessage[];
+    maxUserInputLength: number;
 }
 
 interface IUserMentorInListModel {

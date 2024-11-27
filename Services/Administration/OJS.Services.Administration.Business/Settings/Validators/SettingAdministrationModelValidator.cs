@@ -91,6 +91,7 @@ public class SettingAdministrationModelValidator : BaseAdministrationModelValida
         {
             nameof(MentorMessagesSentCount) => MentorMessagesSentCount,
             nameof(MentorMaxInputTokenCount) => MentorMaxInputTokenCount,
+            nameof(PercentageOfMentorMaxInputTokenCountUsedByUser) => PercentageOfMentorMaxInputTokenCountUsedByUser,
             nameof(MentorMaxOutputTokenCount) => MentorMaxOutputTokenCount,
             nameof(MentorQuotaLimit) => MentorQuotaLimit,
             nameof(MentorQuotaResetTimeInMinutes) => MentorQuotaResetTimeInMinutes,

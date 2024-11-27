@@ -70,6 +70,7 @@ public static class ServiceProviderExtensions
             new() { Name = MaxSubmissionsCountAllowedForBatchRetest, Value = "100", Type = SettingType.Numeric },
             new() { Name = nameof(MentorMessagesSentCount), Value = "6", Type = SettingType.Numeric },
             new() { Name = nameof(MentorMaxInputTokenCount), Value = "1600", Type = SettingType.Numeric },
+            new() { Name = nameof(PercentageOfMentorMaxInputTokenCountUsedByUser), Value = "50", Type = SettingType.Numeric },
             new() { Name = nameof(MentorMaxOutputTokenCount), Value = "800", Type = SettingType.Numeric },
             new() { Name = nameof(MentorQuotaLimit), Value = "10", Type = SettingType.Numeric },
             new() { Name = nameof(MentorQuotaResetTimeInMinutes), Value = "60", Type = SettingType.Numeric },

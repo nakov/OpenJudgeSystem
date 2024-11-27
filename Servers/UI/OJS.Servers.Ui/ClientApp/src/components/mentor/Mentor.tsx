@@ -50,15 +50,22 @@ const Mentor = (props: IMentorProps) => {
 
     const [ startConversation, { data: conversationData, error, isLoading } ] = useStartConversationMutation();
 
+    const isInputLengthExceeded = useMemo(
+        () => conversationData &&
+            inputMessage.length > conversationData.maxUserInputLength,
+        [ conversationData, inputMessage ],
+    );
+
     const isChatDisabled = useMemo(
         () => inputMessage.trim() === '' ||
             isLoading ||
+            isInputLengthExceeded ||
             problemId === undefined ||
             problemName === undefined ||
             contestId === undefined ||
             contestName === undefined ||
             categoryName === undefined,
-        [ categoryName, contestId, contestName, inputMessage, isLoading, problemId, problemName ],
+        [ categoryName, contestId, contestName, inputMessage, isLoading, problemId, problemName, isInputLengthExceeded ],
     );
 
     useEffect(() => {
@@ -255,20 +262,29 @@ const Mentor = (props: IMentorProps) => {
                       disabled={isLoading}
                       className={styles.typingField}
                     />
-                    <Button
-                      onClick={handleSendMessage}
-                      disabled={isChatDisabled}
-                      sx={{ '&:hover': { backgroundColor: 'inherit' } }}
-                    >
-                        <IoMdSend
+                    <div className={styles.sendButtonContainer}>
+                        <Button
                           onClick={handleSendMessage}
-                          className={
-                                isChatDisabled
-                                    ? styles.sendIconDisabled
-                                    : styles.sendIconActive
-                            }
-                        />
-                    </Button>
+                          disabled={isChatDisabled}
+                        >
+                            <IoMdSend
+                              className={
+                                    isChatDisabled
+                                        ? styles.sendIconDisabled
+                                        : styles.sendIconActive
+                                }
+                            />
+                        </Button>
+                        {isInputLengthExceeded && (
+                            <div className={concatClassNames(styles.errorBubble, styles.bubbleMessage)}>
+                                <div className={styles.secondaryText}>
+                                    {`Your message exceeds the ${conversationData?.maxUserInputLength
+                                        ? `${conversationData.maxUserInputLength}-`
+                                        : ''}character limit. Please shorten it.`}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </DialogActions>
             </Dialog>
         </div>
