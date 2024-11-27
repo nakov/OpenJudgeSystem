@@ -25,11 +25,12 @@ interface IMentorProps {
     contestId?: number;
     contestName?: string;
     categoryName?: string;
+    submissionTypeName?: string;
     isMentorAllowed: boolean;
 }
 
 const Mentor = (props: IMentorProps) => {
-    const { problemId, problemName, contestId, contestName, categoryName, isMentorAllowed } = props;
+    const { problemId, problemName, contestId, contestName, categoryName, submissionTypeName, isMentorAllowed } = props;
     const { internalUser: user } = useAppSelector((state) => state.authorization);
     const { isDarkMode } = useTheme();
 
@@ -64,8 +65,19 @@ const Mentor = (props: IMentorProps) => {
             problemName === undefined ||
             contestId === undefined ||
             contestName === undefined ||
-            categoryName === undefined,
-        [ categoryName, contestId, contestName, inputMessage, isLoading, problemId, problemName, isInputLengthExceeded ],
+            categoryName === undefined ||
+            submissionTypeName === undefined,
+        [
+            categoryName,
+            contestId,
+            contestName,
+            inputMessage,
+            isLoading,
+            problemId,
+            problemName,
+            isInputLengthExceeded,
+            submissionTypeName,
+        ],
     );
 
     useEffect(() => {
@@ -99,7 +111,8 @@ const Mentor = (props: IMentorProps) => {
             problemName === undefined ||
             contestId === undefined ||
             contestName === undefined ||
-            categoryName === undefined) {
+            categoryName === undefined ||
+            submissionTypeName === undefined) {
             return;
         }
 
@@ -125,6 +138,7 @@ const Mentor = (props: IMentorProps) => {
             contestId,
             contestName,
             categoryName,
+            submissionTypeName,
         });
 
         setInputMessage('');

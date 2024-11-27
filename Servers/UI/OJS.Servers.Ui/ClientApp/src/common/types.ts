@@ -770,6 +770,7 @@ interface IMentorConversationRequestModel {
     contestId: number;
     contestName: string;
     categoryName: string;
+    submissionTypeName: string;
 }
 
 interface IMentorConversationResponseModel {

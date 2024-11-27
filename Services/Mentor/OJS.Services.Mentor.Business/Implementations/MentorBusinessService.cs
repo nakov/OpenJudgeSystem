@@ -607,7 +607,8 @@ public class MentorBusinessService : IMentorBusinessService
                 model.ProblemName,
                 text,
                 model.ContestName,
-                model.CategoryName),
+                model.CategoryName,
+                model.SubmissionTypeName),
             Role = MentorMessageRole.System,
             // The system message should always be first ( in ascending order )
             SequenceNumber = int.MinValue,

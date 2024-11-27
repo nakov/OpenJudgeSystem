@@ -406,6 +406,7 @@ const SubmissionDetailsPage = () => {
               contestId={contestId}
               contestName={contestName ?? undefined}
               categoryName={categoryName}
+              submissionTypeName={submissionType?.name}
               isMentorAllowed={isMentorAllowed}
             />
             <div>

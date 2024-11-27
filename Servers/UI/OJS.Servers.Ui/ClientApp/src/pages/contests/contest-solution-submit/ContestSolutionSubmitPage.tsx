@@ -76,7 +76,6 @@ const ContestSolutionSubmitPage = () => {
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
     const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
-
     const { selectedContestDetailsProblem, contestDetails, breadcrumbItems } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
@@ -859,6 +858,7 @@ const ContestSolutionSubmitPage = () => {
               contestId={Number(contestId)}
               contestName={contestDetails?.name}
               categoryName={categoryName}
+              submissionTypeName={selectedSubmissionType?.name}
               isMentorAllowed={isMentorAllowed}
             />
         </div>
