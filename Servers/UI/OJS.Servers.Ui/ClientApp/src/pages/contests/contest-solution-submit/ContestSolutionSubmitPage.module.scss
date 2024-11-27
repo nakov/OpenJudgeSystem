@@ -204,3 +204,8 @@
   color: colors.$dark-base-color-100;
   margin-top: spacings.$sp-12;
 }
+
+.disabledSubmissionsRefreshButton {
+  opacity: 0.5;
+  pointer-events: none;
+}

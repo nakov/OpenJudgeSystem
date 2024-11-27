@@ -1,21 +1,20 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
 using System.Threading.Tasks;
-using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
+using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Problems;
 using OJS.Services.Infrastructure.Extensions;
 
-public class ProblemResourcesBusinessService : IProblemResourcesBusinessService
+public class ProblemResourcesBusinessService(IProblemResourcesDataService problemResourcesDataService)
+    : IProblemResourcesBusinessService
 {
-    private IProblemResourcesDataService problemResourcesDataService;
-
-    public ProblemResourcesBusinessService(IProblemResourcesDataService problemResourcesDataService)
-        => this.problemResourcesDataService = problemResourcesDataService;
-
     public async Task<ProblemResourceServiceModel> GetResource(int resourceId)
-        => await this.problemResourcesDataService
-            .OneById(resourceId)
+        => await problemResourcesDataService
+            .GetByIdQuery(resourceId)
+            .AsNoTracking()
             .MapCollection<ProblemResourceServiceModel>()
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync()
+            ?? throw new BusinessServiceException($"Problem resource with ID {resourceId} not found.");
 }

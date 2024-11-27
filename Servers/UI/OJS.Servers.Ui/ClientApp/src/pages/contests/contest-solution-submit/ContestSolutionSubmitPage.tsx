@@ -237,7 +237,7 @@ const ContestSolutionSubmitPage = () => {
         if (!submissionsDataFetching) {
             setTimeout(() => {
                 setIsRotating(false);
-            }, 900);
+            }, 1000);
         }
     }, [ submissionsDataFetching, setIsRotating ]);
 
@@ -329,6 +329,7 @@ const ContestSolutionSubmitPage = () => {
                 id: data!.contest!.id,
                 name: data.contest.name,
                 categoryId: data!.contest!.categoryId,
+                isOnlineExam: data?.contest?.isOnlineExam,
             }));
         }
     }, [ contestDetails, contestId, data, dispatch ]);
@@ -386,6 +387,7 @@ const ContestSolutionSubmitPage = () => {
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
             contestId: Number(contestId!),
+            isOnlineExam: contestDetails?.isOnlineExam,
         }).then((d) => {
             if (!(d as any).error) {
                 refetch();
@@ -406,6 +408,7 @@ const ContestSolutionSubmitPage = () => {
         submissionCode,
         submitSolution,
         contestId,
+        contestDetails?.isOnlineExam,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
@@ -417,6 +420,7 @@ const ContestSolutionSubmitPage = () => {
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
             contestId: Number(contestId!),
+            isOnlineExam: contestDetails?.isOnlineExam,
         });
         refetch();
         await getSubmissionsData({
@@ -434,6 +438,7 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFile,
         uploadedFile,
         contestId,
+        contestDetails?.isOnlineExam,
     ]);
 
     const sumMyPoints = useMemo(() => contest
@@ -823,9 +828,14 @@ const ContestSolutionSubmitPage = () => {
                     <span className={styles.title}>Submissions</span>
                     <Tooltip
                       title="Refresh"
-                      onClick={handleRefreshClick}
+                      onClick={!isRotating
+                          ? handleRefreshClick
+                          : undefined}
                     >
-                        <span>
+                        <span className={isRotating
+                            ? styles.disabledSubmissionsRefreshButton
+                            : ''}
+                        >
                             <IoMdRefresh
                               size={24}
                               className={isRotating

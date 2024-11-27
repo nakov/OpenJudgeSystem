@@ -176,7 +176,7 @@ interface IProblemSearchType {
     id: number;
     name: string;
     orderBy: number;
-    contest: IContestType;
+    contest: IContestDetailsResponseType;
 }
 
 interface IContestDetailsSubmissionType {
@@ -200,6 +200,7 @@ interface IContestDetailsResponseType {
     competeParticipantsCount: number;
     practiceParticipantsCount: number;
     categoryId: number;
+    userIsAdminOrLecturerInContest: boolean;
 }
 
 interface IContestDetailsSliceType {
@@ -219,39 +220,6 @@ interface IContestDetailsSliceType {
     categoryId: number;
 }
 
-interface IContestType {
-    id: number;
-    name: string;
-    categoryId: number;
-    categoryName: string;
-    startTime: Date;
-    endTime: Date;
-    practiceStartTime: Date;
-    practiceEndTime: Date;
-    limitBetweenSubmissions: number;
-    isDeleted: boolean;
-    isVisible: boolean;
-    isOnline: boolean;
-    isExam: boolean;
-    allowedSubmissionTypes: ISubmissionTypeType[];
-    problems: IProblemType[];
-    canBeCompeted: boolean;
-    canBePracticed: boolean;
-    resultsArePubliclyVisible: boolean;
-    hasContestPassword: boolean;
-    hasPracticePassword: boolean;
-    userIsAdminOrLecturerInContest: boolean;
-    userCanCompete: boolean;
-    userIsParticipant: false;
-    isActive: boolean;
-    contestIsLoading: boolean;
-    registerForContestLoading: boolean;
-    submitContestPasswordIsLoading: boolean;
-    getParticipantScoresIsLoading: boolean;
-    duration: number;
-    numberOfProblems: number;
-}
-
 interface IUserParticipationResult {
     practicePoints: number;
     competePoints: number;
@@ -268,6 +236,7 @@ interface IIndexContestsType {
     canBeCompeted: boolean;
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
+    isOnlineExam: boolean;
     category: string;
     isLoading: boolean;
     numberOfProblems: number;
@@ -353,7 +322,7 @@ interface ICompeteContestResponseType {
     userSubmissionsTimeLimit: number;
     endDateTimeForParticipantOrContest: Date | null;
     participantsCount: number;
-    contest: IContestType | null;
+    contest: IContestDetailsResponseType | null;
     shouldEnterPassword: boolean;
 }
 

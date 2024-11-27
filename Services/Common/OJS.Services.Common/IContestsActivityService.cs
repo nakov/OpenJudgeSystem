@@ -9,7 +9,11 @@ public interface IContestsActivityService : IService
 {
     Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest);
 
-    ParticipantActivityServiceModel GetParticipantActivity(IParticipantForActivityServiceModel participant);
+    IContestActivityServiceModel GetContestActivity(
+        IContestForActivityServiceModel contest,
+        IReadOnlyCollection<IParticipantForActivityServiceModel?> contestParticipantsForUser);
+
+    ParticipantActivityServiceModel? GetParticipantActivity(IParticipantForActivityServiceModel? participant);
 
     Task<bool> IsContestActive(IContestForActivityServiceModel contest);
 

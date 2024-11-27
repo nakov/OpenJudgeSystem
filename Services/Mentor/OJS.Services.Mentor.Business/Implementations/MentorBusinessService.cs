@@ -64,6 +64,7 @@ public class MentorBusinessService : IMentorBusinessService
     {
         var settings = await this.settingData
             .GetQuery(s => s.Name.Contains(Mentor))
+            .AsNoTracking()
             .ToDictionaryAsync(k => k.Name, v => v.Value);
 
         var maxUserInputLength = CalculateMaxUserInputLength(settings);
@@ -561,16 +562,17 @@ public class MentorBusinessService : IMentorBusinessService
          */
         var template = await this.mentorPromptTemplateData
             .GetQuery()
+            .AsNoTracking()
             .FirstOrDefaultAsync();
 
-        var problemsResources = await this.contestsData.GetByIdQuery(model.ContestId)
-            .Include(c => c.ProblemGroups)
-            .ThenInclude(pg => pg.Problems)
-            .ThenInclude(p => p.Resources)
-            .SelectMany(c => c.ProblemGroups
-                .SelectMany(pg => pg.Problems)
-                .SelectMany(p => p.Resources)
-                .Where(pr => pr.Type == ProblemResourceType.ProblemDescription))
+        var problemsResources = await this.contestsData
+            .GetByIdQuery(model.ContestId)
+            .AsNoTracking()
+            .Select(c => c.ProblemGroups
+                .SelectMany(pg => pg.Problems
+                    .SelectMany(p => p.Resources
+                        .Where(r => r.Type == ProblemResourceType.ProblemDescription))))
+            .SelectMany(resources => resources)
             .ToListAsync();
 
         var wordFiles = problemsResources
