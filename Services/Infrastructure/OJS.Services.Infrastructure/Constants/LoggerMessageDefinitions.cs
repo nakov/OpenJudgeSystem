@@ -72,6 +72,13 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(270, LogLevel.Information, "Added {SettingName} setting.")]
     public static partial void LogAddedSetting(this ILogger logger, string settingName);
 
+    // Mentor
+    [LoggerMessage(301, LogLevel.Information, "Removed {MentorMessagesRemoved} out of {MentorMessagesToSend} mentor messages to comply with token limits for problem #{ProblemId}.")]
+    public static partial void LogTruncatedMentorMessages(this ILogger logger, int mentorMessagesRemoved, int mentorMessagesToSend, int problemId);
+
+    [LoggerMessage(302, LogLevel.Information, "Truncated {PercentageOfMessageContentTruncated:F2}% of a message's content to comply with token limits for problem #{ProblemId}.")]
+    public static partial void LogPercentageOfMessageContentTruncated(this ILogger logger, double percentageOfMessageContentTruncated, int problemId);
+
     // Submissions
     [LoggerMessage(1010, LogLevel.Error, "Exception in publishing submission #{SubmissionId}", SkipEnabledCheck = true)]
     public static partial void LogExceptionPublishingSubmission(this ILogger logger, int submissionId, Exception ex);

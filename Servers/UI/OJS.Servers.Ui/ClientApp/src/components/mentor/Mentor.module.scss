@@ -135,15 +135,14 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: colors.$dark-base-color-500;
 
   .primaryText {
-    color: #000000;
     font-weight: 500;
     margin-bottom: 2px;
   }
 
   .secondaryText {
-    color: #666666;
     font-size: 16px;
   }
 
@@ -491,7 +490,6 @@
   .dot {
     width: 8px;
     height: 8px;
-    background-color: colors.$light-base-color-100;
     border-radius: 50%;
     animation: grow-shrink 1.2s infinite ease-in-out;
 
@@ -516,6 +514,14 @@
 
   .dot:nth-child(3) {
     animation-delay: 0.4s;
+  }
+
+  .darkDot {
+    background-color: colors.$light-base-color-100;
+  }
+
+  .lightDot {
+    background-color: colors.$dark-base-color-100;
   }
 }
 

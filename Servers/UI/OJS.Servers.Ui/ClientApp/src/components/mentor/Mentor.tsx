@@ -233,9 +233,18 @@ const Mentor = (props: IMentorProps) => {
                         {isLoading && (
                             <div className={styles.message}>
                                 <div className={styles.typingIndicator}>
-                                    <span className={styles.dot} />
-                                    <span className={styles.dot} />
-                                    <span className={styles.dot} />
+                                    <span className={concatClassNames(styles.dot, isDarkMode
+                                        ? styles.darkDot
+                                        : styles.lightDot)}
+                                    />
+                                    <span className={concatClassNames(styles.dot, isDarkMode
+                                        ? styles.darkDot
+                                        : styles.lightDot)}
+                                    />
+                                    <span className={concatClassNames(styles.dot, isDarkMode
+                                        ? styles.darkDot
+                                        : styles.lightDot)}
+                                    />
                                 </div>
                             </div>
                         )}

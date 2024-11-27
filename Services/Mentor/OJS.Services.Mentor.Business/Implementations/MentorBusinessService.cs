@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Build.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models;
@@ -36,6 +37,7 @@ public class MentorBusinessService : IMentorBusinessService
     private readonly IDataService<Setting> settingData;
     private readonly IContestsDataService contestsData;
     private readonly ICacheService cache;
+    private readonly ILogger<MentorBusinessService> logger;
     private readonly OpenAIClient openAiClient;
 
     public MentorBusinessService(
@@ -45,6 +47,7 @@ public class MentorBusinessService : IMentorBusinessService
         IDataService<Setting> settingData,
         IContestsDataService contestsData,
         ICacheService cache,
+        ILogger<MentorBusinessService> logger,
         OpenAIClient openAiClient)
     {
         this.userMentorData = userMentorData;
@@ -53,6 +56,7 @@ public class MentorBusinessService : IMentorBusinessService
         this.settingData = settingData;
         this.contestsData = contestsData;
         this.cache = cache;
+        this.logger = logger;
         this.openAiClient = openAiClient;
     }
 
@@ -61,6 +65,18 @@ public class MentorBusinessService : IMentorBusinessService
         var settings = await this.settingData
             .GetQuery(s => s.Name.Contains(Mentor))
             .ToDictionaryAsync(k => k.Name, v => v.Value);
+
+        var maxUserInputLength = CalculateMaxUserInputLength(settings);
+
+        /*
+         *  No message ( user, information ) should have a length greater than 'maxUserInputLength'.
+         *  Keeping in mind that the max output token count is about 2 times less than
+         *  the max input token count, this rule can be applied to the assistant messages as well.
+         */
+        if (model.Messages.Any(m => m.Content.Length > maxUserInputLength))
+        {
+            throw new BusinessServiceException($"Your message exceeds the {maxUserInputLength}-character limit. Please shorten it.");
+        }
 
         var userMentor = await this.userMentorData
             .GetQuery(um => um.Id == model.UserId)
@@ -98,7 +114,7 @@ public class MentorBusinessService : IMentorBusinessService
                 ProblemId = model.ProblemId,
             });
 
-            return GetResponseModel(model, settings);
+            return GetResponseModel(model, maxUserInputLength);
         }
 
         var currentProblemMessages = model.Messages
@@ -116,8 +132,9 @@ public class MentorBusinessService : IMentorBusinessService
 
         var recentMessages = currentProblemMessages
             .Where(m => m.Role is not MentorMessageRole.System and not MentorMessageRole.Information)
-            .OrderBy(m => m.SequenceNumber)
+            .OrderByDescending(m => m.SequenceNumber)
             .Take(GetNumericValue(settings, nameof(MentorMessagesSentCount)))
+            .OrderBy(m => m.SequenceNumber)
             .Select(m => new ConversationMessageModel
             {
                 Content = m.Content,
@@ -146,7 +163,7 @@ public class MentorBusinessService : IMentorBusinessService
         var maxInputTokens = GetNumericValue(settings, nameof(MentorMaxInputTokenCount));
         if (tokenCount > maxInputTokens)
         {
-            TrimMessages(recentMessages, encoding, tokenCount - maxInputTokens);
+            this.TruncateMessages(model.ProblemId, recentMessages, encoding, tokenCount - maxInputTokens);
         }
 
         messagesToSend.AddRange(recentMessages.Select(m => CreateChatMessage(m.Role, m.Content)));
@@ -175,7 +192,7 @@ public class MentorBusinessService : IMentorBusinessService
         userMentor.RequestsMade++;
         await this.userMentorData.SaveChanges();
 
-        return GetResponseModel(model, settings);
+        return GetResponseModel(model, maxUserInputLength);
     }
 
     private static string ExtractSectionFromDocument(byte[] bytes, string problemName, int problemNumber)
@@ -328,38 +345,50 @@ public class MentorBusinessService : IMentorBusinessService
         }
     }
 
-    private static void TrimMessages(
-    List<ConversationMessageModel> messages,
-    TikToken encoding,
-    int tokensToRemove)
+    private void TruncateMessages(
+        int problemId,
+        List<ConversationMessageModel> messages,
+        TikToken encoding,
+        int tokensToRemove)
     {
         if (tokensToRemove <= 0 || messages.Count == 0)
         {
             return;
         }
 
-        var messagesToTrim = messages
+        var initialMessageCount = messages.Count;
+
+        var messagesToTruncate = messages
             .OrderBy(m => m.SequenceNumber)
             .ToList();
 
-        foreach (var message in messagesToTrim)
+        foreach (var message in messagesToTruncate)
         {
             var messageTokens = encoding.Encode(message.Content).Count;
+            var percentageTruncated = 0.0;
 
             // If entire message fits within remaining tokens to remove, remove the whole message
             if (messageTokens <= tokensToRemove)
             {
                 messages.Remove(message);
                 tokensToRemove -= messageTokens;
+                percentageTruncated = 100.0;
             }
             else
             {
                 // If message is too long, truncate content
                 var remainingTokens = Math.Max(0, messageTokens - tokensToRemove);
                 var truncatedContent = TruncateContent(encoding, message.Content, remainingTokens);
+
+                // Calculate percentage truncated, do not remove the parenthesis
+                percentageTruncated = ((double)(messageTokens - remainingTokens) / messageTokens) * 100;
+
                 message.Content = truncatedContent;
                 tokensToRemove = 0;
             }
+
+            // Log the percentage of content truncated
+            this.logger.LogPercentageOfMessageContentTruncated(percentageTruncated, problemId);
 
             // Stop if we've removed enough tokens
             if (tokensToRemove <= 0)
@@ -367,7 +396,15 @@ public class MentorBusinessService : IMentorBusinessService
                 break;
             }
         }
+
+        var removedMessageCount = initialMessageCount - messages.Count;
+        if (removedMessageCount > 0)
+        {
+            // Log the number of messages removed
+            this.logger.LogTruncatedMentorMessages(initialMessageCount, removedMessageCount, problemId);
+        }
     }
+
 
     private static string TruncateContent(TikToken encoding, string content, int maxTokens)
     {
@@ -503,10 +540,10 @@ public class MentorBusinessService : IMentorBusinessService
 
     private static ConversationResponseModel GetResponseModel(
         ConversationRequestModel model,
-        Dictionary<string, string> settings)
+        int maxUserInputLength)
     {
         var responseModel = model.Map<ConversationResponseModel>();
-        responseModel.MaxUserInputLength = CalculateMaxUserInputLength(settings);
+        responseModel.MaxUserInputLength = maxUserInputLength;
         return responseModel;
     }
 
