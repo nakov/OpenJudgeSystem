@@ -5,7 +5,6 @@ using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Data;
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Models.Contests;
 
@@ -28,9 +27,9 @@ public class ContestParticipationValidationService : IContestParticipationValida
         this.contestsData = contestsData;
     }
 
-    public ValidationResult GetValidationResult((ContestParticipationValidationServiceModel?, ContestCategoryServiceModel?, UserInfoModel?, bool) item)
+    public ValidationResult GetValidationResult((ContestParticipationValidationServiceModel?, ContestCategoryServiceModel?, IParticipantForActivityServiceModel? participant, UserInfoModel?, bool) item)
     {
-        var (contest, contestCategory, user, official) = item;
+        var (contest, contestCategory, participant, user, official) = item;
 
         // TODO: Fix so it uses lecturers in contests business service
         var userIsAdminOrLecturerInContest = user != null && (user.IsAdmin || this.lecturersInContestsBusiness
@@ -53,9 +52,7 @@ public class ContestParticipationValidationService : IContestParticipationValida
             return ValidationResult.Valid();
         }
 
-        var contestActivityEntity = this.activityService.GetContestActivity(contest.Map<ContestForActivityServiceModel>())
-            .GetAwaiter()
-            .GetResult();
+        var contestActivityEntity = this.activityService.GetContestActivity(contest, [participant]);
 
         if (official && !contestActivityEntity.CanBeCompeted)
         {
