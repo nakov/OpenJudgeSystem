@@ -14,16 +14,37 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
     private const int LatestSubmissionsCountForSubmissionTypesUsage = 10_000;
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly ISubmissionsDataService submissionsData;
+    private readonly IContestCategoriesBusinessService contestCategoriesBusiness;
+    private readonly IContestCategoriesDataService contestCategoriesData;
 
     public SubmissionTypesBusinessService(
         ISubmissionTypesDataService submissionTypesData,
-        ISubmissionsDataService submissionsData)
+        ISubmissionsDataService submissionsData,
+        IContestCategoriesBusinessService contestCategoriesBusiness,
+        IContestCategoriesDataService contestCategoriesData)
     {
         this.submissionTypesData = submissionTypesData;
         this.submissionsData = submissionsData;
+        this.contestCategoriesBusiness = contestCategoriesBusiness;
+        this.contestCategoriesData = contestCategoriesData;
     }
 
-    public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
+    public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllForContestCategory(int contestCategoryId)
+    {
+        if (contestCategoryId == 0)
+        {
+            // If the contest category is not specified, return all submission types ordered by latest usage.
+            return await this.GetAllOrderedByLatestUsage();
+        }
+
+        var subcategories = await this.contestCategoriesBusiness.GetAllSubcategories(contestCategoryId);
+        var categoryIds = subcategories.Select(x => x.Id).Append(contestCategoryId).ToList();
+
+        return await this.contestCategoriesData
+            .GetAllowedStrategyTypesByIds<SubmissionTypeFilterServiceModel>(categoryIds);
+    }
+
+    private async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
     {
         var latestSubmissions = await this.submissionsData
             .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(

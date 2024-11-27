@@ -25,7 +25,6 @@ namespace OJS.Services.Ui.Business.Implementations
     public class ContestsBusinessService : IContestsBusinessService
     {
         private readonly IContestsDataService contestsData;
-        private readonly ISubmissionsDataService submissionsData;
         private readonly IContestsActivityService activityService;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantsBusinessService participantsBusiness;
@@ -40,7 +39,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
-            ISubmissionsDataService submissionsData,
             IContestsActivityService activityService,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
@@ -54,7 +52,6 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestDetailsValidationService contestDetailsValidationService)
         {
             this.contestsData = contestsData;
-            this.submissionsData = submissionsData;
             this.activityService = activityService;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
@@ -91,7 +88,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetContestActivity(activityServiceModel);
 
             var userParticipants = await this.participantsData
-                .GetWithProblemsForParticipantsByContestAndUser(id, user.Id)
+                .GetAllByContestAndUser(id, user.Id)
+                .AsNoTracking()
+                .Include(p => p.ProblemsForParticipants)
                 .ToListAsync();
 
             var competeParticipant = userParticipants.FirstOrDefault(p => p.IsOfficial);
@@ -101,19 +100,34 @@ namespace OJS.Services.Ui.Business.Implementations
                 ? competeParticipant
                 : practiceParticipant;
 
-            if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted)
+            if (!isLecturerInContestOrAdmin && participantToGetProblemsFrom != null && contestActivityEntity.CanBeCompeted && contest!.IsOnlineExam)
             {
-                var problemsForParticipant = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.Problem);
-                contest.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
+                var problemsForParticipantIds = participantToGetProblemsFrom.ProblemsForParticipants.Select(x => x.ProblemId);
+                contest.Problems = contest.Problems
+                    .Where(p => problemsForParticipantIds.Contains(p.Id))
+                    .ToList();
             }
 
-            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest!.IsOnlineExam && contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null) || isLecturerInContestOrAdmin;
-            var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerInContestOrAdmin;
+            var (isActiveParticipantInCompete, isActiveParticipantInPractice) = this.GetParticipantsActivity(competeParticipant, practiceParticipant, contest!);
+
+            var canShowProblemsInCompete =
+                (!contest!.HasContestPassword &&
+                 !contest!.IsOnlineExam &&
+                 contestActivityEntity.CanBeCompeted && participantToGetProblemsFrom != null)
+                 || isLecturerInContestOrAdmin
+                 || isActiveParticipantInCompete;
+
+            var canShowProblemsInPractice =
+                (!contest.HasPracticePassword &&
+                 contestActivityEntity.CanBePracticed)
+                || isLecturerInContestOrAdmin
+                || isActiveParticipantInPractice;
+
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
             if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
-                contest.Problems = new List<ContestProblemServiceModel>();
+                contest.Problems = [];
             }
 
             if (isLecturerInContestOrAdmin || competeParticipant != null)
@@ -131,7 +145,7 @@ namespace OJS.Services.Ui.Business.Implementations
             contest.CompeteParticipantsCount = participantsCount.Official;
             contest.PracticeParticipantsCount = participantsCount.Practice;
 
-            contest!.CanBeCompeted = contestActivityEntity.CanBeCompeted;
+            contest.CanBeCompeted = contestActivityEntity.CanBeCompeted;
             contest.CanBePracticed = contestActivityEntity.CanBePracticed;
 
             contest.IsAdminOrLecturerInContest = isLecturerInContestOrAdmin;
@@ -341,7 +355,6 @@ namespace OJS.Services.Ui.Business.Implementations
             var modelResult = new ContestSearchServiceResultModel();
 
             var allContestsQueryable = this.contestsData.GetAllVisible()
-                .Include(c => c.Category)
                 .Where(c => (c.Name != null && c.Name.Contains(model.SearchTerm ?? string.Empty)) &&
                             (c.Category != null && c.Category.IsVisible));
 
@@ -567,6 +580,37 @@ namespace OJS.Services.Ui.Business.Implementations
                 userId,
                 official,
                 isUserAdminOrLecturerInContest);
+        }
+
+        private (bool isActiveParticipantInCompete, bool isActiveParticipantInPractice) GetParticipantsActivity(
+            Participant? competeParticipant,
+            Participant? practiceParticipant,
+            ContestDetailsServiceModel contestDetailsServiceModel)
+        {
+            var isActiveParticipantInCompete = false;
+            var isActiveParticipantInPractice = false;
+
+            if (competeParticipant != null)
+            {
+                var competeParticipantActivityServiceModel = competeParticipant.Map<ParticipantForActivityServiceModel>();
+
+                competeParticipantActivityServiceModel.ContestStartTime = contestDetailsServiceModel.StartTime;
+                competeParticipantActivityServiceModel.ContestEndTime = contestDetailsServiceModel.EndTime;
+
+                isActiveParticipantInCompete = this.activityService.GetParticipantActivity(competeParticipantActivityServiceModel).IsActive;
+            }
+
+            if (practiceParticipant != null)
+            {
+                var practiceParticipantActivityServiceModel = practiceParticipant.Map<ParticipantForActivityServiceModel>();
+
+                practiceParticipantActivityServiceModel.ContestPracticeStartTime = contestDetailsServiceModel.PracticeStartTime;
+                practiceParticipantActivityServiceModel.ContestPracticeEndTime = contestDetailsServiceModel.PracticeEndTime;
+
+                isActiveParticipantInPractice = this.activityService.GetParticipantActivity(practiceParticipantActivityServiceModel).IsActive;
+            }
+
+            return (isActiveParticipantInCompete, isActiveParticipantInPractice);
         }
     }
 }

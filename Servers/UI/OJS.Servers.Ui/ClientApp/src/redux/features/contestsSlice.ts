@@ -62,9 +62,11 @@ export const contestSlice = createSlice({
         clearContestCategoryBreadcrumbItems: (state) => {
             state.breadcrumbItems = [];
         },
-        setContestDetailsIdAndCategoryId: (state, action: PayloadAction<{ id: number; name: string; categoryId: number}>) => {
-            const { id, name, categoryId } = action.payload;
-            state.contestDetails = { id, name, categoryId };
+        setContestDetailsIdAndCategoryId: (state, action: PayloadAction<{
+            id: number; name: string; categoryId: number; isOnlineExam?: boolean;
+        }>) => {
+            const { id, name, categoryId, isOnlineExam } = action.payload;
+            state.contestDetails = { id, name, categoryId, isOnlineExam };
         },
         setSelectedContestDetailsProblem: (state, action: PayloadAction<{ selectedProblem: IProblemType | null }>) => {
             const { selectedProblem } = action.payload;

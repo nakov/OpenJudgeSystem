@@ -21,6 +21,6 @@
         public const string TotalSubmissionsCount = "TotalSubmissionsCount";
         public const string LatestPublicSubmissions = "PublicSubmissions";
 
-        public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
+        public const string SubmissionTypesByContestCategory = "SubmissionTypesByCategory:{0}";
     }
 }

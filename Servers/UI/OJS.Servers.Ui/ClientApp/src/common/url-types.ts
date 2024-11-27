@@ -85,6 +85,7 @@ interface ISubmitContestSolutionParams {
     problemId: number;
     submissionTypeId: number;
     contestId: number;
+    isOnlineExam?: boolean;
 }
 
 interface IRegisterUserForContestParams {
@@ -92,6 +93,11 @@ interface IRegisterUserForContestParams {
     isOfficial: boolean;
     id: number;
     hasConfirmedParticipation: boolean;
+}
+
+interface IGetTestDetailsParams {
+    id: number;
+    submissionId: number;
 }
 
 export type {
@@ -114,4 +120,5 @@ export type {
     ISubmitContestSolutionParams,
     IGetSubmissionsByUserParams,
     IRegisterUserForContestParams,
+    IGetTestDetailsParams,
 };

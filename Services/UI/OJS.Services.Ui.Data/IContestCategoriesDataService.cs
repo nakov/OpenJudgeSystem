@@ -8,8 +8,6 @@
     {
         Task<IEnumerable<T>> GetAllVisible<T>();
 
-        Task<IEnumerable<TServiceModel>> GetAllVisibleMainOrdered<TServiceModel>();
-
-        Task<IEnumerable<T>> GetAllowedStrategyTypesById<T>(int id);
+        Task<IEnumerable<T>> GetAllowedStrategyTypesByIds<T>(IEnumerable<int> ids);
     }
 }

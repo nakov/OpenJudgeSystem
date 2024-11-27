@@ -56,7 +56,6 @@ namespace OJS.Services.Administration.Business.Submissions
         {
             var submissionProblemId = submission.ProblemId;
             var submissionParticipantId = submission.ParticipantId;
-            var submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(submission);
             SubmissionForProcessing submissionForProcessing = new();
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
@@ -85,6 +84,7 @@ namespace OJS.Services.Administration.Business.Submissions
                 return ServiceResult.Success;
             });
 
+            var submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(submission);
             await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel, submissionForProcessing);
 
             return result;
@@ -92,19 +92,10 @@ namespace OJS.Services.Administration.Business.Submissions
 
         public async Task<ServiceResult> Retest(int id)
         {
-            var submission = this.submissionsData.GetByIdQuery(id)
-                .Include(s => s.SubmissionType)
-                .Include(s => s.Problem)
-                .ThenInclude(p => p.Checker)
-                .Include(s => s.Problem)
-                    .ThenInclude(p => p.Tests)
-                .Include(s => s.Problem)
-                    .ThenInclude(p => p.SubmissionTypesInProblems)
-                .FirstOrDefault();
-
+            var submission = await this.submissionsData.GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(id);
             if (submission == null || submission.Id == 0)
             {
-                return new ServiceResult("Submission doesn't exist");
+                throw new BusinessServiceException("Submission doesn't exist or either the submission or problem is deleted.");
             }
 
             return await this.Retest(submission!);

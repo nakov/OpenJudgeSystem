@@ -10,7 +10,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
-    using OJS.Services.Ui.Models.Participations;
     using OJS.Services.Ui.Models.Problems;
     using OJS.Services.Infrastructure.Extensions;
 
@@ -19,19 +18,16 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly IParticipantsDataService participantsData;
         private readonly IProblemsDataService problemsDataService;
-        private readonly ISubmissionsDataService submissionsData;
         private readonly IUserProviderService userProviderService;
 
         public ParticipantScoresBusinessService(
             IParticipantScoresDataService participantScoresData,
             IParticipantsDataService participantsData,
-            ISubmissionsDataService submissionsData,
             IProblemsDataService problemsDataService,
             IUserProviderService userProviderService)
         {
             this.participantScoresData = participantScoresData;
             this.participantsData = participantsData;
-            this.submissionsData = submissionsData;
             this.problemsDataService = problemsDataService;
             this.userProviderService = userProviderService;
         }
@@ -105,21 +101,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .ToListAsync();
 
             return results;
-        }
-
-        public async Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(
-            int participantId)
-        {
-            var participantScores = await this.participantScoresData.GetWithSubmissionsAndTestsByParticipantId(participantId);
-
-            return participantScores
-                .GroupBy(r => r.ProblemId)
-                .Select(g => new ParticipationForProblemMaxScoreServiceModel
-                {
-                    ProblemId = g.Key,
-                    Points = g.Max(x => x.Points),
-                    TestRunsCount = g.Sum(x => x.Submission!.TestRuns.Count),
-                });
         }
     }
 }
