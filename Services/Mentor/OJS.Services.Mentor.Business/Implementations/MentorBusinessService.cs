@@ -1,18 +1,23 @@
 ﻿namespace OJS.Services.Mentor.Business.Implementations;
 
 using System.Globalization;
+using System.Net;
 using System.Text;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Build.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Data.Models.Mentor;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Cache;
+using OJS.Services.Infrastructure.Configurations;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
@@ -36,6 +41,8 @@ public class MentorBusinessService : IMentorBusinessService
     private readonly IDataService<Setting> settingData;
     private readonly IContestsDataService contestsData;
     private readonly ICacheService cache;
+    private readonly ILogger<MentorBusinessService> logger;
+    private readonly IConfiguration configuration;
     private readonly OpenAIClient openAiClient;
 
     public MentorBusinessService(
@@ -45,6 +52,8 @@ public class MentorBusinessService : IMentorBusinessService
         IDataService<Setting> settingData,
         IContestsDataService contestsData,
         ICacheService cache,
+        ILogger<MentorBusinessService> logger,
+        IConfiguration configuration,
         OpenAIClient openAiClient)
     {
         this.userMentorData = userMentorData;
@@ -53,6 +62,8 @@ public class MentorBusinessService : IMentorBusinessService
         this.settingData = settingData;
         this.contestsData = contestsData;
         this.cache = cache;
+        this.logger = logger;
+        this.configuration = configuration;
         this.openAiClient = openAiClient;
     }
 
@@ -172,68 +183,81 @@ public class MentorBusinessService : IMentorBusinessService
         return model.Map<ConversationResponseModel>();
     }
 
-    private static string ExtractSectionFromDocument(byte[] bytes, string problemName, int problemNumber)
+    private string ExtractSectionFromDocument(
+        byte[] bytes,
+        string problemName,
+        int problemNumber,
+        int problemId,
+        int contestId)
     {
-        using var memoryStream = new MemoryStream(bytes);
-        using var wordDocument = WordprocessingDocument.Open(memoryStream, false);
-
-        var body = wordDocument.MainDocumentPart?.Document.Body;
-        if (body is null)
+        try
         {
-            throw new BusinessServiceException(DocumentNotFoundOrEmpty);
-        }
+            using var memoryStream = new MemoryStream(bytes);
+            using var wordDocument = WordprocessingDocument.Open(memoryStream, false);
 
-        var sections = new Dictionary<string, (int Index, List<string> Data, OpenXmlElement Element)>();
-        string? currentHeading = null;
-        var sectionCount = 0;
-
-        // First pass: Extract all sections into the dictionary
-        foreach (var element in body.Elements())
-        {
-            if (element is Paragraph paragraph)
+            var body = wordDocument.MainDocumentPart?.Document.Body;
+            if (body is null)
             {
-                var styleId = paragraph.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
-                var text = paragraph.InnerText.Trim();
+                throw new BusinessServiceException(DocumentNotFoundOrEmpty);
+            }
 
-                if (string.IsNullOrEmpty(text))
+            var sections = new Dictionary<string, (int Index, List<string> Data, OpenXmlElement Element)>();
+            string? currentHeading = null;
+            var sectionCount = 0;
+
+            // First pass: Extract all sections into the dictionary
+            foreach (var element in body.Elements())
+            {
+                if (element is Paragraph paragraph)
                 {
-                    continue;
-                }
+                    var styleId = paragraph.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
+                    var text = paragraph.InnerText.Trim();
 
-                var isHeading = !string.IsNullOrEmpty(styleId) && (styleId.StartsWith("Heading2", StringComparison.Ordinal) || styleId == "2");
-
-                if (isHeading)
-                {
-                    sectionCount++;
-                    currentHeading = text;
-                    if (!sections.ContainsKey(currentHeading))
+                    if (string.IsNullOrEmpty(text))
                     {
-                        sections[currentHeading] = (sectionCount, new List<string>(), paragraph);
+                        continue;
+                    }
+
+                    var isHeading = !string.IsNullOrEmpty(styleId) && (styleId.StartsWith("Heading2", StringComparison.Ordinal) || styleId == "2");
+
+                    if (isHeading)
+                    {
+                        sectionCount++;
+                        currentHeading = text;
+                        if (!sections.ContainsKey(currentHeading))
+                        {
+                            sections[currentHeading] = (sectionCount, new List<string>(), paragraph);
+                        }
+                    }
+                    else if (currentHeading != null)
+                    {
+                        sections[currentHeading].Data.Add(text);
                     }
                 }
-                else if (currentHeading != null)
+            }
+
+            // Second pass: Find the matching section and process it fully
+            foreach (var section in sections)
+            {
+                // Case 1: Match by name
+                if (problemName.Contains(section.Key, StringComparison.OrdinalIgnoreCase))
                 {
-                    sections[currentHeading].Data.Add(text);
+                    return ProcessMatchedSection(section.Value.Element, section.Key);
+                }
+                // Case 2: Match by section number
+                else if (section.Value.Index == problemNumber)
+                {
+                    return ProcessMatchedSection(section.Value.Element, section.Key);
                 }
             }
-        }
 
-        // Second pass: Find the matching section and process it fully
-        foreach (var section in sections)
+            return string.Empty;
+        }
+        catch (Exception)
         {
-            // Case 1: Match by name
-            if (problemName.Contains(section.Key, StringComparison.OrdinalIgnoreCase))
-            {
-                return ProcessMatchedSection(section.Value.Element, section.Key);
-            }
-            // Case 2: Match by section number
-            else if (section.Value.Index == problemNumber)
-            {
-                return ProcessMatchedSection(section.Value.Element, section.Key);
-            }
+            this.logger.LogFileParsingFailure(problemId, contestId);
+            throw new BusinessServiceException(DocumentNotFoundOrEmpty);
         }
-
-        return string.Empty;
     }
 
     private static string ProcessMatchedSection(OpenXmlElement sectionElement, string sectionHeading)
@@ -339,27 +363,6 @@ public class MentorBusinessService : IMentorBusinessService
         messages.Remove(oldestMessage);
 
         TrimMessages(messages, encoding, tokensToRemove - tokenCount);
-    }
-
-    private async Task<byte[]> DownloadDocument(string link)
-    {
-        var client = this.httpClientFactory.CreateClient();
-
-        var response = await client.GetAsync(link);
-
-        if (response is null || !response.IsSuccessStatusCode)
-        {
-            throw new BusinessServiceException(DocumentNotFoundOrEmpty);
-        }
-
-        var fileBytes = await response.Content.ReadAsByteArrayAsync();
-
-        if (fileBytes.Length == 0)
-        {
-            throw new BusinessServiceException(DocumentNotFoundOrEmpty);
-        }
-
-        return fileBytes;
     }
 
     private static ChatMessage CreateChatMessage(MentorMessageRole role, string content)
@@ -498,11 +501,11 @@ public class MentorBusinessService : IMentorBusinessService
 
         var file = problemsDescription.File ??
             (problemsDescription.Link is not null
-            ? await this.DownloadDocument(problemsDescription.Link)
+            ? await this.DownloadDocument(problemsDescription.Link, model.ProblemId, model.ContestId)
             : []);
 
         var number = GetProblemNumber(model.ProblemName);
-        var text = ExtractSectionFromDocument(file, model.ProblemName, number);
+        var text = this.ExtractSectionFromDocument(file, model.ProblemName, number, model.ProblemId, model.ContestId);
 
         return new ConversationMessageModel
         {
@@ -518,5 +521,81 @@ public class MentorBusinessService : IMentorBusinessService
             SequenceNumber = int.MinValue,
             ProblemId = model.ProblemId,
         };
+    }
+
+    private async Task<byte[]> DownloadDocument(string link, int problemId, int contestId)
+    {
+        var fileBytes = link.Contains("/svn", StringComparison.OrdinalIgnoreCase)
+            ? await this.DownloadSvnResource(link, problemId, contestId)
+            : await this.DownloadResource(link, problemId, contestId);
+
+        if (!IsExpectedFormat(fileBytes))
+        {
+            this.logger.LogInvalidDocumentFormat(problemId, contestId, link);
+            throw new BusinessServiceException(DocumentNotFoundOrEmpty);
+        }
+
+        return fileBytes;
+    }
+
+    private async Task<byte[]> DownloadResource(string url, int problemId, int contestId)
+    {
+        var client = this.httpClientFactory.CreateClient();
+        return await this.FetchResource(url, client, problemId, contestId);
+    }
+
+    private async Task<byte[]> DownloadSvnResource(string path, int problemId, int contestId)
+    {
+        var svnConfig = this.configuration.GetSectionWithValidation<SvnConfig>();
+
+        var pathParts = path.Split("svn", StringSplitOptions.RemoveEmptyEntries);
+
+        var svnUrl = $"{svnConfig.BaseUrl}{pathParts.Last()}";
+
+        var handler = new HttpClientHandler
+        {
+            Credentials = new NetworkCredential(svnConfig.Username, svnConfig.Password)
+        };
+
+        using var client = new HttpClient(handler);
+        return await this.FetchResource(svnUrl, client, problemId, contestId);
+    }
+
+    private async Task<byte[]> FetchResource(string link, HttpClient client, int problemId, int contestId)
+    {
+        try
+        {
+            var response = await client.GetAsync(link, HttpCompletionOption.ResponseHeadersRead);
+
+            if (response is not { IsSuccessStatusCode: true })
+            {
+                this.logger.LogHttpRequestFailure(problemId, contestId, response?.StatusCode ?? HttpStatusCode.ServiceUnavailable, link);
+                throw new BusinessServiceException(DocumentNotFoundOrEmpty);
+            }
+
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+            if (fileBytes.Length == 0)
+            {
+                this.logger.LogFileNotFoundOrEmpty(problemId, contestId, link);
+                throw new BusinessServiceException(DocumentNotFoundOrEmpty);
+            }
+
+            return fileBytes;
+        }
+        catch (Exception)
+        {
+            this.logger.LogResourceDownloadFailure(problemId, contestId, link);
+            throw new BusinessServiceException(DocumentNotFoundOrEmpty);
+        }
+    }
+
+    private static bool IsExpectedFormat(byte[] fileBytes)
+    {
+        // .docx files are ZIP archives, so they start with the ZIP file signature: "PK"
+        const byte p = 0x50; // ASCII for 'P'
+        const byte k = 0x4B; // ASCII for 'K'
+
+        return fileBytes.Length >= 2 && fileBytes[0] == p && fileBytes[1] == k;
     }
 }
