@@ -220,9 +220,9 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             .Select(c => c.Id)
             .ToListAsync();
 
-    public async Task<ContestActivityModel> GetContestActivity(int contestId) =>
-        await this.activityService.GetContestActivity(await this.contestsData.GetByIdQuery(contestId)
-            .MapCollection<ContestForActivityServiceModel>().FirstAsync()).Map<ContestActivityModel>();
+    public async Task<ContestActivityModel> GetContestActivity(int contestId)
+        => this.activityService.GetContestActivity(await this.contestsData.GetByIdQuery(contestId)
+            .MapCollection<ContestForActivityServiceModel>().FirstAsync(), []).Map<ContestActivityModel>();
 
     public override async Task<ContestAdministrationModel> Get(int id)
         => await this.contestsData.GetByIdWithProblemsAndParticipants(id).Map<ContestAdministrationModel>();

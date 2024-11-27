@@ -13,7 +13,7 @@ interface IProfileAboutInfoProps {
     userProfile: IUserProfileType;
     isUserAdmin : boolean;
     isUserLecturer : boolean;
-    isUserProfileOwner : boolean;
+    isUserProfileOwner: boolean | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

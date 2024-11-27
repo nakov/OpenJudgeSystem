@@ -18,21 +18,17 @@ namespace OJS.Services.Ui.Data.Implementations
                 .GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
-        public Task<Participant?> GetWithProblemsForParticipantByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
-            => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
-                .Include(p => p.User)
-                .Include(p => p.Contest)
-                .Include(p => p.ProblemsForParticipants)
-                .FirstOrDefaultAsync();
-
-        public IQueryable<Participant> GetWithProblemsForParticipantsByContestAndUser(int contestId,
-            string userId)
-            => this.GetAllByContestAndUser(contestId, userId)
-                .Include(p => p.ProblemsForParticipants)
-                .ThenInclude(pfp => pfp.Problem);
-
         public IQueryable<Participant> GetAllByUser(string? userId)
             => this.GetQuery(p => p.UserId == userId);
+
+        public IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
+            this.GetAllByContest(contestId)
+                .Where(p => p.UserId == userId);
+
+        public IQueryable<Participant> GetAllByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
+            => this
+                .GetAllByContestAndUser(contestId, userId)
+                .Where(p => p.IsOfficial == isOfficial);
 
         public IQueryable<Participant> GetAllByUsernameAndContests(string username, IEnumerable<int> contestIds)
         {
@@ -51,10 +47,6 @@ namespace OJS.Services.Ui.Data.Implementations
                 .ThenInclude(s => s.Problem)
                 .ThenInclude(p => p.ProblemGroup);
 
-        public IQueryable<Participant> GetAllOfficialByContest(int contestId)
-            => this.GetAllByContest(contestId)
-                .Where(p => p.IsOfficial);
-
         public Task<bool> ExistsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .AnyAsync();
@@ -65,17 +57,5 @@ namespace OJS.Services.Ui.Data.Implementations
                 .GroupBy(p => p.ContestId)
                 .Select(g => new { ContestId = g.Key, ParticipantsCount = g.Count() })
                 .ToDictionaryAsync(p => p.ContestId, p => p.ParticipantsCount);
-
-        private IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
-            this.GetAllByContest(contestId)
-                .Where(p => p.UserId == userId);
-
-        private IQueryable<Participant> GetAllByContestByUserAndIsOfficial(
-            int contestId,
-            string userId,
-            bool isOfficial)
-            => this
-                .GetAllByContestAndUser(contestId, userId)
-                .Where(p => p.IsOfficial == isOfficial);
     }
 }
