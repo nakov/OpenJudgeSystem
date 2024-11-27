@@ -3,6 +3,7 @@ namespace OJS.Services.Infrastructure.Constants;
 using Microsoft.Extensions.Logging;
 using OJS.Workers.Common.Models;
 using System;
+using System.Net;
 
 /// <summary>
 /// Define the logger messages used in the application for high performance logging (https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging).
@@ -78,6 +79,21 @@ public static partial class LoggerMessageDefinitions
 
     [LoggerMessage(302, LogLevel.Information, "Truncated {PercentageOfMessageContentTruncated:F2}% of a message's content to comply with token limits for problem #{ProblemId}.")]
     public static partial void LogPercentageOfMessageContentTruncated(this ILogger logger, double percentageOfMessageContentTruncated, int problemId);
+
+    [LoggerMessage(303, LogLevel.Warning, "The downloaded file from {Link} for problem #{ProblemId} in contest #{ContestId} is not in the expected format.")]
+    public static partial void LogInvalidDocumentFormat(this ILogger logger, int problemId, int contestId, string link);
+
+    [LoggerMessage(304, LogLevel.Warning, "The downloaded file from {Link} for problem #{ProblemId} in contest #{ContestId} is either empty or does not exist.")]
+    public static partial void LogFileNotFoundOrEmpty(this ILogger logger, int problemId, int contestId, string link);
+
+    [LoggerMessage(305, LogLevel.Error, "Failed to download the file from {Link} for problem #{ProblemId} in contest #{ContestId} with status code {StatusCode}")]
+    public static partial void LogHttpRequestFailure(this ILogger logger, int problemId, int contestId, HttpStatusCode statusCode, string link);
+
+    [LoggerMessage(306, LogLevel.Error, "Failed to download the file from {Link} for problem #{ProblemId} in contest #{ContestId}.")]
+    public static partial void LogResourceDownloadFailure(this ILogger logger, int problemId, int contestId, string link);
+
+    [LoggerMessage(307, LogLevel.Error, "Failed to parse the content of the downloaded file for problem #{ProblemId} in contest #{ContestId}.")]
+    public static partial void LogFileParsingFailure(this ILogger logger, int problemId, int contestId);
 
     // Submissions
     [LoggerMessage(1010, LogLevel.Error, "Exception in publishing submission #{SubmissionId}", SkipEnabledCheck = true)]
