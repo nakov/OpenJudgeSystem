@@ -5,7 +5,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import {
     QUOTA_LIMIT,
     QUOTA_RESET_TIME,
-    REQUESTS_MADE,
+    REQUESTS_MADE, USERNAME,
 } from 'src/common/labels';
 import { IUserMentorAdministrationModel } from 'src/common/types';
 import SpinningLoader from 'src/components/guidelines/spinning-loader/SpinningLoader';
@@ -49,6 +49,7 @@ const UserMentorEdit = (props: IUserMentorEditProps) => {
         quotaLimit: null,
         createdOn: new Date(),
         modifiedOne: new Date(),
+        userUserName: '',
     });
 
     const [ userMentorValidations, setUserMentorValidations ] = useState({
@@ -170,6 +171,19 @@ const UserMentorEdit = (props: IUserMentorEditProps) => {
                     </Typography>
                     <div className={formStyles.fieldBoxDivider} />
                     <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.row}>
+                            <TextField
+                              className={formStyles.inputRow}
+                              type="text"
+                              label={USERNAME}
+                              variant="standard"
+                              name="userUserName"
+                              onChange={onChange}
+                              value={userMentor.userUserName}
+                              InputLabelProps={{ shrink: true }}
+                              disabled
+                            />
+                        </Box>
                         <Box className={formStyles.row}>
                             <DateTimePicker
                               className={formStyles.inputRow}

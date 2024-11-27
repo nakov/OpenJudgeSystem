@@ -7,7 +7,7 @@ import {
     QUOTA_LIMIT,
     QUOTA_RESET_TIME,
     REQUESTS_MADE,
-    USER_ID,
+    USER_ID, USERNAME,
 } from '../../../common/labels';
 import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
 
@@ -15,6 +15,16 @@ const usersMentorsFilterableColumns: AdministrationGridColDef[] = [
     {
         field: 'id',
         headerName: USER_ID,
+        flex: 1,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'userUserName',
+        headerName: USERNAME,
         flex: 1,
         type: 'string',
         filterable: false,

@@ -3,13 +3,12 @@
 using System;
 using AutoMapper;
 using OJS.Data.Models.Mentor;
-using OJS.Data.Models.Users;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Models.Mapping;
 
 public class UserMentorAdministrationModel : BaseAdministrationModel<string>, IMapExplicitly
 {
-    public virtual UserProfile User { get; set; } = null!;
+    public string UserUserName { get; set; } = default!;
 
     public DateTimeOffset QuotaResetTime { get; set; }
 

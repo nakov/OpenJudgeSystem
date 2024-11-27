@@ -780,6 +780,7 @@ interface IMentorConversationResponseModel {
 
 interface IUserMentorInListModel {
     id: string;
+    userUserName: string;
     quotaResetTime: Date;
     requestsMade: number;
     quotaLimit: number | null;
@@ -789,6 +790,7 @@ interface IUserMentorInListModel {
 
 interface IUserMentorAdministrationModel {
     id: string;
+    userUserName: string;
     quotaResetTime: Date;
     requestsMade: number;
     quotaLimit: number | null;
