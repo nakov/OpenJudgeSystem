@@ -15,6 +15,8 @@ using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ContestCategoriesController : BaseAdminApiController<ContestCategory, int, ContestCategoryInListModel, ContestCategoryAdministrationModel>
 {
@@ -23,11 +25,13 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
     public ContestCategoriesController(
         IContestCategoriesBusinessService contestCategoriesBusinessService,
         ContestCategoryAdministrationModelValidator validator,
-        IContestCategoriesGridDataService contestCategoryGridDataService)
+        IContestCategoriesGridDataService contestCategoryGridDataService,
+        IDataService<AccessLog> accessLogsData)
     : base(
         contestCategoryGridDataService,
         contestCategoriesBusinessService,
-        validator) => this.contestCategoriesBusinessService = contestCategoriesBusinessService;
+        validator,
+        accessLogsData) => this.contestCategoriesBusinessService = contestCategoriesBusinessService;
 
     [HttpGet]
     public IActionResult GetForContestDropdown()

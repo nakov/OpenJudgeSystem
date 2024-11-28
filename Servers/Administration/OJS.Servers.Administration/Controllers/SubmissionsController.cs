@@ -9,6 +9,8 @@ using OJS.Services.Administration.Business.Submissions.GridData;
 using OJS.Services.Administration.Business.Submissions.Validation;
 using OJS.Services.Administration.Models.Submissions;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class SubmissionsController : BaseAdminApiController<
     Submission,
@@ -21,11 +23,13 @@ public class SubmissionsController : BaseAdminApiController<
     public SubmissionsController(
             ISubmissionsGridDataService submissionsGridDataService,
             ISubmissionsBusinessService submissionsBusinessService,
-            SubmissionsAdministrationModelValidator validator)
+            SubmissionsAdministrationModelValidator validator,
+            IDataService<AccessLog> accessLogsData)
         : base(
             submissionsGridDataService,
             submissionsBusinessService,
-            validator) =>
+            validator,
+            accessLogsData) =>
         this.submissionsBusinessService = submissionsBusinessService;
 
     [HttpPost("{id:int}")]
