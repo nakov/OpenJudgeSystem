@@ -40,7 +40,9 @@ import {
     useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
-import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
+import {
+    useGetSubmissionResultsByProblemQuery,
+} from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
@@ -106,18 +108,19 @@ const ContestSolutionSubmitPage = () => {
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
 
-    const [
-        getSubmissionsData, {
-            data: submissionsData,
-            isError: submissionsError,
-            error: submissionsErrorData,
-            isLoading: submissionsDataLoading,
-            isFetching: submissionsDataFetching,
-        },
-    ] = useLazyGetSubmissionResultsByProblemQuery();
-
     const isModalOpen = Boolean(anchorEl);
     const isCompete = useMemo(() => getParticipationType() === ContestParticipationType.Compete, [ getParticipationType ]);
+
+    const {
+        data: submissionsData,
+        error: submissionsErrorData,
+        isFetching: submissionsDataFetching,
+        refetch: getSubmissionsData,
+    } = useGetSubmissionResultsByProblemQuery({
+        id: Number(selectedContestDetailsProblem!.id),
+        page: selectedSubmissionsPage,
+        isOfficial: isCompete,
+    }, { skip: selectedContestDetailsProblem === undefined });
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -165,11 +168,7 @@ const ContestSolutionSubmitPage = () => {
 
     const handleRefreshClick = () => {
         setIsRotating(true);
-        getSubmissionsData({
-            id: Number(selectedContestDetailsProblem!.id),
-            page: selectedSubmissionsPage,
-            isOfficial: isCompete,
-        });
+        getSubmissionsData();
     };
 
     const handleSubmitButtonShouldBeDisabled = useCallback((force?: boolean) => {
@@ -344,25 +343,6 @@ const ContestSolutionSubmitPage = () => {
         }
     }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue ]);
 
-    // fetching submissions only when we have selected problem,
-    // otherwise the id is NaN and the query is invalid
-    useEffect(() => {
-        if (selectedContestDetailsProblem && isActiveParticipant && isRegisteredParticipant) {
-            getSubmissionsData({
-                id: Number(selectedContestDetailsProblem.id),
-                page: selectedSubmissionsPage,
-                isOfficial: isCompete,
-            });
-        }
-    }, [
-        isActiveParticipant,
-        isRegisteredParticipant,
-        selectedContestDetailsProblem,
-        getSubmissionsData,
-        selectedSubmissionsPage,
-        isCompete,
-    ]);
-
     useEffect(() => {
         // Disable submit button when code is updated
         handleSubmitButtonShouldBeDisabled();
@@ -388,11 +368,7 @@ const ContestSolutionSubmitPage = () => {
         }).then((d) => {
             if (!(d as any).error) {
                 refetch();
-                getSubmissionsData({
-                    id: Number(selectedContestDetailsProblem!.id),
-                    page: selectedSubmissionsPage,
-                    isOfficial: isCompete,
-                });
+                getSubmissionsData();
             }
         }).catch(() => {});
     }, [
@@ -401,17 +377,16 @@ const ContestSolutionSubmitPage = () => {
         refetch,
         selectedContestDetailsProblem,
         selectedSubmissionType?.id,
-        selectedSubmissionsPage,
         submissionCode,
         submitSolution,
         contestId,
         contestDetails?.isOnlineExam,
     ]);
 
-    const onSolutionSubmitFile = useCallback(async () => {
+    const onSolutionSubmitFile = useCallback(() => {
         setUploadedFile(null);
 
-        await submitSolutionFile({
+        submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
@@ -420,18 +395,13 @@ const ContestSolutionSubmitPage = () => {
             isOnlineExam: contestDetails?.isOnlineExam,
         });
         refetch();
-        await getSubmissionsData({
-            id: Number(selectedContestDetailsProblem!.id),
-            page: selectedSubmissionsPage,
-            isOfficial: isCompete,
-        });
+        getSubmissionsData();
     }, [
         getSubmissionsData,
         isCompete,
         refetch,
         selectedContestDetailsProblem,
         selectedSubmissionType?.id,
-        selectedSubmissionsPage,
         submitSolutionFile,
         uploadedFile,
         contestId,
@@ -842,11 +812,11 @@ const ContestSolutionSubmitPage = () => {
                         </span>
                     </Tooltip>
                 </div>
-                { submissionsError
+                { submissionsErrorData
                     ? getErrorMessage(submissionsErrorData, 'Error loading submissions')
                     : (
                         <SubmissionsGrid
-                          isDataLoaded={!submissionsDataLoading}
+                          isDataLoaded={!submissionsDataFetching}
                           submissions={submissionsData ?? undefined}
                           handlePageChange={(page: number) => setSelectedSubmissionsPage(page)}
                           options={{
