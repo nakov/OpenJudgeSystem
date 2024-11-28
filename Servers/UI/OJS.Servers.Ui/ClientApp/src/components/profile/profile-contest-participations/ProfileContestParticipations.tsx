@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { SortType, SortTypeDirection } from '../../../common/contest-types';
-import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../../common/types';
+import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
-import { useLazyGetContestsParticipationsForUserQuery } from '../../../redux/services/contestsService';
+import {
+    useGetContestsParticipationsForUserQuery,
+} from '../../../redux/services/contestsService';
 import { useAppSelector } from '../../../redux/store';
 import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
@@ -30,41 +32,37 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const { getColorClassName, themeColors } = useTheme();
 
-    const [ getContestsParticipationsQuery, {
+    const canFetchParticipations = useMemo(() => {
+        if (!isLoggedIn && isNil(profile)) {
+            return false;
+        }
+
+        if (isLoggedIn && !isNil(profile)) {
+            if (!isChosenInToggle && userIsProfileOwner) {
+                return false;
+            }
+
+            if (!isChosenInToggle && !userIsProfileOwner && internalUser.canAccessAdministration) {
+                return false;
+            }
+        }
+        return !isNil(profile);
+    }, [ isLoggedIn, profile, isChosenInToggle, userIsProfileOwner, internalUser ]);
+
+    const {
         data: userContestParticipations,
         isLoading: areContestParticipationsLoading,
         error: contestParticipationsQueryError,
-    } ] = useLazyGetContestsParticipationsForUserQuery();
-
-    useEffect(() => {
-        if (
-            // If anonymous user but profile is not fetched
-            (!isLoggedIn && isNil(profile)) ||
-            // User is admin/lecturer but is not chosen in toggle
-            (isLoggedIn && !isNil(profile) && !isChosenInToggle && (!userIsProfileOwner && internalUser.canAccessAdministration)) ||
-            // User is profile owner but has not chosen in toggle
-            (isLoggedIn && !isNil(profile) && !isChosenInToggle && userIsProfileOwner) ||
-            // Profile is not fetched
-            isNil(profile)) {
-            return;
-        }
-
-        getContestsParticipationsQuery({
-            username: profile?.userName,
+    } = useGetContestsParticipationsForUserQuery(
+        {
+            username: profile!.userName,
             sortType: SortType.ParticipantRegistrationTime,
             sortTypeDirection: SortTypeDirection.Descending,
             itemsPerPage: 6,
             page: userContestParticipationsPage,
-        } as IGetContestParticipationsForUserQueryParams);
-    }, [
-        getContestsParticipationsQuery,
-        internalUser,
-        isChosenInToggle,
-        isLoggedIn,
-        profile,
-        userContestParticipationsPage,
-        userIsProfileOwner,
-    ]);
+        },
+        { skip: !canFetchParticipations },
+    );
 
     useEffect(() => {
         if (((userIsProfileOwner || internalUser.canAccessAdministration) && !isChosenInToggle) ||
