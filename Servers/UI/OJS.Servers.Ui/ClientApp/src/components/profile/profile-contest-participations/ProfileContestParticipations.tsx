@@ -55,7 +55,8 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         error: contestParticipationsQueryError,
     } = useGetContestsParticipationsForUserQuery(
         {
-            username: profile!.userName,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            username: profile?.userName!,
             sortType: SortType.ParticipantRegistrationTime,
             sortTypeDirection: SortTypeDirection.Descending,
             itemsPerPage: 6,

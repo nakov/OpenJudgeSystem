@@ -35,7 +35,8 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         error: userSubmissionsQueryError,
     } = useGetUserSubmissionsQuery(
         {
-            username: profile!.userName,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            username: profile?.userName!,
             page: userSubmissionsPage,
         },
         { skip: !canFetchSubmissions },
