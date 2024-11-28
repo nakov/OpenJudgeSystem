@@ -230,12 +230,12 @@ const ContestSolutionSubmitPage = () => {
     }, [ submissionsData, problems, refetch ]);
 
     useEffect(() => {
-        if (!submissionsDataFetching) {
+        if (!submissionsDataFetching && !isLoading) {
             setTimeout(() => {
                 setIsRotating(false);
             }, 1000);
         }
-    }, [ submissionsDataFetching, setIsRotating ]);
+    }, [ submissionsDataFetching, isLoading, setIsRotating ]);
 
     // this effect manages the disabling of the submit button as well as the
     // displaying of the seconds before the next submission would be enabled
@@ -816,7 +816,7 @@ const ContestSolutionSubmitPage = () => {
                     ? getErrorMessage(submissionsErrorData, 'Error loading submissions')
                     : (
                         <SubmissionsGrid
-                          isDataLoaded={!submissionsDataFetching && !submissionsDataLoading}
+                          isDataLoaded={!submissionsDataLoading}
                           submissions={submissionsData ?? undefined}
                           handlePageChange={(page: number) => setSelectedSubmissionsPage(page)}
                           options={{
