@@ -80,7 +80,6 @@ const ContestSolutionSubmitPage = () => {
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
-
     // Get the participationType type from route params or path (if not in params)
     const getParticipationType = useCallback(() => {
         if (participationType) {
@@ -115,12 +114,13 @@ const ContestSolutionSubmitPage = () => {
         data: submissionsData,
         error: submissionsErrorData,
         isFetching: submissionsDataFetching,
+        isLoading: submissionsDataLoading,
         refetch: getSubmissionsData,
     } = useGetSubmissionResultsByProblemQuery({
-        id: Number(selectedContestDetailsProblem!.id),
+        id: Number(selectedContestDetailsProblem?.id),
         page: selectedSubmissionsPage,
         isOfficial: isCompete,
-    }, { skip: selectedContestDetailsProblem === undefined });
+    }, { skip: !selectedContestDetailsProblem });
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -816,7 +816,7 @@ const ContestSolutionSubmitPage = () => {
                     ? getErrorMessage(submissionsErrorData, 'Error loading submissions')
                     : (
                         <SubmissionsGrid
-                          isDataLoaded={!submissionsDataFetching}
+                          isDataLoaded={!submissionsDataFetching && !submissionsDataLoading}
                           submissions={submissionsData ?? undefined}
                           handlePageChange={(page: number) => setSelectedSubmissionsPage(page)}
                           options={{
