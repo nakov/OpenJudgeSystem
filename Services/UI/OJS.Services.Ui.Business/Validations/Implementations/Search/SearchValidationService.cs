@@ -22,7 +22,7 @@ public class SearchValidationService : ISearchValidationService
         var contestNullValidationResult = this.notDefaultValueValidationHelper
             .ValidateValueIsNotDefault(item, nameof(item));
 
-        if (item == null || item?.Length < MinimumSearchTermLength)
+        if (item == null || item?.Length < MinimumSearchTermLength || !contestNullValidationResult.IsValid)
         {
             return ValidationResult.Invalid(ValidationMessages.Search.LessThanThreeSymbols);
         }

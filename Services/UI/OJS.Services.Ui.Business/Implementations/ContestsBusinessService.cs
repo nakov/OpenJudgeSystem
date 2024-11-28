@@ -163,7 +163,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .MapCollection<ParticipantForContestRegistrationServiceModel>()
                 .FirstOrDefaultAsync();
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
                 participant,
@@ -205,7 +205,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 participantForActivity.ContestPracticeEndTime = contest?.PracticeEndTime;
             }
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
                 participantForActivity,
@@ -297,7 +297,7 @@ namespace OJS.Services.Ui.Business.Implementations
             participant.Contest = contest;
             var participantForActivity = participant.Map<ParticipantForActivityServiceModel>();
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
                 participantForActivity,
