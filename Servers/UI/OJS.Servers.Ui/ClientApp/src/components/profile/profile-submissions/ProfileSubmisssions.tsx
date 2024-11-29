@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
@@ -19,7 +19,7 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((state) => state.users);
 
-    const canFetchSubmissions = React.useMemo(() => {
+    const canFetchSubmissions = useMemo(() => {
         const isProfileAvailable = !isNil(profile);
         const canAccess = isLoggedIn && isProfileAvailable;
         const hasAdminAccess = internalUser.canAccessAdministration;
