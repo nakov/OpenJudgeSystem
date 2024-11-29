@@ -363,6 +363,8 @@ interface IProblemAdministration {
     tests: File | null;
     problemGroupOrderBy: number;
     problemGroupId : number;
+    additionalFiles: File | null;
+    hasAdditionalFiles: boolean;
 }
 
 interface ISubmissionTypesInListModel {
