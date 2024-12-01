@@ -33,6 +33,7 @@ using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Workers.Common.Extensions;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
+using static OJS.Services.Infrastructure.Models.ModelHelpers;
 using static OJS.Services.Ui.Business.Constants.Comments;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
@@ -264,20 +265,20 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 page);
     }
 
-    public async Task<PagedResult<TServiceModel>> GetUserSubmissionsByProblem<TServiceModel>(
+    public async Task<PagedResult<SubmissionForSubmitSummaryServiceModel>> GetUserSubmissionsByProblem(
         int problemId,
         bool isOfficial,
         int page)
     {
         var problem =
-            await this.problemsDataService.GetWithProblemGroupById(problemId)
-                .Map<ProblemForSubmissionDetailsServiceModel>();
+            await this.problemsDataService.OneByIdTo<ProblemForSubmissionDetailsServiceModel>(problemId);
 
         var user = this.userProviderService.GetCurrentUser();
 
         var participant = await this.participantsDataService
-                .GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id, isOfficial)
-                .Map<ParticipantServiceModel>();
+            .GetAllByContestByUserAndIsOfficial(problem?.ProblemGroupContestId ?? 0, user.Id, isOfficial)
+            .MapCollection<ParticipantServiceModel>()
+            .FirstOrDefaultAsync();
 
         var validationResult =
             this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
@@ -287,7 +288,26 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        return await this.GetUserSubmissions<TServiceModel>(problem.Id, participant.Id, page);
+        var submissions = await this.submissionsData
+            .GetAllByProblemAndParticipant(problemId, participant!.Id)
+            .MapCollection<SubmissionForSubmitSummaryServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
+
+        foreach (var submission in submissions.Items)
+        {
+            var (maxMemoryUsed, maxTimeUsed) = GetMaxMemoryAndTimeUsed(submission.TestRunsCache);
+
+            submission.IsOfficial = isOfficial;
+            submission.MaxMemoryUsed = maxMemoryUsed;
+            submission.MaxTimeUsed = maxTimeUsed;
+            submission.Result = new ResultForPublicSubmissionsServiceModel
+            {
+                Points = submission.Points,
+                MaxPoints = problem!.MaximumPoints,
+            };
+        };
+
+        return submissions;
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -590,13 +610,4 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             HandleProcessingException(submission, ex, nameof(this.SaveParticipantScore));
         }
     }
-
-    private async Task<PagedResult<TServiceModel>> GetUserSubmissions<TServiceModel>(
-        int problemId,
-        int participantId,
-        int page)
-        => await this.submissionsData
-            .GetAllByProblemAndParticipant(problemId, participantId)
-            .MapCollection<TServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
 }
