@@ -1,5 +1,6 @@
 ﻿namespace OJS.Servers.Administration.Controllers;
 
+using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,8 @@ using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Data.Models.Common;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 using static OJS.Services.Administration.Models.AdministrationConstants;
 using static Common.GlobalConstants.FileExtensions;
 
@@ -29,15 +32,18 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     private readonly IGridDataService<TEntity> gridDataService;
     private readonly IAdministrationOperationService<TEntity, TId, TUpdateModel> operationService;
     private readonly IValidator<TUpdateModel> validator;
+    private readonly IDataService<AccessLog> accessLogData;
 
     protected BaseAdminApiController(
         IGridDataService<TEntity> gridDataService,
         IAdministrationOperationService<TEntity, TId, TUpdateModel> operationService,
-        IValidator<TUpdateModel> validator)
+        IValidator<TUpdateModel> validator,
+        IDataService<AccessLog> accessLogData)
     {
         this.gridDataService = gridDataService;
         this.operationService = operationService;
         this.validator = validator;
+        this.accessLogData = accessLogData;
     }
 
     [HttpGet]
@@ -116,6 +122,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
         }
 
         await this.operationService.Edit(model);
+        await this.LogAccess();
         return this.Ok($"The {typeof(TEntity).Name} was successfully updated.");
     }
 
@@ -133,6 +140,27 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
         }
 
         await this.operationService.Delete(id);
+        await this.LogAccess();
         return this.Ok($"Successfully deleted {typeof(TEntity).Name} with id: {id}");
     }
+
+    private async Task LogAccess()
+    {
+        var user = this.User.Map<UserInfoModel>();
+
+        var log = new AccessLog
+        {
+            UserId = user.Id,
+            IpAddress = this.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+            RequestType = this.HttpContext.Request.Method,
+            Url = this.HttpContext.Request.Path,
+            PostParams = this.HttpContext.Request.HasFormContentType
+                ? string.Join("&", this.HttpContext.Request.Form.Select(kv => $"{kv.Key}={kv.Value}"))
+                : null,
+        };
+
+        await this.accessLogData.Add(log);
+        await this.accessLogData.SaveChanges();
+    }
+
 }

@@ -12,6 +12,8 @@ using OJS.Services.Administration.Business.Roles.Permissions;
 using OJS.Services.Administration.Business.Roles.Validators;
 using OJS.Services.Administration.Models.Roles;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class RolesController : BaseAdminApiController<Role, string, RoleInListModel, RoleAdministrationModel>
 {
@@ -22,11 +24,13 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
        IRoleGridDataService gridDataService,
        IRolesBusinessService rolesBusinessService,
        RoleAdministrationModelValidator validator,
-       UserToRoleModelValidator userToRoleModelValidator)
+       UserToRoleModelValidator userToRoleModelValidator,
+       IDataService<AccessLog> accessLogsData)
         : base(
         gridDataService,
         rolesBusinessService,
-        validator)
+        validator,
+        accessLogsData)
     {
         this.rolesBusinessService = rolesBusinessService;
         this.userToRoleModelValidator = userToRoleModelValidator;

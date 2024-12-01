@@ -14,6 +14,8 @@ using OJS.Services.Administration.Models.Contests.Participants;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ParticipantsController : BaseAdminApiController<Participant, int, ParticipantInListViewModel, ParticipantAdministrationModel>
 {
@@ -25,11 +27,13 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, P
         IParticipantsGridDataService participantsGridDataService,
         IParticipantsBusinessService participantsBusinessService,
         ChangeParticipationTimeValidator changeParticipationTimeValidator,
-        ParticipantAdministrationModelValidator validator)
+        ParticipantAdministrationModelValidator validator,
+        IDataService<AccessLog> accessLogsData)
         : base(
             participantsGridDataService,
             participantsBusinessService,
-            validator)
+            validator,
+            accessLogsData)
     {
         this.participantsGridDataService = participantsGridDataService;
         this.participantsBusinessService = participantsBusinessService;
