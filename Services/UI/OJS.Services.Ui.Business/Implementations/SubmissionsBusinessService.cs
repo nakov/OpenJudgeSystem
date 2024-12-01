@@ -277,6 +277,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant = await this.participantsDataService
             .GetAllByContestByUserAndIsOfficial(problem?.ProblemGroupContestId ?? 0, user.Id, isOfficial)
+            .AsNoTracking()
             .MapCollection<ParticipantServiceModel>()
             .FirstOrDefaultAsync();
 
@@ -290,6 +291,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submissions = await this.submissionsData
             .GetAllByProblemAndParticipant(problemId, participant!.Id)
+            .AsNoTracking()
             .MapCollection<SubmissionForSubmitSummaryServiceModel>()
             .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
 
