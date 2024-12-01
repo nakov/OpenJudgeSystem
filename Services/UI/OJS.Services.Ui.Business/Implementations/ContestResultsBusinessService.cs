@@ -51,7 +51,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         var contest = await this.contestsCache.GetContestDetailsServiceModel(contestId)
             ?? throw new BusinessServiceException("Contest does not exist or is deleted.");
 
-        var validationResult = this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
+        var validationResult = await this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
 
         if (!validationResult.IsValid)
         {

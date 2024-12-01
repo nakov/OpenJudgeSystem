@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
+using System.Threading.Tasks;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation.Helpers;
@@ -34,7 +35,7 @@ public class ContestResultsValidationService : IContestResultsValidationService
         this.userProvider = userProvider;
     }
 
-    public ValidationResult GetValidationResult((ContestDetailsServiceModel?, bool, bool) item)
+    public async Task<ValidationResult> GetValidationResult((ContestDetailsServiceModel?, bool, bool) item)
     {
         var (contest, fullResults, isOfficial) = item;
 
@@ -47,10 +48,8 @@ public class ContestResultsValidationService : IContestResultsValidationService
 
         var user = this.userProvider.GetCurrentUser();
 
-        var isUserAdminOrLecturer = user != null && (user.IsAdmin || this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(contest?.Id)
-            .GetAwaiter()
-            .GetResult());
+        var isUserAdminOrLecturer = user != null && (user.IsAdmin || await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(contest?.Id));
 
         if (fullResults && !user!.IsAdminOrLecturer)
         {
@@ -69,19 +68,15 @@ public class ContestResultsValidationService : IContestResultsValidationService
             return ValidationResult.Invalid(ValidationMessages.Participant.ResultsNotVisibleForContest);
         }
 
-        var contestActivity = this.activityService.GetContestActivity(contest!.Map<ContestForActivityServiceModel>())
-            .GetAwaiter()
-            .GetResult();
+        var contestActivity = await this.activityService.GetContestActivity(contest!.Map<ContestForActivityServiceModel>());
 
         var contestHasStartDateAndEndTimeIsBeforeNow =
             contest.StartTime.HasValue &&
             contest.EndTime.HasValue &&
             contest.EndTime <= this.datesService.GetUtcNow();
 
-        if (isOfficial && (!contestHasStartDateAndEndTimeIsBeforeNow && this.participantsData
-                .GetByContestByUserAndByIsOfficial(contest.Id, user!.Id, isOfficial)
-                .GetAwaiter()
-                .GetResult() == null))
+        if (isOfficial && !contestHasStartDateAndEndTimeIsBeforeNow && await this.participantsData
+                .GetByContestByUserAndByIsOfficial(contest.Id, user!.Id, isOfficial) == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ResultsNotVisibleForContest);
         }
