@@ -55,9 +55,9 @@ const SubmissionGridRow = ({
         result: { points, maxPoints },
         strategyName,
         problem: {
-            id: problemId = null,
+            id: problemId,
             name: problemName = '',
-        } = {},
+        },
         isOfficial,
         isCompiledSuccessfully,
         processed,
