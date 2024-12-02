@@ -35,9 +35,7 @@ using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
 {
-    private const int NumberOfContestsToGet = 20;
     private readonly IContestsDataService contestsData;
-    private readonly Business.IUserProviderService userProvider;
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IContestsCacheService contestsCacheService;
@@ -54,7 +52,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
-        Business.IUserProviderService userProvider,
         IIpsDataService ipsData,
         IContestsActivityService activityService,
         IContestsCacheService contestsCacheService,
@@ -70,7 +67,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         IDataService<LecturerInContest> lecturerInContestDataService)
     {
         this.contestsData = contestsData;
-        this.userProvider = userProvider;
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.contestsCacheService = contestsCacheService;
@@ -98,25 +94,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         bool isUserAdmin)
         => !string.IsNullOrWhiteSpace(userId) &&
            (isUserAdmin || await this.contestsData.IsUserLecturerInContestByContestAndUser(contestId, userId));
-
-    public async Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string searchString)
-        where TServiceModel : class
-    {
-        var user = this.userProvider.GetCurrentUser();
-
-        return user.IsAdmin
-            ? await this.contestsData.AllTo<TServiceModel>(
-                filter: c => c.Name!.Contains(searchString),
-                null,
-                false,
-                0,
-                NumberOfContestsToGet)
-            : await this.contestsData.GetAllByLecturer(user.Id)
-                .Where(x => x.Name!.Contains(searchString))
-                .Take(NumberOfContestsToGet)
-                .MapCollection<TServiceModel>()
-                .ToListAsync();
-    }
 
     public async Task<FileResponseModel> ExportResults(ContestResultsExportRequestModel model)
     {
@@ -205,9 +182,47 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         };
     }
 
-    public async Task<ContestActivityModel> GetContestActivity(int contestId) =>
-        await this.activityService.GetContestActivity(await this.contestsData.GetByIdQuery(contestId)
-            .MapCollection<ContestForActivityServiceModel>().FirstAsync()).Map<ContestActivityModel>();
+    public async Task<ContestLegacyExportServiceModel> Export(int id)
+    {
+        var contest = await this.contestsData
+            .GetByIdQuery(id)
+            .AsSplitQuery()
+            .Where(c => !c.IsDeleted)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.Tests)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.Checker)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.SubmissionTypesInProblems)
+            .ThenInclude(sp => sp.SubmissionType)
+            .Include(c => c.ProblemGroups)
+            .ThenInclude(pg => pg.Problems)
+            .ThenInclude(p => p.Resources)
+            .FirstOrDefaultAsync();
+
+        if (contest == null)
+        {
+            throw new BusinessServiceException($"Contest with Id:{id} not found.");
+        }
+
+        RemoveCircularReferences(contest);
+
+        return contest.Map<ContestLegacyExportServiceModel>();
+    }
+
+    public async Task<IEnumerable<int>> GetExistingIds(IEnumerable<int> ids)
+        => await this.contestsData
+            .GetQuery()
+            .Where(c => !c.IsDeleted && ids.Contains(c.Id))
+            .Select(c => c.Id)
+            .ToListAsync();
+
+    public async Task<ContestActivityModel> GetContestActivity(int contestId)
+        => this.activityService.GetContestActivity(await this.contestsData.GetByIdQuery(contestId)
+            .MapCollection<ContestForActivityServiceModel>().FirstAsync(), []).Map<ContestActivityModel>();
 
     public override async Task<ContestAdministrationModel> Get(int id)
         => await this.contestsData.GetByIdWithProblemsAndParticipants(id).Map<ContestAdministrationModel>();
@@ -358,6 +373,34 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
         this.participantsData.DeleteMany(participantsForDeletion);
         await this.participantsData.SaveChanges();
+    }
+
+    private static void RemoveCircularReferences(Contest contest)
+    {
+        foreach (var problemGroup in contest.ProblemGroups)
+        {
+            problemGroup.Contest = null;
+
+            foreach (var problem in problemGroup.Problems)
+            {
+                problem.ProblemGroup = null;
+
+                foreach (var test in problem.Tests)
+                {
+                    test.Problem = null;
+                }
+
+                foreach (var resource in problem.Resources)
+                {
+                    resource.Problem = null;
+                }
+
+                foreach (var submissionTypeInProblem in problem.SubmissionTypesInProblems)
+                {
+                    submissionTypeInProblem.Problem = null;
+                }
+            }
+        }
     }
 
     private static StringBuilder PrepareSolutionsFileComment(

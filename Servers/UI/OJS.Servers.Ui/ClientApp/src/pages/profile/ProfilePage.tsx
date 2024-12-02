@@ -26,14 +26,14 @@ const ProfilePage = () => {
     const { internalUser, isLoggedIn, isGetUserInfoCompleted } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const [ toggleValue, setToggleValue ] = useState<number>(1);
-    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
+    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean | null>(null);
 
     const { username } = useParams();
     const { themeColors, getColorClassName } = useTheme();
     const dispatch = useAppDispatch();
 
-    // If {username} is present in url, then the the profile should be loaded for this username,
-    // otherwise the profile is loaded for the logged in user
+    // If {username} is present in url, then the profile should be loaded for this username,
+    // otherwise the profile is loaded for the logged-in user
     const profileUsername = useMemo(
         () => !isNil(username)
             ? decodeFromUrlParam(username)
@@ -49,6 +49,9 @@ const ProfilePage = () => {
 
     useEffect(() => {
         if (isGetUserInfoCompleted && !isNilOrEmpty(profileUsername)) {
+            // currentUserIsProfileOwner should be cleared and updated between each profile query
+            // in the case where the user makes consecutive profile requests for different users
+            setCurrentUserIsProfileOwner(null);
             getProfileQuery({ username: profileUsername });
         }
     }, [ getProfileQuery, isGetUserInfoCompleted, profileUsername ]);
@@ -100,65 +103,70 @@ const ProfilePage = () => {
                     'View submissions, contest participations, and track coding progress.'
                 }
             />
-            {isProfileInfoLoading || !isGetUserInfoCompleted
-                ? (
-                    <SpinningLoader />
-                )
-                : isNil(profile)
-                    ? renderError()
-                    : (
-                        <div className={getColorClassName(themeColors.textColor)}>
-                            <Breadcrumbs
-                              keyPrefix="profile"
-                              items={[
+            {
+                isProfileInfoLoading ||
+                !isGetUserInfoCompleted ||
+                // Wait until currentUserIsProfileOwner is set as render operations depend on it
+                (isLoggedIn && isNil(currentUserIsProfileOwner))
+                    ? (
+                        <SpinningLoader />
+                    )
+                    : isNil(profile)
+                        ? renderError()
+                        : (
+                            <div className={getColorClassName(themeColors.textColor)}>
+                                <Breadcrumbs
+                                  keyPrefix="profile"
+                                  items={[
                                 {
                                     text: `${currentUserIsProfileOwner
                                         ? 'My'
                                         : ''} Profile`,
                                 } as IPageBreadcrumbsItem,
-                              ]}
-                            />
-                            <ProfileAboutInfo
-                              userProfile={profile}
-                              isUserAdmin={internalUser.isAdmin}
-                              isUserLecturer={internalUser.isInRole}
-                              isUserProfileOwner={currentUserIsProfileOwner}
-                            />
-                            {currentUserIsProfileOwner && <LegacyInfoMessage />}
-                            {(currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
-                            <div className={styles.submissionsAndParticipationsToggle}>
-                                <Button
-                                  type={toggleValue === 1
-                                      ? ButtonType.primary
-                                      : ButtonType.secondary}
-                                  className={styles.toggleBtn}
-                                  text={currentUserIsProfileOwner
-                                      ? 'My Submissions'
-                                      : 'User Submissions'}
-                                  onClick={() => setToggleValue(1)}
+                                  ]}
                                 />
-                                <Button
-                                  type={toggleValue === 2
-                                      ? ButtonType.primary
-                                      : ButtonType.secondary}
-                                  className={styles.toggleBtn}
-                                  text={currentUserIsProfileOwner
-                                      ? 'My Contests'
-                                      : 'User Contests'}
-                                  onClick={() => setToggleValue(2)}
+                                <ProfileAboutInfo
+                                  userProfile={profile}
+                                  isUserAdmin={internalUser.isAdmin}
+                                  isUserLecturer={internalUser.isInRole}
+                                  isUserProfileOwner={currentUserIsProfileOwner}
+                                />
+                                {currentUserIsProfileOwner && <LegacyInfoMessage />}
+                                {(currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
+                                <div className={styles.submissionsAndParticipationsToggle}>
+                                    <Button
+                                      type={toggleValue === 1
+                                          ? ButtonType.primary
+                                          : ButtonType.secondary}
+                                      className={styles.toggleBtn}
+                                      text={currentUserIsProfileOwner
+                                          ? 'My Submissions'
+                                          : 'User Submissions'}
+                                      onClick={() => setToggleValue(1)}
+                                    />
+                                    <Button
+                                      type={toggleValue === 2
+                                          ? ButtonType.primary
+                                          : ButtonType.secondary}
+                                      className={styles.toggleBtn}
+                                      text={currentUserIsProfileOwner
+                                          ? 'My Contests'
+                                          : 'User Contests'}
+                                      onClick={() => setToggleValue(2)}
+                                    />
+                                </div>
+                                )}
+                                <ProfileSubmissions
+                                  userIsProfileOwner={currentUserIsProfileOwner}
+                                  isChosenInToggle={toggleValue === 1}
+                                />
+                                <ProfileContestParticipations
+                                  userIsProfileOwner={currentUserIsProfileOwner}
+                                  isChosenInToggle={toggleValue === 2}
                                 />
                             </div>
-                            )}
-                            <ProfileSubmissions
-                              userIsProfileOwner={currentUserIsProfileOwner}
-                              isChosenInToggle={toggleValue === 1}
-                            />
-                            <ProfileContestParticipations
-                              userIsProfileOwner={currentUserIsProfileOwner}
-                              isChosenInToggle={toggleValue === 2}
-                            />
-                        </div>
-                    )}
+                        )
+}
         </>
     );
 };

@@ -2,7 +2,6 @@
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
-using OJS.Data;
 using OJS.Data.Models;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
@@ -10,13 +9,11 @@ using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
 using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
-using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -85,9 +82,9 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
                 .FirstOrDefaultAsync();
         }
 
-        bool shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
+        var shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
 
-        var validationResult = this.deleteOrReplaceSubmissionTypeValidationService.GetValidationResult(
+        var validationResult = await this.deleteOrReplaceSubmissionTypeValidationService.GetValidationResult(
             (
                 model.SubmissionTypeToReplace,
                 model.SubmissionTypeToReplaceWith,

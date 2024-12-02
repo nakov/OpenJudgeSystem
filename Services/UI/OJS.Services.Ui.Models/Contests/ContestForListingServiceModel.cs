@@ -7,7 +7,6 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
-using System.Collections.Generic;
 
 public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
 {

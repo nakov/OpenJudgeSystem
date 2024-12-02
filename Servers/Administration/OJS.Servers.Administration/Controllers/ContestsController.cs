@@ -23,6 +23,8 @@ using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 using static Common.GlobalConstants.FileExtensions;
 
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
@@ -43,11 +45,13 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         IContestsGridDataService contestGridDataService,
         IContestsDataService contestsData,
         ISimilarityService similarityService,
-        IExcelService excelService)
+        IExcelService excelService,
+        IDataService<AccessLog> accessLogsData)
     : base(
         contestGridDataService,
         contestsBusinessService,
-        validator)
+        validator,
+        accessLogsData)
     {
         this.contestsBusinessService = contestsBusinessService;
         this.validator = validator;
@@ -121,7 +125,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
 
     [HttpPost]
     [ProtectedEntityAction(false)]
-    public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
+    public async Task<IActionResult> ExportResults(ContestResultsExportRequestModel model)
     {
         var file = await this.contestsBusinessService.ExportResults(model);
         return this.File(file.Content!, file.MimeType!, file.FileName);

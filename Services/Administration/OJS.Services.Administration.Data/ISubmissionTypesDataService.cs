@@ -7,8 +7,6 @@ namespace OJS.Services.Administration.Data
 
     public interface ISubmissionTypesDataService : IService, IDataService<SubmissionType>
     {
-        IQueryable<SubmissionType> GetAllByProblem(int problemId);
-
         IQueryable<SubmissionType> GetAll();
     }
 }

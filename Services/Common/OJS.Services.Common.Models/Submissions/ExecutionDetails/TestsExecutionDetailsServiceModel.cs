@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 {
     using System.Collections.Generic;
-    using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models.Mappings;
@@ -22,7 +21,7 @@
 
         public string? CheckerParameter { get; set; }
 
-        public IEnumerable<TestContext> Tests { get; set; } = Enumerable.Empty<TestContext>();
+        public IEnumerable<TestContext> Tests { get; set; } = [];
 
         public void RegisterMappings(IProfileExpression configuration)
         {

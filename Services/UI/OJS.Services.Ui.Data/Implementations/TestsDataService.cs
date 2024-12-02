@@ -4,7 +4,6 @@
     using OJS.Data.Models.Tests;
     using OJS.Services.Common.Data.Implementations;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public class TestsDataService : DataService<Test>, ITestsDataService
     {
@@ -13,21 +12,7 @@
         {
         }
 
-        public IQueryable<Test> GetByIdQuery(int id)
-            => this.GetQuery(t => t.Id == id);
-
         public IQueryable<Test> GetAllByProblem(int problemId)
             => this.GetQuery(t => t.ProblemId == problemId);
-
-        public IQueryable<Test> GetAllNonTrialByProblem(int problemId)
-            => this.GetAllByProblem(problemId)
-                .Where(t => !t.IsTrialTest);
-
-        public void DeleteByProblem(int problemId)
-        {
-            var entity = this.GetQuery().First(t => t.ProblemId == problemId);
-            this.Delete(entity);
-            Task.FromResult(this.SaveChanges());
-        }
     }
 }

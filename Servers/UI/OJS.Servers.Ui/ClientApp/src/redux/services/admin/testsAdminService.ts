@@ -100,6 +100,5 @@ export const {
     useExportZipQuery,
     useGetTestRunsByTestIdQuery,
     useLazyExportTestsToExcelQuery,
-
 } = testsAdminService;
 export default testsAdminService;

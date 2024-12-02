@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Data.Models;
 using OJS.Data.Models.Submissions;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.SubmissionTypes;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
+using OJS.Services.Common.Data;
 using OJS.Workers.Common.Models;
 
 using static OJS.Common.GlobalConstants.Roles;
@@ -22,11 +24,13 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
     public SubmissionTypesController(
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         IGridDataService<SubmissionType> submissionTypesGridDataService,
-        SubmissionTypeAdministrationModelValidator validator)
+        SubmissionTypeAdministrationModelValidator validator,
+        IDataService<AccessLog> accessLogsData)
             : base(
                 submissionTypesGridDataService,
                 submissionTypesBusinessService,
-                validator) =>
+                validator,
+                accessLogsData) =>
         this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]

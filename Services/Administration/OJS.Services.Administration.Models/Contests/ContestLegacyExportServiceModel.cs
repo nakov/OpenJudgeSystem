@@ -1,13 +1,13 @@
-namespace OJS.Services.Ui.Models.Contests;
+namespace OJS.Services.Administration.Models.Contests;
 
 using AutoMapper;
-using Data.Models;
-using Data.Models.Checkers;
-using Data.Models.Contests;
-using Data.Models.Problems;
-using Data.Models.Submissions;
-using Data.Models.Tests;
-using Infrastructure.Models.Mapping;
+using OJS.Data.Models;
+using OJS.Data.Models.Checkers;
+using OJS.Data.Models.Contests;
+using OJS.Data.Models.Problems;
+using OJS.Data.Models.Submissions;
+using OJS.Data.Models.Tests;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using OJS.Services.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Infrastructure.Constants;
@@ -8,42 +8,52 @@ using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Ui.Models.Contests;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Infrastructure.Extensions;
 
 public class ContestsCacheService : IContestsCacheService
 {
     private readonly ICacheService cache;
     private readonly IContestsDataService contestsData;
+    private readonly IProblemsDataService problemsData;
 
     public ContestsCacheService(
         ICacheService cache,
-        IContestsDataService contestsData)
+        IContestsDataService contestsData,
+        IProblemsDataService problemsData)
     {
         this.cache = cache;
         this.contestsData = contestsData;
+        this.problemsData = problemsData;
     }
 
-    public async Task<ContestDetailsServiceModel?> GetContestDetailsServiceModel(
-        int contestId,
-        int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
+    public async Task<ContestDetailsServiceModel?> GetContestDetailsServiceModel(int contestId)
         => await this.cache.Get(
-            string.Format(CacheConstants.ContestDetails, contestId),
-            async () => (await this.GetContestServiceModel(contestId)),
-            cacheSeconds);
+            string.Format(CacheConstants.ContestDetailsById, contestId),
+            async () => await this.GetContestDetails(contestId),
+            CacheConstants.OneHourInSeconds,
+            slidingExpirationSeconds: CacheConstants.FiveMinutesInSeconds);
 
-    private async Task<ContestDetailsServiceModel?> GetContestServiceModel(int contestId)
+    private async Task<ContestDetailsServiceModel?> GetContestDetails(int contestId)
     {
-        var contestDetailsServiceModel = await this.contestsData.GetById<ContestDetailsServiceModel>(contestId);
+        var contest = await this.contestsData.OneByIdTo<ContestDetailsServiceModel>(contestId);
 
-        if (contestDetailsServiceModel != null)
+        if (contest is null)
         {
-            contestDetailsServiceModel.AllowedSubmissionTypes = contestDetailsServiceModel.Problems
-                .AsQueryable()
-                .SelectMany(p => p.AllowedSubmissionTypes)
-                .DistinctBy(st => st.Id)
-                .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.Id, Name = x.Name })
-                .ToList();
+            return null;
         }
 
-        return contestDetailsServiceModel;
+        contest.Problems = await this.problemsData.GetAllByContest(contestId)
+            .MapCollection<ContestProblemServiceModel>()
+            .OrderBy(p => p.OrderBy)
+            .ThenBy(p => p.Name)
+            .ToListAsync();
+
+        contest.AllowedSubmissionTypes = contest.Problems
+            .SelectMany(p => p.AllowedSubmissionTypes)
+            .DistinctBy(st => st.Id)
+            .MapCollection<ContestDetailsSubmissionTypeServiceModel>()
+            .ToList();
+
+        return contest;
     }
 }

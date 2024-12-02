@@ -30,7 +30,6 @@ namespace OJS.Servers.Infrastructure
             public const string BadHttpRequestExceptionTitle = "Bad Request!";
             public const string ValidationExceptionTitle = "Invalid Request!";
             public const string UnhandledExceptionTitle = "An unexpected error occurred!";
-            public const string ExceptionDetailsForUnauthorized = "Please use the Instance code if reporting an issue.";
         }
     }
 }

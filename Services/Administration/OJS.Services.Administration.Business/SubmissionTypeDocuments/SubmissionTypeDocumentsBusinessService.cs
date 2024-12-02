@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business.SubmissionTypes;
 using OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypeDocuments;
 using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Common.Data;

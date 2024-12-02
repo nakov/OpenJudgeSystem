@@ -77,6 +77,7 @@ const ContestDetailsPage = () => {
         if (!problems || problems.length === 0) {
             return 'The problems for this contest are not public.';
         }
+
         return problems.map((problem) => (
             <div key={`contest-problem-${problem.id}`} className={styles.problemNameItem}>
                 <span>{problem.name}</span>

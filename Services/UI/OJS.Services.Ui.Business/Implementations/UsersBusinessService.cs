@@ -13,6 +13,7 @@ using OJS.Services.Ui.Models.Search;
 using OJS.Services.Ui.Models.Users;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Common.Models.Users;
 using X.PagedList;
 using static OJS.Common.GlobalConstants.Roles;
 
@@ -40,6 +41,7 @@ public class UsersBusinessService : IUsersBusinessService
 
         var profile = await this.usersProfileData
             .GetByIdQuery(currentUser.Id!)
+            .AsNoTracking()
             .Include(u => u.UsersInRoles)
             .ThenInclude(ur => ur.Role)
             .FirstOrDefaultAsync();
@@ -66,31 +68,30 @@ public class UsersBusinessService : IUsersBusinessService
 
         if (currentUser.Id == null && (username.IsNull() || username!.IsEmpty()))
         {
-            throw new BusinessServiceException("Empty username is not valid");
+            throw new BusinessServiceException("The user could not be found.");
         }
 
         var userWithUsernameExists = await this.usersProfileData.Exists(p => p.UserName == username);
 
         if (!userWithUsernameExists)
         {
-            throw new BusinessServiceException("User with this username does not exist");
+            throw new BusinessServiceException("A user with this username does not exist.");
         }
 
         if (currentUser.Id == null && userWithUsernameExists)
         {
-            return await Task.FromResult(new UserProfileServiceModel
+            return new UserProfileServiceModel
             {
                 UserName = username ?? string.Empty,
-            });
+            };
         }
 
-        bool isLoggedInUserAdminOrProfileOwner = this.IsUserInRolesOrProfileOwner(
+        var isLoggedInUserAdminOrProfileOwner = await this.IsUserInRolesOrProfileOwner(
             username,
             [Administrator]);
 
         var profile = await (isLoggedInUserAdminOrProfileOwner
-            ? this.usersProfileData
-                .GetByUsername<UserProfileServiceModel>(username)
+            ? this.usersProfileData.GetByUsername<UserProfileServiceModel>(username)
             : this.GetByUsernameAsShortProfile(username));
 
         profile!.Id = isLoggedInUserAdminOrProfileOwner ? profile.Id : string.Empty;
@@ -118,18 +119,14 @@ public class UsersBusinessService : IUsersBusinessService
             throw new BusinessServiceException("Empty username is not valid");
         }
 
-        var userWithUsernameExists = this.usersProfileData
-            .Exists(p => p.UserName == username)
-            .GetAwaiter().GetResult();
+        var userWithUsernameExists = await this.usersProfileData.Exists(p => p.UserName == username);
 
         if (!userWithUsernameExists)
         {
             throw new BusinessServiceException("User with this username does not exist");
         }
 
-        bool isLoggedInUserAdminLecturerOrProfileOwner =
-            currentUser.IsInRoles([Administrator, Lecturer]) ||
-            this.usersProfileData.GetByIdQuery(currentUser.Id!).Any(u => u.UserName == username);
+        var isLoggedInUserAdminLecturerOrProfileOwner = await this.IsUserInRolesOrProfileOwner(username, [Administrator, Lecturer]);
 
         if (!isLoggedInUserAdminLecturerOrProfileOwner)
         {
@@ -162,7 +159,7 @@ public class UsersBusinessService : IUsersBusinessService
     public async Task AddOrUpdateUser(UserProfile user)
         => await this.usersProfileData.AddOrUpdate<UserProfileServiceModel>(user);
 
-    public bool IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles)
+    public async Task<bool> IsUserInRolesOrProfileOwner(string? profileUsername, string[] roles)
     {
         var currentUser = this.userProvider.GetCurrentUser();
 
@@ -171,20 +168,30 @@ public class UsersBusinessService : IUsersBusinessService
             return false;
         }
 
-        return currentUser.IsInRoles(roles) ||
-               this.usersProfileData.GetByIdQuery(currentUser.Id).Any(u => u.UserName == profileUsername);
+        return IsUserInRoles(currentUser, roles) || await this.IsUserProfileOwner(currentUser.Id, profileUsername);
     }
+
+    private async Task<bool> IsUserProfileOwner(string id, string? username)
+        => await this.usersProfileData.Exists(u => u.Id == id && u.UserName == username);
+
+    private static bool IsUserInRoles(UserInfoModel user, string[] roles)
+        => user.IsInRoles(roles);
 
     //AsNoTracking() Method is added to prevent ''tracking query'' error.
     //Error is thrown when we map from UserSettings (owned entity) without including the
     //UserProfile (owner entity) in the query.
     private async Task<UserProfileServiceModel?> GetByUsernameAsShortProfile(string? username) =>
-        await this.usersProfileData.GetByUsername(username)
+        await this.usersProfileData
+            .GetByUsername(username)
             .AsNoTracking()
-            .Select(user => new UserProfileServiceModel
+            /*
+             * A projection is used on purpose, since in this case we do not want other
+             * users to be able to see another user's sensitive data ( like email, etc. ).
+             */
+            .Select(u => new UserProfileServiceModel
             {
-                UserName = user.UserName!,
-                Id = user.Id,
+                UserName = u.UserName!,
+                Id = u.Id,
             })
             .FirstOrDefaultAsync();
 }

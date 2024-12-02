@@ -11,6 +11,7 @@ import isNil from 'lodash/isNil';
 import moment from 'moment';
 import { SUBMISSION_SENT } from 'src/common/messages';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
+import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -39,7 +40,9 @@ import {
     useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
-import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
+import {
+    useGetSubmissionResultsByProblemQuery,
+} from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
@@ -61,7 +64,6 @@ const ContestSolutionSubmitPage = () => {
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType, slug } = useParams();
-
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
@@ -78,7 +80,6 @@ const ContestSolutionSubmitPage = () => {
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
-
     // Get the participationType type from route params or path (if not in params)
     const getParticipationType = useCallback(() => {
         if (participationType) {
@@ -106,18 +107,20 @@ const ContestSolutionSubmitPage = () => {
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
 
-    const [
-        getSubmissionsData, {
-            data: submissionsData,
-            isError: submissionsError,
-            error: submissionsErrorData,
-            isLoading: submissionsDataLoading,
-            isFetching: submissionsDataFetching,
-        },
-    ] = useLazyGetSubmissionResultsByProblemQuery();
-
     const isModalOpen = Boolean(anchorEl);
     const isCompete = useMemo(() => getParticipationType() === ContestParticipationType.Compete, [ getParticipationType ]);
+
+    const {
+        data: submissionsData,
+        error: submissionsErrorData,
+        isFetching: submissionsDataFetching,
+        isLoading: submissionsDataLoading,
+        refetch: getSubmissionsData,
+    } = useGetSubmissionResultsByProblemQuery({
+        id: Number(selectedContestDetailsProblem?.id),
+        page: selectedSubmissionsPage,
+        isOfficial: isCompete,
+    }, { skip: !selectedContestDetailsProblem });
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -170,12 +173,33 @@ const ContestSolutionSubmitPage = () => {
 
     const handleRefreshClick = () => {
         setIsRotating(true);
-        getSubmissionsData({
-            id: Number(selectedContestDetailsProblem!.id),
-            page: selectedSubmissionsPage,
-            isOfficial: isCompete,
-        });
+        getSubmissionsData();
     };
+
+    const handleSubmitButtonShouldBeDisabled = useCallback((force?: boolean) => {
+        if (force) {
+            // Submit button is forcefully disabled when timer is active
+            setIsSubmitButtonDisabled(true);
+            return;
+        }
+
+        if (!selectedSubmissionType) {
+            return;
+        }
+
+        const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
+
+        const isCodeStrategyAndCodeIsEmptyOrTooShort =
+            !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
+        const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
+
+        if (isCodeStrategyAndCodeIsEmptyOrTooShort || isFileUploadAndFileIsEmpty) {
+            setIsSubmitButtonDisabled(true);
+            return;
+        }
+
+        setIsSubmitButtonDisabled(false);
+    }, [ selectedSubmissionType, submissionCode, uploadedFile ]);
 
     useSuccessMessageEffect({
         data: [
@@ -211,12 +235,12 @@ const ContestSolutionSubmitPage = () => {
     }, [ submissionsData, problems, refetch ]);
 
     useEffect(() => {
-        if (!submissionsDataFetching) {
+        if (!submissionsDataFetching && !isLoading) {
             setTimeout(() => {
                 setIsRotating(false);
-            }, 900);
+            }, 1000);
         }
-    }, [ submissionsDataFetching, setIsRotating ]);
+    }, [ submissionsDataFetching, isLoading, setIsRotating ]);
 
     // this effect manages the disabling of the submit button as well as the
     // displaying of the seconds before the next submission would be enabled
@@ -231,19 +255,19 @@ const ContestSolutionSubmitPage = () => {
             const newRemainingTime = userSubmissionsTimeLimit - elapsedTimeInSeconds;
 
             if (newRemainingTime <= 0) {
-                setIsSubmitButtonDisabled(false);
+                handleSubmitButtonShouldBeDisabled();
                 setRemainingTime(0);
                 clearInterval(intervalId);
             } else {
                 setRemainingTime(newRemainingTime);
-                setIsSubmitButtonDisabled(true);
+                handleSubmitButtonShouldBeDisabled(true);
             }
         });
 
         return () => {
             clearInterval(intervalId);
         };
-    }, [ lastSubmissionTime, userSubmissionsTimeLimit ]);
+    }, [ lastSubmissionTime, userSubmissionsTimeLimit, handleSubmitButtonShouldBeDisabled ]);
 
     // managing the proper display of remaining time in compete contest
     useEffect(() => {
@@ -306,6 +330,7 @@ const ContestSolutionSubmitPage = () => {
                 id: data!.contest!.id,
                 name: data.contest.name,
                 categoryId: data!.contest!.categoryId,
+                isOnlineExam: data?.contest?.isOnlineExam,
             }));
         }
     }, [ contestDetails, contestId, data, dispatch ]);
@@ -323,24 +348,10 @@ const ContestSolutionSubmitPage = () => {
         }
     }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue ]);
 
-    // fetching submissions only when we have selected problem,
-    // otherwise the id is NaN and the query is invalid
     useEffect(() => {
-        if (selectedContestDetailsProblem && isActiveParticipant && isRegisteredParticipant) {
-            getSubmissionsData({
-                id: Number(selectedContestDetailsProblem.id),
-                page: selectedSubmissionsPage,
-                isOfficial: isCompete,
-            });
-        }
-    }, [
-        isActiveParticipant,
-        isRegisteredParticipant,
-        selectedContestDetailsProblem,
-        getSubmissionsData,
-        selectedSubmissionsPage,
-        isCompete,
-    ]);
+        // Disable submit button when code is updated
+        handleSubmitButtonShouldBeDisabled();
+    }, [ handleSubmitButtonShouldBeDisabled, selectedSubmissionType, submissionCode, uploadedFile ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -357,14 +368,12 @@ const ContestSolutionSubmitPage = () => {
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
+            contestId: Number(contestId!),
+            isOnlineExam: contestDetails?.isOnlineExam,
         }).then((d) => {
             if (!(d as any).error) {
                 refetch();
-                getSubmissionsData({
-                    id: Number(selectedContestDetailsProblem!.id),
-                    page: selectedSubmissionsPage,
-                    isOfficial: isCompete,
-                });
+                getSubmissionsData();
             }
         }).catch(() => {});
     }, [
@@ -373,35 +382,35 @@ const ContestSolutionSubmitPage = () => {
         refetch,
         selectedContestDetailsProblem,
         selectedSubmissionType?.id,
-        selectedSubmissionsPage,
         submissionCode,
         submitSolution,
+        contestId,
+        contestDetails?.isOnlineExam,
     ]);
 
-    const onSolutionSubmitFile = useCallback(async () => {
+    const onSolutionSubmitFile = useCallback(() => {
         setUploadedFile(null);
 
-        await submitSolutionFile({
+        submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
+            contestId: Number(contestId!),
+            isOnlineExam: contestDetails?.isOnlineExam,
         });
         refetch();
-        await getSubmissionsData({
-            id: Number(selectedContestDetailsProblem!.id),
-            page: selectedSubmissionsPage,
-            isOfficial: isCompete,
-        });
+        getSubmissionsData();
     }, [
         getSubmissionsData,
         isCompete,
         refetch,
         selectedContestDetailsProblem,
         selectedSubmissionType?.id,
-        selectedSubmissionsPage,
         submitSolutionFile,
         uploadedFile,
+        contestId,
+        contestDetails?.isOnlineExam,
     ]);
 
     const sumMyPoints = useMemo(() => contest
@@ -789,9 +798,14 @@ const ContestSolutionSubmitPage = () => {
                     <span className={styles.title}>Submissions</span>
                     <Tooltip
                       title="Refresh"
-                      onClick={handleRefreshClick}
+                      onClick={!isRotating
+                          ? handleRefreshClick
+                          : undefined}
                     >
-                        <span>
+                        <span className={isRotating
+                            ? styles.disabledSubmissionsRefreshButton
+                            : ''}
+                        >
                             <IoMdRefresh
                               size={24}
                               className={isRotating
@@ -801,7 +815,7 @@ const ContestSolutionSubmitPage = () => {
                         </span>
                     </Tooltip>
                 </div>
-                { submissionsError
+                { submissionsErrorData
                     ? getErrorMessage(submissionsErrorData, 'Error loading submissions')
                     : (
                         <SubmissionsGrid

@@ -171,6 +171,13 @@ namespace OJS.Services.Administration.Business.ProblemGroups
                 .MapCollection<ProblemGroupDropdownModel>()
                 .ToHashSet();
 
+        public async Task<double> GetNewLatestOrderByContest(int contestId)
+        {
+            var lastProblemGroupOrderBy = await this.problemGroupsData.GetLastNonDeletedByContest(contestId);
+
+            return lastProblemGroupOrderBy + 1;
+        }
+
         public async Task GenerateNewProblem(
             Problem problem,
             ProblemGroup currentNewProblemGroup,

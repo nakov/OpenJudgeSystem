@@ -20,7 +20,7 @@ const ContestStrategies = () => {
         data: contestStrategies,
         isLoading: areStrategiesLoading,
         error: strategiesError,
-    } = useGetContestStrategiesQuery();
+    } = useGetContestStrategiesQuery({ contestCategoryId: selectedCategory?.id ?? 0 });
 
     useEffect(() => {
         if (selectedId && contestStrategies) {
@@ -39,16 +39,10 @@ const ContestStrategies = () => {
         name: el.name,
     });
 
-    const dropdownItems = useMemo(() => {
-        const items =
-            !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
-                ? contestStrategies || []
-                : selectedCategory?.allowedStrategyTypes;
-
-        return items
-            .filter((item) => item?.name && item.name.trim() !== '')
-            .map(mapDataToDropdownItem);
-    }, [ contestStrategies, selectedCategory ]);
+    const dropdownItems = useMemo(
+        () => (contestStrategies || []).map(mapDataToDropdownItem),
+        [ contestStrategies ],
+    );
 
     const handleStrategySelect = (item: IDropdownItem | undefined) => {
         if (item) {

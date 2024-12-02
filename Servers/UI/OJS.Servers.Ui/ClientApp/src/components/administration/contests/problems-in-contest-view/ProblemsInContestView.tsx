@@ -9,7 +9,11 @@ import { getColors, useAdministrationTheme } from '../../../../hooks/use-adminis
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColumns, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
-import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
+import {
+    useDeleteByContestMutation,
+    useGetContestProblemsQuery,
+    useValidateRetestMutation,
+} from '../../../../redux/services/admin/problemsAdminService';
 import isNilOrEmpty from '../../../../utils/check-utils';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -61,6 +65,13 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         isFetching: areProblemsFetching,
     } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
 
+    const [
+        validateRetest,
+        {
+            data: validateResult,
+            isLoading: isValidateLoading,
+        } ] = useValidateRetestMutation();
+
     const [ deleteByContest,
         {
             data: deleteAllData,
@@ -94,13 +105,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     }, [ isSuccessfullyDeletedAll, retakeData ]);
 
     const openCopyModal = (id: number) => {
-        setShowCopyModal(true);
         setProblemToCopy(id);
+        setShowCopyModal(true);
     };
 
     const openRetestModal = (id: number) => {
         setShowRetestModal(true);
         setProblemToRetestId(id);
+        validateRetest(id);
     };
 
     const renderProblemModal = (index: number, isCreate: boolean) => {
@@ -172,6 +184,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
           key={index}
           contestId={contestId}
           declineFunction={() => setShowRetestModal(!showRetestModal)}
+          isValidationLoading={isValidateLoading}
+          validationModel={validateResult}
           index={index}
           problemData={problemsData}
           problemName={problemsData?.items
@@ -231,7 +245,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
           sourceContestName={problemsData?.items
               ? problemsData?.items[0]?.contest ?? ''
               : ''}
-          problemToCopyName="Problem to copy"
+          problemToCopyName={problemsData?.items!.find((x) => x.id === problemToCopy)?.name ?? null}
           problemToCopyId={problemToCopy}
           setParentSuccessMessage={setSuccessMessage}
         />

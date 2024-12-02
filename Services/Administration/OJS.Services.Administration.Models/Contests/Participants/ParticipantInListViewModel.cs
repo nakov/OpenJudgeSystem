@@ -27,6 +27,8 @@ public class ParticipantInListViewModel : IMapExplicitly
 
     public DateTime? ParticipationEndTime { get; set; }
 
+    public DateTime? LastSubmissionTime { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ParticipantInListViewModel>()
             .ForMember(cvp => cvp.Id, opt
