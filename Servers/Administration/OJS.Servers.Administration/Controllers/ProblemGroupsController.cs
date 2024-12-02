@@ -11,6 +11,8 @@ using OJS.Services.Administration.Business.ProblemGroups.Validators;
 using OJS.Services.Administration.Models.ProblemGroups;
 using System;
 using System.Linq;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int, ProblemGroupInListModel, ProblemGroupsAdministrationModel>
 {
@@ -19,11 +21,13 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int,
     public ProblemGroupsController(
         IProblemGroupsGridDataService problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        ProblemGroupAdministrationModelValidator validator)
+        ProblemGroupAdministrationModelValidator validator,
+        IDataService<AccessLog> accessLogsData)
         : base(
             problemGroupGridDataService,
             problemGroupsBusinessService,
-            validator) =>
+            validator,
+            accessLogsData) =>
         this.problemGroupsBusinessService = problemGroupsBusinessService;
 
     [HttpGet]

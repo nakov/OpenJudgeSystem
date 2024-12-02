@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
+using System.Threading.Tasks;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Users;
@@ -27,15 +28,13 @@ public class ContestParticipationValidationService : IContestParticipationValida
         this.contestsData = contestsData;
     }
 
-    public ValidationResult GetValidationResult((ContestParticipationValidationServiceModel?, ContestCategoryServiceModel?, IParticipantForActivityServiceModel? participant, UserInfoModel?, bool) item)
+    public async Task<ValidationResult> GetValidationResult((ContestParticipationValidationServiceModel?, ContestCategoryServiceModel?, IParticipantForActivityServiceModel? participant, UserInfoModel?, bool) item)
     {
         var (contest, contestCategory, participant, user, official) = item;
 
         // TODO: Fix so it uses lecturers in contests business service
-        var userIsAdminOrLecturerInContest = user != null && (user.IsAdmin || this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(contest?.Id)
-            .GetAwaiter()
-            .GetResult());
+        var userIsAdminOrLecturerInContest = user != null && (user.IsAdmin || await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(contest?.Id));
 
         var contestIsVisible = contest?.IsVisible == true || contest?.VisibleFrom <= this.datesService.GetUtcNow();
 
@@ -67,7 +66,7 @@ public class ContestParticipationValidationService : IContestParticipationValida
         if (contest.IsOnlineExam &&
             official &&
             !userIsAdminOrLecturerInContest &&
-            !this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, user.Id).GetAwaiter().GetResult())
+            !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, user.Id))
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
         }
