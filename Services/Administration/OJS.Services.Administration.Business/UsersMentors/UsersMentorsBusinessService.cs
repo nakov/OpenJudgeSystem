@@ -46,15 +46,12 @@ public class UsersMentorsBusinessService : AdministrationOperationService<UserMe
         }
 
         var userMentor = await this.userMentorData
-            .GetQuery(us => us.Id == model.Id)
-            .FirstOrDefaultAsync();
+            .OneById(model.Id);
 
         if (userMentor is null)
         {
             throw new BusinessServiceException($"The record with id #{model.Id} could not be found.");
         }
-
-        this.userProfileData.Detach(userMentor.User);
 
         userMentor.MapFrom(model);
 

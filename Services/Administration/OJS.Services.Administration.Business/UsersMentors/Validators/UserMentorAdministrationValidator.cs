@@ -27,18 +27,18 @@ public class UserMentorAdministrationValidator : BaseAdministrationModelValidato
 
         this.RuleFor(model => model.Id)
             .MustAsync(async (id, _) => await this.userManager.FindByIdAsync(id) != null)
-            .When(model => model is { OperationType: CrudOperationType.Create } or { OperationType: CrudOperationType.Update })
-            .WithMessage("The user does not exist.");
+            .WithMessage("The user does not exist.")
+            .When(model => model is { OperationType: CrudOperationType.Create } or { OperationType: CrudOperationType.Update });
 
         this.RuleFor(model => model.QuotaLimit)
             .Must(x => x is >= 0 and <= MentorQuotaLimit or null)
-            .When(model => model is { OperationType: CrudOperationType.Create } or { OperationType: CrudOperationType.Update })
-            .WithMessage($"The quota limit must be between 0 and {MentorQuotaLimit} (inclusive).");
+            .WithMessage($"The quota limit must be between 0 and {MentorQuotaLimit} (inclusive).")
+            .When(model => model is { OperationType: CrudOperationType.Create } or { OperationType: CrudOperationType.Update });
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _) => await this.HaveValidQuotaResetTime(model))
-            .When(model => model is { OperationType: CrudOperationType.Update })
-            .WithMessage($"The quota reset time must not exceed {MentorQuotaResetTimeInMinutes} minutes beyond the current reset time.");
+            .WithMessage($"The quota reset time must not exceed {MentorQuotaResetTimeInMinutes} minutes beyond the current reset time.")
+            .When(model => model is { OperationType: CrudOperationType.Update });
     }
 
     private async Task<bool> HaveValidQuotaResetTime(UserMentorAdministrationModel model)
