@@ -8,7 +8,6 @@ namespace OJS.Servers.Ui.Extensions
     using OJS.Services.Infrastructure.Configurations;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.BackgroundJobs;
-    using static System.Text.Json.Serialization.JsonIgnoreCondition;
     using ApplicationConfig = OJS.Services.Ui.Models.ApplicationConfig;
 
     internal static class ServiceCollectionExtensions
@@ -33,7 +32,6 @@ namespace OJS.Servers.Ui.Extensions
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<ApplicationUrlsConfig>()
                 .AddOptionsWithValidation<EmailServiceConfig>()
-                .AddControllers()
-                .AddJsonOptions(opt => opt.JsonSerializerOptions.DefaultIgnoreCondition = WhenWritingNull);
+                .AddControllers();
     }
 }
