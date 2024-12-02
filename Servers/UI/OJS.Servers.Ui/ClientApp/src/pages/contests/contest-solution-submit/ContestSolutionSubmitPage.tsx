@@ -156,7 +156,9 @@ const ContestSolutionSubmitPage = () => {
     } = selectedContestDetailsProblem || {};
 
     const strategyDropdownItems = useMemo(() => {
-        if (!problemAllowedSubmissionTypes) { return []; }
+        if (!problemAllowedSubmissionTypes) {
+            return [];
+        }
 
         return problemAllowedSubmissionTypes.map((item) => ({
             id: item.id,
@@ -165,7 +167,10 @@ const ContestSolutionSubmitPage = () => {
     }, [ problemAllowedSubmissionTypes ]);
 
     const selectedSubmissionType = useMemo(() => {
-        if (!selectedContestDetailsProblem) { return undefined; }
+        if (!selectedContestDetailsProblem) {
+            return undefined;
+        }
+
         return submissionTypesPerProblem[selectedContestDetailsProblem.id];
     }, [ selectedContestDetailsProblem, submissionTypesPerProblem ]);
 
@@ -402,7 +407,10 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(() => {
-        if (!selectedSubmissionType || !uploadedFile) { return; }
+        if (!selectedSubmissionType || !uploadedFile) {
+            return;
+        }
+
         setUploadedFile(null);
 
         submitSolutionFile({

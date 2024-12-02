@@ -371,14 +371,15 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         var submissionTypeIds = model.SubmissionTypes.Select(st => st.Id).ToList();
 
         var submissionTypes = await this.submissionTypesData
-            .All(st => submissionTypeIds.Contains(st.Id))
-            .ToDictionaryAsync(st => st.Id, st => st);
+            .GetQuery(st => submissionTypeIds.Contains(st.Id))
+            .Select(st => st.Id)
+            .ToListAsync();
 
         var newSubmissionTypes = new List<SubmissionTypeInProblem>();
 
         foreach (var newSubmissionType in model.SubmissionTypes)
         {
-            if (!submissionTypes.TryGetValue(newSubmissionType.Id, out var submissionType))
+            if (!submissionTypes.Contains(newSubmissionType.Id))
             {
                 throw new BusinessServiceException($"Submission type with Id #{newSubmissionType.Id} does not exist.");
             }
