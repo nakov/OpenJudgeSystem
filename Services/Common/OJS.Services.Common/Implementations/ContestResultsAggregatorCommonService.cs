@@ -27,18 +27,13 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
         this.participantsCommonData = participantsCommonData;
     }
 
-    public ContestResultsViewModel GetContestResults(ContestResultsModel contestResultsModel)
+    public ContestResultsViewModel GetContestResults(ContestResultsModel contestResultsModel, IContestActivityServiceModel contestActivity)
     {
-        var contestActivityEntity = this.activityService
-            .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>())
-            .GetAwaiter()
-            .GetResult();
-
         var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
         contestResults.Id = contestResultsModel.Contest.Id;
 
-        contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
-        contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
+        contestResults.ContestCanBeCompeted = contestActivity.CanBeCompeted;
+        contestResults.ContestCanBePracticed = contestActivity.CanBePracticed;
 
         var problems = contestResultsModel.Problems
             .AsQueryable()
