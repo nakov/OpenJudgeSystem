@@ -32,8 +32,8 @@ const ProfilePage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const dispatch = useAppDispatch();
 
-    // If {username} is present in url, then the the profile should be loaded for this username,
-    // otherwise the profile is loaded for the logged in user
+    // If {username} is present in url, then the profile should be loaded for this username,
+    // otherwise the profile is loaded for the logged-in user
     const profileUsername = useMemo(
         () => !isNil(username)
             ? decodeFromUrlParam(username)
