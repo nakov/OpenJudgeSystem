@@ -9,6 +9,8 @@ using OJS.Services.Administration.Business.ProblemResources.Validators;
 using OJS.Services.Administration.Business.ProblemResources.GridData;
 using OJS.Services.Administration.Models.ProblemResources;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ProblemResourcesController : BaseAdminApiController<ProblemResource, int, ProblemResourceInListModel, ProblemResourceAdministrationModel>
 {
@@ -17,8 +19,9 @@ public class ProblemResourcesController : BaseAdminApiController<ProblemResource
     public ProblemResourcesController(
         IProblemResourcesGridDataService problemResourceGridService,
         IProblemResourcesBusinessService problemResourcesBusinessService,
-        ProblemResourceAdministrationModelValidator modelValidator)
-        : base(problemResourceGridService, problemResourcesBusinessService, modelValidator) =>
+        ProblemResourceAdministrationModelValidator modelValidator,
+        IDataService<AccessLog> accessLogsData)
+        : base(problemResourceGridService, problemResourcesBusinessService, modelValidator, accessLogsData) =>
         this.problemResourcesBusinessService = problemResourcesBusinessService;
 
     [HttpGet("{id:int}")]

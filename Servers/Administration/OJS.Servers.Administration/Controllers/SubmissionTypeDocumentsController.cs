@@ -11,6 +11,8 @@ using OJS.Services.Administration.Business.SubmissionTypes;
 using OJS.Services.Administration.Business.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Administration.Models.SubmissionTypeDocuments;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class SubmissionTypeDocumentsController : BaseAdminApiController<SubmissionTypeDocument, int, SubmissionTypeDocumentInListModel, SubmissionTypeDocumentAdministrationModel>
 {
@@ -23,8 +25,13 @@ public class SubmissionTypeDocumentsController : BaseAdminApiController<Submissi
         ISubmissionTypeDocumentsBusinessService submissionTypeDocumentsBusinessService,
         SubmissionTypeDocumentsAdministrationValidator submissionTypeDocumentsAdministrationValidator,
         ISubmissionTypesBusinessService submissionTypesBusinessService,
-        ISubmissionTypesInSubmissionDocumentsBusinessService submissionTypesInSubmissionDocumentsBusinessService)
-        : base(submissionTypeDocumentsGridDataService, submissionTypeDocumentsBusinessService, submissionTypeDocumentsAdministrationValidator)
+        ISubmissionTypesInSubmissionDocumentsBusinessService submissionTypesInSubmissionDocumentsBusinessService,
+        IDataService<AccessLog> accessLogsData)
+        : base(
+            submissionTypeDocumentsGridDataService,
+            submissionTypeDocumentsBusinessService,
+            submissionTypeDocumentsAdministrationValidator,
+            accessLogsData)
     {
         this.submissionTypeDocumentsBusinessService = submissionTypeDocumentsBusinessService;
         this.submissionTypesBusinessService = submissionTypesBusinessService;

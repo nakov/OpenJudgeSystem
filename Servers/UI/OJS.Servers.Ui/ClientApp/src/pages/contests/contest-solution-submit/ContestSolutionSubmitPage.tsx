@@ -41,7 +41,9 @@ import {
     useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
-import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
+import {
+    useGetSubmissionResultsByProblemQuery,
+} from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
@@ -78,7 +80,6 @@ const ContestSolutionSubmitPage = () => {
     const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
     const { selectedContestDetailsProblem, contestDetails, breadcrumbItems } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
-
     // Get the participationType type from route params or path (if not in params)
     const getParticipationType = useCallback(() => {
         if (participationType) {
@@ -106,18 +107,20 @@ const ContestSolutionSubmitPage = () => {
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
 
-    const [
-        getSubmissionsData, {
-            data: submissionsData,
-            isError: submissionsError,
-            error: submissionsErrorData,
-            isLoading: submissionsDataLoading,
-            isFetching: submissionsDataFetching,
-        },
-    ] = useLazyGetSubmissionResultsByProblemQuery();
-
     const isModalOpen = Boolean(anchorEl);
     const isCompete = useMemo(() => getParticipationType() === ContestParticipationType.Compete, [ getParticipationType ]);
+
+    const {
+        data: submissionsData,
+        error: submissionsErrorData,
+        isFetching: submissionsDataFetching,
+        isLoading: submissionsDataLoading,
+        refetch: getSubmissionsData,
+    } = useGetSubmissionResultsByProblemQuery({
+        id: Number(selectedContestDetailsProblem?.id),
+        page: selectedSubmissionsPage,
+        isOfficial: isCompete,
+    }, { skip: !selectedContestDetailsProblem });
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -168,11 +171,7 @@ const ContestSolutionSubmitPage = () => {
 
     const handleRefreshClick = () => {
         setIsRotating(true);
-        getSubmissionsData({
-            id: Number(selectedContestDetailsProblem!.id),
-            page: selectedSubmissionsPage,
-            isOfficial: isCompete,
-        });
+        getSubmissionsData();
     };
 
     const handleSubmitButtonShouldBeDisabled = useCallback((force?: boolean) => {
@@ -234,12 +233,12 @@ const ContestSolutionSubmitPage = () => {
     }, [ submissionsData, problems, refetch ]);
 
     useEffect(() => {
-        if (!submissionsDataFetching) {
+        if (!submissionsDataFetching && !isLoading) {
             setTimeout(() => {
                 setIsRotating(false);
             }, 1000);
         }
-    }, [ submissionsDataFetching, setIsRotating ]);
+    }, [ submissionsDataFetching, isLoading, setIsRotating ]);
 
     // this effect manages the disabling of the submit button as well as the
     // displaying of the seconds before the next submission would be enabled
@@ -347,25 +346,6 @@ const ContestSolutionSubmitPage = () => {
         }
     }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue ]);
 
-    // fetching submissions only when we have selected problem,
-    // otherwise the id is NaN and the query is invalid
-    useEffect(() => {
-        if (selectedContestDetailsProblem && isActiveParticipant && isRegisteredParticipant) {
-            getSubmissionsData({
-                id: Number(selectedContestDetailsProblem.id),
-                page: selectedSubmissionsPage,
-                isOfficial: isCompete,
-            });
-        }
-    }, [
-        isActiveParticipant,
-        isRegisteredParticipant,
-        selectedContestDetailsProblem,
-        getSubmissionsData,
-        selectedSubmissionsPage,
-        isCompete,
-    ]);
-
     useEffect(() => {
         // Disable submit button when code is updated
         handleSubmitButtonShouldBeDisabled();
@@ -391,11 +371,7 @@ const ContestSolutionSubmitPage = () => {
         }).then((d) => {
             if (!(d as any).error) {
                 refetch();
-                getSubmissionsData({
-                    id: Number(selectedContestDetailsProblem!.id),
-                    page: selectedSubmissionsPage,
-                    isOfficial: isCompete,
-                });
+                getSubmissionsData();
             }
         }).catch(() => {});
     }, [
@@ -404,17 +380,16 @@ const ContestSolutionSubmitPage = () => {
         refetch,
         selectedContestDetailsProblem,
         selectedSubmissionType?.id,
-        selectedSubmissionsPage,
         submissionCode,
         submitSolution,
         contestId,
         contestDetails?.isOnlineExam,
     ]);
 
-    const onSolutionSubmitFile = useCallback(async () => {
+    const onSolutionSubmitFile = useCallback(() => {
         setUploadedFile(null);
 
-        await submitSolutionFile({
+        submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
@@ -423,18 +398,13 @@ const ContestSolutionSubmitPage = () => {
             isOnlineExam: contestDetails?.isOnlineExam,
         });
         refetch();
-        await getSubmissionsData({
-            id: Number(selectedContestDetailsProblem!.id),
-            page: selectedSubmissionsPage,
-            isOfficial: isCompete,
-        });
+        getSubmissionsData();
     }, [
         getSubmissionsData,
         isCompete,
         refetch,
         selectedContestDetailsProblem,
         selectedSubmissionType?.id,
-        selectedSubmissionsPage,
         submitSolutionFile,
         uploadedFile,
         contestId,
@@ -845,7 +815,7 @@ const ContestSolutionSubmitPage = () => {
                         </span>
                     </Tooltip>
                 </div>
-                { submissionsError
+                { submissionsErrorData
                     ? getErrorMessage(submissionsErrorData, 'Error loading submissions')
                     : (
                         <SubmissionsGrid
