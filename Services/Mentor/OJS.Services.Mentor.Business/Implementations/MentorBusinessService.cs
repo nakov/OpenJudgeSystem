@@ -33,6 +33,7 @@ public class MentorBusinessService : IMentorBusinessService
     private const string SvnHttpClientName = "Svn";
     private const string DefaultHttpClientName = "Default";
     private const string Docx = "docx";
+    private const string Svn = "svn";
     private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please contact an administrator and report the problem.";
 
     private readonly IDataService<UserMentor> userMentorData;
@@ -617,7 +618,7 @@ public class MentorBusinessService : IMentorBusinessService
 
     private async Task<byte[]> DownloadDocument(string link, int problemId, int contestId)
     {
-        var fileBytes = link.Contains("/svn", StringComparison.OrdinalIgnoreCase)
+        var fileBytes = link.Contains($"/{Svn}", StringComparison.OrdinalIgnoreCase)
             ? await this.DownloadSvnResource(link, problemId, contestId)
             : await this.DownloadResource(link, problemId, contestId);
 
@@ -638,10 +639,12 @@ public class MentorBusinessService : IMentorBusinessService
 
     private async Task<byte[]> DownloadSvnResource(string path, int problemId, int contestId)
     {
-        var pathParts = path.Split("svn", StringSplitOptions.RemoveEmptyEntries);
+        var index = path.IndexOf(Svn, StringComparison.OrdinalIgnoreCase);
+        var resourcePath = path[(index + Svn.Length)..].TrimStart('/');
 
         using var client = this.httpClientFactory.CreateClient(SvnHttpClientName);
-        return await this.FetchResource(pathParts.Last(), client, problemId, contestId);
+
+        return await this.FetchResource(resourcePath, client, problemId, contestId);
     }
 
     private async Task<byte[]> FetchResource(string link, HttpClient client, int problemId, int contestId)
