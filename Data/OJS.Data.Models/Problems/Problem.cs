@@ -63,7 +63,7 @@ namespace OJS.Data.Models.Problems
 
         public int? DefaultSubmissionTypeId { get; set; }
 
-        public virtual SubmissionType DefaultSubmissionType { get; set; } = null!;
+        public virtual SubmissionType? DefaultSubmissionType { get; set; }
 
         public virtual ICollection<Test> Tests { get; set; } = new HashSet<Test>();
 

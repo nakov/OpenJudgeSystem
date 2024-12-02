@@ -26,8 +26,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public int? DefaultSubmissionTypeId { get; set; }
 
-    public virtual SubmissionType DefaultSubmissionType { get; set; } = null!;
-
     public int CheckerId { get; set; }
 
     public int ProblemGroupId { get; set; }
@@ -98,7 +96,9 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
              .ForMember(pam => pam.ModifiedOn, opt
                  => opt.Ignore())
+             .ForMember(pam => pam.DefaultSubmissionType, opt
+                => opt.Ignore())
              .ForMember(pam => pam.AdditionalFiles, opt
-             => opt.Ignore());
+                => opt.Ignore());
     }
 }

@@ -390,13 +390,11 @@ const ContestSolutionSubmitPage = () => {
             }
         }).catch(() => { });
     }, [
-        selectedSubmissionType?.id,
         selectedSubmissionType,
         getSubmissionsData,
         isCompete,
         refetch,
         selectedContestDetailsProblem,
-        selectedSubmissionType?.id,
         submissionCode,
         submitSolution,
         contestId,
@@ -423,7 +421,6 @@ const ContestSolutionSubmitPage = () => {
         isCompete,
         refetch,
         selectedContestDetailsProblem,
-        selectedSubmissionType?.id,
         submitSolutionFile,
         uploadedFile,
         contestId,
