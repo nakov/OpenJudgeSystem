@@ -196,17 +196,16 @@ const findParentNames = (collection: Array<IContestCategory> | undefined, select
     const findParentsRecursive = (
         element: IContestCategory,
         targetId: number,
-        parents: Array<{ name: string; id: number; allowMentor: boolean }> = [],
-    ): Array<{ name: string; id: number; allowMentor: boolean }> | null => {
+        parents: Array<{ name: string; id: number }> = [],
+    ): Array<{ name: string; id: number }> | null => {
         if (element.id === targetId) {
-            return [ ...parents, { name: element.name, id: element.id, allowMentor: element.allowMentor } ];
+            return [ ...parents, { name: element.name, id: element.id } ];
         }
 
         for (const child of element.children || []) {
             const result = findParentsRecursive(child, targetId, [ ...parents, {
                 name: element.name,
                 id: element.id,
-                allowMentor: element.allowMentor,
             } ]);
 
             if (result) {

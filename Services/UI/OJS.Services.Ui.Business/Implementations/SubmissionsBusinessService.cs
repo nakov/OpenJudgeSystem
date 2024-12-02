@@ -60,6 +60,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ICacheService cache;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly IProblemsCacheService problemsCache;
+    private readonly IContestCategoriesCacheService contestCategoriesCache;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -84,7 +85,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ITransactionsProvider transactionsProvider,
         ICacheService cache,
         ITestRunsDataService testRunsDataService,
-        IProblemsCacheService problemsCache)
+        IProblemsCacheService problemsCache,
+        IContestCategoriesCacheService contestCategoriesCache)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -109,6 +111,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.cache = cache;
         this.testRunsDataService = testRunsDataService;
         this.problemsCache = problemsCache;
+        this.contestCategoriesCache = contestCategoriesCache;
     }
 
     public async Task Retest(int submissionId)
@@ -153,6 +156,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         submission.UserIsInRoleForContest = userAdminOrLecturerInContest;
+
+        var category = await this.contestCategoriesCache.GetById(submission.ContestCategoryId);
+        submission.AllowMentor = category?.AllowMentor ?? false;
 
         if (!submission.IsCompiledSuccessfully)
         {
@@ -201,6 +207,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.TestRuns = [.. testRuns.OrderBy(tr => !tr.IsTrialTest).ThenBy(tr => tr.OrderBy)];
         submission.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(
             submissionId, submission.IsProcessed, submission.IsCompiledSuccessfully, submission.TestRuns.Count);
+
+        submission.AllowMentor = submission.AllowMentor && submission.TestRuns.Any(tr => tr.ResultType != 0);
 
         return submission;
     }

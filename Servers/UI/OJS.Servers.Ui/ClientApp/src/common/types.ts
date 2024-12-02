@@ -324,6 +324,7 @@ interface ICompeteContestResponseType {
     participantsCount: number;
     contest: IContestDetailsResponseType | null;
     shouldEnterPassword: boolean;
+    allowMentor: boolean;
 }
 
 interface IPagedResultType<TItem> {

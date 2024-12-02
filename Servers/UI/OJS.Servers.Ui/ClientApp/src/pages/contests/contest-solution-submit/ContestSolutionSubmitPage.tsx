@@ -142,6 +142,7 @@ const ContestSolutionSubmitPage = () => {
         lastSubmissionTime,
         userSubmissionsTimeLimit,
         endDateTimeForParticipantOrContest,
+        allowMentor,
     } = data || {};
 
     const { problems = [] } = contest || {};
@@ -154,7 +155,6 @@ const ContestSolutionSubmitPage = () => {
         allowedSubmissionTypes: problemAllowedSubmissionTypes,
     } = selectedContestDetailsProblem || {};
 
-    const isMentorAllowed = useMemo(() => breadcrumbItems.at(-1)?.allowMentor ?? false, [ breadcrumbItems ]);
     const categoryName = useMemo(() => breadcrumbItems.at(-1)?.name ?? undefined, [ breadcrumbItems ]);
 
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
@@ -839,7 +839,7 @@ const ContestSolutionSubmitPage = () => {
               contestName={contestDetails?.name}
               categoryName={categoryName}
               submissionTypeName={selectedSubmissionType?.name}
-              isMentorAllowed={isMentorAllowed}
+              isMentorAllowed={allowMentor ?? false}
             />
         </div>
     );

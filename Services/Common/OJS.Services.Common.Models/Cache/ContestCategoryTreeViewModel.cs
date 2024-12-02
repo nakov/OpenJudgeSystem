@@ -18,8 +18,6 @@ public class ContestCategoryTreeViewModel : IMapFrom<ContestCategory>
 
     public double OrderBy { get; set; }
 
-    public bool AllowMentor { get; set; }
-
     public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; }
         = Enumerable.Empty<ContestCategoryTreeViewModel>();
 }

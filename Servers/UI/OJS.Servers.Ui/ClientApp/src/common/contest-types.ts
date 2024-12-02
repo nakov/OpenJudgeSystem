@@ -14,7 +14,6 @@ enum SortTypeDirection {
 type ContestBreadcrumb = {
     name: string;
     id: number;
-    allowMentor: boolean;
 }
 
 interface IContestStrategyFilter {
