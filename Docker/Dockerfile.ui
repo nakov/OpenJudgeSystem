@@ -8,6 +8,7 @@ WORKDIR /src
 COPY Servers/UI ./Servers/UI
 COPY Servers/Infrastructure ./Servers/Infrastructure
 COPY Services/UI ./Services/UI
+COPY Services/Mentor ./Services/Mentor
 
 COPY Directory.Build.props ./Directory.Build.props
 COPY Common ./Common

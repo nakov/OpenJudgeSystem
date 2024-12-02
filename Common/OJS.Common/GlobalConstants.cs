@@ -146,6 +146,13 @@ namespace OJS.Common
 
         public static class Settings
         {
+            public const string Mentor = "Mentor";
+            public const string MentorModel = "MentorModel";
+            public const int MentorMessagesSentCount = 10;
+            public const int MentorMaxInputTokenCount = 4096;
+            public const int MentorMaxOutputTokenCount = 2048;
+            public const int MentorQuotaLimit = 15;
+            public const int MentorQuotaResetTimeInMinutes = 120;
             public const string MaxSubmissionTimeToExecuteAllowedForBatchRetest = "MaxSubmissionTimeToExecuteAllowedForBatchRetest";
             public const string MaxSubmissionsCountAllowedForBatchRetest = "MaxSubmissionsCountAllowedForBatchRetest";
             public const string MaxWorkersWorkingTimeInSeconds = "MaxWorkersWorkingTimeInSeconds";

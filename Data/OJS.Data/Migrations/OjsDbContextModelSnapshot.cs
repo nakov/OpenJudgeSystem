@@ -312,6 +312,9 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AllowMentor")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -537,7 +540,7 @@ namespace OJS.Data.Migrations
 
             modelBuilder.Entity("OJS.Data.Models.Mentor.UserMentor", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -546,7 +549,7 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("QuotaLimit")
+                    b.Property<int?>("QuotaLimit")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("QuotaResetTime")
@@ -555,7 +558,7 @@ namespace OJS.Data.Migrations
                     b.Property<int>("RequestsMade")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("UsersMentors");
                 });
@@ -1459,7 +1462,7 @@ namespace OJS.Data.Migrations
                 {
                     b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

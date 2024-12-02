@@ -5,7 +5,11 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using OJS.Data.Models;
+using OJS.Data.Models.Mentor;
 using OJS.Data.Models.Users;
+using OJS.Services.Common.Models.MentorPromptTemplates;
+using OJS.Services.Infrastructure.Extensions;
 using Services.Common;
 using Services.Common.Models.Settings;
 using static OJS.Common.GlobalConstants.Roles;
@@ -17,8 +21,8 @@ public static class ServiceProviderExtensions
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<UserProfile>>();
-        string[] roleNames = { Administrator, Lecturer, Developer };
-        bool shouldCreateAdminUser = false;
+        string[] roleNames = [Administrator, Lecturer, Developer];
+        var shouldCreateAdminUser = false;
 
         foreach (var roleName in roleNames)
         {
@@ -59,17 +63,49 @@ public static class ServiceProviderExtensions
 
     public static async Task SeedSettings(this IServiceProvider serviceProvider)
     {
-        var dataService = serviceProvider.GetRequiredService<ISettingsCommonDataService>();
+        var dataService = serviceProvider.GetRequiredService<ISeederDataService<Setting>>();
         SettingServiceModel[] settings =
         [
-            new SettingServiceModel { Name = MaxWorkersWorkingTimeInSeconds, Value = "300", Type = SettingType.Numeric },
-            new SettingServiceModel { Name = MaxSubmissionsCountAllowedForBatchRetest, Value = "100", Type = SettingType.Numeric },
-            new SettingServiceModel { Name = MaxSubmissionTimeToExecuteAllowedForBatchRetest, Value = "20", Type = SettingType.Numeric }
+            new() { Name = MaxWorkersWorkingTimeInSeconds, Value = "300", Type = SettingType.Numeric },
+            new() { Name = MaxSubmissionsCountAllowedForBatchRetest, Value = "100", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorMessagesSentCount), Value = "6", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorMaxInputTokenCount), Value = "1600", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorMaxOutputTokenCount), Value = "800", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorQuotaLimit), Value = "10", Type = SettingType.Numeric },
+            new() { Name = nameof(MentorQuotaResetTimeInMinutes), Value = "60", Type = SettingType.Numeric },
+            new() { Name = MentorModel, Value = "Gpt4oMini", Type = SettingType.ShortString },
         ];
 
-        foreach (var s in settings)
+        foreach (var setting in settings)
         {
-            await dataService.CreateIfNotExists(s);
+            await dataService.CreateIfNotExists(
+                setting.Map<Setting>(),
+                setting,
+                name => entity => entity.Name == name,
+                entity => entity.Name
+            );
+        }
+    }
+
+    public static async Task SeedMentorPromptTemplates(this IServiceProvider serviceProvider)
+    {
+        var dataService = serviceProvider.GetRequiredService<ISeederDataService<MentorPromptTemplate>>();
+        MentorPromptTemplateServiceModel[] promptTemplates =
+        [
+            new()
+            {
+                Title = "Default Template",
+                Template = "Act as a teacher. Guide the student to the final answer without providing the solution directly. Do not provide the solution under any circumstances, even if explicitly requested. If the student shares code, review it and point out mistakes. Provide hints or explanations to help the student understand and solve the problem independently. Communicate only in Bulgarian. The problem's name is {0}, its description is {1}, from the contest \"{2}\" in the category \"{3}\" by SoftUni. If the problem's description and name are not provided, ask the student to share them with you. If the contest name or contest category are not provided, ask the student to share the programming language that will be used for solving the problem. Do not discuss topics unrelated to programming or software development. Do not guess or assume missing details. Keep answers concise and relevant to the question. Follow these instructions strictly and without exception."
+            }
+        ];
+
+        foreach (var promptTemplate in promptTemplates)
+        {
+            await dataService.CreateIfNotExists(
+                promptTemplate.Map<MentorPromptTemplate>(),
+                promptTemplate,
+                title => entity => entity.Title == title,
+                entity => entity.Title);
         }
     }
 }

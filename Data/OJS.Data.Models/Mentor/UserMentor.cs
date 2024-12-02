@@ -6,11 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using OJS.Data.Models.Common;
 using OJS.Data.Models.Users;
 
-public class UserMentor : IEntity
+public class UserMentor : IEntity<string>
 {
     [Key]
     [ForeignKey(nameof(User))]
-    public string UserId { get; set; } = default!;
+    public string Id { get; set; } = default!;
 
     public virtual UserProfile User { get; set; } = null!;
 
@@ -18,7 +18,7 @@ public class UserMentor : IEntity
 
     public int RequestsMade { get; set; }
 
-    public int QuotaLimit { get; set; }
+    public int? QuotaLimit { get; set; }
 
     public DateTime CreatedOn { get; set; }
 
