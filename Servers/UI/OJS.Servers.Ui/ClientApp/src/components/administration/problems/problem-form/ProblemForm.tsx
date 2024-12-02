@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, Box, FormControl, MenuItem, TextField, Typography } from '@mui/material';
+import downloadFile from 'src/utils/file-download-utils';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
+import { ADDITIONAL_FILES, SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
 import { IProblemAdministration, IProblemGroupDropdownModel, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
-import { useGetIdsByContestIdQuery } from '../../../../redux/services/admin/problemGroupsAdminService';
-import { useCreateProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
+import {
+    useGetIdsByContestIdQuery,
+} from '../../../../redux/services/admin/problemGroupsAdminService';
+import {
+    useCreateProblemMutation,
+    useDownloadAdditionalFilesQuery,
+    useGetProblemByIdQuery,
+    useUpdateProblemMutation,
+} from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -86,10 +94,13 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         contestType: contestType || ContestVariation.Exercise,
         problemGroupOrderBy: -1,
         problemGroupId: 0,
+        additionalFiles: null,
+        hasAdditionalFiles: false,
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
+    const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
 
     const {
         data: problemData,
@@ -119,6 +130,11 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         },
     ] = useCreateProblemMutation();
 
+    const {
+        data: downloadData,
+        error: downloadError,
+    } = useDownloadAdditionalFilesQuery(Number(problemId), { skip: skipDownload });
+
     const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
 
     useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
@@ -132,6 +148,12 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         setSuccessMessage,
         clearFlags: [ isCreating, isUpdating ],
     });
+
+    useEffect(() => {
+        if (downloadData?.blob) {
+            downloadFile(downloadData.blob, downloadData.filename);
+        }
+    }, [ downloadData ]);
 
     useEffect(() => {
         if (problemGroupData) {
@@ -158,9 +180,9 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     }, [ getContestId, getName, problemData ]);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ gettingDataError, createError, updateError ], setErrorMessages);
+        getAndSetExceptionMessage([ gettingDataError, createError, updateError, downloadError ], setErrorMessages);
         clearSuccessMessages({ setSuccessMessage, setParentSuccessMessage });
-    }, [ updateError, createError, gettingDataError, setParentSuccessMessage ]);
+    }, [ updateError, createError, gettingDataError, downloadError, setParentSuccessMessage ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -216,6 +238,10 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                 );
             }
         });
+
+        if (currentProblem.additionalFiles) {
+            formData.append('additionalFiles', currentProblem.additionalFiles);
+        }
         if (currentProblem.tests) {
             formData.append('tests', currentProblem.tests);
         }
@@ -311,21 +337,19 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         }));
     };
 
-    const handleFileUpload = (e: any) => {
-        let { tests } = currentProblem;
-        tests = e.target.files[0];
+    const handleFileUpload = (e: any, propName: keyof IProblemAdministration) => {
+        const file = e.target.files[0];
         setCurrentProblem((prevState) => ({
             ...prevState,
-            tests,
+            [propName]: file,
         }));
+        setSkipDownload(true);
     };
 
-    const handleFileClearance = () => {
-        let { tests } = currentProblem;
-        tests = null;
+    const handleFileClearance = (propName: keyof IProblemAdministration) => {
         setCurrentProblem((prevState) => ({
             ...prevState,
-            tests,
+            [propName]: null,
         }));
     };
 
@@ -398,12 +422,32 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                 />
             ))
         }
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        {ADDITIONAL_FILES}
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <Box className={formStyles.row}>
+                            <FormControl className={formStyles.inputRow}>
+                                <FileUpload
+                                  handleFileUpload={handleFileUpload}
+                                  propName="additionalFiles"
+                                  setSkipDownload={setSkipDownload}
+                                  uploadButtonName={currentProblem.additionalFiles?.name}
+                                  showDownloadButton={currentProblem.hasAdditionalFiles}
+                                  onClearSelectionClicked={handleFileClearance}
+                                  disableClearButton={currentProblem.additionalFiles === null}
+                                />
+                            </FormControl>
+                        </Box>
+                    </Box>
+                </Box>
                 <AdministrationFormButtons
                   isEditMode={isEditMode}
                   onCreateClick={() => submitForm()}
                   onEditClick={() => submitForm()}
                 />
-
             </form>
         </Box>
     );

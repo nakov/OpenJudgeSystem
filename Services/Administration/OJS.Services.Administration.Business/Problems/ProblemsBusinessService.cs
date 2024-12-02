@@ -16,16 +16,18 @@ using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
-using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Extensions;
 using Settings;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using OJS.Workers.Common;
+using Polly.CircuitBreaker;
 using IsolationLevel = System.Transactions.IsolationLevel;
 using Resource = OJS.Common.Resources.ProblemsBusiness;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -83,6 +85,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
     {
+        if (model.AdditionalFiles != null)
+        {
+            this.ValidateAdditionalFiles(model.AdditionalFiles);
+        }
+
         var contestId = model.ContestId;
 
         var problem = model.Map<Problem>();
@@ -214,6 +221,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         if (problem is null)
         {
             throw new ArgumentNullException($"Problem with id {model.Id} not found");
+        }
+
+        if (model.AdditionalFiles != null)
+        {
+            this.ValidateAdditionalFiles(model.AdditionalFiles);
         }
 
         problem.MapFrom(model);
@@ -358,6 +370,74 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
                 .ToList();
 
         await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(serviceModels);
+    }
+
+    public async Task<(MemoryStream outputStream, string zipFileName)> DownloadAdditionalFiles(int problemId)
+    {
+        var problem = await this.problemsData
+            .GetByIdQuery(problemId)
+            .FirstOrDefaultAsync();
+
+        if (problem is null)
+        {
+            throw new BusinessServiceException($"Problem with id {problemId} does not exist.");
+        }
+
+        var additionalFiles = problem.AdditionalFiles;
+        if (additionalFiles == null || additionalFiles.Length == 0)
+        {
+            throw new BusinessServiceException($"Problem with id {problemId} does not have any additional files.");
+        }
+
+        var zipFileName = $"{problem.Name}_AdditionalFiles_{DateTime.Now:yyyyMMddHHmmss}{Constants.ZipFileExtension}";
+
+        var outputStream = new MemoryStream();
+        try
+        {
+            await outputStream.WriteAsync(additionalFiles);
+
+            outputStream.Position = 0;
+
+            return (outputStream, zipFileName);
+        }
+        catch
+        {
+            await outputStream.DisposeAsync();
+            throw;
+        }
+    }
+
+    private void ValidateAdditionalFiles(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            throw new BusinessServiceException("The additional files should not be empty.");
+        }
+
+        var isExtensionInvalid = Path.GetExtension(file.FileName) != Constants.ZipFileExtension;
+
+        if (isExtensionInvalid)
+        {
+            throw new BusinessServiceException("The additional files should be in a .zip format.");
+        }
+
+        using var stream = file.OpenReadStream();
+        var buffer = new byte[2];
+        var bytesRead = stream.Read(buffer, 0, 2);
+
+        if (bytesRead < 2)
+        {
+            throw new BusinessServiceException("The additional files are too small to be a valid .zip file.");
+        }
+
+        /*
+         *  Validate if the file is .zip, its magic number ( the first two bytes ), should be 'P' and 'K'.
+         *  Where '0x50' and '0x4B' are the byte representations of 'P' and 'K' respectively.
+         */
+        if (buffer[0] != 0x50 || buffer[1] != 0x4B)
+        {
+            throw new BusinessServiceException("The additional files should be in a .zip format.");
+        }
     }
 
     private static void AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
