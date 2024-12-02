@@ -2,7 +2,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypesInSubmissionDocuments;
 using OJS.Services.Common.Data;
 using System.Collections.Generic;

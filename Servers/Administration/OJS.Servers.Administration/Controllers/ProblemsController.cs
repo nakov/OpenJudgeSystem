@@ -21,6 +21,8 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -38,11 +40,13 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IProblemsGridDataService problemGridDataService,
         ProblemAdministrationValidator validator,
-        IGridDataService<ProblemResource> problemResourceGridDataService)
+        IGridDataService<ProblemResource> problemResourceGridDataService,
+        IDataService<AccessLog> accessLogsData)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
-                validator)
+                validator,
+                accessLogsData)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.problemsDataService = problemsDataService;
@@ -72,6 +76,20 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         return response;
     }
 
+    [HttpPost("{problemId:int}")]
+    [ProtectedEntityAction]
+    public async Task<IActionResult> ValidateRetest(int problemId)
+    {
+        if (!await this.problemsDataService.ExistsById(problemId))
+        {
+            return this.UnprocessableEntity();
+        }
+
+        var validationModel = await this.problemsBusinessService.ValidateRetest(problemId);
+
+        return this.Ok(validationModel);
+    }
+
     [HttpPost]
     [ProtectedEntityAction]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
@@ -79,6 +97,13 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         if (model == null || !await this.problemsDataService.ExistsById(model.Id))
         {
             return this.UnprocessableEntity();
+        }
+
+        var validationModel = await this.problemsBusinessService.ValidateRetest(model.Id);
+
+        if (!validationModel.RetestAllowed)
+        {
+            return this.UnprocessableEntity(validationModel.Message);
         }
 
         await this.problemsBusinessService.RetestById(model.Id);

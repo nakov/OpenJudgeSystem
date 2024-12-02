@@ -8,6 +8,10 @@ public class SubmitSubmissionServiceModel : IMapExplicitly
 {
     public int ProblemId { get; set; }
 
+    public int ContestId { get; set; }
+
+    public bool IsOnlineExam { get; set; }
+
     public int SubmissionTypeId { get; set; }
 
     public bool Official { get; set; }

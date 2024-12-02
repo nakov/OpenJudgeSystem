@@ -76,8 +76,8 @@ export const contestsService = createApi({
             query: () => ({ url: '/ContestCategories/GetCategoriesTree' }),
             /* eslint-disable object-curly-newline */
         }),
-        getContestStrategies: builder.query<IContestStrategyFilter[], void>({
-            query: () => ({ url: '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+        getContestStrategies: builder.query<IContestStrategyFilter[], { contestCategoryId: number }>({
+            query: ({ contestCategoryId }) => ({ url: `/SubmissionTypes/GetAllForContestCategory?contestCategoryId=${contestCategoryId}` }),
             /* eslint-disable object-curly-newline */
         }),
         getContestsParticipationsForUser: builder.query<
@@ -94,7 +94,6 @@ export const contestsService = createApi({
                         strategy,
                     },
                 }),
-                keepUnusedDataFor: 0,
             }),
         getContestUserParticipation: builder.query<ICompeteContestResponseType, { id: number; isOfficial: boolean }>({
             query: ({ id, isOfficial }) => ({
@@ -104,14 +103,14 @@ export const contestsService = createApi({
             keepUnusedDataFor: 0,
         }),
         submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, problemId, submissionTypeId }) => ({
+            query: ({ content, official, problemId, submissionTypeId, contestId, isOnlineExam }) => ({
                 url: '/Compete/Submit',
                 method: 'POST',
-                body: { content, official, problemId, submissionTypeId },
+                body: { content, official, problemId, submissionTypeId, contestId, isOnlineExam },
             }),
         }),
         submitContestSolutionFile: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, submissionTypeId, problemId }) => {
+            query: ({ content, official, submissionTypeId, problemId, contestId, isOnlineExam }) => {
                 const formData = new FormData();
                 formData.append('content', content);
                 formData.append('official', official
@@ -119,6 +118,10 @@ export const contestsService = createApi({
                     : 'false');
                 formData.append('problemId', problemId.toString());
                 formData.append('submissionTypeId', submissionTypeId.toString());
+                formData.append('contestId', contestId.toString());
+                formData.append('isOnlineExam', isOnlineExam
+                    ? 'true'
+                    : 'false');
 
                 return {
                     url: '/Compete/SubmitFileSubmission',
@@ -181,7 +184,7 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
-    useLazyGetContestsParticipationsForUserQuery,
+    useGetContestsParticipationsForUserQuery,
     useSubmitContestSolutionMutation,
     useRegisterUserForContestMutation,
     useSubmitContestSolutionFileMutation,

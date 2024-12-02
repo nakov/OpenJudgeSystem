@@ -66,6 +66,12 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(260, LogLevel.Debug, "Platform data for {UserName} successfully received.")]
     public static partial void LogPlatformDataReceived(this ILogger logger, string userName);
 
+    [LoggerMessage(270, LogLevel.Information, "Setting {SettingName} already exists. Skipping adding setting.")]
+    public static partial void LogSettingExistsSkipAdding(this ILogger logger, string settingName);
+
+    [LoggerMessage(270, LogLevel.Information, "Added {SettingName} setting.")]
+    public static partial void LogAddedSetting(this ILogger logger, string settingName);
+
     // Submissions
     [LoggerMessage(1010, LogLevel.Error, "Exception in publishing submission #{SubmissionId}", SkipEnabledCheck = true)]
     public static partial void LogExceptionPublishingSubmission(this ILogger logger, int submissionId, Exception ex);

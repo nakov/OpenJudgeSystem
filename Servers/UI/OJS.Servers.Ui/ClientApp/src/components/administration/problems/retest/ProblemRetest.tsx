@@ -1,8 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+    DialogContentText,
+} from '@mui/material';
+import SimpleDialog from 'src/components/guidelines/dialog/simple-dialog/SimpleDialog';
+import isNilOrEmpty from 'src/utils/check-utils';
 
-import { IIndexProblemsType, IPagedResultType } from '../../../../common/types';
+import { IIndexProblemsType, IPagedResultType, IProblemRetestValidationType } from '../../../../common/types';
 import { useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
@@ -13,6 +18,10 @@ interface IProblemRetestProps {
     index: number;
     problemName: string | undefined;
     declineFunction: () => void;
+
+    isValidationLoading: boolean;
+    validationModel?: IProblemRetestValidationType;
+
     onSuccess: (message: string) => void;
 
     contestId:number;
@@ -22,7 +31,17 @@ interface IProblemRetestProps {
 
 }
 const ProblemRetest = (props: IProblemRetestProps) => {
-    const { index, problemName, declineFunction, onSuccess, contestId, problemData, problemToRetest } = props;
+    const {
+        index,
+        problemName,
+        declineFunction,
+        isValidationLoading,
+        validationModel,
+        onSuccess,
+        contestId,
+        problemData,
+        problemToRetest,
+    } = props;
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
 
@@ -57,21 +76,66 @@ const ProblemRetest = (props: IProblemRetestProps) => {
         }
     };
 
+    const dialogTitle = `Retest ${problemName}`;
+
+    const retestAllowedMessage = `You are about to retest ${validationModel?.submissionsCount} submissions
+        with an average execution time of ${validationModel?.averageExecutionTime} seconds.
+        This will impact the execution of other submissions during the time it takes
+        for the submissions to be processed. ${validationModel?.message} Are you sure you want to proceed?`;
+
+    const retestNotAllowedDefaultMessage = `Unable to retest
+                        ${validationModel?.submissionsCount}
+                        submissions for this problem. Contact a developer for this action.`;
+
+    const renderLoadingDialog = useCallback(() => (
+        <SimpleDialog
+          title={dialogTitle}
+          content={(
+              <>
+                  <DialogContentText>
+                      Validating retest limits. Please wait.
+                  </DialogContentText>
+                  <SpinningLoader />
+              </>
+            )}
+          declineFunction={declineFunction}
+        />
+    ), [ declineFunction, dialogTitle ]);
+
+    const renderRetestNotAllowedDialog = useCallback(() => (
+        <SimpleDialog
+          title={dialogTitle}
+          content={isNilOrEmpty(validationModel?.message)
+              ? retestNotAllowedDefaultMessage
+              : validationModel?.message}
+          declineFunction={declineFunction}
+        />
+    ), [ dialogTitle, validationModel, retestNotAllowedDefaultMessage, declineFunction ]);
+
     if (isRetesting) {
         <SpinningLoader />;
     }
+
     return (
         <>
             {renderErrorMessagesAlert(errorMessages)}
-            <ConfirmDialogWithAdditionalProtection
-              key={index}
-              text={`Are you sure you want to retest all submissions for  ${problemName}`}
-              title="Retest"
-              passWordToMatch="Retest"
-              confirmButtonText="Retest"
-              declineFunction={() => declineFunction()}
-              confirmFunction={() => retestProblem(problemToRetest)}
-            />
+            {
+                isValidationLoading
+                    ? renderLoadingDialog()
+                    : validationModel?.retestAllowed
+                        ? (
+                            <ConfirmDialogWithAdditionalProtection
+                              key={index}
+                              text={retestAllowedMessage}
+                              title={dialogTitle}
+                              passWordToMatch="Retest"
+                              confirmButtonText="Retest"
+                              declineFunction={() => declineFunction()}
+                              confirmFunction={() => retestProblem(problemToRetest)}
+                            />
+                        )
+                        : renderRetestNotAllowedDialog()
+            }
         </>
     );
 };

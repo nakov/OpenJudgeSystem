@@ -13,17 +13,15 @@
 
         IQueryable<Submission> GetByIdQuery(int id);
 
-        IQueryable<Submission> GetAllWithParticipantProblemAndSubmissionType();
-
         IQueryable<Submission> GetAllByProblem(int problemId);
+
+        Task<int> GetCountByProblem(int problemId);
 
         IQueryable<Submission> GetAllByProblems(IEnumerable<int> problemIds);
 
-        IQueryable<Submission> GetByIds(IEnumerable<int> ids);
+        Task<Submission?> GetNonDeletedWithNonDeletedProblemTestsAndSubmissionTypes(int id);
 
-        IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
-
-        IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId);
+        Task<IEnumerable<Submission>> GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(int problemId);
 
         IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
             DateTime createdBeforeDate,
@@ -33,19 +31,13 @@
 
         IQueryable<Submission> GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(int submissionTypeId, int monthsCount);
 
-        IQueryable<int> GetIdsByProblem(int problemId);
-
-        bool IsOfficialById(int id);
-
         Task SetAllToUnprocessedByProblem(int problemId);
 
         void DeleteByProblem(int problemId);
 
         new void Update(Submission submission);
 
-        void RemoveTestRunsCacheByProblem(int problemId);
-
-        Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId);
+        Task RemoveTestRunsCacheByProblem(int problemId);
 
         Task<IEnumerable<int>> GetIdsByProblemId(int problemId);
     }

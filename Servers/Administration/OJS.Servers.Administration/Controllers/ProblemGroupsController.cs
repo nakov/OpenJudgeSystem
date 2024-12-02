@@ -8,11 +8,11 @@ using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.GridData;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemGroups;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int, ProblemGroupInListModel, ProblemGroupsAdministrationModel>
 {
@@ -21,11 +21,13 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int,
     public ProblemGroupsController(
         IProblemGroupsGridDataService problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        ProblemGroupAdministrationModelValidator validator)
+        ProblemGroupAdministrationModelValidator validator,
+        IDataService<AccessLog> accessLogsData)
         : base(
             problemGroupGridDataService,
             problemGroupsBusinessService,
-            validator) =>
+            validator,
+            accessLogsData) =>
         this.problemGroupsBusinessService = problemGroupsBusinessService;
 
     [HttpGet]

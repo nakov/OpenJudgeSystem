@@ -1,44 +1,34 @@
 namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
-using System.Linq;
-using OJS.Services.Common.Models;
+using System.Threading.Tasks;
 using OJS.Services.Common.Models.Users;
-using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
-public class RetestSubmissionValidationService : IRetestSubmissionValidationService
+public class RetestSubmissionValidationService(ISubmissionsHelper submissionsHelper)
+    : IRetestSubmissionValidationService
 {
-    private readonly ISubmissionDetailsValidationService submissionDetailsValidation;
-    private readonly ISubmissionsHelper submissionsHelper;
-
-    public RetestSubmissionValidationService(
-        ISubmissionDetailsValidationService submissionDetailsValidation,
-        ISubmissionsHelper submissionsHelper)
+    public async Task<ValidationResult> GetValidationResult((SubmissionForRetestServiceModel, UserInfoModel, bool) item)
     {
-        this.submissionDetailsValidation = submissionDetailsValidation;
-        this.submissionsHelper = submissionsHelper;
-    }
+        var (submission, user, isAdminOrLecturerInContest) = item;
 
-    public ValidationResult GetValidationResult((SubmissionDetailsServiceModel, UserInfoModel, bool) item)
-    {
-        var (detailsModel, user, isInRole) = item;
-        // Checks if user is submissions participant or is admin/lecturer
-        var permissionsValidationResult = this.submissionDetailsValidation.GetValidationResult((detailsModel, user, isInRole));
-
-        if (!permissionsValidationResult.IsValid)
+        if (!isAdminOrLecturerInContest && user.Id != submission.UserId)
         {
-            permissionsValidationResult.Message = ValidationMessages.Submission.NoPrivilegesForThisSubmission;
-
-            return permissionsValidationResult;
+            return ValidationResult.Invalid(ValidationMessages.Submission.NoPrivilegesForThisSubmission);
         }
 
-        if (permissionsValidationResult.IsValid || this.submissionsHelper.IsEligibleForRetest(detailsModel))
+        var isEligibleForRetest = await submissionsHelper.IsEligibleForRetest(
+            submission.Id,
+            submission.Processed,
+            submission.IsCompiledSuccessfully,
+            submission.TestRunsCount);
+
+        if (!isAdminOrLecturerInContest && !isEligibleForRetest)
         {
-            return ValidationResult.Valid();
+            return ValidationResult.Invalid(ValidationMessages.Submission.NotEligibleForRetest);
         }
 
-        return ValidationResult.Invalid(ValidationMessages.Submission.NotEligibleForRetest);
+        return ValidationResult.Valid();
     }
 }

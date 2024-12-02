@@ -1,13 +1,13 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
-using FluentExtensions.Extensions;
+using System;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
 
 public class ContestCategoriesCacheService : IContestCategoriesCacheService
 {
@@ -23,15 +23,12 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
     }
 
     public async Task ClearMainContestCategoriesCache()
-    {
-        await this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
-        await this.cache.Remove(CacheConstants.ContestCategoriesTree);
-    }
+        => await this.cache.Remove(CacheConstants.ContestCategoriesTree);
 
     public async Task ClearContestCategoryParentsAndChildren(int categoryId)
     {
-        var contestCategory = await this.contestCategoriesData.GetByIdQuery(categoryId)
-            .Include(cc => cc.Children)
+        var contestCategory = await this.contestCategoriesData
+            .GetByIdQuery(categoryId)
             .FirstOrDefaultAsync();
 
         if (contestCategory == null)
@@ -39,42 +36,64 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             return;
         }
 
-        // Collect all child category IDs
-        var allCategoryIds = new HashSet<int>(contestCategory.Children.Select(cc => cc.Id));
-        var currentCategory = contestCategory;
+        var allCategoryIds = new HashSet<int>();
 
-        // Traverse upwards and collect parent IDs
-        while (currentCategory != null && currentCategory.ParentId.HasValue)
+        // Retrieve the IDs of all children
+        await this.BreadthFirstSearch(
+            contestCategory,
+            childCategory => allCategoryIds.Add(childCategory.Id));
+
+        // Traverse upwards and retrieve the IDs of all parents
+        while (contestCategory is { ParentId: not null })
         {
-            allCategoryIds.Add(currentCategory.ParentId.Value);
-            currentCategory = await this.contestCategoriesData
-                .GetByIdQuery(currentCategory.ParentId.Value)
+            allCategoryIds.Add(contestCategory.ParentId.Value);
+            contestCategory = await this.contestCategoriesData
+                .GetByIdQuery(contestCategory.ParentId.Value)
                 .FirstOrDefaultAsync();
         }
 
-        // Add the initial categoryId
-        allCategoryIds.Add(categoryId);
-
-        // Remove cache for all collected category IDs
-        await allCategoryIds.ToList().ForEachAsync(this.RemoveCacheFromCategory);
+        foreach (var id in allCategoryIds)
+        {
+            await this.cache.Remove(string.Format(CacheConstants.ContestSubCategoriesFormat, id));
+        }
     }
 
-    private async Task RemoveCacheFromCategory(int contestCategoryId)
+    /// <summary>
+    /// Performs a breadth-first traversal of contest categories starting from the specified parent category.
+    /// Executes a provided action on each visited category.
+    /// </summary>
+    /// <param name="parent">The root category from which the traversal begins.</param>
+    /// <param name="action">The action to execute on each visited category ( including the parent category ).</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <remarks>
+    /// <para>Warning: The contest category's children are loaded inside
+    /// the method, do not <c>.Include(cc =&gt; cc.Children)</c> for the parent category.</para>
+    /// </remarks>
+    private async Task BreadthFirstSearch(ContestCategory parent, Action<ContestCategory> action)
     {
-        var categoryNameCacheId = string.Format(
-            CacheConstants.ContestCategoryNameFormat,
-            contestCategoryId);
+        // Initialize a queue to manage the order of category traversal
+        var queue = new Queue<ContestCategory>();
 
-        var subCategoriesCacheId = string.Format(
-            CacheConstants.ContestSubCategoriesFormat,
-            contestCategoryId);
+        // Enqueue the root category to start the traversal
+        queue.Enqueue(parent);
 
-        var parentCategoriesCacheId = string.Format(
-            CacheConstants.ContestParentCategoriesFormat,
-            contestCategoryId);
+        // Continue processing until there are no more categories in the queue
+        while (queue.Count > 0)
+        {
+            // Dequeue the next category to visit
+            var currentCategory = queue.Dequeue();
 
-        await this.cache.Remove(categoryNameCacheId);
-        await this.cache.Remove(subCategoriesCacheId);
-        await this.cache.Remove(parentCategoriesCacheId);
+            // Asynchronously load all child categories of the current category
+            await this.contestCategoriesData.LoadChildrenRecursively(currentCategory);
+
+            // Execute the specified action on the current category
+            action(currentCategory);
+
+            // Enqueue all immediate child categories to be visited next
+            foreach (var child in currentCategory.Children)
+            {
+                queue.Enqueue(child);
+            }
+        }
     }
 }

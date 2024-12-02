@@ -12,15 +12,9 @@ namespace OJS.Services.Administration.Data
 
         IQueryable<ContestCategory> GetAllVisibleAndNotDeleted();
 
-        IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId);
-
         Task<ContestCategory> GetById(int? id);
 
         Task<ContestCategory?> GetByIdWithParent(int? id);
-
-        Task<string?> GetNameById(int id);
-
-        Task<bool> HasContestsById(int id);
 
         Task<IEnumerable<ContestCategory>> GetContestCategoriesByParentId(int? parentId);
 
@@ -28,6 +22,6 @@ namespace OJS.Services.Administration.Data
 
         Task<bool> UserHasContestCategoryPermissions(int categoryId, string? userId, bool isAdmin);
 
-        void LoadChildrenRecursively(ContestCategory category);
+        Task LoadChildrenRecursively(ContestCategory category);
     }
 }

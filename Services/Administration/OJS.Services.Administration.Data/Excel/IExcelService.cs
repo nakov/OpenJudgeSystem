@@ -5,7 +5,6 @@ using OJS.Services.Common.Models.Files;
 using OJS.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ClosedXML.Excel;
 
 public interface IExcelService : IService
 {

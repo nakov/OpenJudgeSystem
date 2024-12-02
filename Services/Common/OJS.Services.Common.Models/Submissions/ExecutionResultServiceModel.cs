@@ -3,7 +3,6 @@
     using AutoMapper;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Services.Infrastructure.Models.Mapping;
-    using System;
     using System.Linq;
 
     public class ExecutionResultServiceModel : IMapExplicitly

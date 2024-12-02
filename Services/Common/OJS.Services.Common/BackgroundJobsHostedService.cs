@@ -20,6 +20,7 @@ public class BackgroundJobsHostedService : IHostedService
     private readonly string deleteProcessedSubmissionsCronExpression = Cron.Daily(2);
     private readonly string updatingParticipantTotalScoreSnapshotCronExpression = Cron.Daily(4);
     private readonly string removingMultipleParticipantScoresForProblemCronExpression = Cron.Daily(3);
+    private readonly string normalizingAllPointsThatExceedAllowedLimitCronExpression = Cron.Daily(1);
 
     private readonly IHangfireBackgroundJobsService hangfireBackgroundJobs;
     private readonly ILogger<BackgroundJobsHostedService> logger;
@@ -90,5 +91,14 @@ public class BackgroundJobsHostedService : IHostedService
                 AdministrationQueueName);
 
         this.logger.LogBackgroundJobAddedOrUpdated("removing participant multiple scores");
+
+        this.hangfireBackgroundJobs
+            .AddOrUpdateRecurringJob<IRecurringBackgroundJobsBusinessService>(
+                nameof(IRecurringBackgroundJobsBusinessService.NormalizeAllPointsThatExceedAllowedLimit),
+                m => m.NormalizeAllPointsThatExceedAllowedLimit(),
+                this.normalizingAllPointsThatExceedAllowedLimitCronExpression,
+                AdministrationQueueName);
+
+        this.logger.LogBackgroundJobAddedOrUpdated("normalizing all points that exceed allowed limit");
     }
 }

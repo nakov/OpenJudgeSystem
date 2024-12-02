@@ -8,20 +8,32 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Common;
-using OJS.Common.Extensions;
 using System.Linq;
 
 public class ProblemResourceBusinessService : AdministrationOperationService<ProblemResource, int, ProblemResourceAdministrationModel>, IProblemResourcesBusinessService
 {
     private readonly IProblemResourcesDataService problemResourcesDataService;
+    private readonly IProblemsCacheService problemsCache;
 
-    public ProblemResourceBusinessService(IProblemResourcesDataService problemResourcesDataService)
-        => this.problemResourcesDataService = problemResourcesDataService;
+    public ProblemResourceBusinessService(
+        IProblemResourcesDataService problemResourcesDataService,
+        IProblemsCacheService problemsCache)
+    {
+        this.problemResourcesDataService = problemResourcesDataService;
+        this.problemsCache = problemsCache;
+    }
 
     public override async Task Delete(int id)
     {
+        var problemResource = await this.problemResourcesDataService
+            .GetByIdQuery(id)
+            .Select(pr => new { pr.Problem.ProblemGroup.ContestId, pr.ProblemId})
+            .FirstAsync();
+
         await this.problemResourcesDataService.DeleteById(id);
         await this.problemResourcesDataService.SaveChanges();
+
+        await this.problemsCache.ClearProblemCacheById(problemResource.ProblemId);
     }
 
     public override async Task<ProblemResourceAdministrationModel> Create(ProblemResourceAdministrationModel model)
@@ -35,6 +47,8 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
         await this.problemResourcesDataService.Add(problemResource);
         await this.problemResourcesDataService.SaveChanges();
+
+        await this.problemsCache.ClearProblemCacheById(problemResource.ProblemId);
 
         return model;
     }
@@ -87,6 +101,8 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
         this.problemResourcesDataService.Update(resource);
         await this.problemResourcesDataService.SaveChanges();
+
+        await this.problemsCache.ClearProblemCacheById(resource.ProblemId);
 
         return model;
     }

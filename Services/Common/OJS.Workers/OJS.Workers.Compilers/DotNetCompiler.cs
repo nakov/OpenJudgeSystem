@@ -30,12 +30,9 @@ namespace OJS.Workers.Compilers
 
         public override string BuildCompilerArguments(string inputFile, string outputFile, string additionalArguments)
         {
-            var compilingDir = $"{Path.GetDirectoryName(inputFile)}\\{CompilationDirectoryName}";
-            Directory.CreateDirectory(compilingDir);
-
             var arguments = new StringBuilder();
             arguments.Append("build ");
-            arguments.Append($"-o {compilingDir} ");
+            arguments.Append($"-o {this.CompilationDirectory} ");
             arguments.Append($"\"{inputFile}\" ");
             arguments.Append(additionalArguments);
             return arguments.ToString().Trim();

@@ -21,7 +21,7 @@ const ContestStrategies = () => {
         data: contestStrategies,
         isLoading: areStrategiesLoading,
         error: strategiesError,
-    } = useGetContestStrategiesQuery();
+    } = useGetContestStrategiesQuery({ contestCategoryId: selectedCategory?.id ?? 0 });
 
     useEffect(() => {
         if (selectedId && contestStrategies) {
@@ -49,10 +49,8 @@ const ContestStrategies = () => {
     });
 
     const dropdownItems = useMemo(
-        () => !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
-            ? (contestStrategies || []).map(mapDataToDropdownItem)
-            : selectedCategory?.allowedStrategyTypes.map(mapDataToDropdownItem),
-        [ contestStrategies, selectedCategory ],
+        () => (contestStrategies || []).map(mapDataToDropdownItem),
+        [ contestStrategies ],
     );
 
     const removeSelectedStrategy = () => {
@@ -76,7 +74,7 @@ const ContestStrategies = () => {
         <div className={styles.selectWrapper}>
             {selectedStrategy && <IoMdClose onClick={removeSelectedStrategy} />}
             <Dropdown
-              dropdownItems={dropdownItems || []}
+              dropdownItems={dropdownItems}
               value={selectValue}
               placeholder="Select strategy"
               handleDropdownItemClick={handleStrategySelect}

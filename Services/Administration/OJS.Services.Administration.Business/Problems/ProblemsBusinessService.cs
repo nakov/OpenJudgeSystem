@@ -1,26 +1,27 @@
 namespace OJS.Services.Administration.Business.Problems;
 
 using FluentExtensions.Extensions;
+using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
 using OJS.Data;
 using OJS.Data.Models;
 using OJS.Data.Models.Problems;
-using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
-using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
+using Settings;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,11 +41,13 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-    private readonly IContestsBusinessService contestsBusiness;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
     private readonly IProblemGroupsDataService problemGroupsDataService;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ITransactionsProvider transactionsProvider;
+    private readonly IProblemsCacheService problemsCache;
+    private readonly IUserProviderService userProviderService;
+    private readonly ISettingsBusinessService settingsBusinessService;
     private readonly ISubmissionTypesDataService submissionTypesData;
 
     public ProblemsBusinessService(
@@ -56,11 +59,13 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ITestRunsDataService testRunsData,
         IProblemGroupsBusinessService problemGroupsBusiness,
-        IContestsBusinessService contestsBusiness,
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IProblemGroupsDataService problemGroupsDataService,
         IZippedTestsParserService zippedTestsParser,
         ITransactionsProvider transactionsProvider,
+        IProblemsCacheService problemsCache,
+        IUserProviderService userProviderService,
+        ISettingsBusinessService settingsBusinessService,
         ISubmissionTypesDataService submissionTypesData)
     {
         this.contestsData = contestsData;
@@ -71,11 +76,13 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.testRunsData = testRunsData;
         this.problemGroupsBusiness = problemGroupsBusiness;
-        this.contestsBusiness = contestsBusiness;
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.problemGroupsDataService = problemGroupsDataService;
         this.zippedTestsParser = zippedTestsParser;
         this.transactionsProvider = transactionsProvider;
+        this.problemsCache = problemsCache;
+        this.userProviderService = userProviderService;
+        this.settingsBusinessService = settingsBusinessService;
         this.submissionTypesData = submissionTypesData;
     }
 
@@ -104,6 +111,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.problemsData.SaveChanges();
 
         await this.ReevaluateProblemsOrder(contestId);
+        await this.problemsCache.ClearProblemCacheById(problem.Id);
 
         return model;
     }
@@ -128,6 +136,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         {
             await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
         }
+
+        await this.problemsCache.ClearProblemCacheById(id);
 
         await this.problemsData.DeleteById(id);
         await this.problemsData.SaveChanges();
@@ -178,18 +188,6 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         return ServiceResult.Success;
     }
 
-    public async Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin)
-    {
-        var problem = await this.problemsData.OneByIdTo<ProblemShortDetailsServiceModel>(problemId);
-
-        if (problem == null)
-        {
-            throw new BusinessServiceException("Problem cannot be null");
-        }
-
-        return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
-    }
-
     public Task ReevaluateProblemsOrder(int contestId)
         => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId);
 
@@ -214,9 +212,9 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     public override async Task<ProblemAdministrationModel> Edit(ProblemAdministrationModel model)
     {
         var problem = await this.problemsData.GetByIdQuery(model.Id)
+            .Include(s => s.Checker)
             .Include(s => s.SubmissionTypesInProblems)
             .Include(s => s.ProblemGroup)
-            .Include(s => s.Checker)
             .FirstOrDefaultAsync();
 
         if (problem is null)
@@ -241,6 +239,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         await this.AddSubmissionTypes(problem, model);
 
+        await this.problemsCache.ClearProblemCacheById(problem.Id);
+
         this.problemsData.Update(problem);
 
         await this.problemsData.SaveChanges();
@@ -250,9 +250,99 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         return model;
     }
 
+    public async Task<ProblemRetestValidationModel> ValidateRetest(int id)
+    {
+        var submissionsCount = await this.submissionsData.GetCountByProblem(id);
+
+        if (submissionsCount == 0)
+        {
+            return new ProblemRetestValidationModel
+            {
+                SubmissionsCount = 0,
+                AverageExecutionTime = 0,
+                RetestAllowed = false,
+                Message = "No submissions have been submitted for this problem."
+            };
+        }
+
+        // Take 3 submissions with different results so an average execution time can be obtained
+        var relevantSubmissions = this.submissionsData.GetAllByProblem(id)
+            .Where(s => s.IsCompiledSuccessfully && s.StartedExecutionOn.HasValue && s.CompletedExecutionOn.HasValue)
+            .GroupBy(s => s.Points)
+            .Select(g => g.FirstOrDefault())
+            .Take(3)
+            .ToList();
+
+        if (relevantSubmissions.Count == 0)
+        {
+            return new ProblemRetestValidationModel
+            {
+                SubmissionsCount = submissionsCount,
+                AverageExecutionTime = 0,
+                RetestAllowed = false,
+                Message = "No submissions have been successfully compiled for this problem."
+            };
+        }
+
+        var averageTimeDifferenceInSeconds = Math.Round(relevantSubmissions
+            .Select(s => (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds)
+            .Average());
+
+        var maxWorkersWorkingTime =
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxWorkersWorkingTimeInSeconds);
+        var maxSubmissionsCountAllowedForBatchRetest =
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxSubmissionsCountAllowedForBatchRetest);
+        var maxSubmissionTimeToExecuteAllowedForBatchRetest =
+            await this.settingsBusinessService.GetByKey(GlobalConstants.Settings.MaxSubmissionTimeToExecuteAllowedForBatchRetest);
+
+        var allSubmissionsWorkingTime = submissionsCount * averageTimeDifferenceInSeconds;
+
+        var allSubmissionsWorkingTimeExceedsMaxAllowedTime = allSubmissionsWorkingTime > double.Parse(maxWorkersWorkingTime.Value, CultureInfo.InvariantCulture);
+        var submissionsCountExceedsMaxAllowedLimit = submissionsCount > int.Parse(maxSubmissionsCountAllowedForBatchRetest.Value!, CultureInfo.InvariantCulture);
+        var submissionsTimeToExecuteExceedsMaxAllowedLimit = averageTimeDifferenceInSeconds < int.Parse(maxSubmissionTimeToExecuteAllowedForBatchRetest.Value!, CultureInfo.InvariantCulture);
+
+        var validationModel = new ProblemRetestValidationModel
+        {
+            SubmissionsCount = submissionsCount,
+            AverageExecutionTime = averageTimeDifferenceInSeconds,
+            RetestAllowed = false,
+        };
+
+        var canRetest = !allSubmissionsWorkingTimeExceedsMaxAllowedTime || (!submissionsCountExceedsMaxAllowedLimit && !submissionsTimeToExecuteExceedsMaxAllowedLimit);
+
+        if (this.userProviderService.GetCurrentUser().IsDeveloper && !canRetest)
+        {
+            // Developers can retest even if validations fail
+            // Adding messages for developers for better understanding why retest fails
+            if (allSubmissionsWorkingTimeExceedsMaxAllowedTime)
+            {
+                validationModel.Message = $"Submissions will take {Math.Round(allSubmissionsWorkingTime / 60)} minutes to execute.";
+            }
+            else if (submissionsCountExceedsMaxAllowedLimit)
+            {
+                validationModel.Message = $"Submissions count exceeds max allowed limit {maxSubmissionsCountAllowedForBatchRetest.Value}.";
+            }
+            else if (submissionsTimeToExecuteExceedsMaxAllowedLimit)
+            {
+                validationModel.Message =
+                    $"Submissions time to execute ({averageTimeDifferenceInSeconds}) exceeds max allowed limit {maxSubmissionTimeToExecuteAllowedForBatchRetest.Value}";
+            }
+        }
+        else if (!canRetest)
+        {
+            validationModel.Message =
+                $"Retesting {submissionsCount} submissions will take {Math.Round(allSubmissionsWorkingTime / 60)} minutes to complete, exceeding the maximum allowed time limit ({Math.Round(double.Parse(maxWorkersWorkingTime.Value) / 60)} minutes). Contact a developer.";
+
+            return validationModel;
+        }
+
+        validationModel.RetestAllowed = true;
+        return validationModel;
+    }
+
     public async Task RetestById(int id)
     {
-        var submissions = (await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(id)).ToList();
+        var submissions = await this.submissionsData.GetAllNonDeletedByProblemWithProblemTestsAndSubmissionTypes(id);
 
         var submissionIds = submissions.Select(s => s.Id).ToList();
 
@@ -264,10 +354,16 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
             await this.submissionsData.SetAllToUnprocessedByProblem(id);
 
+            await this.submissionsData.RemoveTestRunsCacheByProblem(id);
+
             await this.submissionsForProcessingData.AddOrUpdateMany(submissionIds);
         });
 
-        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
+        var serviceModels = submissions
+                .Select(this.submissionsCommonBusinessService.BuildSubmissionForProcessing)
+                .ToList();
+
+        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(serviceModels);
     }
 
     private async Task AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
@@ -321,11 +417,12 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         else
         {
             orderBy = await this.problemsData.GetNewOrderByContest(contestId);
+            var problemGroupOrderBy = await this.problemGroupsBusiness.GetNewLatestOrderByContest(contestId);
 
             problem.ProblemGroup = new ProblemGroup
             {
                 ContestId = contestId,
-                OrderBy = orderBy,
+                OrderBy = problemGroupOrderBy,
             };
         }
 
