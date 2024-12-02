@@ -15,6 +15,8 @@ using OJS.Services.Administration.Models.TestRuns;
 using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class TestsController : BaseAdminApiController<Test, int, TestsInListModel, TestAdministrationModel>
 {
@@ -26,11 +28,13 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
         ITestsGridDataService testGridDataService,
         ITestsBusinessService testsBusinessService,
         TestAdministrationModelValidator validator,
-        IGridDataService<TestRun> testRunsGridDataService)
+        IGridDataService<TestRun> testRunsGridDataService,
+        IDataService<AccessLog> accessLogsData)
         : base(
             testGridDataService,
             testsBusinessService,
-            validator)
+            validator,
+            accessLogsData)
     {
         this.testGridDataService = testGridDataService;
         this.testsBusinessService = testsBusinessService;

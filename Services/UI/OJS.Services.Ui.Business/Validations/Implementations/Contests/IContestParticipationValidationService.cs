@@ -5,6 +5,6 @@ using OJS.Services.Common.Models.Users;
 using OJS.Services.Common.Validation;
 using OJS.Services.Ui.Models.Contests;
 
-public interface IContestParticipationValidationService : IValidationService<(ContestParticipationValidationServiceModel?, ContestCategoryServiceModel?, IParticipantForActivityServiceModel? participant, UserInfoModel?, bool)>
+public interface IContestParticipationValidationService : IValidationServiceAsync<(ContestParticipationValidationServiceModel?, ContestCategoryServiceModel?, IParticipantForActivityServiceModel? participant, UserInfoModel?, bool)>
 {
 }

@@ -21,6 +21,8 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -38,11 +40,13 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IProblemsGridDataService problemGridDataService,
         ProblemAdministrationValidator validator,
-        IGridDataService<ProblemResource> problemResourceGridDataService)
+        IGridDataService<ProblemResource> problemResourceGridDataService,
+        IDataService<AccessLog> accessLogsData)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
-                validator)
+                validator,
+                accessLogsData)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.problemsDataService = problemsDataService;
