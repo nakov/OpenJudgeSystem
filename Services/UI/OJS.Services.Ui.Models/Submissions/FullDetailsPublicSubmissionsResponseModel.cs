@@ -16,7 +16,7 @@ public class FullDetailsPublicSubmissionsResponseModel : IMapFrom<FullDetailsPub
 
     public string? User { get; set; }
 
-    public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null;
+    public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
     public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
