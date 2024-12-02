@@ -307,7 +307,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 Points = submission.Points,
                 MaxPoints = problem!.MaximumPoints,
             };
-        };
+        }
 
         return submissions;
     }
