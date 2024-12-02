@@ -14,10 +14,8 @@ using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Data.Models.Mentor;
-using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Cache;
-using OJS.Services.Infrastructure.Configurations;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
@@ -32,6 +30,8 @@ using static OJS.Common.GlobalConstants.Settings;
 
 public class MentorBusinessService : IMentorBusinessService
 {
+    private const string SvnHttpClientName = "Svn";
+    private const string DefaultHttpClientName = "Default";
     private const string Docx = "docx";
     private const string DocumentNotFoundOrEmpty = "Judge was unable to find the problem's description. Please contact an administrator and report the problem.";
 
@@ -53,7 +53,6 @@ public class MentorBusinessService : IMentorBusinessService
         IContestsDataService contestsData,
         ICacheService cache,
         ILogger<MentorBusinessService> logger,
-        IConfiguration configuration,
         OpenAIClient openAiClient)
     {
         this.userMentorData = userMentorData;
@@ -63,7 +62,6 @@ public class MentorBusinessService : IMentorBusinessService
         this.contestsData = contestsData;
         this.cache = cache;
         this.logger = logger;
-        this.configuration = configuration;
         this.openAiClient = openAiClient;
     }
 
@@ -540,25 +538,16 @@ public class MentorBusinessService : IMentorBusinessService
 
     private async Task<byte[]> DownloadResource(string url, int problemId, int contestId)
     {
-        var client = this.httpClientFactory.CreateClient();
+        var client = this.httpClientFactory.CreateClient(DefaultHttpClientName);
         return await this.FetchResource(url, client, problemId, contestId);
     }
 
     private async Task<byte[]> DownloadSvnResource(string path, int problemId, int contestId)
     {
-        var svnConfig = this.configuration.GetSectionWithValidation<SvnConfig>();
-
         var pathParts = path.Split("svn", StringSplitOptions.RemoveEmptyEntries);
 
-        var svnUrl = $"{svnConfig.BaseUrl}{pathParts.Last()}";
-
-        var handler = new HttpClientHandler
-        {
-            Credentials = new NetworkCredential(svnConfig.Username, svnConfig.Password)
-        };
-
-        using var client = new HttpClient(handler);
-        return await this.FetchResource(svnUrl, client, problemId, contestId);
+        using var client = this.httpClientFactory.CreateClient(SvnHttpClientName);
+        return await this.FetchResource(pathParts.Last(), client, problemId, contestId);
     }
 
     private async Task<byte[]> FetchResource(string link, HttpClient client, int problemId, int contestId)
