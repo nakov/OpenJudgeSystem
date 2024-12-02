@@ -544,10 +544,12 @@ public class MentorBusinessService : IMentorBusinessService
 
     private async Task<byte[]> DownloadSvnResource(string path, int problemId, int contestId)
     {
-        var pathParts = path.Split("svn", StringSplitOptions.RemoveEmptyEntries);
+        var index = path.IndexOf("svn", StringComparison.OrdinalIgnoreCase);
+        var resourcePath = path[(index + "svn".Length)..].TrimStart('/');
 
         using var client = this.httpClientFactory.CreateClient(SvnHttpClientName);
-        return await this.FetchResource(pathParts.Last(), client, problemId, contestId);
+
+        return await this.FetchResource(resourcePath, client, problemId, contestId);
     }
 
     private async Task<byte[]> FetchResource(string link, HttpClient client, int problemId, int contestId)
