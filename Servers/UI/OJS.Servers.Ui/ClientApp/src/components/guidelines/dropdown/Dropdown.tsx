@@ -1,21 +1,39 @@
-import { MenuItem, Select } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { IoMdClose } from 'react-icons/io';
+import { Autocomplete, createFilterOptions, IconButton, InputAdornment, Popper, TextField } from '@mui/material';
+import { IDropdownItem } from 'src/common/types';
 
 import useTheme from '../../../hooks/use-theme';
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from './Dropdown.module.scss';
-
-interface IDropdownItem {
-    id: number;
-    name: string;
-}
 
 interface IDropdownProps {
     dropdownItems: Array<IDropdownItem>;
-    value: string;
-    handleDropdownItemClick?: (arg?: any) => any;
+    value: IDropdownItem | null;
+    handleDropdownItemClick?: (item: IDropdownItem | undefined) => void;
     placeholder?: string;
     isDisabled?: boolean;
+    noOptionsFoundText?: string;
+    isSearchable?: boolean;
 }
+
+const StyledPopper = (popperProps: any) => (
+    <Popper
+      {...popperProps}
+      placement="bottom-start"
+      modifiers={[
+          {
+              name: 'flip',
+              enabled: false,
+          },
+          {
+              name: 'offset',
+              options: { offset: [ 0, 8 ] },
+          },
+      ]}
+    />
+);
 
 const Dropdown = (props: IDropdownProps) => {
     const {
@@ -24,37 +42,107 @@ const Dropdown = (props: IDropdownProps) => {
         handleDropdownItemClick,
         isDisabled = false,
         placeholder = 'Select element',
+        noOptionsFoundText = 'No options found',
+        isSearchable = false,
     } = props;
 
-    const { getColorClassName, themeColors } = useTheme();
+    const { isDarkMode } = useTheme();
 
-    const textColorClassName = getColorClassName(themeColors.textColor);
+    const theme = isDarkMode
+        ? 'dark'
+        : 'light';
+
+    const [ inputValue, setInputValue ] = useState('');
+
+    useEffect(() => {
+        if (value) {
+            setInputValue(value.name);
+        } else {
+            setInputValue('');
+        }
+    }, [ value ]);
+
+    const autocompleteClasses = {
+        root: styles[`${theme}Autocomplete`],
+        inputRoot: `${styles.inputRoot} ${styles[`${theme}InputRoot`]}`,
+        paper: styles[`${theme}Paper`],
+        option: `${styles.option} ${styles[`${theme}Option`]}`,
+        noOptions: `${styles.option} ${styles[`${theme}NoOptions`]}`,
+        listbox: styles[`${theme}Listbox`],
+        input: `${styles.input} ${styles[`${theme}Input`]}`,
+    };
+
+    const textFieldClasses = {
+        root: `${styles.textField} ${styles[`${theme}TextField`]}`,
+        input: `${styles.input} ${styles[`${theme}Input`]}`,
+    };
+
+    const defaultFilterOptions = createFilterOptions<IDropdownItem>();
 
     return (
-        <Select
-          sx={{ '.MuiSvgIcon-root ': { fill: themeColors.textColor } }}
-          className={`${styles.dropdown} ${textColorClassName}`}
-          value={value}
-          autoWidth
-          displayEmpty
+        <Autocomplete
+          options={dropdownItems}
+          getOptionLabel={(option) => option.name}
+          value={value ?? undefined}
+          inputValue={inputValue}
+          onInputChange={(event, newInputValue) => {
+              if (isSearchable) {
+                  setInputValue(newInputValue.trim() === ''
+                      ? ''
+                      : newInputValue);
+              }
+          }}
+          onChange={(event, newValue) => {
+              handleDropdownItemClick?.(newValue);
+          }}
+          noOptionsText={noOptionsFoundText}
           disabled={isDisabled}
-          MenuProps={{ MenuListProps: { disablePadding: true } }}
-        >
-            <MenuItem key="dropdown-default-item" value="" disabled>
-                {placeholder}
-            </MenuItem>
-            {dropdownItems.map((item: IDropdownItem) => (
-                <MenuItem
-                  key={`dropdown-item-${item.id}`}
-                  value={item.id}
-                  selected
-                  onClick={() => handleDropdownItemClick?.(item)}
-                  className={textColorClassName}
-                >
-                    {item.name}
-                </MenuItem>
-            ))}
-        </Select>
+          PopperComponent={StyledPopper}
+          classes={autocompleteClasses}
+          disableClearable
+          isOptionEqualToValue={(option, val) => option.id === val.id}
+          filterOptions={(options, state) => isSearchable
+              ? defaultFilterOptions(options, state)
+              : options}
+          renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={placeholder}
+                classes={textFieldClasses}
+                InputProps={{
+                    ...params.InputProps,
+                    inputProps: {
+                        ...params.inputProps,
+                        readOnly: !isSearchable,
+                    },
+                    endAdornment: isSearchable
+                        ? (
+                            <>
+                                {inputValue !== '' && !isDisabled && (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                      onClick={(event) => {
+                                          event.stopPropagation();
+                                          setInputValue('');
+                                          handleDropdownItemClick?.(undefined);
+                                      }}
+                                      edge="end"
+                                      size="small"
+                                      aria-label="clear input"
+                                    >
+                                        <IoMdClose />
+                                    </IconButton>
+                                </InputAdornment>
+                                )}
+                                {params.InputProps.endAdornment}
+                            </>
+                        )
+                        : params.InputProps.endAdornment,
+                }}
+              />
+          )}
+          ListboxProps={{ style: { maxHeight: '400px' } }}
+        />
     );
 };
 

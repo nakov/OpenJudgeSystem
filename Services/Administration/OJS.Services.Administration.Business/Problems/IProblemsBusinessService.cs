@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Business.Problems;
 
+using System.IO;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common.Models;
@@ -14,4 +15,6 @@ public interface IProblemsBusinessService : IAdministrationOperationService<Prob
     Task DeleteByContest(int contestId);
 
     Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId);
+
+    Task<(MemoryStream outputStream, string zipFileName)> DownloadAdditionalFiles(int problemId);
 }

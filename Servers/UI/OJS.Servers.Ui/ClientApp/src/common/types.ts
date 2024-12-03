@@ -364,6 +364,8 @@ interface IProblemAdministration {
     problemGroupOrderBy: number;
     problemGroupId : number;
     defaultSubmissionTypeId?: number;
+    additionalFiles: File | null;
+    hasAdditionalFiles: boolean;
 }
 
 interface ISubmissionTypesInListModel {
@@ -722,6 +724,11 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
     username: string;
 }
 
+interface IDropdownItem {
+    id: number;
+    name: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -799,4 +806,5 @@ export type {
     IContestCategoryHierarchyEdit,
     IChangeParticipationTimeForMultipleParticipants,
     IChangeParticipationTimeForSingleParticipant,
+    IDropdownItem,
 };

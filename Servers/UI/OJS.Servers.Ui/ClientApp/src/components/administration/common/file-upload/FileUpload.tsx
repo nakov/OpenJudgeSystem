@@ -5,6 +5,8 @@ import { Button, FormControl, FormGroup, IconButton, styled, Tooltip, Typography
 
 import { CLEAR_SELECTION } from '../../../../common/messages';
 
+import styles from './FileUpload.module.scss';
+
 interface IFileUploadProps {
     handleFileUpload: Function;
     propName: string;
@@ -15,6 +17,7 @@ interface IFileUploadProps {
     buttonLabel?: string;
     disableClearButton: boolean;
 }
+
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -26,6 +29,7 @@ const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
 });
+
 const FileUpload = (props: IFileUploadProps) => {
     const {
         handleFileUpload,
@@ -37,18 +41,19 @@ const FileUpload = (props: IFileUploadProps) => {
         disableClearButton,
         buttonLabel = 'Upload',
     } = props;
+
     return (
         <FormGroup
           sx={{
               display: 'flex',
-              width: '100%',
               flexDirection: 'row',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               justifyContent: 'flex-start',
+              gap: '1rem',
               margin: '1rem 0',
           }}
         >
-            <FormControl sx={{ margin: '1rem' }}>
+            <FormControl sx={{ display: 'flex', alignItems: 'start' }}>
                 <Tooltip title={CLEAR_SELECTION}>
                     <span>
                         <IconButton onClick={() => onClearSelectionClicked(propName)} disabled={disableClearButton}>
@@ -60,34 +65,38 @@ const FileUpload = (props: IFileUploadProps) => {
                     </span>
                 </Tooltip>
             </FormControl>
-            <FormControl sx={{ margin: '1rem' }}>
+            <FormControl className={styles.fileUpload} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Button
                   sx={{ width: '200px' }}
                   component="label"
                   variant="contained"
                   startIcon={<FaFileUpload />}
-                  onChange={(e) => handleFileUpload(e, propName)}
                 >
                     {buttonLabel}
-                    <VisuallyHiddenInput type="file" />
+                    <VisuallyHiddenInput type="file" onChange={(e) => handleFileUpload(e, propName)} />
                 </Button>
-                <Typography variant="caption">
-                    {' '}
-                    {uploadButtonName}
+                <Typography
+                  variant="caption"
+                  sx={{
+                      minHeight: '1rem',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      maxWidth: '200px',
+                  }}
+                >
+                    {uploadButtonName || 'No file selected'}
                 </Typography>
             </FormControl>
             {showDownloadButton && (
-            <FormControl sx={{ margin: '1rem' }}>
-                <Button
-                  sx={{ width: '200px' }}
-                  variant="contained"
-                  onClick={() => setSkipDownload(false)}
-                >
-                    Download
-                </Button>
-            </FormControl>
+                <FormControl sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                    <Button sx={{ width: '200px' }} variant="contained" onClick={() => setSkipDownload(false)}>
+                        Download
+                    </Button>
+                </FormControl>
             )}
         </FormGroup>
     );
 };
+
 export default FileUpload;

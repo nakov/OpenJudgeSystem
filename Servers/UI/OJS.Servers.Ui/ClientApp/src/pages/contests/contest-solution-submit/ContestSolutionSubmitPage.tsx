@@ -15,7 +15,7 @@ import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { AdjacencyList, IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
+import { IProblemResourceType, IProblemType, ISubmissionTypeType, AdjacencyList } from '../../../common/types';
 import {
     getAllContestsPageUrl,
     getContestsDetailsPageUrl,
@@ -642,7 +642,6 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Dropdown
                           dropdownItems={strategyDropdownItems || []}
-                          placeholder="Select strategy"
                           value={selectedSubmissionType?.id.toString() || ''}
                           handleDropdownItemClick={onStrategyDropdownItemSelect}
                         />
@@ -680,7 +679,6 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems || []}
-                      placeholder="Select strategy"
                       value={selectedSubmissionType?.id.toString() || ''}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />

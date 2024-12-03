@@ -56,11 +56,7 @@ const SubmissionGridRow = ({
         strategyName,
         problem: {
             id: problemId,
-            name: problemName,
-            contest: {
-                id: contestId,
-                name: contestName,
-            },
+            name: problemName = '',
         },
         isOfficial,
         isCompiledSuccessfully,
@@ -70,6 +66,8 @@ const SubmissionGridRow = ({
         maxTimeUsed,
         maxMemoryUsed,
     } = submission;
+
+    const { id: contestId = 0, name: contestName = '' } = submission.problem.contest || {};
 
     const { internalUser } =
         useSelector((reduxState: { authorization: IAuthorizationReduxState }) => reduxState.authorization);
