@@ -12,8 +12,8 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20241118160308_RenameUserMentorPKAndMakeQuotaLimitNullable")]
-    partial class RenameUserMentorPKAndMakeQuotaLimitNullable
+    [Migration("20241203094250_AddMentorTables")]
+    partial class AddMentorTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -315,6 +315,9 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AllowMentor")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -583,6 +586,9 @@ namespace OJS.Data.Migrations
                     b.Property<bool>("IsOfficial")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastSubmissionTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
@@ -681,6 +687,9 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DefaultSubmissionTypeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
@@ -725,6 +734,8 @@ namespace OJS.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CheckerId");
+
+                    b.HasIndex("DefaultSubmissionTypeId");
 
                     b.HasIndex("ProblemGroupId");
 
@@ -1034,9 +1045,6 @@ namespace OJS.Data.Migrations
 
                     b.Property<int>("ExecutionStrategyType")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsSelectedByDefault")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("MaxAllowedMemoryLimitInBytes")
                         .HasColumnType("int");
@@ -1535,6 +1543,10 @@ namespace OJS.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CheckerId");
 
+                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "DefaultSubmissionType")
+                        .WithMany()
+                        .HasForeignKey("DefaultSubmissionTypeId");
+
                     b.HasOne("OJS.Data.Models.Problems.ProblemGroup", "ProblemGroup")
                         .WithMany("Problems")
                         .HasForeignKey("ProblemGroupId")
@@ -1542,6 +1554,8 @@ namespace OJS.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Checker");
+
+                    b.Navigation("DefaultSubmissionType");
 
                     b.Navigation("ProblemGroup");
                 });
