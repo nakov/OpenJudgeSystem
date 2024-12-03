@@ -5,9 +5,7 @@ import { ITestRun } from '../hooks/submissions/types';
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
-interface ISubmissionTypeType {
-    id: number;
-    name: string;
+interface ISubmissionTypeType extends IDropdownItem {
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
     timeLimit: number;

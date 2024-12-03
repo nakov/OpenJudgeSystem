@@ -15,7 +15,13 @@ import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IProblemResourceType, IProblemType, ISubmissionTypeType, AdjacencyList } from '../../../common/types';
+import {
+    AdjacencyList,
+    IDropdownItem,
+    IProblemResourceType,
+    IProblemType,
+    ISubmissionTypeType,
+} from '../../../common/types';
 import {
     getAllContestsPageUrl,
     getContestsDetailsPageUrl,
@@ -77,7 +83,8 @@ const ContestSolutionSubmitPage = () => {
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
     const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
-    const [ submissionTypesPerProblem, setSubmissionTypesPerProblem ] = useState<AdjacencyList<number, ISubmissionTypeType>>({});
+    const [ submissionTypesPerProblem, setSubmissionTypesPerProblem ] =
+        useState<AdjacencyList<number, ISubmissionTypeType>>({});
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -175,7 +182,9 @@ const ContestSolutionSubmitPage = () => {
     }, [ selectedContestDetailsProblem, submissionTypesPerProblem ]);
 
     const onStrategyDropdownItemSelect = useCallback(
-        (submission: ISubmissionTypeType) => {
+        (item: IDropdownItem | undefined) => {
+            const submission = item as ISubmissionTypeType;
+
             if (!selectedContestDetailsProblem || !submission.id) {
                 return;
             }
@@ -228,7 +237,7 @@ const ContestSolutionSubmitPage = () => {
     });
 
     useEffect(() => {
-        if (problems) {
+        if (problems && Object.keys(submissionTypesPerProblem).length === 0) {
             const initialSubmissionTypes: AdjacencyList<number, ISubmissionTypeType> = {};
             problems.forEach((problem: IProblemType) => {
                 const defaultType = problem.allowedSubmissionTypes.find((type) => type.id === problem.defaultSubmissionTypeId);
@@ -642,7 +651,7 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Dropdown
                           dropdownItems={strategyDropdownItems || []}
-                          value={selectedSubmissionType?.id.toString() || ''}
+                          value={selectedSubmissionType}
                           handleDropdownItemClick={onStrategyDropdownItemSelect}
                         />
                         <Button
@@ -679,7 +688,7 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems || []}
-                      value={selectedSubmissionType?.id.toString() || ''}
+                      value={selectedSubmissionType}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
