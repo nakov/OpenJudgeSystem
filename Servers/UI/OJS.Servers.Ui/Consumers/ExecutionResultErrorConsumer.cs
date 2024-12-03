@@ -4,13 +4,13 @@ using FluentExtensions.Extensions;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using OJS.Common.Enumerations;
 using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Ui.Data;
 using System;
 using System.Threading.Tasks;
+using static OJS.Common.Enumerations.SubmissionProcessingState;
 
 public class ExecutionResultErrorConsumer(
     ILogger<ExecutionResultErrorConsumer> logger,
@@ -33,13 +33,11 @@ public class ExecutionResultErrorConsumer(
             logger.LogExceptionFromWorker(message.Id, message.WorkerName, workerException);
         }
 
-        var submissionForProcessing = await submissionsForProcessingData
-            .GetBySubmission(submissionId);
+        var submissionForProcessing = await submissionsForProcessingData.GetBySubmission(submissionId);
 
         if (submissionForProcessing is not null)
         {
-            submissionForProcessing.State = SubmissionProcessingState.Faulted;
-            submissionsForProcessingData.Update(submissionForProcessing);
+            await submissionsForProcessingData.SetProcessingState(submissionForProcessing, Faulted);
         }
         else
         {
@@ -61,12 +59,11 @@ public class ExecutionResultErrorConsumer(
             submission.CompilerComment = "Unexpected error occurred during processing. Please contact support.";
             submission.ProcessingComment = context.Message.Exceptions[0].Message;
             submissionsData.Update(submission);
+            await submissionsData.SaveChanges();
         }
         else
         {
             logger.LogSubmissionNotFound(submissionId);
         }
-
-        await submissionsData.SaveChanges();
     }
 }
