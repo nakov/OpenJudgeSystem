@@ -36,6 +36,8 @@ public class ContestParticipationServiceModel : IMapExplicitly
 
     public IEnumerable<int> ProblemsForParticipantIds { get; set; } = [];
 
+    public bool AllowMentor { get; set; }
+
     /// <summary>
     /// Gets or sets the count of participants in the contest taking into consideration if it is compete or practice.
     /// </summary>
@@ -54,7 +56,8 @@ public class ContestParticipationServiceModel : IMapExplicitly
             .ForMember(m => m.IsActiveParticipant, opt => opt.Ignore())
             .ForMember(m => m.ParticipantId, opt => opt.Ignore())
             .ForMember(m => m.UserSubmissionsTimeLimit, opt => opt.Ignore())
-            .ForMember(m => m.ParticipantsCount, opt => opt.Ignore());
+            .ForMember(m => m.ParticipantsCount, opt => opt.Ignore())
+            .ForMember(m => m.AllowMentor, opt => opt.Ignore());
 
         configuration.CreateMap<ContestParticipationServiceModel, ParticipantForActivityServiceModel>();
     }

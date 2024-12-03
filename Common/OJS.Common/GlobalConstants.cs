@@ -150,8 +150,14 @@ namespace OJS.Common
             public const string MentorModel = "MentorModel";
             public const int MentorMessagesSentCount = 10;
             public const int MentorMaxInputTokenCount = 4096;
+            public const int PercentageOfMentorMaxInputTokenCountUsedByUser = 80;
+            /*
+             *  The limit for the max output tokens should be approximately 2 times less than
+             *  the limit for the max input tokens. This is due to pricing, the output tokens
+             *  are about 2 times more expensive than the input tokens ( on average ).
+             */
             public const int MentorMaxOutputTokenCount = 2048;
-            public const int MentorQuotaLimit = 15;
+            public const int MentorQuotaLimit = 60;
             public const int MentorQuotaResetTimeInMinutes = 120;
             public const string MaxSubmissionTimeToExecuteAllowedForBatchRetest = "MaxSubmissionTimeToExecuteAllowedForBatchRetest";
             public const string MaxSubmissionsCountAllowedForBatchRetest = "MaxSubmissionsCountAllowedForBatchRetest";

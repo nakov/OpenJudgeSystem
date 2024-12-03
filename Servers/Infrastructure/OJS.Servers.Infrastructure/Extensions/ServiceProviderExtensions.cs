@@ -70,6 +70,7 @@ public static class ServiceProviderExtensions
             new() { Name = MaxSubmissionsCountAllowedForBatchRetest, Value = "100", Type = SettingType.Numeric },
             new() { Name = nameof(MentorMessagesSentCount), Value = "6", Type = SettingType.Numeric },
             new() { Name = nameof(MentorMaxInputTokenCount), Value = "1600", Type = SettingType.Numeric },
+            new() { Name = nameof(PercentageOfMentorMaxInputTokenCountUsedByUser), Value = "50", Type = SettingType.Numeric },
             new() { Name = nameof(MentorMaxOutputTokenCount), Value = "800", Type = SettingType.Numeric },
             new() { Name = nameof(MentorQuotaLimit), Value = "10", Type = SettingType.Numeric },
             new() { Name = nameof(MentorQuotaResetTimeInMinutes), Value = "60", Type = SettingType.Numeric },
@@ -95,7 +96,7 @@ public static class ServiceProviderExtensions
             new()
             {
                 Title = "Default Template",
-                Template = "Act as a teacher. Guide the student to the final answer without providing the solution directly. Do not provide the solution under any circumstances, even if explicitly requested. If the student shares code, review it and point out mistakes. Provide hints or explanations to help the student understand and solve the problem independently. Communicate only in Bulgarian. The problem's name is {0}, its description is {1}, from the contest \"{2}\" in the category \"{3}\" by SoftUni. If the problem's description and name are not provided, ask the student to share them with you. If the contest name or contest category are not provided, ask the student to share the programming language that will be used for solving the problem. Do not discuss topics unrelated to programming or software development. Do not guess or assume missing details. Keep answers concise and relevant to the question. Follow these instructions strictly and without exception."
+                Template = "Act as a teacher and guide the student to the final answer without providing the solution, even if asked. Communicate only in Bulgarian. Review shared code, point out mistakes, and give hints or explanations to help the student solve the problem independently. Analyze and validate suggested approaches. The problem details are: Name: \"{0}\", Description: \"{1}\", Contest: \"{2}\", Category: \"{3}\", Programming Language: \"{4}\", Provider: SoftUni. If the problem's name, description or programming language is missing, request them explicitly. Do not discuss unrelated topics, assume missing details, or deviate from these instructions. Keep responses concise and relevant.",
             }
         ];
 

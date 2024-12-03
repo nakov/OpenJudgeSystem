@@ -10,6 +10,7 @@ import Popover from '@mui/material/Popover';
 import isNil from 'lodash/isNil';
 import moment from 'moment';
 import { SUBMISSION_SENT } from 'src/common/messages';
+import Mentor from 'src/components/mentor/Mentor';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
 import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
@@ -77,8 +78,7 @@ const ContestSolutionSubmitPage = () => {
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
     const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
-
-    const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
+    const { selectedContestDetailsProblem, contestDetails, breadcrumbItems } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
     // Get the participationType type from route params or path (if not in params)
     const getParticipationType = useCallback(() => {
@@ -142,6 +142,7 @@ const ContestSolutionSubmitPage = () => {
         lastSubmissionTime,
         userSubmissionsTimeLimit,
         endDateTimeForParticipantOrContest,
+        allowMentor,
     } = data || {};
 
     const { problems = [] } = contest || {};
@@ -153,6 +154,8 @@ const ContestSolutionSubmitPage = () => {
         checkerName,
         allowedSubmissionTypes: problemAllowedSubmissionTypes,
     } = selectedContestDetailsProblem || {};
+
+    const categoryName = useMemo(() => breadcrumbItems.at(-1)?.name ?? undefined, [ breadcrumbItems ]);
 
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
         const submissionType = selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
@@ -829,6 +832,15 @@ const ContestSolutionSubmitPage = () => {
                         />
                     )}
             </div>
+            <Mentor
+              problemId={selectedContestDetailsProblem?.id}
+              problemName={selectedContestDetailsProblem?.name}
+              contestId={Number(contestId)}
+              contestName={contestDetails?.name}
+              categoryName={categoryName}
+              submissionTypeName={selectedSubmissionType?.name}
+              isMentorAllowed={allowMentor ?? false}
+            />
         </div>
     );
 };

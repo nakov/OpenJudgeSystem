@@ -5,7 +5,6 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // features
-import testsService from 'src/redux/services/testsService';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
 import searchSlice from './features/searchSlice';
@@ -14,11 +13,14 @@ import usersSlice from './features/usersSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // admin services
+import testsService from './services/testsService';
 import contestsAdminService from './services/admin/contestsAdminService';
 import examGroupsService from './services/admin/examGroupsAdminService';
 import participantsAdminService from './services/admin/participantsAdminService';
 import problemGroupsAdminService from './services/admin/problemGroupsAdminService';
 import { problemResourcesAdminService } from './services/admin/problemResourcesAdminService';
+import usersMentorsAdminService from './services/admin/usersMentorsAdminService';
+import mentorPromptTemplatesAdminService from './services/admin/mentorPromptTemplatesAdminService';
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
 import rolesAdminService from './services/admin/rolesAdminService';
@@ -28,6 +30,7 @@ import submissionsForProcessingAdminService from './services/admin/submissionsFo
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
 import testsAdminService from './services/admin/testsAdminService';
 import usersAdminService from './services/admin/usersAdminService';
+import mentorService from './services/mentorService';
 // features
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
@@ -54,6 +57,7 @@ const rootReducer = combineReducers({
     [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
     [searchService.reducerPath]: searchService.reducer,
+    [mentorService.reducerPath]: mentorService.reducer,
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
     [submissionsForProcessingAdminService.reducerPath]: submissionsForProcessingAdminService.reducer,
@@ -65,6 +69,8 @@ const rootReducer = combineReducers({
     [submissionTypesInSubmissionDocumentsAdminService.reducerPath]: submissionTypesInSubmissionDocumentsAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: problemGroupsAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
+    [usersMentorsAdminService.reducerPath]: usersMentorsAdminService.reducer,
+    [mentorPromptTemplatesAdminService.reducerPath]: mentorPromptTemplatesAdminService.reducer,
     [testsAdminService.reducerPath]: testsAdminService.reducer,
     [problemResourcesAdminService.reducerPath]: problemResourcesAdminService.reducer,
     [usersAdminService.reducerPath]: usersAdminService.reducer,
@@ -102,6 +108,7 @@ const store = configureStore({
         contestCategoriesAdminService.middleware,
         contestsService.middleware,
         searchService.middleware,
+        mentorService.middleware,
         homeStatisticsService.middleware,
         problemsAdminService.middleware,
         submissionsAdminService.middleware,
@@ -110,6 +117,8 @@ const store = configureStore({
         submissionTypeDocumentsAdminService.middleware,
         submissionTypesInSubmissionDocumentsAdminService.middleware,
         checkerAdminService.middleware,
+        usersMentorsAdminService.middleware,
+        mentorPromptTemplatesAdminService.middleware,
         testsAdminService.middleware,
         problemResourcesAdminService.middleware,
         usersAdminService.middleware,

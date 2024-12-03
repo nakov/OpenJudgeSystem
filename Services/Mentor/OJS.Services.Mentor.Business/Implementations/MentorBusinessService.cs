@@ -69,9 +69,21 @@ public class MentorBusinessService : IMentorBusinessService
     public async Task<ConversationResponseModel> StartConversation(ConversationRequestModel model)
     {
         var settings = await this.settingData
-            .GetQuery(s => s.Name.StartsWith(Mentor))
+            .GetQuery(s => s.Name.Contains(Mentor))
             .AsNoTracking()
             .ToDictionaryAsync(k => k.Name, v => v.Value);
+
+        var maxUserInputLength = CalculateMaxUserInputLength(settings);
+
+        /*
+         *  No message ( user, information ) should have a length greater than 'maxUserInputLength'.
+         *  Keeping in mind that the max output token count is about 2 times less than
+         *  the max input token count, this rule can be applied to the assistant messages as well.
+         */
+        if (model.Messages.Any(m => m.Content.Length > maxUserInputLength))
+        {
+            throw new BusinessServiceException($"Your message exceeds the {maxUserInputLength}-character limit. Please shorten it.");
+        }
 
         var userMentor = await this.userMentorData
             .GetQuery(um => um.Id == model.UserId)
@@ -105,11 +117,11 @@ public class MentorBusinessService : IMentorBusinessService
             {
                 Content = $"Достигнахте лимита на съобщенията си, моля опитайте отново след {GetTimeUntilNextMessage(userMentor.QuotaResetTime)}.",
                 Role = MentorMessageRole.Information,
-                SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
+                SequenceNumber = model.Messages.Max(m => m.SequenceNumber) + 1,
                 ProblemId = model.ProblemId,
             });
 
-            return model.Map<ConversationResponseModel>();
+            return GetResponseModel(model, maxUserInputLength);
         }
 
         var currentProblemMessages = model.Messages
@@ -119,16 +131,24 @@ public class MentorBusinessService : IMentorBusinessService
         var messagesToSend = new List<ChatMessage>();
 
         var systemMessage = await this.cache.Get(
-            string.Format(CacheConstants.MentorSystemMessage, model.UserId, model.ProblemId),
+            string.Format(CultureInfo.InvariantCulture, CacheConstants.MentorSystemMessage, model.UserId, model.ProblemId),
             async () => await this.GetSystemMessage(model),
             CacheConstants.OneHourInSeconds);
         systemMessage.Content = RemoveRedundantWhitespace(systemMessage.Content);
         messagesToSend.Add(CreateChatMessage(systemMessage.Role, systemMessage.Content));
 
         var recentMessages = currentProblemMessages
-            .Where(cm => cm.Role is not MentorMessageRole.System and not MentorMessageRole.Information)
-            .OrderByDescending(cm => cm.SequenceNumber)
+            .Where(m => m.Role is not MentorMessageRole.System and not MentorMessageRole.Information)
+            .OrderByDescending(m => m.SequenceNumber)
             .Take(GetNumericValue(settings, nameof(MentorMessagesSentCount)))
+            .OrderBy(m => m.SequenceNumber)
+            .Select(m => new ConversationMessageModel
+            {
+                Content = m.Content,
+                Role = m.Role,
+                SequenceNumber = m.SequenceNumber,
+                ProblemId = m.ProblemId,
+            })
             .ToList();
 
         foreach (var message in recentMessages)
@@ -150,10 +170,10 @@ public class MentorBusinessService : IMentorBusinessService
         var maxInputTokens = GetNumericValue(settings, nameof(MentorMaxInputTokenCount));
         if (tokenCount > maxInputTokens)
         {
-            TrimMessages(recentMessages, encoding, tokenCount - maxInputTokens);
+            this.TruncateMessages(model.ProblemId, recentMessages, encoding, tokenCount - maxInputTokens);
         }
 
-        messagesToSend.AddRange(recentMessages.Select(cm => CreateChatMessage(cm.Role, cm.Content)));
+        messagesToSend.AddRange(recentMessages.Select(m => CreateChatMessage(m.Role, m.Content)));
 
         var chat = this.openAiClient.GetChatClient(mentorModel);
         var response = await chat.CompleteChatAsync(messagesToSend, new ChatCompletionOptions
@@ -172,14 +192,14 @@ public class MentorBusinessService : IMentorBusinessService
         {
             Content = assistantContent,
             Role = MentorMessageRole.Assistant,
-            SequenceNumber = model.Messages.Max(cm => cm.SequenceNumber) + 1,
+            SequenceNumber = model.Messages.Max(m => m.SequenceNumber) + 1,
             ProblemId = model.ProblemId,
         });
 
         userMentor.RequestsMade++;
         await this.userMentorData.SaveChanges();
 
-        return model.Map<ConversationResponseModel>();
+        return GetResponseModel(model, maxUserInputLength);
     }
 
     private string ExtractSectionFromDocument(
@@ -243,8 +263,9 @@ public class MentorBusinessService : IMentorBusinessService
                 {
                     return ProcessMatchedSection(section.Value.Element, section.Key);
                 }
+
                 // Case 2: Match by section number
-                else if (section.Value.Index == problemNumber)
+                if (section.Value.Index == problemNumber)
                 {
                     return ProcessMatchedSection(section.Value.Element, section.Key);
                 }
@@ -344,8 +365,9 @@ public class MentorBusinessService : IMentorBusinessService
         }
     }
 
-    private static void TrimMessages(
-        ICollection<ConversationMessageModel> messages,
+    private void TruncateMessages(
+        int problemId,
+        List<ConversationMessageModel> messages,
         TikToken encoding,
         int tokensToRemove)
     {
@@ -354,14 +376,72 @@ public class MentorBusinessService : IMentorBusinessService
             return;
         }
 
-        var oldestMessage = messages
+        var initialMessageCount = messages.Count;
+
+        var messagesToTruncate = messages
             .OrderBy(m => m.SequenceNumber)
-            .First();
+            .ToList();
 
-        var tokenCount = encoding.Encode(oldestMessage.Content).Count;
-        messages.Remove(oldestMessage);
+        foreach (var message in messagesToTruncate)
+        {
+            var messageTokens = encoding.Encode(message.Content).Count;
+            var percentageTruncated = 0.0;
 
-        TrimMessages(messages, encoding, tokensToRemove - tokenCount);
+            // If entire message fits within remaining tokens to remove, remove the whole message
+            if (messageTokens <= tokensToRemove)
+            {
+                messages.Remove(message);
+                tokensToRemove -= messageTokens;
+                percentageTruncated = 100.0;
+            }
+            else
+            {
+                // If message is too long, truncate content
+                var remainingTokens = Math.Max(0, messageTokens - tokensToRemove);
+                var truncatedContent = TruncateContent(encoding, message.Content, remainingTokens);
+
+                // Calculate percentage truncated, do not remove the parenthesis
+                percentageTruncated = ((double)(messageTokens - remainingTokens) / messageTokens) * 100;
+
+                message.Content = truncatedContent;
+                tokensToRemove = 0;
+            }
+
+            // Log the percentage of content truncated
+            this.logger.LogPercentageOfMessageContentTruncated(percentageTruncated, problemId);
+
+            // Stop if we've removed enough tokens
+            if (tokensToRemove <= 0)
+            {
+                break;
+            }
+        }
+
+        var removedMessageCount = initialMessageCount - messages.Count;
+        if (removedMessageCount > 0)
+        {
+            // Log the number of messages removed
+            this.logger.LogTruncatedMentorMessages(initialMessageCount, removedMessageCount, problemId);
+        }
+    }
+
+
+    private static string TruncateContent(TikToken encoding, string content, int maxTokens)
+    {
+        // If content is already within token limit, return as-is
+        if (encoding.Encode(content).Count <= maxTokens)
+        {
+            return content;
+        }
+
+        // Tokenize the content
+        var tokens = encoding.Encode(content);
+
+        // Truncate to specified number of tokens
+        var truncatedTokens = tokens.Take(maxTokens).ToList();
+
+        // Decode back to string
+        return encoding.Decode(truncatedTokens);
     }
 
     private static ChatMessage CreateChatMessage(MentorMessageRole role, string content)
@@ -457,6 +537,19 @@ public class MentorBusinessService : IMentorBusinessService
     private static int GetNumericValue(Dictionary<string, string> settings, string key)
         => int.Parse(settings[key], CultureInfo.InvariantCulture);
 
+    private static ConversationResponseModel GetResponseModel(
+        ConversationRequestModel model,
+        int maxUserInputLength)
+    {
+        var responseModel = model.Map<ConversationResponseModel>();
+        responseModel.MaxUserInputLength = maxUserInputLength;
+        return responseModel;
+    }
+
+    private static int CalculateMaxUserInputLength(Dictionary<string, string> settings)
+        // The parenthesis should not be removed, they are used to define the priority of the arithmetic operations.
+        => (GetNumericValue(settings, nameof(MentorMaxInputTokenCount)) * 4 * GetNumericValue(settings, nameof(PercentageOfMentorMaxInputTokenCountUsedByUser))) / 100;
+
     private async Task<ConversationMessageModel> GetSystemMessage(ConversationRequestModel model)
     {
         /*
@@ -514,7 +607,8 @@ public class MentorBusinessService : IMentorBusinessService
                 model.ProblemName,
                 text,
                 model.ContestName,
-                model.CategoryName),
+                model.CategoryName,
+                model.SubmissionTypeName),
             Role = MentorMessageRole.System,
             // The system message should always be first ( in ascending order )
             SequenceNumber = int.MinValue,

@@ -15,4 +15,6 @@ public class ConversationRequestModel
     public string ContestName { get; set; } = default!;
 
     public string CategoryName { get; set; } = default!;
+
+    public string SubmissionTypeName { get; set; } = default!;
 }

@@ -62,6 +62,8 @@
 
         public int? ContestCategoryId { get; set; }
 
+        public bool AllowMentor { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration
                 .CreateMap<SubmissionDetailsServiceModel, SubmissionDetailsResponseModel>()

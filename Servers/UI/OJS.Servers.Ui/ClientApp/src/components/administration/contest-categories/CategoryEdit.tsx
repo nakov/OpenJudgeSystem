@@ -39,6 +39,7 @@ const initialState : IContestCategoryAdministration = {
     orderBy: 0,
     deletedOn: null,
     modifiedOn: null,
+    allowMentor: false,
 };
 
 const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
@@ -127,12 +128,14 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
 
     const onChange = (e: any) => {
         const { name, value, checked } = e.target;
+
         let {
             name: contestCategoryName,
             parentId,
             parent,
             isVisible,
             orderBy,
+            allowMentor,
         } = contestCategory;
         const contestCategoryValidations1 = contestCategoryValidations;
         // eslint-disable-next-line default-case
@@ -156,6 +159,9 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         case 'isVisible':
             isVisible = checked;
             break;
+        case 'allowMentor':
+            allowMentor = checked;
+            break;
         case 'parent': {
             const category = contestCategories?.find((cc) => cc.id === value);
             if (category) {
@@ -176,6 +182,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             parent,
             parentId,
             isVisible,
+            allowMentor,
             orderBy,
         }));
         validateForm();
@@ -252,6 +259,13 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                               control={<Checkbox checked={contestCategory.isVisible} />}
                               label="IsVisible"
                               name="isVisible"
+                              onChange={(e) => onChange(e)}
+                            />
+                            <FormControlLabel
+                              sx={{ marginTop: '1rem' }}
+                              control={<Checkbox checked={contestCategory.allowMentor} />}
+                              label="AllowMentor"
+                              name="allowMentor"
                               onChange={(e) => onChange(e)}
                             />
                             <FormControl className={styles.textArea} sx={{ margin: '15px 0' }}>
