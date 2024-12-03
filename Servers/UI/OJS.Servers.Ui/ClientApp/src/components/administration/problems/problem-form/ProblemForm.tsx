@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Autocomplete, Box, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 import downloadFile from 'src/utils/file-download-utils';
 
@@ -94,6 +94,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         contestType: contestType || ContestVariation.Exercise,
         problemGroupOrderBy: -1,
         problemGroupId: 0,
+        defaultSubmissionTypeId: 0,
         additionalFiles: null,
         hasAdditionalFiles: false,
     });
@@ -136,6 +137,13 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     } = useDownloadAdditionalFilesQuery(Number(problemId), { skip: skipDownload });
 
     const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
+
+    const isDefaultStrategySelected = useMemo(() => currentProblem
+        .submissionTypes
+        .some((st) => currentProblem.defaultSubmissionTypeId === st.id), [
+        currentProblem.defaultSubmissionTypeId,
+        currentProblem.submissionTypes,
+    ]);
 
     useDelayedSuccessEffect({ isSuccess: isSuccessfullyCreated || isSuccessfullyUpdated, onSuccess });
 
@@ -187,6 +195,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     const onChange = (e: any) => {
         const { target } = e;
         const { name, type, value, checked } = target;
+
         setCurrentProblem((prevState) => ({
             ...prevState,
             [name]: type === 'checkbox'
@@ -215,9 +224,15 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
         formData.append('showResults', currentProblem.showResults?.toString() || '');
         formData.append('problemGroupId', currentProblem.problemGroupId?.toString() || '');
+        formData.append('defaultSubmissionTypeId', currentProblem.defaultSubmissionTypeId?.toString() || '');
         currentProblem.submissionTypes?.forEach((type, index) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
+
+            if (type.id === Number(formData.get('defaultSubmissionTypeId'))) {
+                formData.append('DefaultSubmissionType.Id', type.id.toString());
+                formData.append('DefaultSubmissionType.Name', type.name.toString());
+            }
 
             if (type.solutionSkeleton) {
                 formData.append(
@@ -225,12 +240,14 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     type?.solutionSkeleton!.toString(),
                 );
             }
+
             if (type.timeLimit) {
                 formData.append(
                     `SubmissionTypes[${index}].TimeLimit`,
                     type?.timeLimit.toString(),
                 );
             }
+
             if (type.memoryLimit) {
                 formData.append(
                     `SubmissionTypes[${index}].MemoryLimit`,
@@ -324,6 +341,28 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     }
                     // Assuming you want to convert these to numbers
                     updatedValue = number;
+                } else if (propName === 'defaultSubmissionTypeId') {
+                    onChange({
+                        target: {
+                            value: value
+                                ? item.id
+                                : 0,
+                            name: propName,
+                            type: typeof item.id,
+                            checked: false,
+                        },
+                    });
+
+                    onChange({
+                        target: {
+                            value: value
+                                ? item
+                                : null,
+                            name: 'defaultSubmissionType',
+                            type: '',
+                            checked: false,
+                        },
+                    });
                 }
 
                 return { ...item, [propName]: updatedValue };
@@ -419,6 +458,8 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                   onPropChange={onPropChangeInSubmissionType}
                   onStrategyRemoved={onStrategyRemoved}
                   strategy={st}
+                  isDefaultStrategySelected={isDefaultStrategySelected}
+                  defaultSubmissionTypeId={currentProblem.defaultSubmissionTypeId ?? 0}
                 />
             ))
         }

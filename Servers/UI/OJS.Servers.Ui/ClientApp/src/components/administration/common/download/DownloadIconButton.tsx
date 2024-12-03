@@ -60,11 +60,14 @@ const DownloadIconButton = (props: IDownloadIconButtonProps) => {
         <>
             {renderErrorMessagesAlert(errorMessages)}
             <Tooltip title="Download" onClick={onClick}>
-                <IconButton disabled={disabled}>
-                    <DownloadIcon size={IconSize.Large} />
-                </IconButton>
+                <span>
+                    <IconButton disabled={disabled}>
+                        <DownloadIcon size={IconSize.Large} />
+                    </IconButton>
+                </span>
             </Tooltip>
         </>
     );
 };
+
 export default DownloadIconButton;

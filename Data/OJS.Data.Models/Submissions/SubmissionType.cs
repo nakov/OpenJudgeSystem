@@ -18,9 +18,6 @@ namespace OJS.Data.Models.Submissions
         [MinLength(NameMinLength)]
         public string Name { get; set; } = string.Empty;
 
-        [DefaultValue(false)]
-        public bool IsSelectedByDefault { get; set; }
-
         public ExecutionStrategyType ExecutionStrategyType { get; set; }
 
         public CompilerType CompilerType { get; set; }

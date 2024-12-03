@@ -15,7 +15,13 @@ import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IDropdownItem, IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
+import {
+    AdjacencyList,
+    IDropdownItem,
+    IProblemResourceType,
+    IProblemType,
+    ISubmissionTypeType,
+} from '../../../common/types';
 import {
     getAllContestsPageUrl,
     getContestsDetailsPageUrl,
@@ -34,7 +40,9 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
+import {
+    setContestDetailsIdAndCategoryId,
+} from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
     useSubmitContestSolutionFileMutation,
@@ -68,8 +76,6 @@ const ContestSolutionSubmitPage = () => {
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
-    const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<IDropdownItem>({ name: '', id: 0 });
-    const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
     const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
@@ -77,10 +83,12 @@ const ContestSolutionSubmitPage = () => {
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
     const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
+    const [ submissionTypesPerProblem, setSubmissionTypesPerProblem ] =
+        useState<AdjacencyList<number, ISubmissionTypeType>>({});
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
-    // Get the participationType type from route params or path (if not in params)
+
     const getParticipationType = useCallback(() => {
         if (participationType) {
             return participationType === ContestParticipationType.Compete
@@ -154,21 +162,39 @@ const ContestSolutionSubmitPage = () => {
         allowedSubmissionTypes: problemAllowedSubmissionTypes,
     } = selectedContestDetailsProblem || {};
 
-    const onStrategyDropdownItemSelect = useCallback((s: IDropdownItem | undefined) => {
-        if (s) {
-            const submissionType =
-                selectedContestDetailsProblem?.allowedSubmissionTypes?.find((type: ISubmissionTypeType) => type.id === s.id);
-            setSelectedStrategyValue({ name: s.name, id: s.id });
-            setSelectedSubmissionType(submissionType);
-        } else {
-            setSelectedStrategyValue({ name: '', id: 0 });
-            setSelectedSubmissionType(undefined);
+    const strategyDropdownItems = useMemo(() => {
+        if (!problemAllowedSubmissionTypes) {
+            return [];
         }
-    }, [ selectedContestDetailsProblem ]);
 
-    const strategyDropdownItems = useMemo(
-        () => problemAllowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
-        [ problemAllowedSubmissionTypes ],
+        return problemAllowedSubmissionTypes.map((item) => ({
+            id: item.id,
+            name: item.name,
+        })).sort((a, b) => a.id - b.id);
+    }, [ problemAllowedSubmissionTypes ]);
+
+    const selectedSubmissionType = useMemo(() => {
+        if (!selectedContestDetailsProblem) {
+            return undefined;
+        }
+
+        return submissionTypesPerProblem[selectedContestDetailsProblem.id];
+    }, [ selectedContestDetailsProblem, submissionTypesPerProblem ]);
+
+    const onStrategyDropdownItemSelect = useCallback(
+        (item: IDropdownItem | undefined) => {
+            const submission = item as ISubmissionTypeType;
+
+            if (!selectedContestDetailsProblem || !submission.id) {
+                return;
+            }
+
+            setSubmissionTypesPerProblem((prev) => ({
+                ...prev,
+                [selectedContestDetailsProblem.id]: submission,
+            }));
+        },
+        [ selectedContestDetailsProblem ],
     );
 
     const handleRefreshClick = () => {
@@ -211,6 +237,22 @@ const ContestSolutionSubmitPage = () => {
     });
 
     useEffect(() => {
+        if (problems && Object.keys(submissionTypesPerProblem).length === 0) {
+            const initialSubmissionTypes: AdjacencyList<number, ISubmissionTypeType> = {};
+            problems.forEach((problem: IProblemType) => {
+                const defaultType = problem.allowedSubmissionTypes.find((type) => type.id === problem.defaultSubmissionTypeId);
+                if (defaultType) {
+                    initialSubmissionTypes[problem.id] = defaultType;
+                } else if (problem.allowedSubmissionTypes.length > 0) {
+                    initialSubmissionTypes[problem.id] = problem.allowedSubmissionTypes[0];
+                }
+            });
+            setSubmissionTypesPerProblem(initialSubmissionTypes);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ problems ]);
+
+    useEffect(() => {
         if (submissionsData?.items && problems && submissionsData.items.length > 0) {
             // eslint-disable-next-line max-len
             const latestSubmission = submissionsData.items.reduce((latest, current) => new Date(current.createdOn) > new Date(latest.createdOn)
@@ -242,8 +284,7 @@ const ContestSolutionSubmitPage = () => {
         }
     }, [ submissionsDataFetching, isLoading, setIsRotating ]);
 
-    // this effect manages the disabling of the submit button as well as the
-    // displaying of the seconds before the next submission would be enabled
+    // Disable submit button based on submission time limits
     useEffect(() => {
         if (!lastSubmissionTime || !userSubmissionsTimeLimit) {
             return;
@@ -269,7 +310,7 @@ const ContestSolutionSubmitPage = () => {
         };
     }, [ lastSubmissionTime, userSubmissionsTimeLimit, handleSubmitButtonShouldBeDisabled ]);
 
-    // managing the proper display of remaining time in compete contest
+    // Manage remaining time for compete contest
     useEffect(() => {
         if (!endDateTimeForParticipantOrContest) {
             return;
@@ -286,7 +327,7 @@ const ContestSolutionSubmitPage = () => {
             const remainingCompeteTime = moment.utc(endDateTimeForParticipantOrContest).diff(moment.utc(currentTime));
 
             if (remainingCompeteTime > 0) {
-                const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
+                const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'milliseconds'));
                 setRemainingTimeForCompete(formattedTime);
             } else {
                 setRemainingTimeForCompete(calculatedTimeFormatted(moment.duration(0, 'milliseconds')));
@@ -297,10 +338,9 @@ const ContestSolutionSubmitPage = () => {
         return () => {
             clearInterval(intervalId);
         };
-    }, [ endDateTimeForParticipantOrContest, setRemainingTimeForCompete ]);
+    }, [ endDateTimeForParticipantOrContest ]);
 
-    // in case of not registered user for compete contest, redirect
-    // user to register page in order to keep the flow correct
+    // Redirect unregistered users in compete contests
     useEffect(() => {
         if (isLoading) {
             return;
@@ -318,8 +358,7 @@ const ContestSolutionSubmitPage = () => {
         setSubmissionCode('');
     }, [ selectedContestDetailsProblem ]);
 
-    // in case of loading by url we need to have contest details set in state,
-    // in order for breadcrumbs to load and work properly
+    // Ensure contest details are set in state
     useEffect(() => {
         if (!contestDetails || contestDetails.id !== Number(contestId)) {
             if (!data?.contest) {
@@ -335,19 +374,7 @@ const ContestSolutionSubmitPage = () => {
         }
     }, [ contestDetails, contestId, data, dispatch ]);
 
-    // set dropdown data to the first element in the dropdown
-    // instead of having the default empty one selected
-    useEffect(() => {
-        const previousSelectedStrategy = strategyDropdownItems?.find((strat) => strat.id === Number(selectedStrategyValue?.id));
-        if (strategyDropdownItems?.length && strategyDropdownItems?.length > 0) {
-            if (!previousSelectedStrategy) {
-                onStrategyDropdownItemSelect(strategyDropdownItems[0]);
-            } else {
-                onStrategyDropdownItemSelect(previousSelectedStrategy);
-            }
-        }
-    }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue ]);
-
+    // Fetch submissions when the selected problem changes
     useEffect(() => {
         // Disable submit button when code is updated
         handleSubmitButtonShouldBeDisabled();
@@ -362,6 +389,7 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitCode = useCallback(() => {
+        if (!selectedSubmissionType) { return; }
         setSubmissionCode('');
         submitSolution({
             content: submissionCode!,
@@ -375,13 +403,13 @@ const ContestSolutionSubmitPage = () => {
                 refetch();
                 getSubmissionsData();
             }
-        }).catch(() => {});
+        }).catch(() => { });
     }, [
+        selectedSubmissionType,
         getSubmissionsData,
         isCompete,
         refetch,
         selectedContestDetailsProblem,
-        selectedSubmissionType?.id,
         submissionCode,
         submitSolution,
         contestId,
@@ -389,6 +417,10 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(() => {
+        if (!selectedSubmissionType || !uploadedFile) {
+            return;
+        }
+
         setUploadedFile(null);
 
         submitSolutionFile({
@@ -402,11 +434,11 @@ const ContestSolutionSubmitPage = () => {
         refetch();
         getSubmissionsData();
     }, [
+        selectedSubmissionType,
         getSubmissionsData,
         isCompete,
         refetch,
         selectedContestDetailsProblem,
-        selectedSubmissionType?.id,
         submitSolutionFile,
         uploadedFile,
         contestId,
@@ -423,31 +455,30 @@ const ContestSolutionSubmitPage = () => {
 
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
-        <div className={styles.adminButtonsContainer}>
-            <AdministrationLink
-              text="Problem"
-              to={`/problems?filter=id~equals~${
-                    selectedContestDetailsProblem!.id
-              }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
-            />
-            <AdministrationLink
-              text="Tests"
-              to={`/problems/${
-                  selectedContestDetailsProblem!.id
-              }#tab-tests`}
-            />
-            {user.isAdmin && (
-            <AdministrationLink
-              text="View docs"
-              to={`/submission-type-documents-view?submissionTypeIds=${selectedContestDetailsProblem.allowedSubmissionTypes
-                  .map((st) => st.id)
-                  .join(',')}`}
-            />
-            )}
-        </div>
+            <div className={styles.adminButtonsContainer}>
+                <AdministrationLink
+                  text="Problem"
+                  to={`/problems?filter=id~equals~${
+                        selectedContestDetailsProblem!.id
+                  }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+                />
+                <AdministrationLink
+                  text="Tests"
+                  to={`/problems/${
+                        selectedContestDetailsProblem!.id
+                  }#tab-tests`}
+                />
+                {user.isAdmin && (
+                    <AdministrationLink
+                      text="View docs"
+                      to={`/submission-type-documents-view?submissionTypeIds=${selectedContestDetailsProblem.allowedSubmissionTypes
+                          .map((st) => st.id)
+                          .join(',')}`}
+                    />
+                )}
+            </div>
         ),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [ contest, selectedContestDetailsProblem ],
+        [ contest, selectedContestDetailsProblem, user.isAdmin ],
     );
 
     const renderProblemResources = useCallback(() => {
@@ -483,7 +514,6 @@ const ContestSolutionSubmitPage = () => {
             ? selectedSubmissionType?.memoryLimit
             : memoryLimit;
 
-        // eslint-disable-next-line consistent-return
         return (
             <div className={styles.problemParametersWrapper}>
                 <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
@@ -522,7 +552,7 @@ const ContestSolutionSubmitPage = () => {
                             <span>
                                 {mLimit
                                     ? (mLimit / 1024 / 1024).toFixed(2)
-                                    : 0 }
+                                    : 0}
                             </span>
                             {' '}
                             MB
@@ -546,8 +576,17 @@ const ContestSolutionSubmitPage = () => {
             </div>
         );
     }, [
-        selectedContestDetailsProblem, selectedSubmissionType, isModalOpen, anchorEl, textColorClassName,
-        lightBackgroundClassName, timeLimit, memoryLimit, fileSizeLimit, checkerName ]);
+        selectedContestDetailsProblem,
+        selectedSubmissionType,
+        isModalOpen,
+        anchorEl,
+        textColorClassName,
+        lightBackgroundClassName,
+        timeLimit,
+        memoryLimit,
+        fileSizeLimit,
+        checkerName,
+    ]);
 
     const renderRemainingTimeForContest = useCallback(() => {
         if (remainingTimeForCompete) {
@@ -582,10 +621,14 @@ const ContestSolutionSubmitPage = () => {
     }, [ remainingTimeForCompete ]);
 
     const renderSubmissionsInput = useCallback(() => {
+        if (!selectedSubmissionType) {
+            return null;
+        }
+
         const {
             allowBinaryFilesUpload,
             allowedFileExtensions,
-        } = selectedSubmissionType || selectedContestDetailsProblem?.allowedSubmissionTypes[0] || {};
+        } = selectedSubmissionType;
 
         if (allowBinaryFilesUpload) {
             return (
@@ -609,7 +652,7 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Dropdown
                           dropdownItems={strategyDropdownItems || []}
-                          value={selectedStrategyValue}
+                          value={selectedSubmissionType}
                           handleDropdownItemClick={onStrategyDropdownItemSelect}
                         />
                         <Button
@@ -646,7 +689,7 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems || []}
-                      value={selectedStrategyValue}
+                      value={selectedSubmissionType}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
@@ -674,27 +717,23 @@ const ContestSolutionSubmitPage = () => {
             </div>
         );
     }, [
-        submitSolutionFileIsLoading,
-        uploadedFile,
-        submitSolutionHasError,
+        selectedSubmissionType,
+        submissionCode,
+        strategyDropdownItems,
+        onStrategyDropdownItemSelect,
         isSubmitButtonDisabled,
         submitSolutionIsLoading,
-        remainingTime,
-        selectedStrategyValue,
-        strategyDropdownItems,
-        submissionCode,
-        selectedSubmissionType,
-        fileUploadError,
-        submitSolutionFileError,
-        selectedContestDetailsProblem,
         onSolutionSubmitCode,
+        remainingTime,
+        submitSolutionHasError,
         submitSolutionError,
-        submitSolutionFileHasError,
+        fileUploadError,
+        uploadedFile,
+        selectedContestDetailsProblem?.id,
         onSolutionSubmitFile,
-        setSubmissionCode,
-        setUploadedFile,
-        setFileUploadError,
-        onStrategyDropdownItemSelect,
+        submitSolutionFileIsLoading,
+        submitSolutionFileHasError,
+        submitSolutionFileError,
     ]);
 
     if (isLoading) {
@@ -733,7 +772,7 @@ const ContestSolutionSubmitPage = () => {
                     >
                         {contest?.name}
                     </Link>
-                    { user.canAccessAdministration && (
+                    {user.canAccessAdministration && (
                         <div className={styles.adminButtonsContainer}>
                             <AdministrationLink
                               text="Contest"
@@ -754,7 +793,7 @@ const ContestSolutionSubmitPage = () => {
                                 />
                             )}
                         </div>
-                    ) }
+                    )}
                 </div>
                 <div
                   className={styles.allResultsLink}
@@ -815,7 +854,7 @@ const ContestSolutionSubmitPage = () => {
                         </span>
                     </Tooltip>
                 </div>
-                { submissionsErrorData
+                {submissionsErrorData
                     ? getErrorMessage(submissionsErrorData, 'Error loading submissions')
                     : (
                         <SubmissionsGrid

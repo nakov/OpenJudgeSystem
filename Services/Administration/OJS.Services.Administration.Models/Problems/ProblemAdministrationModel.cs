@@ -9,7 +9,6 @@ using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using OJS.Common.Extensions;
-using OJS.Services.Infrastructure.Extensions;
 
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -24,6 +23,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
     public bool ShowResults { get; set; }
 
     public bool ShowDetailedFeedback { get; set; }
+
+    public int? DefaultSubmissionTypeId { get; set; }
 
     public int CheckerId { get; set; }
 
@@ -42,7 +43,7 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public string? ProblemGroupType { get; set; }
 
-    public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
+    public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = [];
 
     public IFormFile? Tests { get; set; }
 
@@ -103,6 +104,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
              .ForMember(pam => pam.ModifiedOn, opt
                  => opt.Ignore())
+             .ForMember(pam => pam.DefaultSubmissionType, opt
+                => opt.Ignore())
              .ForMember(pam => pam.AdditionalFiles, opt
                  => opt.Ignore())
              .ForMember(d => d.AdditionalFiles, opt
