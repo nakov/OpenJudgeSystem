@@ -18,10 +18,18 @@ public class ExecutionResultErrorConsumer(
     ISubmissionsForProcessingCommonDataService submissionsForProcessingData)
     : IConsumer<Fault<ProcessedSubmissionPubSubModel>>
 {
+    /// <summary>
+    /// Updates the submission state to Faulted and logs the error.
+    /// No need for a transaction here, we just want to safely update everything we can.
+    /// </summary>
     public async Task Consume(ConsumeContext<Fault<ProcessedSubmissionPubSubModel>> context)
     {
+        // If we get here, the submission result was not processed successfully and there is an unexpected error.
+        // Further investigation is always needed to determine if the error is recoverable.
+
         var message = context.Message.Message;
         var submissionId = message.Id;
+
         logger.LogErrorProcessingExecutionResultForSubmission(
             submissionId,
             context.Message.Message.WorkerName,
