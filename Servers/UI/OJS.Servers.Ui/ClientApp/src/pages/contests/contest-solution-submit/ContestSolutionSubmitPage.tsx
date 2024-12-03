@@ -249,6 +249,7 @@ const ContestSolutionSubmitPage = () => {
             });
             setSubmissionTypesPerProblem(initialSubmissionTypes);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ problems ]);
 
     useEffect(() => {
