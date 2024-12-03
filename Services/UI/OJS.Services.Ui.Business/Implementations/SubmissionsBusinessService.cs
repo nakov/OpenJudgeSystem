@@ -208,7 +208,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.IsEligibleForRetest = await this.submissionsHelper.IsEligibleForRetest(
             submissionId, submission.IsProcessed, submission.IsCompiledSuccessfully, submission.TestRuns.Count);
 
-        submission.AllowMentor = submission.AllowMentor && submission.TestRuns.Any(tr => tr.ResultType != 0);
+        submission.AllowMentor = submission.AllowMentor && submission.TestRuns.Any(tr => tr.ResultType != TestRunResultType.CorrectAnswer);
 
         return submission;
     }
