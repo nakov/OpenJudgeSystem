@@ -94,7 +94,7 @@ const {
     useGetLatestSubmissionsQuery,
     useLazyGetLatestSubmissionsInRoleQuery,
     useGetSubmissionResultsByProblemQuery,
-    useLazyGetUserSubmissionsQuery,
+    useGetUserSubmissionsQuery,
     useGetSubmissionDetailsQuery,
     useLazyGetSubmissionUploadedFileQuery,
     useLazyRetestSubmissionQuery,
@@ -106,7 +106,7 @@ export {
     useGetSubmissionDetailsQuery,
     useLazyGetLatestSubmissionsInRoleQuery,
     useGetSubmissionResultsByProblemQuery,
-    useLazyGetUserSubmissionsQuery,
+    useGetUserSubmissionsQuery,
     useLazyGetSubmissionUploadedFileQuery,
     useLazyRetestSubmissionQuery,
 };

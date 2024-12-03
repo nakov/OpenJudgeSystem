@@ -5,10 +5,7 @@ import { ITestRun } from '../hooks/submissions/types';
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { ChatMessageRole, CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
-interface ISubmissionTypeType {
-    id: number;
-    name: string;
-    isSelectedByDefault: boolean;
+interface ISubmissionTypeType extends IDropdownItem {
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
     timeLimit: number;
@@ -170,6 +167,7 @@ interface IProblemType {
     checkerDescription: string;
     resources: IProblemResourceType[];
     allowedSubmissionTypes: ISubmissionTypeType[];
+    defaultSubmissionTypeId?: number;
 }
 
 interface IProblemSearchType {
@@ -366,6 +364,9 @@ interface IProblemAdministration {
     tests: File | null;
     problemGroupOrderBy: number;
     problemGroupId : number;
+    defaultSubmissionTypeId?: number;
+    additionalFiles: File | null;
+    hasAdditionalFiles: boolean;
 }
 
 interface ISubmissionTypesInListModel {
@@ -565,7 +566,6 @@ interface ISubmissionTypeAdministrationModel {
     additionalCompilerArguments: string;
     description: string;
     allowedFileExtensions: string;
-    isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     baseTimeUsedInMilliseconds?: number;
     baseMemoryUsedInBytes?: number;
@@ -725,6 +725,11 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
     username: string;
 }
 
+interface IDropdownItem {
+    id: number;
+    name: string;
+}
+
 interface IMentorConversationMessage {
     content: string;
     role: ChatMessageRole;
@@ -869,4 +874,5 @@ export type {
     IUserMentorAdministrationModel,
     IMentorPromptTemplateAdministrationModel,
     IMentorPromptTemplateInListModel,
+    IDropdownItem,
 };
