@@ -229,6 +229,11 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
 
+            if (type.id === Number(formData.get('defaultSubmissionTypeId'))) {
+                formData.append('DefaultSubmissionType.Id', type.id.toString());
+                formData.append('DefaultSubmissionType.Name', type.name.toString());
+            }
+
             if (type.solutionSkeleton) {
                 formData.append(
                     `SubmissionTypes[${index}].SolutionSkeleton`,

@@ -36,7 +36,7 @@ public class SubmissionsForProcessingCommonDataService(
         => this.GetQuery(sfp => sfp.State == Enqueued);
 
     public IQueryable<SubmissionForProcessing> GetAllUnprocessed()
-        => this.GetQuery(sfp => sfp.State != Processed);
+        => this.GetQuery(sfp => sfp.State != Processed && sfp.State != Faulted);
 
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
         => this.GetQuery(sfp => sfp.State == Processing);
@@ -127,6 +127,8 @@ public class SubmissionsForProcessingCommonDataService(
                 break;
             case Processed:
                 submissionForProcessing.ProcessedAt = stateChangedAt;
+                break;
+            case Faulted:
                 break;
             case Pending:
             case Invalid:
