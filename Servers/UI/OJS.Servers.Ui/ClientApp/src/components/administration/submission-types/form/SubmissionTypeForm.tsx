@@ -22,7 +22,7 @@ import {
     COMPILER,
     DESCRIPTION,
     EXECUTION_STRATEGY,
-    IS_SELECTED, MAX_ALLOWED_MEMORY_LIMIT, MAX_ALLOWED_TIME_LIMIT,
+    MAX_ALLOWED_MEMORY_LIMIT, MAX_ALLOWED_TIME_LIMIT,
     NAME,
 } from '../../../../common/labels';
 import { SUBMISSION_TYPE_FILE_EXTENSION_PLACEHOLDER, SUBMISSION_TYPE_FORM_NAME } from '../../../../common/messages';
@@ -60,7 +60,6 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
         description: '',
         executionStrategyType: '',
         id: 0,
-        isSelectedByDefault: false,
         allowedFileExtensions: '',
         allowBinaryFilesUpload: false,
     });
@@ -299,14 +298,6 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                       value={currentSubmissionType.maxAllowedMemoryLimitInBytes}
                     />
                 </Box>
-                <FormControl className={formStyles.inputRow}>
-                    <FormControlLabel
-                      control={<Checkbox checked={currentSubmissionType.isSelectedByDefault} />}
-                      label={IS_SELECTED}
-                      name="isSelectedByDefault"
-                      onChange={(e) => onChange(e)}
-                    />
-                </FormControl>
                 <FormControl className={formStyles.inputRow}>
                     <FormControlLabel
                       control={<Checkbox checked={currentSubmissionType.allowBinaryFilesUpload} />}

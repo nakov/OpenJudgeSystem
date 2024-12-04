@@ -5,7 +5,7 @@ interface IProblemType {
     name: string;
     maximumPoints: number;
     orderBy: number;
-    contestId:number;
+    contestId: number;
 }
 
 interface ITestRunType {

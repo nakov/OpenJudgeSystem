@@ -6,7 +6,13 @@ public interface IContestActivityServiceModel
 
     string? Name { get; set; }
 
+    bool IsVisible { get; set; }
+
     bool CanBeCompeted { get; set; }
 
     bool CanBePracticed { get; set; }
+
+    ParticipantActivityServiceModel? CompeteUserActivity { get; set; }
+
+    ParticipantActivityServiceModel? PracticeUserActivity { get; set; }
 }

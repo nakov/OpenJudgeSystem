@@ -56,8 +56,11 @@ public class ContestsActivityService : IContestsActivityService
         {
             Id = contest.Id,
             Name = contest.Name,
+            IsVisible = !contest.IsDeleted && (contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow()),
             CanBeCompeted = canBeCompeted,
             CanBePracticed = canBePracticed,
+            CompeteUserActivity = officialParticipantActivity,
+            PracticeUserActivity = practiceParticipantActivity,
         };
     }
 

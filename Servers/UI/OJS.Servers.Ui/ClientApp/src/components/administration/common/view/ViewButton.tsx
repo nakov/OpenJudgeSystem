@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton } from '@mui/material';
+import StyledTooltip from 'src/components/administration/common/styled-tooltip/StyledTooltip';
 
 interface IViewButtonProps {
     path: string;
@@ -11,13 +12,17 @@ const ViewButton = (props: IViewButtonProps) => {
     const { path, text } = props;
 
     return (
-        <Tooltip title={text}>
+        <StyledTooltip
+          placement="left"
+          arrow
+          title={text}
+        >
             <Link to={path}>
                 <IconButton>
                     <VisibilityIcon color="primary" />
                 </IconButton>
             </Link>
-        </Tooltip>
+        </StyledTooltip>
     );
 };
 

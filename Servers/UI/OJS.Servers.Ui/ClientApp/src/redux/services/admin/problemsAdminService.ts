@@ -134,6 +134,9 @@ const problemsAdminService = createApi({
             }),
             keepUnusedDataFor: 0,
         }),
+
+        // eslint-disable-next-line max-len
+        downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({ query: (problemId) => ({ url: `/DownloadAdditionalFiles/${problemId}` }) }),
     }),
 });
 
@@ -152,6 +155,7 @@ export const {
     useGetResourcesQuery,
     useGetAllByNameQuery,
     useLazyExportProblemsToExcelQuery,
+    useDownloadAdditionalFilesQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

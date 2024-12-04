@@ -118,7 +118,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             IsExportResults = false,
         };
 
-        var contestResults = this.contestResultsAggregatorCommonService.GetContestResults(contestResultsModel);
+        var contestActivity = this.activityService.GetContestActivity(contest.Map<ContestForActivityServiceModel>(), []);
+        var contestResults = this.contestResultsAggregatorCommonService.GetContestResults(contestResultsModel, contestActivity);
 
         // Suggested file name in the "Save as" dialog which will be displayed to the end user
         var fileName = string.Format(

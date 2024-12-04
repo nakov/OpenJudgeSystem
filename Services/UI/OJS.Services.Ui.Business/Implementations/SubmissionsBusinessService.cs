@@ -429,7 +429,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submissionForProcessing = await this.submissionsForProcessingData
             .GetBySubmission(submission.Id)
             ?? throw new BusinessServiceException(
-                $"Submission for processing for Submission with ID {submissionExecutionResult.SubmissionId} not found in the database.");
+                $"Submission for processing for Submission with ID {submission.Id} not found in the database.");
 
         var participant = await this.participantsDataService
             .GetByIdQuery(submission.ParticipantId)

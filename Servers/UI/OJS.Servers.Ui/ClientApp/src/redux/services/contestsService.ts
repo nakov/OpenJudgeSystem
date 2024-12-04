@@ -94,7 +94,6 @@ export const contestsService = createApi({
                         strategy,
                     },
                 }),
-                keepUnusedDataFor: 0,
             }),
         getContestUserParticipation: builder.query<ICompeteContestResponseType, { id: number; isOfficial: boolean }>({
             query: ({ id, isOfficial }) => ({
@@ -185,7 +184,7 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
-    useLazyGetContestsParticipationsForUserQuery,
+    useGetContestsParticipationsForUserQuery,
     useSubmitContestSolutionMutation,
     useRegisterUserForContestMutation,
     useSubmitContestSolutionFileMutation,

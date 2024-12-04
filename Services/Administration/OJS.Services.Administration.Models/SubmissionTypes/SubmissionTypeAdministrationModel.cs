@@ -13,8 +13,6 @@ public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, I
 
     public string? ExecutionStrategyType { get; set; }
 
-    public bool IsSelectedByDefault { get; set; }
-
     public bool AllowBinaryFilesUpload { get; set; }
 
     public string? AdditionalCompilerArguments { get; set; }

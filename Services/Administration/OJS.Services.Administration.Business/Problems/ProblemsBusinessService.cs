@@ -16,16 +16,19 @@ using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
-using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Extensions;
 using Settings;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using OJS.Workers.Common;
+using Polly.CircuitBreaker;
+using OJS.Data.Models.Submissions;
 using IsolationLevel = System.Transactions.IsolationLevel;
 using Resource = OJS.Common.Resources.ProblemsBusiness;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -47,6 +50,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
     private readonly IProblemsCacheService problemsCache;
     private readonly IUserProviderService userProviderService;
     private readonly ISettingsBusinessService settingsBusinessService;
+    private readonly ISubmissionTypesDataService submissionTypesData;
 
     public ProblemsBusinessService(
         IContestsDataService contestsData,
@@ -62,7 +66,9 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         IZippedTestsParserService zippedTestsParser,
         ITransactionsProvider transactionsProvider,
         IProblemsCacheService problemsCache,
-        IUserProviderService userProviderService, ISettingsBusinessService settingsBusinessService)
+        IUserProviderService userProviderService,
+        ISettingsBusinessService settingsBusinessService,
+        ISubmissionTypesDataService submissionTypesData)
     {
         this.contestsData = contestsData;
         this.participantScoresData = participantScoresData;
@@ -79,10 +85,16 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         this.problemsCache = problemsCache;
         this.userProviderService = userProviderService;
         this.settingsBusinessService = settingsBusinessService;
+        this.submissionTypesData = submissionTypesData;
     }
 
     public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
     {
+        if (model.AdditionalFiles != null)
+        {
+            this.ValidateAdditionalFiles(model.AdditionalFiles);
+        }
+
         var contestId = model.ContestId;
 
         var problem = model.Map<Problem>();
@@ -100,7 +112,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         await this.problemsData.Add(problem);
 
-        AddSubmissionTypes(problem, model);
+        await this.AddSubmissionTypes(problem, model);
         await this.TryAddTestsToProblem(problem, model.Tests);
 
         await this.problemsData.SaveChanges();
@@ -188,7 +200,8 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
     public override async Task<ProblemAdministrationModel> Get(int id)
     {
-        var problem = await this.problemsData.GetByIdQuery(id)
+        var problem = await this.problemsData
+            .GetByIdQuery(id)
             .Include(stp => stp.SubmissionTypesInProblems)
             .ThenInclude(stp => stp.SubmissionType)
             .Include(p => p.ProblemGroup)
@@ -216,6 +229,11 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             throw new ArgumentNullException($"Problem with id {model.Id} not found");
         }
 
+        if (model.AdditionalFiles != null)
+        {
+            this.ValidateAdditionalFiles(model.AdditionalFiles);
+        }
+
         problem.MapFrom(model);
 
         problem.ProblemGroupId = model.ProblemGroupId;
@@ -231,7 +249,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
             problem.ProblemGroup.OrderBy = model.OrderBy;
         }
 
-        AddSubmissionTypes(problem, model);
+        await this.AddSubmissionTypes(problem, model);
 
         await this.problemsCache.ClearProblemCacheById(problem.Id);
 
@@ -360,20 +378,105 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
         await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(serviceModels);
     }
 
-    private static void AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
+    public async Task<(MemoryStream outputStream, string zipFileName)> DownloadAdditionalFiles(int problemId)
     {
-        var newSubmissionTypes = model.SubmissionTypes
-            .Select(x => new SubmissionTypeInProblem
+        var problem = await this.problemsData
+            .GetByIdQuery(problemId)
+            .FirstOrDefaultAsync();
+
+        if (problem is null)
+        {
+            throw new BusinessServiceException($"Problem with id {problemId} does not exist.");
+        }
+
+        var additionalFiles = problem.AdditionalFiles;
+        if (additionalFiles == null || additionalFiles.Length == 0)
+        {
+            throw new BusinessServiceException($"Problem with id {problemId} does not have any additional files.");
+        }
+
+        var zipFileName = $"{problem.Name}_AdditionalFiles_{DateTime.Now:yyyyMMddHHmmss}{Constants.ZipFileExtension}";
+
+        var outputStream = new MemoryStream();
+        try
+        {
+            await outputStream.WriteAsync(additionalFiles);
+
+            outputStream.Position = 0;
+
+            return (outputStream, zipFileName);
+        }
+        catch
+        {
+            await outputStream.DisposeAsync();
+            throw;
+        }
+    }
+
+    private void ValidateAdditionalFiles(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            throw new BusinessServiceException("The additional files should not be empty.");
+        }
+
+        var isExtensionInvalid = Path.GetExtension(file.FileName) != Constants.ZipFileExtension;
+
+        if (isExtensionInvalid)
+        {
+            throw new BusinessServiceException("The additional files should be in a .zip format.");
+        }
+
+        using var stream = file.OpenReadStream();
+        var buffer = new byte[2];
+        var bytesRead = stream.Read(buffer, 0, 2);
+
+        if (bytesRead < 2)
+        {
+            throw new BusinessServiceException("The additional files are too small to be a valid .zip file.");
+        }
+
+        /*
+         *  Validate if the file is .zip, its magic number ( the first two bytes ), should be 'P' and 'K'.
+         *  Where '0x50' and '0x4B' are the byte representations of 'P' and 'K' respectively.
+         */
+        if (buffer[0] != 0x50 || buffer[1] != 0x4B)
+        {
+            throw new BusinessServiceException("The additional files should be in a .zip format.");
+        }
+    }
+
+    private async Task AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
+    {
+        var submissionTypeIds = model.SubmissionTypes.Select(st => st.Id).ToList();
+
+        var submissionTypes = await this.submissionTypesData
+            .GetQuery(st => submissionTypeIds.Contains(st.Id))
+            .Select(st => st.Id)
+            .ToListAsync();
+
+        var newSubmissionTypes = new List<SubmissionTypeInProblem>();
+
+        foreach (var newSubmissionType in model.SubmissionTypes)
+        {
+            if (!submissionTypes.Contains(newSubmissionType.Id))
+            {
+                throw new BusinessServiceException($"Submission type with Id #{newSubmissionType.Id} does not exist.");
+            }
+
+            newSubmissionTypes.Add(new SubmissionTypeInProblem
             {
                 ProblemId = problem.Id,
-                SubmissionTypeId = x.Id,
-                SolutionSkeleton = x.SolutionSkeleton?.ToString().Compress(),
-                TimeLimit = x.TimeLimit,
-                MemoryLimit = x.MemoryLimit,
+                SubmissionTypeId = newSubmissionType.Id,
+                SolutionSkeleton = newSubmissionType.SolutionSkeleton?.ToString().Compress(),
+                TimeLimit = newSubmissionType.TimeLimit,
+                MemoryLimit = newSubmissionType.MemoryLimit,
             });
+        }
 
         problem.SubmissionTypesInProblems = new HashSet<SubmissionTypeInProblem>(newSubmissionTypes);
     }
+
 
     private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
     {

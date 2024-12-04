@@ -88,8 +88,17 @@ public static partial class LoggerMessageDefinitions
     [LoggerMessage(1050, LogLevel.Error, "Error processing submission #{SubmissionId} on worker: {WorkerName}", SkipEnabledCheck = true)]
     public static partial void LogErrorProcessingSubmission(this ILogger logger, int submissionId, string? workerName, Exception ex);
 
-    [LoggerMessage(1050, LogLevel.Error, "Submission for processing #{SubmissionForProcessingId} for Submission #{SubmissionId} not found in the database.", SkipEnabledCheck = true)]
+    [LoggerMessage(1051, LogLevel.Error, "Submission for processing #{SubmissionForProcessingId} for Submission #{SubmissionId} not found in the database.", SkipEnabledCheck = true)]
     public static partial void LogSubmissionForProcessingNotFoundForSubmission(this ILogger logger, int? submissionForProcessingId, int submissionId);
+
+    [LoggerMessage(1052, LogLevel.Error, "Error processing execution result for submission {SubmissionId} from worker {WorkerName}: {ExceptionMessage}", SkipEnabledCheck = true)]
+    public static partial void LogErrorProcessingExecutionResultForSubmission(this ILogger logger, int submissionId, string? workerName, string? exceptionMessage);
+
+    [LoggerMessage(1053, LogLevel.Error, "Exception from worker {WorkerName} was thrown for submission {SubmissionId}: {ExceptionMessage}", SkipEnabledCheck = true)]
+    public static partial void LogExceptionFromWorker(this ILogger logger, int submissionId, string? workerName, string? exceptionMessage);
+
+    [LoggerMessage(1054, LogLevel.Error, "Submission #{SubmissionId} not found in the database.", SkipEnabledCheck = true)]
+    public static partial void LogSubmissionNotFound(this ILogger logger, int submissionId);
 
     [LoggerMessage(1060, LogLevel.Warning, "Submission for processing for Submission #{SubmissionId} is in state {CurrentProcessingState} state. Skipping updating it to {UpdateToProcessingState}.")]
     public static partial void LogSubmissionProcessingStateNotUpdated(this ILogger logger, int submissionId, string currentProcessingState, string updateToProcessingState);

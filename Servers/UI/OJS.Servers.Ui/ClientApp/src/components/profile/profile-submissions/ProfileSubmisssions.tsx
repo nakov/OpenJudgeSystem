@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
+import { useAppSelector } from '../../../redux/store';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
 
 import styles from './ProfileSubmissions.module.scss';
@@ -19,31 +19,28 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((state) => state.users);
 
-    const dispatch = useAppDispatch();
-
-    const [ getUserSubmissionsQuery, {
-        data: userSubmissions,
-        isLoading: areSubmissionsLoading,
-        error: userSubmissionsQueryError,
-    } ] = useLazyGetUserSubmissionsQuery();
-
-    useEffect(() => {
+    const canFetchSubmissions = useMemo(() => {
         const isProfileAvailable = !isNil(profile);
         const canAccess = isLoggedIn && isProfileAvailable;
         const hasAdminAccess = internalUser.canAccessAdministration;
         const isOwnerAccessNotAllowed = userIsProfileOwner && !isChosenInToggle;
         const isNonOwnerAccessNotAllowed = !userIsProfileOwner && (!hasAdminAccess || !isChosenInToggle);
 
-        if (!canAccess || isOwnerAccessNotAllowed || isNonOwnerAccessNotAllowed) {
-            return;
-        }
+        return canAccess && !isOwnerAccessNotAllowed && !isNonOwnerAccessNotAllowed;
+    }, [ profile, isLoggedIn, internalUser, isChosenInToggle, userIsProfileOwner ]);
 
-        getUserSubmissionsQuery({
+    const {
+        data: userSubmissions,
+        isLoading: areSubmissionsLoading,
+        error: userSubmissionsQueryError,
+    } = useGetUserSubmissionsQuery(
+        {
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             username: profile?.userName!,
             page: userSubmissionsPage,
-        });
-    }, [ getUserSubmissionsQuery, internalUser, isChosenInToggle, isLoggedIn, profile, userIsProfileOwner, userSubmissionsPage ]);
+        },
+        { skip: !canFetchSubmissions },
+    );
 
     useEffect(() => {
         if (!isChosenInToggle || areSubmissionsLoading || isNil(userSubmissions)) {
@@ -52,11 +49,11 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         }
 
         setShouldRender(true);
-    }, [ areSubmissionsLoading, dispatch, isChosenInToggle, userSubmissions ]);
+    }, [ areSubmissionsLoading, isChosenInToggle, userSubmissions ]);
 
     const render = useCallback(() => {
         if (!isNil(userSubmissionsQueryError)) {
-            return (<span>Error fetching user submissions</span>);
+            return <span>Error fetching user submissions</span>;
         }
 
         if (!shouldRender || isNil(userIsProfileOwner)) {

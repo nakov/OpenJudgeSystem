@@ -19,7 +19,13 @@ interface IContestProblemsProps {
 }
 
 const ContestProblems = (props: IContestProblemsProps) => {
-    const { problems, onContestProblemChange, totalParticipantsCount, sumMyPoints = 0, sumTotalPoints } = props;
+    const {
+        problems,
+        onContestProblemChange,
+        totalParticipantsCount,
+        sumMyPoints = 0,
+        sumTotalPoints,
+    } = props;
 
     const { hash } = useLocation();
     const dispatch = useAppDispatch();

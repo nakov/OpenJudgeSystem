@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { useMemo } from 'react';
 import { MdOutlineRemoveCircle } from 'react-icons/md';
-import { FormControl, FormGroup, FormLabel, IconButton, TextareaAutosize, TextField } from '@mui/material';
+import { Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    FormLabel,
+    IconButton,
+    TextareaAutosize,
+    TextField } from '@mui/material';
+import StyledTooltip from 'src/components/administration/common/styled-tooltip/StyledTooltip';
 
 import { MEMORY_LIMIT, NAME, SOLUTION_SKELETON, TIME_LIMIT } from '../../../../common/labels';
 import { SOLUTION_SKELETON_PLACEHOLDER } from '../../../../common/messages';
@@ -18,11 +27,20 @@ interface IProblemSubmissionTypesProps{
     onPropChange: Function;
     onStrategyRemoved: Function;
     strategy: IProblemSubmissionType;
+    isDefaultStrategySelected: boolean;
+    defaultSubmissionTypeId: number;
 }
 
 const ProblemSubmissionTypes = (props: IProblemSubmissionTypesProps) => {
-    const { onPropChange, onStrategyRemoved, strategy } = props;
+    const { onPropChange, onStrategyRemoved, strategy, isDefaultStrategySelected, defaultSubmissionTypeId } = props;
+
+    const isSelectDefaultCheckboxDisabled = useMemo(
+        () => isDefaultStrategySelected && !(strategy.id === defaultSubmissionTypeId),
+        [ isDefaultStrategySelected, defaultSubmissionTypeId, strategy.id ],
+    );
+
     useDisableMouseWheelOnNumberInputs();
+
     return (
         <FormGroup
           sx={{
@@ -86,11 +104,26 @@ const ProblemSubmissionTypes = (props: IProblemSubmissionTypesProps) => {
                   onChange={(e) => onPropChange(e.target.value, strategy.id, 'memoryLimit')}
                 />
             </FormGroup>
-            <div className={styles.viewButtonWrapper}>
+            <div className={styles.optionsWrapper}>
                 <ViewButton
                   path={`/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPE_DOCUMENTS_VIEW_PATH}?submissionTypeIds=${strategy.id}`}
                   text={`View all documentation for ${strategy.name}`}
                 />
+                <StyledTooltip
+                  placement="left"
+                  arrow
+                  title="Set as default strategy"
+                  disabled={isSelectDefaultCheckboxDisabled}
+                >
+                    <FormControlLabel
+                      sx={{ marginX: '0px' }}
+                      label=""
+                      control={<Checkbox checked={strategy.id === defaultSubmissionTypeId} disabled={isSelectDefaultCheckboxDisabled} />}
+                      name="defaultSubmissionTypeId"
+                      onChange={(e, checked) => onPropChange(checked, strategy.id, 'defaultSubmissionTypeId')}
+                    />
+                </StyledTooltip>
+
             </div>
         </FormGroup>
     );

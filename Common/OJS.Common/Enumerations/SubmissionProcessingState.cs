@@ -7,4 +7,5 @@ public enum SubmissionProcessingState
     Enqueued = 2,
     Processing = 3,
     Processed = 4,
+    Faulted = 5,
 }
