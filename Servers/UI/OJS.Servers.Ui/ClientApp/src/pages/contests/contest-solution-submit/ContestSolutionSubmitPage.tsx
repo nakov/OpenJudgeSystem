@@ -10,6 +10,7 @@ import Popover from '@mui/material/Popover';
 import isNil from 'lodash/isNil';
 import moment from 'moment';
 import { SUBMISSION_SENT } from 'src/common/messages';
+import Dropdown from 'src/components/guidelines/dropdown/Dropdown';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
 import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
@@ -35,7 +36,6 @@ import ErrorWithActionButtons from '../../../components/error/ErrorWithActionBut
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
 import Button, { ButtonState } from '../../../components/guidelines/buttons/Button';
-import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
@@ -650,12 +650,15 @@ const ContestSolutionSubmitPage = () => {
                       }}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
-                        <Dropdown
-                          dropdownItems={strategyDropdownItems || []}
-                          value={selectedSubmissionType}
-                          handleDropdownItemClick={onStrategyDropdownItemSelect}
-                        />
+                        <div className={styles.fileUploadDropdown}>
+                            <Dropdown
+                              dropdownItems={strategyDropdownItems || []}
+                              value={selectedSubmissionType}
+                              handleDropdownItemClick={onStrategyDropdownItemSelect}
+                            />
+                        </div>
                         <Button
+                          className={styles.button}
                           onClick={onSolutionSubmitFile}
                           text="Submit"
                           state={isSubmitButtonDisabled || submitSolutionFileIsLoading || fileUploadError
