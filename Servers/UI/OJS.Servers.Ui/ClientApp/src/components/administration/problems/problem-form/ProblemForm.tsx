@@ -201,9 +201,9 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
             [name]: type === 'checkbox'
                 ? checked
                 : type === 'number'
-                    ? value === ''
-                        ? ''
-                        : Number(value)
+                    ? value
+                        ? Number(value)
+                        : null
                     : value,
         }));
     };
@@ -228,11 +228,6 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         currentProblem.submissionTypes?.forEach((type, index) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
-
-            if (type.id === Number(formData.get('defaultSubmissionTypeId'))) {
-                formData.append('DefaultSubmissionType.Id', type.id.toString());
-                formData.append('DefaultSubmissionType.Name', type.name.toString());
-            }
 
             if (type.solutionSkeleton) {
                 formData.append(
@@ -346,20 +341,9 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                         target: {
                             value: value
                                 ? item.id
-                                : 0,
-                            name: propName,
-                            type: typeof item.id,
-                            checked: false,
-                        },
-                    });
-
-                    onChange({
-                        target: {
-                            value: value
-                                ? item
                                 : null,
-                            name: 'defaultSubmissionType',
-                            type: '',
+                            name: propName,
+                            type: 'number',
                             checked: false,
                         },
                     });
