@@ -128,6 +128,8 @@ public class SubmissionsForProcessingCommonDataService(
             case Processed:
                 submissionForProcessing.ProcessedAt = stateChangedAt;
                 break;
+            case Faulted:
+                break;
             case Pending:
             case Invalid:
                 throw new ArgumentException($"Not allowed to set processing state to {state}.", nameof(state));
