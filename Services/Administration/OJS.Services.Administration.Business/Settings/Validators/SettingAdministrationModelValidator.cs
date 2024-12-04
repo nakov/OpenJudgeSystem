@@ -77,11 +77,7 @@ public class SettingAdministrationModelValidator : BaseAdministrationModelValida
     }
 
     private static bool ValidateStringMentorSetting(SettingAdministrationModel model)
-        => model.Name switch
-        {
-            MentorModel => Enum.TryParse<OpenAIModels>(model.Value, out _),
-            _ => false,
-        };
+        => model.Name == MentorModel && Enum.TryParse<OpenAIModels>(model.Value, out _);
 
     private static bool ValidateNumericMentorSetting(
         SettingAdministrationModel model,
