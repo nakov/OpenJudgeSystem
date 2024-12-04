@@ -201,9 +201,9 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
             [name]: type === 'checkbox'
                 ? checked
                 : type === 'number'
-                    ? value === ''
-                        ? ''
-                        : Number(value)
+                    ? value
+                        ? Number(value)
+                        : null
                     : value,
         }));
     };
@@ -346,20 +346,9 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                         target: {
                             value: value
                                 ? item.id
-                                : 0,
-                            name: propName,
-                            type: typeof item.id,
-                            checked: false,
-                        },
-                    });
-
-                    onChange({
-                        target: {
-                            value: value
-                                ? item
                                 : null,
-                            name: 'defaultSubmissionType',
-                            type: '',
+                            name: propName,
+                            type: 'number',
                             checked: false,
                         },
                     });

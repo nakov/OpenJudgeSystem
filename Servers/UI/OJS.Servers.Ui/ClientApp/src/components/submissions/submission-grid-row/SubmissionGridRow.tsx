@@ -211,7 +211,7 @@ const SubmissionGridRow = ({
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (user === internalUser.userName || internalUser.isAdmin) {
+            if (!options.showParticipantUsername || user === internalUser.userName || internalUser.isAdmin) {
                 return (
                     <LinkButton
                       to={getSubmissionDetailsRedirectionUrl({ submissionId })}
@@ -225,7 +225,7 @@ const SubmissionGridRow = ({
 
             return null;
         },
-        [ internalUser.isAdmin, internalUser.userName, submissionId, user ],
+        [ options.showParticipantUsername, user, internalUser.userName, internalUser.isAdmin, submissionId ],
     );
 
     return (
