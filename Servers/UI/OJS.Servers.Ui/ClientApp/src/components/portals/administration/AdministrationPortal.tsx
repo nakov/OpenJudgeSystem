@@ -3,7 +3,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
-import { IoMdCheckbox } from 'react-icons/io';
+import { IoIosLock, IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { TbBinaryTree } from 'react-icons/tb';
@@ -39,11 +39,13 @@ import MuiDrawer from '@mui/material/Drawer';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import UserActions from 'src/components/administration/common/user-actions/UserActions';
+import AdministrationAccessLogsPage from 'src/pages/administration-new/access-logs/AdministrationAccessLogsPage';
 
 import 'dayjs/locale/bg';
 
 import { ThemeMode } from '../../../common/enums';
 import {
+    ACCESS_LOGS_PATH,
     CHECKERS_PATH,
     CONTEST_CATEGORIES_HIERARCHY_PATH,
     CONTEST_CATEGORIES_PATH,
@@ -226,6 +228,12 @@ const administrationItems = [
         icon: <IoMdCheckbox className={styles.iconSize} />,
         path: `${SUBMISSIONS_SIMILLARITY}`,
         visibleOnlyForAdmin: false,
+    },
+    {
+        name: 'Access Logs',
+        icon: <IoIosLock className={styles.iconSize} />,
+        path: `${ACCESS_LOGS_PATH}`,
+        visibleOnlyForAdmin: true,
     },
 ];
 
@@ -525,6 +533,11 @@ const AdministrationPortal = () => {
             path: `${SUBMISSIONS_SIMILLARITY}`,
             Element: SubmissionsSimillarity,
             visibleOnlyForAdmin: false,
+        },
+        {
+            path: `${ACCESS_LOGS_PATH}`,
+            Element: AdministrationAccessLogsPage,
+            visibleOnlyForAdmin: true,
         },
     ];
 
