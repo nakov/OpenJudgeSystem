@@ -6,21 +6,18 @@ import {
     Box,
     FormControl,
     MenuItem,
-    styled,
     TextField,
-    Tooltip, tooltipClasses,
-    TooltipProps,
     Typography,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import moment from 'moment';
-import { ThemeMode } from 'src/common/enums';
 import {
     IChangeParticipationTimeForMultipleParticipants, IChangeParticipationTimeForSingleParticipant,
     IContestAdministration,
     IUserAutocompleteData,
 } from 'src/common/types';
 import { getContestsDetailsPageUrl } from 'src/common/urls/compose-client-urls';
+import StyledTooltip from 'src/components/administration/common/styled-tooltip/StyledTooltip';
 import TabsInView from 'src/components/administration/common/tabs/TabsInView';
 import FormActionButton from 'src/components/administration/form-action-button/FormActionButton';
 import { handleDateTimePickerChange } from 'src/components/administration/utils/mui-utils';
@@ -255,34 +252,6 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
         };
     };
 
-    const SectionTooltip = styled(({ className, ...props }: TooltipProps) => (
-        <Tooltip {...props} classes={{ popper: className }} />
-    ))(({ theme }) => ({
-        [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: theme.palette.mode === ThemeMode.Light
-                ? '#fff'
-                : '#444',
-            color: theme.palette.mode === ThemeMode.Light
-                ? '#000'
-                : '#fff',
-            boxShadow: theme.shadows[1],
-            fontSize: 14,
-            border: theme.palette.mode === ThemeMode.Light
-                ? '1px solid #ccc'
-                : '1px solid #666',
-        },
-        [`& .${tooltipClasses.arrow}`]: {
-            color: theme.palette.mode === ThemeMode.Light
-                ? '#fff'
-                : '#444',
-            '&::before': {
-                border: theme.palette.mode === ThemeMode.Light
-                    ? '1px solid #ccc'
-                    : '1px solid #666',
-            },
-        },
-    }));
-
     const renderSingleParticipant = () => {
         const { action, preposition, buttonText, dialogColor, isDisabled, formColor } = getChangeTimeProperties(
             changeParticipationTimeForSingleParticipant.timeInMinutes,
@@ -465,13 +434,13 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
                               onChangeForMultipleParticipants,
                           )}
                         />
-                        <SectionTooltip
+                        <StyledTooltip
                           title="Users who started competing after this time will be affected (The default value
                         is calculated by the following formula: [the current time] - [the participant full contest duration])"
                           arrow
                         >
                             <InfoIcon sx={{ width: '30px', height: '30px', marginRight: '3rem' }} />
-                        </SectionTooltip>
+                        </StyledTooltip>
                     </div>
                     <div className={styles.date}>
                         <DateTimePicker
@@ -484,14 +453,14 @@ const ChangeParticipantsTime = ({ contest, setParentSuccessMessage, onSuccess } 
                               onChangeForMultipleParticipants,
                           )}
                         />
-                        <SectionTooltip
+                        <StyledTooltip
                           title="Users who started competing
                         before this time will be affected (The default value is
                         set to the [current time])"
                           arrow
                         >
                             <InfoIcon sx={{ width: '30px', height: '30px', marginRight: '3rem' }} />
-                        </SectionTooltip>
+                        </StyledTooltip>
                     </div>
                     <FormActionButton
                       disabled={isDisabled}

@@ -52,7 +52,6 @@ namespace OJS.Data.Models.Problems
         /// Gets or sets Problem specific dependencies that will be compiled and executed with the user code
         /// such as Solution skeletons, mocks or data and text files.
         /// </summary>
-        // Deprecated
         public byte[]? AdditionalFiles { get; set; }
 
         [DefaultValue(true)]
@@ -61,19 +60,21 @@ namespace OJS.Data.Models.Problems
         [DefaultValue(false)]
         public bool ShowDetailedFeedback { get; set; }
 
-        public virtual ICollection<Test> Tests { get; set; } = new HashSet<Test>();
+        public int? DefaultSubmissionTypeId { get; set; }
 
-        public virtual ICollection<ProblemResource> Resources { get; set; } = new HashSet<ProblemResource>();
+        public virtual SubmissionType? DefaultSubmissionType { get; set; }
 
-        public virtual ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
+        public virtual ICollection<Test> Tests { get; set; } = [];
 
-        public virtual ICollection<ParticipantScore> ParticipantScores { get; set; } = new HashSet<ParticipantScore>();
+        public virtual ICollection<ProblemResource> Resources { get; set; } = [];
 
-        public virtual ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
-            new HashSet<SubmissionTypeInProblem>();
+        public virtual ICollection<Submission> Submissions { get; set; } = [];
 
-        public virtual ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
-            new HashSet<ProblemForParticipant>();
+        public virtual ICollection<ParticipantScore> ParticipantScores { get; set; } = [];
+
+        public virtual ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } = [];
+
+        public virtual ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } = [];
 
         public override string ToString() => $"#{this.Id} {this.Name}";
     }

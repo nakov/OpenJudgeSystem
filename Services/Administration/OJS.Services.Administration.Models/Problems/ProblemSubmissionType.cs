@@ -17,12 +17,13 @@ public class ProblemSubmissionType : IMapExplicitly
 
     public int? MemoryLimit { get; set; }
 
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<SubmissionTypeInProblem, ProblemSubmissionType>()
-            .ForMember(pam => pam.Id, opt
-                => opt.MapFrom(p => p.SubmissionTypeId))
-            .ForMember(pam => pam.Name, opt
-                => opt.MapFrom(p => p.SubmissionType.Name))
-            .ForMember(pam => pam.SolutionSkeleton, opt
-                => opt.MapFrom(p => p.SolutionSkeleton != null ? p.SolutionSkeleton.Decompress().ToString() : null));
+            .ForMember(d => d.Id, opt
+                => opt.MapFrom(d => d.SubmissionTypeId))
+            .ForMember(d => d.Name, opt
+                => opt.MapFrom(d => d.SubmissionType.Name))
+            .ForMember(d => d.SolutionSkeleton, opt
+                => opt.MapFrom(d => d.SolutionSkeleton != null ? d.SolutionSkeleton.Decompress().ToString() : null));
 }

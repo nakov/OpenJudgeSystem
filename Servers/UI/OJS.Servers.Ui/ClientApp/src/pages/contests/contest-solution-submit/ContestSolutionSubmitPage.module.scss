@@ -152,6 +152,12 @@
   }
 }
 
+.fileUploadDropdown {
+  div {
+    margin: 0 !important;
+  }
+}
+
 .fileUploadError {
   color: colors.$primary-red;
 }
@@ -183,7 +189,7 @@
     margin-bottom: spacings.$sp-12;
   }
 
-  button {
+  .button {
     width: 200px;
   }
 }

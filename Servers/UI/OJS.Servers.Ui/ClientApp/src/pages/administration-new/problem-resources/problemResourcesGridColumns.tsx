@@ -163,7 +163,7 @@ export const returnProblemResourceNonFilterableColumns = (onEditClick: Function,
                 <DownloadIconButton
                   args={params.row.id}
                   mutation={useDownloadResourceQuery}
-                  disabled={params.row.link}
+                  disabled={!!params.row.link}
                 />
             </div>
         ),

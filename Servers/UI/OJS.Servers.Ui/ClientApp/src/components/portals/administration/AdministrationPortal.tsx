@@ -32,12 +32,12 @@ import {
     ListItemText,
     styled,
     Theme,
-    Tooltip, tooltipClasses, TooltipProps,
     Typography,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import StyledTooltip from 'src/components/administration/common/styled-tooltip/StyledTooltip';
 import UserActions from 'src/components/administration/common/user-actions/UserActions';
 import AdministrationAccessLogsPage from 'src/pages/administration-new/access-logs/AdministrationAccessLogsPage';
 
@@ -264,34 +264,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-}));
-
-const SectionTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: theme.palette.mode === ThemeMode.Light
-            ? '#fff'
-            : '#444',
-        color: theme.palette.mode === ThemeMode.Light
-            ? '#000'
-            : '#fff',
-        boxShadow: theme.shadows[1],
-        fontSize: 14,
-        border: theme.palette.mode === ThemeMode.Light
-            ? '1px solid #ccc'
-            : '1px solid #666',
-    },
-    [`& .${tooltipClasses.arrow}`]: {
-        color: theme.palette.mode === ThemeMode.Light
-            ? '#fff'
-            : '#444',
-        '&::before': {
-            border: theme.palette.mode === ThemeMode.Light
-                ? '1px solid #ccc'
-                : '1px solid #666',
-        },
-    },
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -610,7 +582,7 @@ const AdministrationPortal = () => {
                     <List className={styles.list}>
                         <Divider />
                         {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
-                            <SectionTooltip
+                            <StyledTooltip
                               key={item.path}
                               title={item.name}
                               placement="right"
@@ -644,7 +616,7 @@ const AdministrationPortal = () => {
                                     </ListItem>
                                     <Divider />
                                 </div>
-                            </SectionTooltip>
+                            </StyledTooltip>
                         ))}
                     </List>
                 </Drawer>

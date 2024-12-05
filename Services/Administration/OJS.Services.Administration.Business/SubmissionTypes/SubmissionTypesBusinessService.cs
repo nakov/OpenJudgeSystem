@@ -82,9 +82,9 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
                 .FirstOrDefaultAsync();
         }
 
-        bool shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
+        var shouldDoSubmissionsDeletion = !model.SubmissionTypeToReplaceWith.HasValue;
 
-        var validationResult = this.deleteOrReplaceSubmissionTypeValidationService.GetValidationResult(
+        var validationResult = await this.deleteOrReplaceSubmissionTypeValidationService.GetValidationResult(
             (
                 model.SubmissionTypeToReplace,
                 model.SubmissionTypeToReplaceWith,

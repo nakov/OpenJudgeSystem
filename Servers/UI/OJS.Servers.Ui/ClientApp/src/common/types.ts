@@ -5,10 +5,7 @@ import { ITestRun } from '../hooks/submissions/types';
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
-interface ISubmissionTypeType {
-    id: number;
-    name: string;
-    isSelectedByDefault: boolean;
+interface ISubmissionTypeType extends IDropdownItem {
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
     timeLimit: number;
@@ -169,6 +166,7 @@ interface IProblemType {
     checkerDescription: string;
     resources: IProblemResourceType[];
     allowedSubmissionTypes: ISubmissionTypeType[];
+    defaultSubmissionTypeId?: number;
 }
 
 interface IProblemSearchType {
@@ -363,6 +361,9 @@ interface IProblemAdministration {
     tests: File | null;
     problemGroupOrderBy: number;
     problemGroupId : number;
+    defaultSubmissionTypeId?: number;
+    additionalFiles: File | null;
+    hasAdditionalFiles: boolean;
 }
 
 interface ISubmissionTypesInListModel {
@@ -562,7 +563,6 @@ interface ISubmissionTypeAdministrationModel {
     additionalCompilerArguments: string;
     description: string;
     allowedFileExtensions: string;
-    isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     baseTimeUsedInMilliseconds?: number;
     baseMemoryUsedInBytes?: number;
@@ -740,6 +740,11 @@ interface IAccessLogInListModel {
     postParams: string;
 }
 
+interface IDropdownItem {
+    id: number;
+    name: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -819,4 +824,5 @@ export type {
     IChangeParticipationTimeForSingleParticipant,
     IAccessLogAdministrationModel,
     IAccessLogInListModel,
+    IDropdownItem,
 };

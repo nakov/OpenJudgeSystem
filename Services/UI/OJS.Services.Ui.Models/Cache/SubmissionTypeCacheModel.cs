@@ -11,8 +11,6 @@ public class SubmissionTypeCacheModel : IMapExplicitly
 
     public string Name { get; set; } = string.Empty;
 
-    public bool IsSelectedByDefault { get; set; }
-
     public ExecutionStrategyType ExecutionStrategyType { get; set; }
 
     public CompilerType CompilerType { get; set; }

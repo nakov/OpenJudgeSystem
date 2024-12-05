@@ -1,19 +1,20 @@
 namespace OJS.Services.Ui.Models.Submissions;
 
+using AutoMapper;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
-public class FullDetailsPublicSubmissionsResponseModel : IMapFrom<FullDetailsPublicSubmissionsServiceModel>
+public class FullDetailsPublicSubmissionsResponseModel : IMapFrom<FullDetailsPublicSubmissionsServiceModel>, IMapExplicitly
 {
     public int Id { get; set; }
 
     public DateTime CreatedOn { get; set; }
 
-    public string StrategyName { get; set; } = null!;
+    public string? StrategyName { get; set; }
 
     public bool IsOfficial { get; set; }
 
-    public string User { get; set; } = null!;
+    public string? User { get; set; }
 
     public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
@@ -28,4 +29,16 @@ public class FullDetailsPublicSubmissionsResponseModel : IMapFrom<FullDetailsPub
     public int? MaxTimeUsed { get; set; }
 
     public string? TestRunsCache { get; set; }
+
+    public void RegisterMappings(IProfileExpression configuration)
+        => configuration
+            .CreateMap<SubmissionForSubmitSummaryServiceModel, FullDetailsPublicSubmissionsResponseModel>()
+            .ForMember(
+                x => x.StrategyName,
+                opt => opt.MapFrom(y => y.SubmissionTypeName))
+            .ForMember(m => m.User, opt => opt.Ignore())
+            .ForMember(m => m.Problem, opt => opt.MapFrom(src => new ProblemForPublicSubmissionsServiceModel
+            {
+                Id = src.ProblemId,
+            }));
 }

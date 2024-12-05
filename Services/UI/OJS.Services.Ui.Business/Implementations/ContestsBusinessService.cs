@@ -106,18 +106,15 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ToList();
             }
 
-            var competeParticipantActivity = this.activityService.GetParticipantActivity(competeParticipant);
-            var practiceParticipantActivity = this.activityService.GetParticipantActivity(practiceParticipant);
-
             var canShowProblemsInCompete =
-                (!contest!.HasContestPassword && contestActivityEntity.CanBeCompeted)
+                (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity is { CanBeCompeted: true, CompeteUserActivity: not null })
                  || isLecturerInContestOrAdmin
-                 || competeParticipantActivity?.IsActive == true;
+                 || contestActivityEntity.CompeteUserActivity?.IsActive == true;
 
             var canShowProblemsInPractice =
                 (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed)
                 || isLecturerInContestOrAdmin
-                || practiceParticipantActivity?.IsActive == true;
+                || contestActivityEntity.PracticeUserActivity?.IsActive == true;
 
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
@@ -163,7 +160,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .MapCollection<ParticipantForContestRegistrationServiceModel>()
                 .FirstOrDefaultAsync();
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
                 participant,
@@ -205,7 +202,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 participantForActivity.ContestPracticeEndTime = contest?.PracticeEndTime;
             }
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
                 participantForActivity,
@@ -297,7 +294,7 @@ namespace OJS.Services.Ui.Business.Implementations
             participant.Contest = contest;
             var participantForActivity = participant.Map<ParticipantForActivityServiceModel>();
 
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            var validationResult = await this.contestParticipationValidationService.GetValidationResult((
                 contest?.Map<ContestParticipationValidationServiceModel>(),
                 category,
                 participantForActivity,
