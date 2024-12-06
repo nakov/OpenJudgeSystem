@@ -413,14 +413,14 @@ const ContestSolutionSubmitPage = () => {
         contestDetails?.isOnlineExam,
     ]);
 
-    const onSolutionSubmitFile = useCallback(() => {
+    const onSolutionSubmitFile = useCallback(async () => {
         if (!selectedSubmissionType || !uploadedFile) {
             return;
         }
 
         setUploadedFile(null);
 
-        submitSolutionFile({
+        await submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
