@@ -34,16 +34,6 @@ const ContestStrategies = () => {
         }
     }, [ selectedId, contestStrategies, dispatch ]);
 
-    const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({
-        id: el.id,
-        name: el.name,
-    });
-
-    const dropdownItems = useMemo(
-        () => (contestStrategies || []).map(mapDataToDropdownItem),
-        [ contestStrategies ],
-    );
-
     const handleStrategySelect = (item: IDropdownItem | undefined) => {
         if (item) {
             const strategy = contestStrategies?.find((s) => s.id === item.id);
@@ -65,11 +55,9 @@ const ContestStrategies = () => {
 
     return (
         <div className={styles.selectWrapper}>
-            <Dropdown
-              dropdownItems={dropdownItems}
-              value={selectedStrategy
-                  ? mapDataToDropdownItem(selectedStrategy)
-                  : { name: '', id: 0 }}
+            <Dropdown<IContestStrategyFilter>
+              dropdownItems={contestStrategies || []}
+              value={selectedStrategy ?? { id: 0, name: '' }}
               placeholder="Select strategy"
               noOptionsFoundText="No strategies found"
               handleDropdownItemClick={handleStrategySelect}
