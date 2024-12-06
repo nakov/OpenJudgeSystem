@@ -41,10 +41,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import StyledTooltip from 'src/components/administration/common/styled-tooltip/StyledTooltip';
 import UserActions from 'src/components/administration/common/user-actions/UserActions';
+import AdministrationAccessLogsPage from 'src/pages/administration-new/access-logs/AdministrationAccessLogsPage';
 import AdministrationMentorPromptTemplatesPage
     from 'src/pages/administration-new/mentor-prompt-templates/AdministrationMentorPromptTemplatesPage';
 import AdministrationUsersMentorsPage from 'src/pages/administration-new/users-mentors/AdministrationUsersMentorsPage';
-import AdministrationAccessLogsPage from 'src/pages/administration-new/access-logs/AdministrationAccessLogsPage';
 
 import 'dayjs/locale/bg';
 

@@ -1,6 +1,7 @@
 /* eslint-disable import/group-exports */
 /* eslint-disable import/prefer-default-export */
 export const ID = 'Id';
+export const USER_ID = 'User Id';
 export const NAME = 'Name';
 export const ORDER_BY = 'Order By';
 export const ORDER_BY_DECIMAL = 'Order By (whole or decimal number, e.g. 5 or 5.5)';
@@ -123,7 +124,6 @@ export const SUBMISSION_TYPE_DOCUMENT_TITLE = 'Submission Type Document Title';
 export const TITLE = 'Title';
 
 // Users Mentors
-export const USER_ID = 'User Id';
 export const QUOTA_RESET_TIME = 'Quota Reset Time';
 export const REQUESTS_MADE = 'Requests Made';
 export const QUOTA_LIMIT = 'Quota Limit';
@@ -134,7 +134,6 @@ export const MENTOR_PROMPT_TEMPLATE_TITLE = 'Mentor Prompt Template Title';
 export const MENTOR_PROMPT_TEMPLATE = 'Mentor Prompt Template';
 
 // Access Logs
-export const USER_ID = 'User Id';
 export const IP_ADDRESS = 'IP Address';
 export const REQUEST_TYPE = 'Request Type';
 export const REQUEST_URL = 'Url';
