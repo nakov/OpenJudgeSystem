@@ -724,6 +724,24 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
     username: string;
 }
 
+interface IAccessLogAdministrationModel {
+    id: number;
+    userId: string;
+    ipAddress: string;
+    requestType: string;
+    url: string;
+    postParams: string;
+}
+
+interface IAccessLogInListModel {
+    id: number;
+    userId: string;
+    ipAddress: string;
+    requestType: string;
+    url: string;
+    postParams: string;
+}
+
 interface IDropdownItemBase {
     id: number;
     name: string;
@@ -808,6 +826,8 @@ export type {
     IContestCategoryHierarchyEdit,
     IChangeParticipationTimeForMultipleParticipants,
     IChangeParticipationTimeForSingleParticipant,
+    IAccessLogAdministrationModel,
+    IAccessLogInListModel,
     IDropdownItemBase,
     IDropdownItem,
 };
