@@ -5,7 +5,9 @@ import { ITestRun } from '../hooks/submissions/types';
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { ChatMessageRole, CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
-interface ISubmissionTypeType extends IDropdownItem {
+interface ISubmissionTypeType {
+    id: number;
+    name: string;
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
     timeLimit: number;
@@ -725,10 +727,30 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
     username: string;
 }
 
-interface IDropdownItem {
+interface IAccessLogAdministrationModel {
+    id: number;
+    userId: string;
+    ipAddress: string;
+    requestType: string;
+    url: string;
+    postParams: string;
+}
+
+interface IAccessLogInListModel {
+    id: number;
+    userId: string;
+    ipAddress: string;
+    requestType: string;
+    url: string;
+    postParams: string;
+}
+
+interface IDropdownItemBase {
     id: number;
     name: string;
 }
+
+type IDropdownItem<T = object> = IDropdownItemBase & T;
 
 interface IMentorConversationMessage {
     content: string;
@@ -874,5 +896,8 @@ export type {
     IUserMentorAdministrationModel,
     IMentorPromptTemplateAdministrationModel,
     IMentorPromptTemplateInListModel,
+    IAccessLogAdministrationModel,
+    IAccessLogInListModel,
+    IDropdownItemBase,
     IDropdownItem,
 };

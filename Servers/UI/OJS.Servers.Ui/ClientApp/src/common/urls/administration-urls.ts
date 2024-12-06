@@ -33,3 +33,4 @@ export const USERS_PATH = 'users';
 export const EXAM_GROUPS_PATH = 'exam-groups';
 export const SETTINGS_PATH = 'Settings';
 export const SUBMISSIONS_SIMILLARITY = 'submissions-simillarity';
+export const ACCESS_LOGS_PATH = 'access-logs';

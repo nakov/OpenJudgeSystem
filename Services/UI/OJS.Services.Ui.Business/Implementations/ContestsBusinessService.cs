@@ -106,18 +106,15 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ToList();
             }
 
-            var competeParticipantActivity = this.activityService.GetParticipantActivity(competeParticipant);
-            var practiceParticipantActivity = this.activityService.GetParticipantActivity(practiceParticipant);
-
             var canShowProblemsInCompete =
-                (!contest!.HasContestPassword && contestActivityEntity.CanBeCompeted)
+                (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity is { CanBeCompeted: true, CompeteUserActivity: not null })
                  || isLecturerInContestOrAdmin
-                 || competeParticipantActivity?.IsActive == true;
+                 || contestActivityEntity.CompeteUserActivity?.IsActive == true;
 
             var canShowProblemsInPractice =
                 (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed)
                 || isLecturerInContestOrAdmin
-                || practiceParticipantActivity?.IsActive == true;
+                || contestActivityEntity.PracticeUserActivity?.IsActive == true;
 
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 

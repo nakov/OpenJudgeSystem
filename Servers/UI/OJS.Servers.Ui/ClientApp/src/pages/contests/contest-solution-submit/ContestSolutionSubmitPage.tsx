@@ -11,6 +11,7 @@ import isNil from 'lodash/isNil';
 import moment from 'moment';
 import { SUBMISSION_SENT } from 'src/common/messages';
 import Mentor from 'src/components/mentor/Mentor';
+import Dropdown from 'src/components/guidelines/dropdown/Dropdown';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
 import isNilOrEmpty from 'src/utils/check-utils';
 import { renderSuccessfullAlert } from 'src/utils/render-utils';
@@ -18,7 +19,6 @@ import { renderSuccessfullAlert } from 'src/utils/render-utils';
 import { ContestParticipationType } from '../../../common/constants';
 import {
     AdjacencyList,
-    IDropdownItem,
     IProblemResourceType,
     IProblemType,
     ISubmissionTypeType,
@@ -36,7 +36,6 @@ import ErrorWithActionButtons from '../../../components/error/ErrorWithActionBut
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
 import Button, { ButtonState } from '../../../components/guidelines/buttons/Button';
-import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
@@ -171,10 +170,7 @@ const ContestSolutionSubmitPage = () => {
             return [];
         }
 
-        return problemAllowedSubmissionTypes.map((item) => ({
-            id: item.id,
-            name: item.name,
-        })).sort((a, b) => a.id - b.id);
+        return problemAllowedSubmissionTypes;
     }, [ problemAllowedSubmissionTypes ]);
 
     const selectedSubmissionType = useMemo(() => {
@@ -186,10 +182,8 @@ const ContestSolutionSubmitPage = () => {
     }, [ selectedContestDetailsProblem, submissionTypesPerProblem ]);
 
     const onStrategyDropdownItemSelect = useCallback(
-        (item: IDropdownItem | undefined) => {
-            const submission = item as ISubmissionTypeType;
-
-            if (!selectedContestDetailsProblem || !submission.id) {
+        (submission: ISubmissionTypeType | undefined) => {
+            if (!selectedContestDetailsProblem || !submission) {
                 return;
             }
 
@@ -393,7 +387,10 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitCode = useCallback(() => {
-        if (!selectedSubmissionType) { return; }
+        if (!selectedSubmissionType) {
+            return;
+        }
+
         setSubmissionCode('');
         submitSolution({
             content: submissionCode!,
@@ -420,14 +417,14 @@ const ContestSolutionSubmitPage = () => {
         contestDetails?.isOnlineExam,
     ]);
 
-    const onSolutionSubmitFile = useCallback(() => {
+    const onSolutionSubmitFile = useCallback(async () => {
         if (!selectedSubmissionType || !uploadedFile) {
             return;
         }
 
         setUploadedFile(null);
 
-        submitSolutionFile({
+        await submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
@@ -654,12 +651,15 @@ const ContestSolutionSubmitPage = () => {
                       }}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
-                        <Dropdown
-                          dropdownItems={strategyDropdownItems || []}
-                          value={selectedSubmissionType}
-                          handleDropdownItemClick={onStrategyDropdownItemSelect}
-                        />
+                        <div className={styles.fileUploadDropdown}>
+                            <Dropdown<ISubmissionTypeType>
+                              dropdownItems={strategyDropdownItems || []}
+                              value={selectedSubmissionType}
+                              handleDropdownItemClick={onStrategyDropdownItemSelect}
+                            />
+                        </div>
                         <Button
+                          className={styles.button}
                           onClick={onSolutionSubmitFile}
                           text="Submit"
                           state={isSubmitButtonDisabled || submitSolutionFileIsLoading || fileUploadError
@@ -691,13 +691,14 @@ const ContestSolutionSubmitPage = () => {
                   onCodeChange={(inputCode) => setSubmissionCode(inputCode)}
                 />
                 <div className={styles.submitSettings}>
-                    <Dropdown
+                    <Dropdown<ISubmissionTypeType>
                       dropdownItems={strategyDropdownItems || []}
                       value={selectedSubmissionType}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Button
+                          className={styles.button}
                           state={isSubmitButtonDisabled || submitSolutionIsLoading
                               ? ButtonState.disabled
                               : ButtonState.enabled}

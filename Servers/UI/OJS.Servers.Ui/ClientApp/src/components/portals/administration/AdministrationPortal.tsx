@@ -4,7 +4,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
 import { HiChatBubbleLeft } from 'react-icons/hi2';
-import { IoMdCheckbox } from 'react-icons/io';
+import { IoIosLock, IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { TbBinaryTree } from 'react-icons/tb';
@@ -44,11 +44,13 @@ import UserActions from 'src/components/administration/common/user-actions/UserA
 import AdministrationMentorPromptTemplatesPage
     from 'src/pages/administration-new/mentor-prompt-templates/AdministrationMentorPromptTemplatesPage';
 import AdministrationUsersMentorsPage from 'src/pages/administration-new/users-mentors/AdministrationUsersMentorsPage';
+import AdministrationAccessLogsPage from 'src/pages/administration-new/access-logs/AdministrationAccessLogsPage';
 
 import 'dayjs/locale/bg';
 
 import { ThemeMode } from '../../../common/enums';
 import {
+    ACCESS_LOGS_PATH,
     CHECKERS_PATH,
     CONTEST_CATEGORIES_HIERARCHY_PATH,
     CONTEST_CATEGORIES_PATH,
@@ -242,6 +244,12 @@ const administrationItems = [
         name: 'Mentor Prompt Templates',
         icon: <HiChatBubbleLeft className={styles.iconSize} />,
         path: `${MENTOR_PROMPT_TEMPLATES_PATH}`,
+        visibleOnlyForAdmin: true,
+    },
+    {
+        name: 'Access Logs',
+        icon: <IoIosLock className={styles.iconSize} />,
+        path: `${ACCESS_LOGS_PATH}`,
         visibleOnlyForAdmin: true,
     },
 ];
@@ -523,6 +531,11 @@ const AdministrationPortal = () => {
         {
             path: `${MENTOR_PROMPT_TEMPLATES_PATH}`,
             Element: AdministrationMentorPromptTemplatesPage,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${ACCESS_LOGS_PATH}`,
+            Element: AdministrationAccessLogsPage,
             visibleOnlyForAdmin: true,
         },
     ];

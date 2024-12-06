@@ -132,3 +132,10 @@ export const QUOTA_LIMIT = 'Quota Limit';
 export const MENTOR_PROMPT_TEMPLATE_ID = 'Mentor Prompt Template Id';
 export const MENTOR_PROMPT_TEMPLATE_TITLE = 'Mentor Prompt Template Title';
 export const MENTOR_PROMPT_TEMPLATE = 'Mentor Prompt Template';
+
+// Access Logs
+export const USER_ID = 'User Id';
+export const IP_ADDRESS = 'IP Address';
+export const REQUEST_TYPE = 'Request Type';
+export const REQUEST_URL = 'Url';
+export const POST_PARAMS = 'Post Params';

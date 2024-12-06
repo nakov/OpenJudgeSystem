@@ -61,6 +61,7 @@ public class ExecutionResultErrorConsumer(
         {
             submission.Processed = true;
             submission.IsCompiledSuccessfully = false;
+            submission.TestRunsCache = null;
             submission.StartedExecutionOn = message.StartedExecutionOn;
             submission.CompletedExecutionOn = message.CompletedExecutionOn;
             submission.WorkerName = message.WorkerName;

@@ -21,6 +21,7 @@ import problemGroupsAdminService from './services/admin/problemGroupsAdminServic
 import { problemResourcesAdminService } from './services/admin/problemResourcesAdminService';
 import usersMentorsAdminService from './services/admin/usersMentorsAdminService';
 import mentorPromptTemplatesAdminService from './services/admin/mentorPromptTemplatesAdminService';
+import accessLogsAdminService from './services/admin/accessLogsAdminService';
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
 import rolesAdminService from './services/admin/rolesAdminService';
@@ -77,6 +78,7 @@ const rootReducer = combineReducers({
     [rolesAdminService.reducerPath]: rolesAdminService.reducer,
     [examGroupsService.reducerPath]: examGroupsService.reducer,
     [settingsAdminService.reducerPath]: settingsAdminService.reducer,
+    [accessLogsAdminService.reducerPath]: accessLogsAdminService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -125,6 +127,7 @@ const store = configureStore({
         rolesAdminService.middleware,
         examGroupsService.middleware,
         settingsAdminService.middleware,
+        accessLogsAdminService.middleware,
     ]),
 });
 
