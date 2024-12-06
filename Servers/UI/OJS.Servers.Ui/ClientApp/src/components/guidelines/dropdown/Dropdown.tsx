@@ -8,10 +8,10 @@ import useTheme from '../../../hooks/use-theme';
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from './Dropdown.module.scss';
 
-interface IDropdownProps {
-    dropdownItems: Array<IDropdownItem>;
-    value: IDropdownItem | null;
-    handleDropdownItemClick?: (item: IDropdownItem | undefined) => void;
+interface IDropdownProps<T = object> {
+    dropdownItems: Array<IDropdownItem<T>>;
+    value: IDropdownItem<T> | null;
+    handleDropdownItemClick?: (item: IDropdownItem<T> | undefined) => void;
     placeholder?: string;
     isDisabled?: boolean;
     noOptionsFoundText?: string;
@@ -35,7 +35,7 @@ const StyledPopper = (popperProps: any) => (
     />
 );
 
-const Dropdown = (props: IDropdownProps) => {
+const Dropdown = <T, >(props: IDropdownProps<T>) => {
     const {
         dropdownItems,
         value,
@@ -63,7 +63,9 @@ const Dropdown = (props: IDropdownProps) => {
     }, [ value ]);
 
     const autocompleteClasses = {
-        root: styles[`${theme}Autocomplete`],
+        root: `${styles[`${theme}Autocomplete`]} ${isSearchable
+            ? styles.searchableAutocomplete
+            : ''}`,
         inputRoot: `${styles.inputRoot} ${styles[`${theme}InputRoot`]}`,
         paper: styles[`${theme}Paper`],
         option: `${styles.option} ${styles[`${theme}Option`]}`,
@@ -77,7 +79,7 @@ const Dropdown = (props: IDropdownProps) => {
         input: `${styles.input} ${styles[`${theme}Input`]}`,
     };
 
-    const defaultFilterOptions = createFilterOptions<IDropdownItem>();
+    const defaultFilterOptions = createFilterOptions<IDropdownItem<T>>();
 
     return (
         <Autocomplete
@@ -119,7 +121,7 @@ const Dropdown = (props: IDropdownProps) => {
                         ? (
                             <>
                                 {inputValue !== '' && !isDisabled && (
-                                <InputAdornment position="end">
+                                <InputAdornment position="end" className={styles.inputAdornment}>
                                     <IconButton
                                       onClick={(event) => {
                                           event.stopPropagation();
@@ -137,7 +139,11 @@ const Dropdown = (props: IDropdownProps) => {
                                 {params.InputProps.endAdornment}
                             </>
                         )
-                        : params.InputProps.endAdornment,
+                        : (
+                            <InputAdornment position="start" className={styles.inputAdornment}>
+                                {params.InputProps.endAdornment}
+                            </InputAdornment>
+                        ),
                 }}
               />
           )}

@@ -121,3 +121,10 @@ export const SUBMISSION_TYPE_DOCUMENT = 'Submission type document';
 export const SUBMISSION_TYPE_DOCUMENT_ID = 'Submission Type Document Id';
 export const SUBMISSION_TYPE_DOCUMENT_TITLE = 'Submission Type Document Title';
 export const TITLE = 'Title';
+
+// Access Logs
+export const USER_ID = 'User Id';
+export const IP_ADDRESS = 'IP Address';
+export const REQUEST_TYPE = 'Request Type';
+export const REQUEST_URL = 'Url';
+export const POST_PARAMS = 'Post Params';
