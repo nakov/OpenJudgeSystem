@@ -363,7 +363,7 @@ interface IProblemAdministration {
     tests: File | null;
     problemGroupOrderBy: number;
     problemGroupId : number;
-    defaultSubmissionTypeId?: number;
+    defaultSubmissionTypeId: number | null;
     additionalFiles: File | null;
     hasAdditionalFiles: boolean;
 }

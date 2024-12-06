@@ -94,7 +94,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         contestType: contestType || ContestVariation.Exercise,
         problemGroupOrderBy: -1,
         problemGroupId: 0,
-        defaultSubmissionTypeId: 0,
+        defaultSubmissionTypeId: null,
         additionalFiles: null,
         hasAdditionalFiles: false,
     });
