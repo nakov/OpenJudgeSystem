@@ -19,6 +19,14 @@
   cursor: pointer;
 }
 
+.searchableAutocomplete {
+  :global {
+    .MuiAutocomplete-endAdornment {
+      margin-right: spacings.$sp-16 !important;
+    }
+  }
+}
+
 .lightAutocomplete {
   min-width: 20rem;
 
@@ -111,7 +119,7 @@
     }
 
     .MuiAutocomplete-endAdornment {
-      margin-right: spacings.$sp-16;
+      margin-right: 0;
     }
 
     ::placeholder {
@@ -177,4 +185,8 @@
 
 :global(.MuiOutlinedInput-notchedOutline) {
   border: none !important;
+}
+
+.inputAdornment {
+  margin-left: 1rem !important;
 }

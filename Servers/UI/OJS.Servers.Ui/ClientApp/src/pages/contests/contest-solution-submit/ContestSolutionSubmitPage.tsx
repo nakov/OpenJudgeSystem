@@ -18,7 +18,6 @@ import { renderSuccessfullAlert } from 'src/utils/render-utils';
 import { ContestParticipationType } from '../../../common/constants';
 import {
     AdjacencyList,
-    IDropdownItem,
     IProblemResourceType,
     IProblemType,
     ISubmissionTypeType,
@@ -167,10 +166,7 @@ const ContestSolutionSubmitPage = () => {
             return [];
         }
 
-        return problemAllowedSubmissionTypes.map((item) => ({
-            id: item.id,
-            name: item.name,
-        })).sort((a, b) => a.id - b.id);
+        return problemAllowedSubmissionTypes;
     }, [ problemAllowedSubmissionTypes ]);
 
     const selectedSubmissionType = useMemo(() => {
@@ -182,10 +178,8 @@ const ContestSolutionSubmitPage = () => {
     }, [ selectedContestDetailsProblem, submissionTypesPerProblem ]);
 
     const onStrategyDropdownItemSelect = useCallback(
-        (item: IDropdownItem | undefined) => {
-            const submission = item as ISubmissionTypeType;
-
-            if (!selectedContestDetailsProblem || !submission.id) {
+        (submission: ISubmissionTypeType | undefined) => {
+            if (!selectedContestDetailsProblem || !submission) {
                 return;
             }
 
@@ -389,7 +383,10 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitCode = useCallback(() => {
-        if (!selectedSubmissionType) { return; }
+        if (!selectedSubmissionType) {
+            return;
+        }
+
         setSubmissionCode('');
         submitSolution({
             content: submissionCode!,
@@ -651,7 +648,7 @@ const ContestSolutionSubmitPage = () => {
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <div className={styles.fileUploadDropdown}>
-                            <Dropdown
+                            <Dropdown<ISubmissionTypeType>
                               dropdownItems={strategyDropdownItems || []}
                               value={selectedSubmissionType}
                               handleDropdownItemClick={onStrategyDropdownItemSelect}
@@ -690,13 +687,14 @@ const ContestSolutionSubmitPage = () => {
                   onCodeChange={(inputCode) => setSubmissionCode(inputCode)}
                 />
                 <div className={styles.submitSettings}>
-                    <Dropdown
+                    <Dropdown<ISubmissionTypeType>
                       dropdownItems={strategyDropdownItems || []}
                       value={selectedSubmissionType}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Button
+                          className={styles.button}
                           state={isSubmitButtonDisabled || submitSolutionIsLoading
                               ? ButtonState.disabled
                               : ButtonState.enabled}
