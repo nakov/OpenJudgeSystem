@@ -5,7 +5,7 @@ import isNaN from 'lodash/isNaN';
 import TabsInView from 'src/components/administration/common/tabs/TabsInView';
 
 import { ProblemResourceType } from '../../../../common/enums';
-import { LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
+import { NAME, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IProblemResourceAdministrationModel } from '../../../../common/types';
 import useDelayedSuccessEffect from '../../../../hooks/common/use-delayed-success-effect';
 import useSuccessMessageEffect from '../../../../hooks/common/use-success-message-effect';
@@ -190,7 +190,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         <FormControl className={formStyles.inputRow}>
             <TextField
               variant="standard"
-              label={LINK}
+              label="Link"
               value={currentResource.link}
               InputLabelProps={{ shrink: true }}
               type="text"
