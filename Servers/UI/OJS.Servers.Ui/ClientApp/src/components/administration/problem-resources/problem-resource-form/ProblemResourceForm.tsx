@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useEffect, useState } from 'react';
-import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { SyntheticEvent, useEffect, useState } from 'react';
+import { Box, Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
+import TabsInView from 'src/components/administration/common/tabs/TabsInView';
 
 import { ProblemResourceType } from '../../../../common/enums';
 import { LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
@@ -24,6 +25,11 @@ import FileUpload from '../../common/file-upload/FileUpload';
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
+enum PROBLEM_RESOURCE_LISTED_DATA {
+    LINK = 'link',
+    FILE = 'file'
+}
+
 interface IProblemResourceFormProps {
     id: number;
     isEditMode?: boolean;
@@ -44,6 +50,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         hasFile: false,
         problemId: 0,
     });
+    const [ tabName, setTabName ] = useState(PROBLEM_RESOURCE_LISTED_DATA.LINK);
     const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
@@ -135,6 +142,10 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         }));
     };
 
+    const onTabChange = (event: SyntheticEvent, newValue: PROBLEM_RESOURCE_LISTED_DATA) => {
+        setTabName(newValue);
+    };
+
     const onChange = (e: any) => {
         const { target } = e;
         const { name, type, value, checked } = target;
@@ -175,6 +186,36 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         }
     };
 
+    const renderLinkForm = () => (
+        <FormControl className={formStyles.inputRow}>
+            <TextField
+              variant="standard"
+              label={LINK}
+              value={currentResource.link}
+              InputLabelProps={{ shrink: true }}
+              type="text"
+              name="link"
+              onChange={(e) => onChange(e)}
+            />
+        </FormControl>
+    );
+
+    const renderFileForm = () => (
+        <FormControl className={formStyles.inputRow}>
+            <Typography variant="h4">File</Typography>
+            <Divider />
+            <FileUpload
+              handleFileUpload={handleFileUpload}
+              propName="file"
+              setSkipDownload={setSkipDownload}
+              uploadButtonName={currentResource.file?.name}
+              showDownloadButton={currentResource.hasFile}
+              onClearSelectionClicked={handleFileClearance}
+              disableClearButton={currentResource.file === null}
+            />
+        </FormControl>
+    );
+
     if (isDownloadingFiles || isUpdating || isCreating || isGetting) {
         return <SpinningLoader />;
     }
@@ -187,74 +228,72 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                 <Typography variant="h4" className="centralize">
                     Problem Resource Administration Form
                 </Typography>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={NAME}
-                      name="name"
-                      value={currentResource?.name}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      onChange={(e) => onChange(e)}
-                    />
-                </FormControl>
-                <FormGroup className={formStyles.inputRow}>
-                    <InputLabel id="problemGroupType">{TYPE}</InputLabel>
-                    <Select
-                      onChange={(e) => onChange(e)}
-                      onBlur={(e) => onChange(e)}
-                      labelId="problemGroupType"
-                      value={currentResource.type}
-                      name="type"
-                    >
-                        {Object.keys(ProblemResourceType)
-                            .filter((key) => isNaN(Number(key)))
-                            .map((key) => (
-                                <MenuItem key={key} value={ProblemResourceType[key as keyof typeof ProblemResourceType]}>
-                                    {key}
-                                </MenuItem>
-                            ))}
-                    </Select>
-                </FormGroup>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={ORDER_BY}
-                      value={currentResource.orderBy}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      name="orderBy"
-                      onChange={(e) => onChange(e)}
-                    />
-                </FormControl>
-                {currentResource.type === ProblemResourceType.Link && (
-                    <FormControl className={formStyles.inputRow}>
-                        <TextField
-                          variant="standard"
-                          label={LINK}
-                          value={currentResource.link}
-                          InputLabelProps={{ shrink: true }}
-                          type="text"
-                          name="link"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                )}
-                {currentResource.type !== ProblemResourceType.Link && (
-                <FormControl className={formStyles.inputRow}>
-                    <Typography variant="h4">File</Typography>
-                    <Divider />
-                    <FileUpload
-                      handleFileUpload={handleFileUpload}
-                      propName="file"
-                      setSkipDownload={setSkipDownload}
-                      uploadButtonName={currentResource.file?.name}
-                      showDownloadButton={currentResource.hasFile}
-                      onClearSelectionClicked={handleFileClearance}
-                      disableClearButton={currentResource.file === null}
-                    />
-                </FormControl>
-                )}
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        General Information
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <FormControl className={formStyles.inputRow}>
+                            <TextField
+                              variant="standard"
+                              label={NAME}
+                              name="name"
+                              value={currentResource?.name}
+                              InputLabelProps={{ shrink: true }}
+                              type="text"
+                              onChange={(e) => onChange(e)}
+                            />
+                        </FormControl>
+                        <FormGroup className={formStyles.inputRow}>
+                            <InputLabel id="problemGroupType">{TYPE}</InputLabel>
+                            <Select
+                              onChange={(e) => onChange(e)}
+                              onBlur={(e) => onChange(e)}
+                              labelId="problemGroupType"
+                              value={currentResource.type}
+                              name="type"
+                            >
+                                {Object.keys(ProblemResourceType)
+                                    .filter((key) => isNaN(Number(key)))
+                                    .map((key) => (
+                                        <MenuItem key={key} value={ProblemResourceType[key as keyof typeof ProblemResourceType]}>
+                                            {key}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormGroup>
+                        <FormControl className={formStyles.inputRow}>
+                            <TextField
+                              variant="standard"
+                              label={ORDER_BY}
+                              value={currentResource.orderBy}
+                              InputLabelProps={{ shrink: true }}
+                              type="text"
+                              name="orderBy"
+                              onChange={(e) => onChange(e)}
+                            />
+                        </FormControl>
+                    </Box>
+                </Box>
+                <Box className={formStyles.fieldBox}>
+                    <Typography className={formStyles.fieldBoxTitle} variant="h5">
+                        Resource Content
+                    </Typography>
+                    <div className={formStyles.fieldBoxDivider} />
+                    <Box className={formStyles.fieldBoxElement}>
+                        <FormControl className={formStyles.inputRow}>
+                            <TabsInView
+                              onTabChange={onTabChange}
+                              tabName={tabName}
+                              tabs={[
+                                  { value: PROBLEM_RESOURCE_LISTED_DATA.LINK, label: 'Link', node: renderLinkForm },
+                                  { value: PROBLEM_RESOURCE_LISTED_DATA.FILE, label: 'File', node: renderFileForm },
+                              ]}
+                            />
+                        </FormControl>
+                    </Box>
+                </Box>
                 <AdministrationFormButtons
                   isEditMode={isEditMode}
                   onCreateClick={() => submitForm()}

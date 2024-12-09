@@ -62,17 +62,16 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
             .Include(pr => pr.Problem)
             .FirstOrDefaultAsync();
 
-        var areFileAndLinkNull = model is { File: null, Link: null };
-
         if (resource is null)
         {
-            throw new BusinessServiceException($"Resource with id {model.Id} not found.");
+            throw new BusinessServiceException($"A resource with id {model.Id} was not found.");
         }
 
-        if (resource is { File: null } && areFileAndLinkNull)
+        var areFileAndLinkNull = model is { File: null, Link: null };
+
+        if (areFileAndLinkNull)
         {
-            // This will be valid when we want to switch from a link to a file-based resource.
-            throw new BusinessServiceException("The file cannot be empty.");
+            throw new BusinessServiceException("The resource should contain either a file or a link.");
         }
 
         // Get the value before mapping from the model.
