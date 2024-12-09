@@ -68,6 +68,7 @@ export const PROBLEM_GROUP_TYPE = 'Problem Group Type';
 export const SHOW_DETAILED_FEEDBACK = 'Show Detailed feedback';
 export const SHOW_RESULTS = 'Show Results';
 export const SOLUTION_SKELETON = 'Solution Skeleton';
+export const ADDITIONAL_FILES = 'Additional Files';
 
 // Problem groups
 
@@ -120,3 +121,10 @@ export const SUBMISSION_TYPE_DOCUMENT = 'Submission type document';
 export const SUBMISSION_TYPE_DOCUMENT_ID = 'Submission Type Document Id';
 export const SUBMISSION_TYPE_DOCUMENT_TITLE = 'Submission Type Document Title';
 export const TITLE = 'Title';
+
+// Access Logs
+export const USER_ID = 'User Id';
+export const IP_ADDRESS = 'IP Address';
+export const REQUEST_TYPE = 'Request Type';
+export const REQUEST_URL = 'Url';
+export const POST_PARAMS = 'Post Params';

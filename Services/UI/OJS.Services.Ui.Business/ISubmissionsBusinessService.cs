@@ -24,9 +24,7 @@
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
-        // Task HardDeleteAllArchived();
-
-        Task<PagedResult<TServiceModel>> GetUserSubmissionsByProblem<TServiceModel>(int problemId, bool isOfficial, int page);
+        Task<PagedResult<SubmissionForSubmitSummaryServiceModel>> GetUserSubmissionsByProblem(int problemId, bool isOfficial, int page);
 
         Task<int> GetTotalCount();
 

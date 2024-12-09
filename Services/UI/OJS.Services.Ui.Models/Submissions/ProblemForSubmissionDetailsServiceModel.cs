@@ -9,7 +9,9 @@ public class ProblemForSubmissionDetailsServiceModel : IMapFrom<Problem>
 
     public int Id { get; set; }
 
-    public ProblemGroupForSubmissionDetailsServiceModel ProblemGroup { get; set; } = null!;
+    public int ProblemGroupContestId { get; set; }
 
     public bool ShowResults { get; set; }
+
+    public short MaximumPoints { get; set; }
 }

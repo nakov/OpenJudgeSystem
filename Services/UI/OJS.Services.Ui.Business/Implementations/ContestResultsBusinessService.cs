@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Problems;
+using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Cache;
 
@@ -27,6 +28,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
     private readonly IUserProviderService userProvider;
     private readonly IParticipantsDataService participantsData;
     private readonly IContestsCacheService contestsCache;
+    private readonly IContestsActivityService contestsActivity;
 
     public ContestResultsBusinessService(
         IContestResultsAggregatorCommonService contestResultsAggregator,
@@ -35,7 +37,8 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         ILecturersInContestsBusinessService lecturersInContestsBusinessService,
         IUserProviderService userProvider,
         IParticipantsDataService participantsData,
-        IContestsCacheService contestsCache)
+        IContestsCacheService contestsCache,
+        IContestsActivityService contestsActivity)
     {
         this.contestResultsAggregator = contestResultsAggregator;
         this.contestsData = contestsData;
@@ -44,6 +47,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         this.userProvider = userProvider;
         this.participantsData = participantsData;
         this.contestsCache = contestsCache;
+        this.contestsActivity = contestsActivity;
     }
 
     public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults, int page)
@@ -51,7 +55,10 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         var contest = await this.contestsCache.GetContestDetailsServiceModel(contestId)
             ?? throw new BusinessServiceException("Contest does not exist or is deleted.");
 
-        var validationResult = this.contestResultsValidation.GetValidationResult((contest, isFullResults, official));
+        var isUserAdminOrLecturer = await this.lecturersInContestsBusinessService.IsCurrentUserAdminOrLecturerInContest(contestId);
+        var contestActivity = await this.contestsActivity.GetContestActivity(contest.Map<ContestForActivityServiceModel>());
+
+        var validationResult = this.contestResultsValidation.GetValidationResult((contestActivity, isFullResults, official, isUserAdminOrLecturer));
 
         if (!validationResult.IsValid)
         {
@@ -75,9 +82,9 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             Page = page,
         };
 
-        var results = this.contestResultsAggregator.GetContestResults(contestResultsModel);
+        var results = this.contestResultsAggregator.GetContestResults(contestResultsModel, contestActivity);
 
-        results.UserIsInRoleForContest = await this.lecturersInContestsBusinessService.IsCurrentUserAdminOrLecturerInContest(contest.Id);
+        results.UserIsInRoleForContest = isUserAdminOrLecturer;
 
         return results;
     }

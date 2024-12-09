@@ -20,7 +20,10 @@ using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -38,11 +41,13 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IProblemsGridDataService problemGridDataService,
         ProblemAdministrationValidator validator,
-        IGridDataService<ProblemResource> problemResourceGridDataService)
+        IGridDataService<ProblemResource> problemResourceGridDataService,
+        IDataService<AccessLog> accessLogsData)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
-                validator)
+                validator,
+                accessLogsData)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.problemsDataService = problemsDataService;
@@ -181,4 +186,12 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
             await this.problemResourceGridDataService.GetAll<ProblemResourceInListModel>(
                 model,
                 pr => pr.ProblemId == problemId));
+
+    [HttpGet("{problemId:int}")]
+    [ProtectedEntityAction]
+    public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int problemId)
+    {
+        var (outputStream, zipFileName) = await this.problemsBusinessService.DownloadAdditionalFiles(problemId);
+        return this.File(outputStream, MediaTypeNames.Application.Zip, zipFileName);
+    }
 }

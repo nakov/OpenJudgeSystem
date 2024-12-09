@@ -8,6 +8,7 @@ using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
+using OJS.Common.Extensions;
 
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -22,6 +23,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
     public bool ShowResults { get; set; }
 
     public bool ShowDetailedFeedback { get; set; }
+
+    public int? DefaultSubmissionTypeId { get; set; }
 
     public int CheckerId { get; set; }
 
@@ -40,9 +43,13 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public string? ProblemGroupType { get; set; }
 
-    public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
+    public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = [];
 
     public IFormFile? Tests { get; set; }
+
+    public IFormFile? AdditionalFiles { get; set; }
+
+    public bool HasAdditionalFiles { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
     {
@@ -62,7 +69,11 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
              .ForMember(pam => pam.ProblemGroupOrderBy, opt
                  => opt.MapFrom(p => p.ProblemGroup.OrderBy))
              .ForMember(pam => pam.ContestType, opt
-             => opt.MapFrom(p => p.ProblemGroup.Contest.Type));
+                => opt.MapFrom(p => p.ProblemGroup.Contest.Type))
+             .ForMember(pam => pam.HasAdditionalFiles, opt
+                => opt.MapFrom(p => p.AdditionalFiles != null && p.AdditionalFiles.Length > 0))
+             .ForMember(pam => pam.AdditionalFiles, opt
+                 => opt.Ignore());
 
          configuration.CreateMap<ProblemAdministrationModel, Problem>()
              .ForMember(pam => pam.SubmissionTypesInProblems, opt
@@ -93,7 +104,24 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
              .ForMember(pam => pam.ModifiedOn, opt
                  => opt.Ignore())
+             .ForMember(pam => pam.DefaultSubmissionType, opt
+                => opt.Ignore())
              .ForMember(pam => pam.AdditionalFiles, opt
-             => opt.Ignore());
+                 => opt.Ignore())
+             .ForMember(d => d.AdditionalFiles, opt
+                 => opt.MapFrom(s => s.AdditionalFiles == null ? null : s.AdditionalFiles.GetBytes()))
+             .AfterMap((s, d) =>
+             {
+                 /*
+                  * AutoMapper cannot automatically map the File property to null
+                  * when it's an empty byte array. Therefore, we explicitly check
+                  * after the mapping process if the File is either null or an empty
+                  * array, and if so, we set it to null manually.
+                  */
+                 if (s.AdditionalFiles == null || s.AdditionalFiles.Length == 0)
+                 {
+                     d.AdditionalFiles = null;
+                 }
+             });
     }
 }

@@ -8,7 +8,6 @@ import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from 
 interface ISubmissionTypeType {
     id: number;
     name: string;
-    isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
     timeLimit: number;
@@ -169,6 +168,7 @@ interface IProblemType {
     checkerDescription: string;
     resources: IProblemResourceType[];
     allowedSubmissionTypes: ISubmissionTypeType[];
+    defaultSubmissionTypeId?: number;
 }
 
 interface IProblemSearchType {
@@ -363,6 +363,9 @@ interface IProblemAdministration {
     tests: File | null;
     problemGroupOrderBy: number;
     problemGroupId : number;
+    defaultSubmissionTypeId: number | null;
+    additionalFiles: File | null;
+    hasAdditionalFiles: boolean;
 }
 
 interface ISubmissionTypesInListModel {
@@ -562,7 +565,6 @@ interface ISubmissionTypeAdministrationModel {
     additionalCompilerArguments: string;
     description: string;
     allowedFileExtensions: string;
-    isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     baseTimeUsedInMilliseconds?: number;
     baseMemoryUsedInBytes?: number;
@@ -722,6 +724,31 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
     username: string;
 }
 
+interface IAccessLogAdministrationModel {
+    id: number;
+    userId: string;
+    ipAddress: string;
+    requestType: string;
+    url: string;
+    postParams: string;
+}
+
+interface IAccessLogInListModel {
+    id: number;
+    userId: string;
+    ipAddress: string;
+    requestType: string;
+    url: string;
+    postParams: string;
+}
+
+interface IDropdownItemBase {
+    id: number;
+    name: string;
+}
+
+type IDropdownItem<T = object> = IDropdownItemBase & T;
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -799,4 +826,8 @@ export type {
     IContestCategoryHierarchyEdit,
     IChangeParticipationTimeForMultipleParticipants,
     IChangeParticipationTimeForSingleParticipant,
+    IAccessLogAdministrationModel,
+    IAccessLogInListModel,
+    IDropdownItemBase,
+    IDropdownItem,
 };

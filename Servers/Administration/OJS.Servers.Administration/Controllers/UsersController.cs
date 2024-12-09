@@ -26,6 +26,8 @@ using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class UsersController : BaseAdminApiController<UserProfile, string, UserInListModel, UserAdministrationModel>
 {
@@ -44,11 +46,13 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
        ILecturersInContestsGridDataService lecturersInContestsGridDataService,
        ILecturersInContestsBusinessService lecturersInContestsBusinessService,
        ILecturersInCategoriesGridDataService lecturersInCategoriesGridDataService,
-       ILecturersInCategoriesBusinessService lecturersInCategoriesBusinessService)
+       ILecturersInCategoriesBusinessService lecturersInCategoriesBusinessService,
+       IDataService<AccessLog> accessLogsData)
         : base(
             usersGridData,
             usersBusinessService,
-            validator)
+            validator,
+            accessLogsData)
     {
         this.usersGridData = usersGridData;
         this.usersDataService = usersDataService;

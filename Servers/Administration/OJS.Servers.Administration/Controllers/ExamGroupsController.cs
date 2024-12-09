@@ -10,6 +10,8 @@ using OJS.Services.Administration.Business.ExamGroups.Permissions;
 using OJS.Services.Administration.Business.ExamGroups.Validators;
 using OJS.Services.Administration.Models.ExamGroups;
 using System.Threading.Tasks;
+using OJS.Data.Models;
+using OJS.Services.Common.Data;
 
 public class ExamGroupsController : BaseAdminApiController<ExamGroup, int, ExamGroupInListModel, ExamGroupAdministrationModel>
 {
@@ -22,8 +24,9 @@ public class ExamGroupsController : BaseAdminApiController<ExamGroup, int, ExamG
        IExamGroupsBusinessService operationService,
        ExamGroupAdministrationModelValidator validator,
        UserToExamGroupValidator userToExamGroupValidator,
-       MultipleUsersToExamGroupModelValidator multipleUsersToExamGroupModelValidator)
-        : base(gridDataService, operationService, validator)
+       MultipleUsersToExamGroupModelValidator multipleUsersToExamGroupModelValidator,
+       IDataService<AccessLog> accessLogsData)
+        : base(gridDataService, operationService, validator, accessLogsData)
     {
         this.operationService = operationService;
         this.userToExamGroupValidator = userToExamGroupValidator;

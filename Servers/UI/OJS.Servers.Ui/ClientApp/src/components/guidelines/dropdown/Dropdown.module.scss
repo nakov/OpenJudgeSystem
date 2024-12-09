@@ -1,11 +1,192 @@
-@use 'src/styles/variables';
-@use 'src/styles/font-weights';
+@use 'src/styles/colors.scss';
 @use 'src/styles/spacings';
 
-.dropdown {
-  font-size: variables.$f-size-16;
-  font-weight: font-weights.$font-weight-regular;
-  height: 40px;
-  margin-left: spacings.$sp-16;
-  width: 350px;
+.textField {
+  width: 100%;
+}
+
+.inputRoot {
+  padding: 0 spacings.$sp-4;
+}
+
+.input {
+  font-size: spacings.$sp-16;
+}
+
+.option {
+  font-size: spacings.$sp-16;
+  padding: spacings.$sp-8 spacings.$sp-16;
+  cursor: pointer;
+}
+
+.searchableAutocomplete {
+  :global {
+    .MuiAutocomplete-endAdornment {
+      margin-right: spacings.$sp-16 !important;
+    }
+  }
+}
+
+.lightAutocomplete {
+  min-width: 20rem;
+
+  :global {
+    .MuiFormControl-root {
+      background-color: colors.$light-base-color-100;
+      border: 2px solid colors.$background-color-btn-primary;
+      border-radius: 4px;
+    }
+
+    .MuiOutlinedInput-root {
+      padding: 0 spacings.$sp-4 2px 6px !important;
+    }
+
+    .MuiAutocomplete-endAdornment {
+      margin-right: spacings.$sp-16;
+    }
+
+    ::placeholder {
+      color: colors.$light-text-color !important;
+      opacity: 0.6 !important;
+    }
+  }
+}
+
+.lightInputRoot {
+  .MuiAutocomplete-root {
+    background-color: colors.$light-base-color-100;
+    color: colors.$light-text-color;
+  }
+
+  .MuiSvgIcon-root {
+    color: colors.$light-text-color;
+  }
+}
+
+.lightTextField {
+  :global {
+    .MuiInputBase-input {
+      border-color: colors.$light-base-color-100;
+      color: colors.$light-text-color;
+    }
+  }
+}
+
+.lightOption {
+  color: colors.$light-text-color;
+  background-color: colors.$light-base-color-100;
+
+  &:hover {
+    background-color: colors.$light-base-color-200 !important;
+  }
+
+  &[aria-selected='true'] {
+    background-color: colors.$light-base-color-200 !important;
+  }
+}
+
+.lightNoOptions {
+  color: colors.$light-text-color;
+  background-color: colors.$light-base-color-100;
+
+  :global {
+    color: colors.$light-text-color !important;
+    border: 2px solid colors.$background-color-btn-primary;
+  }
+}
+
+.lightPaper {
+  background-color: colors.$light-base-color-400;
+}
+
+.lightListbox {
+  background-color: colors.$light-base-color-100;
+  border: 2px solid colors.$background-color-btn-primary;
+}
+
+.darkAutocomplete {
+  min-width: 20rem;
+
+  :global {
+    .MuiFormControl-root {
+      background-color: colors.$dark-base-color-400;
+      border: 2px solid colors.$background-color-btn-primary;
+      border-radius: spacings.$sp-4;
+    }
+
+    .MuiOutlinedInput-root {
+      padding: 0 spacings.$sp-4 2px 6px !important;
+    }
+
+    .MuiAutocomplete-endAdornment {
+      margin-right: 0;
+    }
+
+    ::placeholder {
+      color: colors.$dark-text-color !important;
+      opacity: 0.8 !important;
+    }
+  }
+}
+
+.darkInputRoot {
+  .MuiInputBase-root {
+    background-color: colors.$dark-base-color-100;
+    color: colors.$dark-text-color;
+  }
+
+  .MuiSvgIcon-root {
+    color: colors.$dark-text-color;
+  }
+}
+
+.darkTextField {
+  :global {
+    .MuiInputBase-input {
+      border-color: colors.$dark-text-color;
+      color: colors.$dark-text-color !important;
+    }
+  }
+}
+
+.darkOption {
+  background-color: colors.$dark-base-color-400;
+
+  :global {
+    color: colors.$dark-text-color !important;
+  }
+
+  &:hover {
+    background-color: colors.$dark-base-color-300 !important;
+  }
+
+  &[aria-selected='true'] {
+    background-color: colors.$dark-base-color-300 !important;
+  }
+}
+
+.darkNoOptions {
+  background-color: colors.$dark-base-color-400;
+
+  :global {
+    color: colors.$dark-text-color !important;
+    border: 2px solid colors.$background-color-btn-primary;
+  }
+}
+
+.darkPaper {
+  background-color: colors.$dark-base-color-400;
+}
+
+.darkListbox {
+  background-color: colors.$dark-base-color-400;
+  border: 2px solid colors.$background-color-btn-primary;
+}
+
+:global(.MuiOutlinedInput-notchedOutline) {
+  border: none !important;
+}
+
+.inputAdornment {
+  margin-left: 1rem !important;
 }

@@ -1,6 +1,8 @@
 namespace OJS.Services.Administration.Business.SubmissionTypes.Validators;
 
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure;
@@ -19,7 +21,7 @@ public class DeleteOrReplaceSubmissionTypeValidationService : IDeleteOrReplaceSu
         this.datesService = datesService;
     }
 
-    public ValidationResult GetValidationResult((int, int?, SubmissionType?, SubmissionType?, bool) item)
+    public async Task<ValidationResult> GetValidationResult((int, int?, SubmissionType?, SubmissionType?, bool) item)
     {
         var (
             requestSubmissionTypeToReplaceValue,
@@ -43,9 +45,9 @@ public class DeleteOrReplaceSubmissionTypeValidationService : IDeleteOrReplaceSu
             return ValidationResult.Invalid("Submission type to replace with not found");
         }
 
-        var submissionsByRegularUsersInTheLastMonth = this.submissionsDataService
+        var submissionsByRegularUsersInTheLastMonth = await this.submissionsDataService
             .GetAllBySubmissionTypeSentByRegularUsersInTheLastNMonths(submissionTypeToReplaceOrDelete.Id, 1)
-            .ToList();
+            .ToListAsync();
 
         if (submissionsByRegularUsersInTheLastMonth.Count > 0)
         {

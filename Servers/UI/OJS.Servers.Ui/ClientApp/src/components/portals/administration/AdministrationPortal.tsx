@@ -3,7 +3,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
-import { IoMdCheckbox } from 'react-icons/io';
+import { IoIosLock, IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { TbBinaryTree } from 'react-icons/tb';
@@ -32,18 +32,20 @@ import {
     ListItemText,
     styled,
     Theme,
-    Tooltip, tooltipClasses, TooltipProps,
     Typography,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import StyledTooltip from 'src/components/administration/common/styled-tooltip/StyledTooltip';
 import UserActions from 'src/components/administration/common/user-actions/UserActions';
+import AdministrationAccessLogsPage from 'src/pages/administration-new/access-logs/AdministrationAccessLogsPage';
 
 import 'dayjs/locale/bg';
 
 import { ThemeMode } from '../../../common/enums';
 import {
+    ACCESS_LOGS_PATH,
     CHECKERS_PATH,
     CONTEST_CATEGORIES_HIERARCHY_PATH,
     CONTEST_CATEGORIES_PATH,
@@ -227,6 +229,12 @@ const administrationItems = [
         path: `${SUBMISSIONS_SIMILLARITY}`,
         visibleOnlyForAdmin: false,
     },
+    {
+        name: 'Access Logs',
+        icon: <IoIosLock className={styles.iconSize} />,
+        path: `${ACCESS_LOGS_PATH}`,
+        visibleOnlyForAdmin: true,
+    },
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -256,34 +264,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-}));
-
-const SectionTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: theme.palette.mode === ThemeMode.Light
-            ? '#fff'
-            : '#444',
-        color: theme.palette.mode === ThemeMode.Light
-            ? '#000'
-            : '#fff',
-        boxShadow: theme.shadows[1],
-        fontSize: 14,
-        border: theme.palette.mode === ThemeMode.Light
-            ? '1px solid #ccc'
-            : '1px solid #666',
-    },
-    [`& .${tooltipClasses.arrow}`]: {
-        color: theme.palette.mode === ThemeMode.Light
-            ? '#fff'
-            : '#444',
-        '&::before': {
-            border: theme.palette.mode === ThemeMode.Light
-                ? '1px solid #ccc'
-                : '1px solid #666',
-        },
-    },
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -526,6 +506,11 @@ const AdministrationPortal = () => {
             Element: SubmissionsSimillarity,
             visibleOnlyForAdmin: false,
         },
+        {
+            path: `${ACCESS_LOGS_PATH}`,
+            Element: AdministrationAccessLogsPage,
+            visibleOnlyForAdmin: true,
+        },
     ];
 
     return (
@@ -597,7 +582,7 @@ const AdministrationPortal = () => {
                     <List className={styles.list}>
                         <Divider />
                         {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
-                            <SectionTooltip
+                            <StyledTooltip
                               key={item.path}
                               title={item.name}
                               placement="right"
@@ -631,7 +616,7 @@ const AdministrationPortal = () => {
                                     </ListItem>
                                     <Divider />
                                 </div>
-                            </SectionTooltip>
+                            </StyledTooltip>
                         ))}
                     </List>
                 </Drawer>
