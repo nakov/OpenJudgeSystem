@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types,max-len */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { adminFormatDate } from 'src/utils/administration/administration-dates';
 
 import {
+    CREATED_ON,
     IP_ADDRESS, POST_PARAMS, REQUEST_TYPE, REQUEST_URL,
-    USER_ID,
+    USER_ID, USERNAME,
 } from '../../../common/labels';
 import ViewButton from '../../../components/administration/common/view/ViewButton';
 import { AdministrationGridColDef } from '../../../components/administration/utils/mui-utils';
@@ -18,6 +20,25 @@ const accessLogsFilterableColumns: AdministrationGridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'userUserName',
+        headerName: USERNAME,
+        flex: 1,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'ipAddress',
