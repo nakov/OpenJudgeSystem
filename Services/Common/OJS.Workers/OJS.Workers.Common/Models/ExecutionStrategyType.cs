@@ -67,5 +67,6 @@
         NodeJsV20PreprocessExecuteAndRunJsDomUnitTests = 70,
         NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy = 71,
         NodeJsV20ZipExecuteHtmlAndCssStrategy = 72,
+        NodeJsV20RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests = 73,
     }
 }

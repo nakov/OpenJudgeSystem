@@ -214,6 +214,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider,
                         this.loggerFactory.CreateLogger<RunSpaAndExecuteMochaTestsExecutionStrategy<RunSpaAndExecuteMochaTestsExecutionStrategySettings>>());
                     break;
+                case ExecutionStrategyType.NodeJsV20RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
                 case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
                     executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<RunSpaAndExecuteMochaTestsExecutionStrategySettings>(
                         submission,
