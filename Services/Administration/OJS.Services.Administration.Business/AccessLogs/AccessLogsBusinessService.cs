@@ -19,6 +19,8 @@ public class AccessLogsBusinessService : AdministrationOperationService<AccessLo
     {
         var accessLog = await this.accessLogsData
             .GetByIdQuery(id)
+            .AsTracking()
+            .Include(al => al.User)
             .FirstOrDefaultAsync();
 
         if (accessLog == null)

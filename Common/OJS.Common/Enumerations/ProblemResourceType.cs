@@ -4,6 +4,6 @@ namespace OJS.Common.Enumerations
     {
         ProblemDescription = 1,
         AuthorsSolution = 2,
-        Link = 3,
+        Other = 3,
     }
 }
