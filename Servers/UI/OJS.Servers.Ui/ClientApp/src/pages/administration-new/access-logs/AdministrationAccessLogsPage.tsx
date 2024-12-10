@@ -11,6 +11,8 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView from '../AdministrationGridView';
 
+const defaultAccessLogsSorterToAdd = 'createdon=DESC';
+
 const AdministrationSubmissionTypeDocumentsPage = () => {
     const [ searchParams ] = useSearchParams();
 
@@ -52,7 +54,7 @@ const AdministrationSubmissionTypeDocumentsPage = () => {
           error={error}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          defaultSorter=""
+          defaultSorter={defaultAccessLogsSorterToAdd}
           defaultFilter=""
           modals={[
               { showModal: showViewModal, modal: (i) => renderViewModal(i) },
