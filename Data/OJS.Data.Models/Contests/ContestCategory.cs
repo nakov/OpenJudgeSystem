@@ -21,6 +21,8 @@ namespace OJS.Data.Models.Contests
 
         public bool IsVisible { get; set; }
 
+        public bool AllowMentor { get; set; }
+
         [InverseProperty(nameof(Parent))]
         public virtual ICollection<ContestCategory> Children { get; set; } = new HashSet<ContestCategory>();
 
