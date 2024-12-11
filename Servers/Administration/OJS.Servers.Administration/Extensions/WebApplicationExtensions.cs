@@ -19,6 +19,7 @@ internal static class WebApplicationExtensions
 
         app.SeedRoles();
         app.SeedSettings();
+        app.SeedMentorPromptTemplates();
 
         app
             .MapHealthChecksUI()

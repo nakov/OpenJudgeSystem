@@ -292,6 +292,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             participant.Contest = contest;
+            participant.AllowMentor = category is { AllowMentor: true };
             var participantForActivity = participant.Map<ParticipantForActivityServiceModel>();
 
             var validationResult = await this.contestParticipationValidationService.GetValidationResult((

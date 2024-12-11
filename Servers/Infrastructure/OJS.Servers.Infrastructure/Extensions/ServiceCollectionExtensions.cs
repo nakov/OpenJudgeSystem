@@ -55,6 +55,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Security.Claims;
     using System.Text.Json;
     using System.Threading.Tasks;
+    using OpenAI;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
@@ -365,15 +366,24 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
         {
-            var settings = configuration.GetSectionWithValidation<ApplicationConfig>();
+            var applicationConfig = configuration.GetSectionWithValidation<ApplicationConfig>();
+            var svnConfig = configuration.GetSectionWithValidation<SvnConfig>();
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
             services.AddHttpClient(ServerConstants.LokiHttpClientName, client =>
             {
-                client.BaseAddress = new Uri(settings.OtlpCollectorBaseUrl);
-                client.DefaultRequestHeaders.Add(HeaderNames.Authorization, settings.OtlpCollectorBasicAuthHeaderValue);
+                client.BaseAddress = new Uri(applicationConfig.OtlpCollectorBaseUrl);
+                client.DefaultRequestHeaders.Add(HeaderNames.Authorization, applicationConfig.OtlpCollectorBasicAuthHeaderValue);
             });
+            services.AddHttpClient(ServerConstants.SvnHttpClientName, client =>
+            {
+                client.BaseAddress = new Uri(svnConfig.BaseUrl);
+            }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                Credentials = new NetworkCredential(svnConfig.Username, svnConfig.Password),
+            });
+            services.AddHttpClient(ServerConstants.DefaultHttpClientName);
 
             return services;
         }
@@ -438,6 +448,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddPolicy(ApiKeyPolicyName, policy => policy.AddRequirements(new ApiKeyRequirement(HeaderKeys.ApiKey)));
 
             services.AddSingleton<IAuthorizationHandler, ApiKeyHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddOpenAiClient(this IServiceCollection services, IConfiguration configuration)
+        {
+            var apiKey = configuration.GetSectionWithValidation<MentorConfig>().ApiKey;
+
+            services.AddSingleton(new OpenAIClient(apiKey));
 
             return services;
         }

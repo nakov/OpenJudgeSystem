@@ -26,6 +26,7 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
     {
         this.activityService = activityService;
         this.contestService = contestService;
+
         this.RuleFor(model => model.Name)
             .Length(4, 100)
             .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
@@ -106,6 +107,7 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
     private async Task<bool> ValidateActiveContestCannotEditDurationTypeOnEdit(ContestAdministrationModel model)
     {
         var contest = await this.contestService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
+
         if (contest is null)
         {
             return false;

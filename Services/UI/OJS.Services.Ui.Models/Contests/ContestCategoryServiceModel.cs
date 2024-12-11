@@ -10,6 +10,8 @@ public class ContestCategoryServiceModel : IMapExplicitly
 
     public bool IsVisible { get; set; }
 
+    public bool AllowMentor { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<ContestCategory, ContestCategoryServiceModel>()
             .ReverseMap();

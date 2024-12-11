@@ -67,6 +67,8 @@ public class SubmissionDetailsServiceModel : IMapExplicitly
 
     public int? ContestCategoryId { get; set; }
 
+    public bool AllowMentor { get; set; }
+
     public ICollection<TestDetailsServiceModel> Tests { get; set; } = [];
 
     public void RegisterMappings(IProfileExpression configuration)
@@ -95,5 +97,6 @@ public class SubmissionDetailsServiceModel : IMapExplicitly
             .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
             .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore())
             .ForMember(s => s.Tests, opt => opt.Ignore())
-            .ForMember(s => s.TestRuns, opt => opt.Ignore());
+            .ForMember(s => s.TestRuns, opt => opt.Ignore())
+            .ForMember(s => s.AllowMentor, opt => opt.Ignore());
 }
