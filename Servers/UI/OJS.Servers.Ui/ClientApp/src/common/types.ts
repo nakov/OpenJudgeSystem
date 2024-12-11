@@ -363,7 +363,7 @@ interface IProblemAdministration {
     tests: File | null;
     problemGroupOrderBy: number;
     problemGroupId : number;
-    defaultSubmissionTypeId?: number;
+    defaultSubmissionTypeId: number | null;
     additionalFiles: File | null;
     hasAdditionalFiles: boolean;
 }
@@ -727,19 +727,23 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
 interface IAccessLogAdministrationModel {
     id: number;
     userId: string;
+    userUserName: string;
     ipAddress: string;
     requestType: string;
     url: string;
     postParams: string;
+    createdOn: Date;
 }
 
 interface IAccessLogInListModel {
     id: number;
     userId: string;
+    userUserName: string;
     ipAddress: string;
     requestType: string;
     url: string;
     postParams: string;
+    createdOn: Date;
 }
 
 interface IDropdownItemBase {
