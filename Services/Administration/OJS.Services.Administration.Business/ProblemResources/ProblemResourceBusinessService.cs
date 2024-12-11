@@ -69,13 +69,12 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
         var areFileAndLinkNull = model is { File: null, Link: null };
 
-        if (areFileAndLinkNull)
+        if (resource.File == null && areFileAndLinkNull)
         {
             throw new BusinessServiceException("The resource should contain either a file or a link.");
         }
 
-        // Get the value before mapping from the model.
-        var shouldKeepFile = resource is { File: not null } && areFileAndLinkNull;
+        var shouldKeepFile = resource.File != null && areFileAndLinkNull;
 
         resource.MapFrom(model);
 
