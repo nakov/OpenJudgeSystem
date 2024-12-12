@@ -76,7 +76,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddConventionServices<TStartup>()
                 .AddTransient(typeof(IDataService<>), typeof(DataService<>))
                 .AddHttpContextServices()
-                .AddHttpClients(configuration)
+                .AddLokiHttpClient(configuration)
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<HealthCheckConfig>();
 
@@ -364,18 +364,25 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
+        private static IServiceCollection AddLokiHttpClient(this IServiceCollection services, IConfiguration configuration)
         {
             var applicationConfig = configuration.GetSectionWithValidation<ApplicationConfig>();
-            var svnConfig = configuration.GetSectionWithValidation<SvnConfig>();
 
-            services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
-            services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
             services.AddHttpClient(ServerConstants.LokiHttpClientName, client =>
             {
                 client.BaseAddress = new Uri(applicationConfig.OtlpCollectorBaseUrl);
                 client.DefaultRequestHeaders.Add(HeaderNames.Authorization, applicationConfig.OtlpCollectorBasicAuthHeaderValue);
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            var svnConfig = configuration.GetSectionWithValidation<SvnConfig>();
+
+            services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
+            services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
             services.AddHttpClient(ServerConstants.SvnHttpClientName, client =>
             {
                 client.BaseAddress = new Uri(svnConfig.BaseUrl);

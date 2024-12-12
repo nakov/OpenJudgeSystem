@@ -36,6 +36,7 @@ internal static class ServiceCollectionExtensions
             .AddGridServices()
             .AddValidators()
             .AddWebServer<Program>(configuration)
+            .AddHttpClients(configuration)
             .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
             .AddTransient<AdministrationExceptionMiddleware>()
             .AddHangfireServer(configuration, AppName, new[] { AdministrationQueueName })
