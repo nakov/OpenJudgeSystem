@@ -203,7 +203,10 @@ const findParentNames = (collection: Array<IContestCategory> | undefined, select
         }
 
         for (const child of element.children || []) {
-            const result = findParentsRecursive(child, targetId, [ ...parents, { name: element.name, id: element.id } ]);
+            const result = findParentsRecursive(child, targetId, [ ...parents, {
+                name: element.name,
+                id: element.id,
+            } ]);
 
             if (result) {
                 return result;

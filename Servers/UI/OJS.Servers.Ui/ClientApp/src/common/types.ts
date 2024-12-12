@@ -3,7 +3,7 @@ import { Dayjs } from 'dayjs';
 import { ITestRun } from '../hooks/submissions/types';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
+import { ChatMessageRole, CheckboxSearchValues, FilterColumnTypeEnum, ProblemResourceType } from './enums';
 
 interface ISubmissionTypeType {
     id: number;
@@ -113,6 +113,7 @@ interface IContestCategory {
     nameUrl: string;
     orderBy: number;
     parentId: null | number;
+    allowMentor: boolean;
 }
 
 interface IContestCategoryHierarchy {
@@ -296,6 +297,7 @@ interface IContestCategoryAdministration {
     orderBy: number;
     deletedOn: Date | null;
     modifiedOn: Date | null;
+    allowMentor: boolean;
 }
 
 interface IRegisterUserForContestResponseType {
@@ -322,6 +324,7 @@ interface ICompeteContestResponseType {
     participantsCount: number;
     contest: IContestDetailsResponseType | null;
     shouldEnterPassword: boolean;
+    allowMentor: boolean;
 }
 
 interface IPagedResultType<TItem> {
@@ -727,19 +730,23 @@ interface IChangeParticipationTimeForSingleParticipant extends IChangeParticipat
 interface IAccessLogAdministrationModel {
     id: number;
     userId: string;
+    userUserName: string;
     ipAddress: string;
     requestType: string;
     url: string;
     postParams: string;
+    createdOn: Date;
 }
 
 interface IAccessLogInListModel {
     id: number;
     userId: string;
+    userUserName: string;
     ipAddress: string;
     requestType: string;
     url: string;
     postParams: string;
+    createdOn: Date;
 }
 
 interface IDropdownItemBase {
@@ -748,6 +755,66 @@ interface IDropdownItemBase {
 }
 
 type IDropdownItem<T = object> = IDropdownItemBase & T;
+
+interface IMentorConversationMessage {
+    content: string;
+    role: ChatMessageRole;
+    sequenceNumber: number;
+    problemId: number;
+}
+
+interface IMentorConversationRequestModel {
+    userId: string;
+    messages: IMentorConversationMessage[];
+    problemId: number;
+    problemName: string;
+    contestId: number;
+    contestName: string;
+    categoryName: string;
+    submissionTypeName: string;
+}
+
+interface IMentorConversationResponseModel {
+    userId: string;
+    messages: IMentorConversationMessage[];
+    maxUserInputLength: number;
+}
+
+interface IUserMentorInListModel {
+    id: string;
+    userUserName: string;
+    quotaResetTime: Date;
+    requestsMade: number;
+    quotaLimit: number | null;
+    createdOn: Date;
+    modifiedOne: Date;
+}
+
+interface IUserMentorAdministrationModel {
+    id: string;
+    userUserName: string;
+    quotaResetTime: Date;
+    requestsMade: number;
+    quotaLimit: number | null;
+    createdOn: Date;
+    modifiedOne: Date;
+}
+
+interface IMentorPromptTemplateAdministrationModel {
+    id: number;
+    title: string;
+    template: string;
+    createdOn: Date;
+    modifiedOne: Date;
+}
+
+interface IMentorPromptTemplateInListModel {
+    id: number;
+    title: string;
+    template: string;
+    createdOn: Date;
+    modifiedOne: Date;
+}
 
 // eslint-disable-next-line import/prefer-default-export
 export type {
@@ -826,6 +893,13 @@ export type {
     IContestCategoryHierarchyEdit,
     IChangeParticipationTimeForMultipleParticipants,
     IChangeParticipationTimeForSingleParticipant,
+    IMentorConversationMessage,
+    IMentorConversationRequestModel,
+    IMentorConversationResponseModel,
+    IUserMentorInListModel,
+    IUserMentorAdministrationModel,
+    IMentorPromptTemplateAdministrationModel,
+    IMentorPromptTemplateInListModel,
     IAccessLogAdministrationModel,
     IAccessLogInListModel,
     IDropdownItemBase,

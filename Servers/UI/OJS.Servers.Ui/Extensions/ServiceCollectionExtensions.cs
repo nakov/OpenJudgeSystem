@@ -22,16 +22,18 @@ namespace OJS.Servers.Ui.Extensions
             => services
                 .AddWebServer<Program>(configuration)
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
-                .AddHangfireServer(configuration, AppName, new[] { UiQueueName })
+                .AddHangfireServer(configuration, AppName, [UiQueueName])
                 .ConfigureCorsPolicy(configuration)
                 .AddMessageQueue<Program>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
                 .AddResiliencePipelines()
+                .AddOpenAiClient(configuration)
                 .AddMemoryCache()
                 .AddDistributedCaching(configuration)
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<ApplicationUrlsConfig>()
                 .AddOptionsWithValidation<EmailServiceConfig>()
+                .AddOptionsWithValidation<MentorConfig>()
                 .AddControllers();
     }
 }

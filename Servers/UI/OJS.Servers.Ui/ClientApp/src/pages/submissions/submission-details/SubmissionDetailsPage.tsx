@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
+import Mentor from 'src/components/mentor/Mentor';
 
 import { sortTestRunsByTrialTest } from '../../../common/submissions-utils';
 import { getContestsDetailsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
@@ -40,8 +41,7 @@ const SubmissionDetailsPage = () => {
     const [ isRetestingStarted, setIsRetestingStarted ] = useState(false);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
-    const { contestDetails } = useAppSelector((state) => state.contests);
-
+    const { contestDetails, breadcrumbItems } = useAppSelector((state) => state.contests);
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     const [ downloadSolutionErrorMessage, setDownloadSolutionErrorMessage ] = useState<string>('');
@@ -96,7 +96,10 @@ const SubmissionDetailsPage = () => {
         isOfficial,
         maxPoints,
         processingComment,
+        allowMentor,
     } = data || {};
+
+    const categoryName = useMemo(() => breadcrumbItems.at(-1)?.name ?? undefined, [ breadcrumbItems ]);
 
     const handleRetestSubmission = useCallback(() => {
         setIsRetestingStarted(true);
@@ -397,6 +400,15 @@ const SubmissionDetailsPage = () => {
                 </div>
             )}
             <ContestBreadcrumbs />
+            <Mentor
+              problemId={problem?.id}
+              problemName={problem?.name}
+              contestId={contestId}
+              contestName={contestName ?? undefined}
+              categoryName={categoryName}
+              submissionTypeName={submissionType?.name}
+              isMentorAllowed={allowMentor ?? false}
+            />
             <div>
                 <div className={styles.submissionTitle}>
                     {renderSolutionTitle()}

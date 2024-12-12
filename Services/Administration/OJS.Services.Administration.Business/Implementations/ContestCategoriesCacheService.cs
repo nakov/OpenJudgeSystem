@@ -25,6 +25,9 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
     public async Task ClearMainContestCategoriesCache()
         => await this.cache.Remove(CacheConstants.ContestCategoriesTree);
 
+    public async Task ClearContestCategoryDetailsCache(int categoryId)
+        => await this.cache.Remove(string.Format(CacheConstants.ContestCategoryDetails, categoryId));
+
     public async Task ClearContestCategoryParentsAndChildren(int categoryId)
     {
         var contestCategory = await this.contestCategoriesData

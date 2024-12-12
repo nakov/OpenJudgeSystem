@@ -133,6 +133,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
 
         await this.ReevaluateContestCategoriesOrder(contestCategory);
         await this.contestCategoriesCache.ClearMainContestCategoriesCache();
+        await this.contestCategoriesCache.ClearContestCategoryDetailsCache(contestCategory.Id);
         return model;
     }
 
@@ -153,6 +154,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
 
         this.categoriesDataService.Delete(contestCategory);
         await this.contestCategoriesCache.ClearMainContestCategoriesCache();
+        await this.contestCategoriesCache.ClearContestCategoryDetailsCache(contestCategory.Id);
         await this.categoriesDataService.SaveChanges();
     }
 

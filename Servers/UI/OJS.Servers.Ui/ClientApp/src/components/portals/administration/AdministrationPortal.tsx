@@ -3,6 +3,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
+import { HiChatBubbleLeft } from 'react-icons/hi2';
 import { IoIosLock, IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
@@ -18,6 +19,7 @@ import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import TableViewIcon from '@mui/icons-material/TableView';
 import {
     Box,
@@ -40,6 +42,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import StyledTooltip from 'src/components/administration/common/styled-tooltip/StyledTooltip';
 import UserActions from 'src/components/administration/common/user-actions/UserActions';
 import AdministrationAccessLogsPage from 'src/pages/administration-new/access-logs/AdministrationAccessLogsPage';
+import AdministrationMentorPromptTemplatesPage
+    from 'src/pages/administration-new/mentor-prompt-templates/AdministrationMentorPromptTemplatesPage';
+import AdministrationUsersMentorsPage from 'src/pages/administration-new/users-mentors/AdministrationUsersMentorsPage';
 
 import 'dayjs/locale/bg';
 
@@ -50,7 +55,7 @@ import {
     CONTEST_CATEGORIES_HIERARCHY_PATH,
     CONTEST_CATEGORIES_PATH,
     CONTESTS_PATH,
-    EXAM_GROUPS_PATH,
+    EXAM_GROUPS_PATH, MENTOR_PROMPT_TEMPLATES_PATH,
     NEW_ADMINISTRATION_PATH,
     PARTICIPANTS_PATH,
     PROBLEM_GROUPS_PATH,
@@ -64,7 +69,7 @@ import {
     SUBMISSIONS_FOR_PROCESSING_PATH,
     SUBMISSIONS_PATH,
     SUBMISSIONS_SIMILLARITY,
-    TESTS_PATH,
+    TESTS_PATH, USERS_MENTORS_PATH,
     USERS_PATH,
 } from '../../../common/urls/administration-urls';
 import {
@@ -228,6 +233,18 @@ const administrationItems = [
         icon: <IoMdCheckbox className={styles.iconSize} />,
         path: `${SUBMISSIONS_SIMILLARITY}`,
         visibleOnlyForAdmin: false,
+    },
+    {
+        name: 'Mentor',
+        icon: <SmartToyIcon className={styles.iconSize} />,
+        path: `${USERS_MENTORS_PATH}`,
+        visibleOnlyForAdmin: true,
+    },
+    {
+        name: 'Mentor Prompt Templates',
+        icon: <HiChatBubbleLeft className={styles.iconSize} />,
+        path: `${MENTOR_PROMPT_TEMPLATES_PATH}`,
+        visibleOnlyForAdmin: true,
     },
     {
         name: 'Access Logs',
@@ -505,6 +522,16 @@ const AdministrationPortal = () => {
             path: `${SUBMISSIONS_SIMILLARITY}`,
             Element: SubmissionsSimillarity,
             visibleOnlyForAdmin: false,
+        },
+        {
+            path: `${USERS_MENTORS_PATH}`,
+            Element: AdministrationUsersMentorsPage,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${MENTOR_PROMPT_TEMPLATES_PATH}`,
+            Element: AdministrationMentorPromptTemplatesPage,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${ACCESS_LOGS_PATH}`,
