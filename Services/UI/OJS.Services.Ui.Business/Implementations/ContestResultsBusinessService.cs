@@ -98,6 +98,11 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
 
         var contestMaxPoints = await this.contestsData.GetMaxPointsForExportById(contestId.Value);
 
+        if (contestMaxPoints <= 0)
+        {
+            return [];
+        }
+
         var participants = await this.participantsData
             .GetAllByContestWithScoresAndProblems(contestId.Value)
             .ToListAsync();
