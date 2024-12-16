@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Mentor;
 using OJS.Data.Models.Users;
@@ -37,7 +38,7 @@ public class UserMentorAdministrationValidator : BaseAdministrationModelValidato
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _) => await this.HaveValidQuotaResetTime(model))
-            .WithMessage($"The quota reset time must not exceed {MentorQuotaResetTimeInMinutes} minutes beyond the current reset time.")
+            .WithMessage($"The new quota reset time must not be before the current quota reset time and must not exceed {MentorQuotaResetTimeInMinutes} minutes beyond the current reset time.")
             .When(model => model is { OperationType: CrudOperationType.Update });
     }
 
@@ -52,6 +53,7 @@ public class UserMentorAdministrationValidator : BaseAdministrationModelValidato
             return false;
         }
 
-        return model.QuotaResetTime <= userMentor.QuotaResetTime.AddMinutes(MentorQuotaResetTimeInMinutes);
+        return model.QuotaResetTime >= userMentor.QuotaResetTime &&
+               model.QuotaResetTime <= userMentor.QuotaResetTime.AddMinutes(MentorQuotaResetTimeInMinutes);
     }
 }
