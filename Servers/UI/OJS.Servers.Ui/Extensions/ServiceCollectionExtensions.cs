@@ -21,6 +21,7 @@ namespace OJS.Servers.Ui.Extensions
             string apiVersion)
             => services
                 .AddWebServer<Program>(configuration)
+                .AddHttpClients(configuration)
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(configuration, AppName, [UiQueueName])
                 .ConfigureCorsPolicy(configuration)

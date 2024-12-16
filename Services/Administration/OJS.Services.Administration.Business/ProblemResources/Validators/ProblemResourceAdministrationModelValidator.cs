@@ -32,7 +32,7 @@ public class ProblemResourceAdministrationModelValidator : BaseAdministrationMod
         this.RuleFor(model => model)
             .Must(ContainEitherLinkOrFile)
             .WithMessage("The resource should contain either a file or a link.")
-            .When(x => x is { OperationType: CrudOperationType.Create or CrudOperationType.Update });
+            .When(x => x is { OperationType: CrudOperationType.Create });
     }
 
     private static bool NotContainBothLinkAndFile(ProblemResourceAdministrationModel model)
