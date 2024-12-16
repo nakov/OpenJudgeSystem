@@ -57,7 +57,7 @@ public class SettingAdministrationModelValidator : BaseAdministrationModelValida
         SettingAdministrationModel model,
         ValidationContext<SettingAdministrationModel> context)
     {
-        if (model.Name is null || !model.Name.StartsWith(Mentor, StringComparison.Ordinal))
+        if (model.Name is null || !model.Name.Contains(Mentor, StringComparison.Ordinal))
         {
             return;
         }
@@ -77,7 +77,7 @@ public class SettingAdministrationModelValidator : BaseAdministrationModelValida
     }
 
     private static bool ValidateStringMentorSetting(SettingAdministrationModel model)
-        => model.Name == MentorModel && Enum.TryParse<OpenAIModels>(model.Value, out _);
+        => model.Name == MentorModel && Enum.IsDefined(typeof(OpenAIModels), model.Value ?? string.Empty);
 
     private static bool ValidateNumericMentorSetting(
         SettingAdministrationModel model,
