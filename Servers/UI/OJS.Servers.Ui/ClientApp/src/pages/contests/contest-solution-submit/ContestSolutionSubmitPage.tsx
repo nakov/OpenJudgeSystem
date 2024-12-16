@@ -280,7 +280,7 @@ const ContestSolutionSubmitPage = () => {
                 setIsRotating(false);
             }, 1000);
         }
-    }, [ submissionsDataFetching, isLoading, setIsRotating ]);
+    }, [ submissionsDataFetching, isLoading ]);
 
     // Disable submit button based on submission time limits
     useEffect(() => {
