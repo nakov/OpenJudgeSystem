@@ -39,6 +39,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using OJS.Services.Infrastructure.ResilienceStrategies;
+    using OJS.Services.Infrastructure.ResilienceStrategies.Implementations;
     using OJS.Services.Infrastructure.ResilienceStrategies.Listeners;
     using Polly;
     using Polly.CircuitBreaker;
@@ -310,6 +312,8 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddResiliencePipelines(this IServiceCollection services)
         {
+            services.AddSingleton<IResilienceStrategiesService, ResilienceStrategiesService>();
+
             services
                 .AddOptionsWithValidation<CircuitBreakerResilienceStrategyConfig>()
                 .AddOptionsWithValidation<RetryResilienceStrategyConfig>()
