@@ -5,6 +5,8 @@ namespace OJS.Servers.Ui.Extensions
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Common.Data;
+    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure.Configurations;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.BackgroundJobs;
@@ -26,6 +28,8 @@ namespace OJS.Servers.Ui.Extensions
                 .AddHangfireServer(configuration, AppName, [UiQueueName])
                 .ConfigureCorsPolicy(configuration)
                 .AddMessageQueue<Program>(configuration)
+                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
+                .AddTransient<ITransactionsProvider, TransactionsProvider<OjsDbContext>>()
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
                 .AddResiliencePipelines()
                 .AddOpenAiClient(configuration)

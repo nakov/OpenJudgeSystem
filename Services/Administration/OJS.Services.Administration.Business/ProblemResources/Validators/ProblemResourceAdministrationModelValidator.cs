@@ -6,7 +6,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemResources;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 public class ProblemResourceAdministrationModelValidator : BaseAdministrationModelValidator<ProblemResourceAdministrationModel, int, ProblemResource>
 {

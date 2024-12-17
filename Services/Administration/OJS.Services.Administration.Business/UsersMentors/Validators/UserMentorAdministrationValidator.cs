@@ -4,13 +4,12 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Mentor;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Models.UsersMentors;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 using static OJS.Common.GlobalConstants.Settings;
 
 public class UserMentorAdministrationValidator : BaseAdministrationModelValidator<UserMentorAdministrationModel, string, UserMentor>

@@ -1,8 +1,8 @@
-﻿namespace OJS.Services.Common;
+﻿namespace OJS.Services.Common.Data;
 
 using OJS.Services.Common.Models.Contests;
-using OJS.Services.Infrastructure;
 using OJS.Services.Common.Models.Contests.Results;
+using OJS.Services.Infrastructure;
 
 public interface IContestResultsAggregatorCommonService : IService
 {

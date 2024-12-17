@@ -22,15 +22,11 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Exceptions;
-    using OJS.Data;
-    using OJS.Data.Implementations;
     using OJS.Servers.Infrastructure.Configurations;
     using OJS.Servers.Infrastructure.Handlers;
     using OJS.Servers.Infrastructure.Health;
     using OJS.Servers.Infrastructure.Policy;
     using OJS.Services.Common;
-    using OJS.Services.Common.Data;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Implementations;
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
@@ -76,7 +72,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddConventionServices<TStartup>()
-                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
                 .AddHttpContextServices()
                 .AddLokiHttpClient(configuration)
                 .AddOptionsWithValidation<ApplicationConfig>()
@@ -123,8 +118,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddDbContext<TDbContext>(options =>
                 {
                     options.UseSqlServer(connectionString);
-                })
-                .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
+                });
 
             services
                 .AddIdentity<TIdentityUser, TIdentityRole>()

@@ -1,13 +1,12 @@
-﻿namespace OJS.Services.Common.Implementations;
+﻿namespace OJS.Services.Common.Data.Implementations;
 
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OJS.Data;
 using OJS.Data.Models.Common;
-using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure.Constants;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 public class SeederDataService<TEntity>(
     ILogger<SeederDataService<TEntity>> logger,

@@ -6,10 +6,10 @@ using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Services.Administration.Models.Settings;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Validation;
 using System;
 using System.Globalization;
 using FluentValidation.Results;
+using OJS.Services.Common.Data.Validation;
 using static OJS.Common.GlobalConstants.Settings;
 
 public class SettingAdministrationModelValidator : BaseAdministrationModelValidator<SettingAdministrationModel, int, Setting>

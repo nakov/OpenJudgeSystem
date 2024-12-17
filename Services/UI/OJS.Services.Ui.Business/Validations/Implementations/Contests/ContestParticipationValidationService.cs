@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using System.Threading.Tasks;
-using OJS.Services.Common;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure;

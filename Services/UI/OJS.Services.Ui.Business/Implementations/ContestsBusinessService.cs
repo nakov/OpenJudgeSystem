@@ -10,6 +10,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;

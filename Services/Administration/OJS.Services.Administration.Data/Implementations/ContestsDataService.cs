@@ -10,7 +10,7 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
-    using OJS.Services.Common;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure;

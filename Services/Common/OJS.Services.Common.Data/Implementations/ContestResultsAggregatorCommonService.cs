@@ -1,8 +1,7 @@
-﻿namespace OJS.Services.Common.Implementations;
+﻿namespace OJS.Services.Common.Data.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Extensions;

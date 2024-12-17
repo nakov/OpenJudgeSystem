@@ -5,7 +5,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Participants;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Participants;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 public class ParticipantAdministrationModelValidator : BaseAdministrationModelValidator<ParticipantAdministrationModel, int, Participant>
 {

@@ -5,7 +5,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
-    <ProjectReference Include="..\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
     <ProjectReference Include="..\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
     <ProjectReference Include="..\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
   </ItemGroup>
