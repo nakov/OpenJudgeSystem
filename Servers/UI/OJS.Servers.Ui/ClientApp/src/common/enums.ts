@@ -31,7 +31,7 @@ enum ProblemResourceType
 {
     ProblemDescription = 1,
     AuthorsSolution = 2,
-    Link = 3,
+    Other = 3,
 }
 
 enum SettingTypeEnums {
@@ -137,6 +137,16 @@ enum SubmissionStrategyType {
     // SolidityCompiler = 11,
     GolangCompiler = 12,
 }
+
+enum ChatMessageRole {
+    System = 0,
+    User = 1,
+    Assistant = 2,
+    Tool = 3,
+    Function = 4,
+    Information = 5,
+}
+
 export {
     ThemeMode,
     FilterColumnTypeEnum,
@@ -149,4 +159,5 @@ export {
     SubmissionStrategyType,
     CompilerType,
     CheckboxSearchValues,
+    ChatMessageRole,
 };

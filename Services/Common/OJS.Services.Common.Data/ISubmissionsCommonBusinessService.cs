@@ -1,4 +1,4 @@
-namespace OJS.Services.Common;
+namespace OJS.Services.Common.Data;
 
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;

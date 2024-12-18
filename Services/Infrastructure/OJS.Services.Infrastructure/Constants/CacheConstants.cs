@@ -22,5 +22,7 @@
         public const string LatestPublicSubmissions = "PublicSubmissions";
 
         public const string SubmissionTypesByContestCategory = "SubmissionTypesByCategory:{0}";
+
+        public const string MentorSystemMessage = "MentorSystemMessage:{0}:{1}";
     }
 }

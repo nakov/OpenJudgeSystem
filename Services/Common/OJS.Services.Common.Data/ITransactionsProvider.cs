@@ -1,4 +1,4 @@
-namespace OJS.Data;
+namespace OJS.Services.Common.Data;
 
 using System;
 using System.Data;

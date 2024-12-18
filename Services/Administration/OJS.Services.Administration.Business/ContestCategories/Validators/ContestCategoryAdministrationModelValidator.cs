@@ -5,7 +5,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 using System.Threading.Tasks;
 
 public class ContestCategoryAdministrationModelValidator : BaseAdministrationModelValidator<ContestCategoryAdministrationModel, int, ContestCategory>

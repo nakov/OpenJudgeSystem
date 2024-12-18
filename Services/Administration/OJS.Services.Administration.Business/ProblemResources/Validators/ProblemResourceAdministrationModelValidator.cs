@@ -6,7 +6,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemResources;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 public class ProblemResourceAdministrationModelValidator : BaseAdministrationModelValidator<ProblemResourceAdministrationModel, int, ProblemResource>
 {
@@ -16,35 +16,23 @@ public class ProblemResourceAdministrationModelValidator : BaseAdministrationMod
         this.RuleFor(model => model.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage("Resource name is mandatory.")
+            .WithMessage("The resource's name is mandatory.")
             .When(x => x is { OperationType: CrudOperationType.Create or CrudOperationType.Update });
 
         this.RuleFor(model => model.ProblemId)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Problem Id cannot be less than 0.")
+            .WithMessage("The Problem Id cannot be less than 0.")
             .When(x => x is { OperationType: CrudOperationType.Create or CrudOperationType.Update });
 
         this.RuleFor(model => model)
             .Must(NotContainBothLinkAndFile)
-            .WithMessage("Resource cannot contain both links and files.")
+            .WithMessage("The resource cannot contain both links and files.")
             .When(x => x is { OperationType: CrudOperationType.Create or CrudOperationType.Update });
 
-        this.RuleFor(model => model.Link)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage("The link is mandatory.")
-            .When(x => x is { Type: ProblemResourceType.Link, OperationType: CrudOperationType.Create or CrudOperationType.Update });
-
-        this.RuleFor(model => model.Link)
-            .Null()
-            .WithMessage("The link can be added only to resources of type \"Link\".")
-            .When(x => x is { Type: not ProblemResourceType.Link, OperationType: CrudOperationType.Create or CrudOperationType.Update });
-
-        this.RuleFor(model => model.File)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage("The file is mandatory.")
-            .When(x => x is { Type: not ProblemResourceType.Link, OperationType: CrudOperationType.Create });
+        this.RuleFor(model => model)
+            .Must(ContainEitherLinkOrFile)
+            .WithMessage("The resource should contain either a file or a link.")
+            .When(x => x is { OperationType: CrudOperationType.Create });
     }
 
     private static bool NotContainBothLinkAndFile(ProblemResourceAdministrationModel model)
@@ -56,4 +44,7 @@ public class ProblemResourceAdministrationModelValidator : BaseAdministrationMod
 
         return true;
     }
+
+    private static bool ContainEitherLinkOrFile(ProblemResourceAdministrationModel model)
+        => !string.IsNullOrEmpty(model.Link) || model.File is { Length: > 0 };
 }

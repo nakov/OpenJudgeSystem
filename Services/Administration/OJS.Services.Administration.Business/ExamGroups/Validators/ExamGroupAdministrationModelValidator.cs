@@ -6,7 +6,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ExamGroups;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 using System.Threading.Tasks;
 using static OJS.Data.Validation.ConstraintConstants.ExamGroup;
 

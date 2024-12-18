@@ -16,6 +16,7 @@ using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Implementations;
 using OJS.Services.Common.Data;
+using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Configurations;
 using System.Collections.Generic;
@@ -36,9 +37,11 @@ internal static class ServiceCollectionExtensions
             .AddGridServices()
             .AddValidators()
             .AddWebServer<Program>(configuration)
+            .AddHttpClients(configuration)
             .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
+            .AddTransient<ITransactionsProvider, TransactionsProvider<OjsDbContext>>()
             .AddTransient<AdministrationExceptionMiddleware>()
-            .AddHangfireServer(configuration, AppName, new[] { AdministrationQueueName })
+            .AddHangfireServer(configuration, AppName, [AdministrationQueueName])
             .AddMessageQueue<Program>(configuration)
             .ConfigureGlobalDateFormat()
             .ConfigureCorsPolicy(configuration)

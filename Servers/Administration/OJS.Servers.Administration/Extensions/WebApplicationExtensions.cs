@@ -2,6 +2,7 @@ namespace OJS.Servers.Administration.Extensions;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using OJS.Data;
 using OJS.Servers.Administration.Middleware;
 using OJS.Servers.Infrastructure.Extensions;
@@ -19,6 +20,7 @@ internal static class WebApplicationExtensions
 
         app.SeedRoles();
         app.SeedSettings();
+        app.SeedMentorPromptTemplates();
 
         app
             .MapHealthChecksUI()
@@ -26,5 +28,27 @@ internal static class WebApplicationExtensions
 
         return app
             .UseAndMapHangfireDashboard();
+    }
+
+    private static WebApplication SeedSettings(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        scope.ServiceProvider
+            .SeedSettings()
+            .GetAwaiter()
+            .GetResult();
+
+        return app;
+    }
+
+    private static WebApplication SeedMentorPromptTemplates(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        scope.ServiceProvider
+            .SeedMentorPromptTemplates()
+            .GetAwaiter()
+            .GetResult();
+
+        return app;
     }
 }

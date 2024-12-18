@@ -84,6 +84,8 @@ const transformSecondsToTimeSpan = (seconds: number) => {
     return moment.utc(duration.asMilliseconds()).format('mm:ss');
 };
 
+const getMentorConversationDate = (date: Date): string => moment(date).utc(true).local().format('DD MMM HH:mm');
+
 export {
     defaultDateTimeFormatReverse,
     dateTimeFormatWithSpacing,
@@ -97,4 +99,5 @@ export {
     timeToWords,
     transformSecondsToTimeSpan,
     transformDaysHoursMinutesTextToMinutes,
+    getMentorConversationDate,
 };

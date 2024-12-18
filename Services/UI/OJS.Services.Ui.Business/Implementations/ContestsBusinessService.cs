@@ -10,6 +10,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
@@ -292,6 +293,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var category = await this.contestCategoriesCache.GetById(contest?.CategoryId);
 
             participant.Contest = contest;
+            participant.AllowMentor = category is { AllowMentor: true };
             var participantForActivity = participant.Map<ParticipantForActivityServiceModel>();
 
             var validationResult = await this.contestParticipationValidationService.GetValidationResult((

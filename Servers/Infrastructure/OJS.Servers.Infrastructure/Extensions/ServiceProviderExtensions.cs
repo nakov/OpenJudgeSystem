@@ -1,15 +1,11 @@
 namespace OJS.Servers.Infrastructure.Extensions;
 
-using Common.Enumerations;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using OJS.Data.Models.Users;
-using Services.Common;
-using Services.Common.Models.Settings;
 using static OJS.Common.GlobalConstants.Roles;
-using static OJS.Common.GlobalConstants.Settings;
 
 public static class ServiceProviderExtensions
 {
@@ -17,8 +13,8 @@ public static class ServiceProviderExtensions
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<UserProfile>>();
-        string[] roleNames = { Administrator, Lecturer, Developer };
-        bool shouldCreateAdminUser = false;
+        string[] roleNames = [Administrator, Lecturer, Developer];
+        var shouldCreateAdminUser = false;
 
         foreach (var roleName in roleNames)
         {
@@ -54,22 +50,6 @@ public static class ServiceProviderExtensions
                     await userManager.AddToRoleAsync(userProfile, Administrator);
                 }
             }
-        }
-    }
-
-    public static async Task SeedSettings(this IServiceProvider serviceProvider)
-    {
-        var dataService = serviceProvider.GetRequiredService<ISettingsCommonDataService>();
-        SettingServiceModel[] settings =
-        [
-            new SettingServiceModel { Name = MaxWorkersWorkingTimeInSeconds, Value = "300", Type = SettingType.Numeric },
-            new SettingServiceModel { Name = MaxSubmissionsCountAllowedForBatchRetest, Value = "100", Type = SettingType.Numeric },
-            new SettingServiceModel { Name = MaxSubmissionTimeToExecuteAllowedForBatchRetest, Value = "20", Type = SettingType.Numeric }
-        ];
-
-        foreach (var s in settings)
-        {
-            await dataService.CreateIfNotExists(s);
         }
     }
 }

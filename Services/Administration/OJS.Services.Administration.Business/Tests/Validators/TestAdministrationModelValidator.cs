@@ -3,7 +3,7 @@
 using OJS.Data.Models.Tests;
 using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 public class TestAdministrationModelValidator : BaseAdministrationModelValidator<TestAdministrationModel, int, Test>
 {

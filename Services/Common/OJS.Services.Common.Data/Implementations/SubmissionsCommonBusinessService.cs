@@ -1,11 +1,10 @@
-namespace OJS.Services.Common.Implementations;
+namespace OJS.Services.Common.Data.Implementations;
 
 using Microsoft.Extensions.Logging;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.PubSub.Worker.Models.Submissions;
-using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
