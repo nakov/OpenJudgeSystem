@@ -236,16 +236,15 @@ const ContestSolutionSubmitPage = () => {
 
     useEffect(() => {
         if (problems && Object.keys(submissionTypesPerProblem).length === 0) {
-            const initialSubmissionTypes: AdjacencyList<number, ISubmissionTypeType> = {};
-            problems.forEach((problem: IProblemType) => {
+            const initialSubmissionTypes = problems.reduce((acc, problem) => {
                 const defaultType = problem.allowedSubmissionTypes.find((type) => type.id === problem.defaultSubmissionTypeId);
-                if (defaultType) {
-                    initialSubmissionTypes[problem.id] = defaultType;
-                } else if (problem.allowedSubmissionTypes.length > 0) {
-                    initialSubmissionTypes[problem.id] = problem.allowedSubmissionTypes[0];
-                }
-            });
-            setSubmissionTypesPerProblem(initialSubmissionTypes);
+                acc[problem.id] = defaultType ?? problem.allowedSubmissionTypes[0];
+                return acc;
+            }, {} as AdjacencyList<number, ISubmissionTypeType>);
+
+            if (JSON.stringify(initialSubmissionTypes) !== JSON.stringify(submissionTypesPerProblem)) {
+                setSubmissionTypesPerProblem(initialSubmissionTypes);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ problems ]);
