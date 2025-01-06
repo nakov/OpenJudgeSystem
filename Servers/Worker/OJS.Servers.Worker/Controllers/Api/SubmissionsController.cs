@@ -20,13 +20,16 @@ public class SubmissionsController : BaseApiController
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
     private readonly ILogger<SubmissionsController> logger;
+    private readonly IHostInfoService hostInfoService;
 
     public SubmissionsController(
         ISubmissionsBusinessService submissionsBusiness,
-        ILogger<SubmissionsController> logger)
+        ILogger<SubmissionsController> logger,
+        IHostInfoService hostInfoService)
     {
         this.submissionsBusiness = submissionsBusiness;
         this.logger = logger;
+        this.hostInfoService = hostInfoService;
     }
 
     [HttpPost]
@@ -59,7 +62,6 @@ public class SubmissionsController : BaseApiController
     {
         var result = new FullExecutionResultResponseModel();
         var startedExecutionTime = DateTime.UtcNow;
-        var workerEndpoint = this.HttpContext.Connection.RemoteIpAddress?.ToString();
         try
         {
             var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
@@ -68,15 +70,10 @@ public class SubmissionsController : BaseApiController
 
             result.SetExecutionResult(executionResultResponseModel);
         }
-        catch (BusinessServiceException ex)
-        {
-            this.logger.LogErrorProcessingSubmission(submission.Id, workerEndpoint, ex);
-            result.SetException(ex, false);
-        }
         catch (Exception ex)
         {
-            this.logger.LogErrorProcessingSubmission(submission.Id, workerEndpoint, ex);
-            result.SetException(ex, withStackTrace);
+            this.logger.LogErrorProcessingSubmission(submission.Id, this.hostInfoService.GetHostIp(), ex);
+            result.SetException(ex, ex is not BusinessServiceException && withStackTrace);
         }
         finally
         {
