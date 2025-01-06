@@ -9,6 +9,7 @@ using OJS.Servers.Worker.Models.ExecutionResult;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Worker.Business;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
@@ -18,12 +19,15 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 public class SubmissionsController : BaseApiController
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
-    // private readonly ILogger<SubmissionsController> logger;
+    private readonly ILogger<SubmissionsController> logger;
 
     public SubmissionsController(
         ISubmissionsBusinessService submissionsBusiness,
-        ILogger<SubmissionsController> logger) =>
+        ILogger<SubmissionsController> logger)
+    {
         this.submissionsBusiness = submissionsBusiness;
+        this.logger = logger;
+    }
 
     [HttpPost]
     [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]
@@ -49,23 +53,13 @@ public class SubmissionsController : BaseApiController
                 submissionFileRequestModel.WithExceptionStackTrace)
             .ToOkResult();
 
-    // Dont think thats used anymore
-    // [HttpPost]
-    // [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]
-    // public async Task<IActionResult> ExecuteFileSubmissionWithJson(
-    //     [ModelBinder(typeof(JsonWithFilesFormDataModelBinder), Name = "executionContextJson")]
-    //     SubmissionFileRequestModel submissionFileRequestModel)
-    //     => await this.ExecuteSubmission(
-    //             submissionFileRequestModel.Map<SubmissionServiceModel>(),
-    //             submissionFileRequestModel.WithExceptionStackTrace)
-    //         .ToOkResult();
-
     private async Task<FullExecutionResultResponseModel> ExecuteSubmission(
         SubmissionServiceModel submission,
         bool withStackTrace)
     {
         var result = new FullExecutionResultResponseModel();
         var startedExecutionTime = DateTime.UtcNow;
+        var workerEndpoint = this.HttpContext.Connection.RemoteIpAddress?.ToString();
         try
         {
             var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
@@ -76,10 +70,12 @@ public class SubmissionsController : BaseApiController
         }
         catch (BusinessServiceException ex)
         {
+            this.logger.LogErrorProcessingSubmission(submission.Id, workerEndpoint, ex);
             result.SetException(ex, false);
         }
         catch (Exception ex)
         {
+            this.logger.LogErrorProcessingSubmission(submission.Id, workerEndpoint, ex);
             result.SetException(ex, withStackTrace);
         }
         finally
