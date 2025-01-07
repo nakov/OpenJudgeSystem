@@ -39,5 +39,7 @@ namespace OJS.Services.Ui.Business
 
         Task<Dictionary<int, List<ParticipantResultServiceModel>>> GetUserParticipantResultsForContestInPage(
             ICollection<int> contestIds);
+
+        Task<IEnumerable<string?>> GetEmailsOfParticipantsInContest(int contestId);
     }
 }
