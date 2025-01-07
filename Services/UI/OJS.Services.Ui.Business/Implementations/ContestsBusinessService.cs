@@ -516,13 +516,11 @@ namespace OJS.Services.Ui.Business.Implementations
             return pagedContests;
         }
 
-        public async Task<IEnumerable<string?>> GetEmailsOfParticipantsInContest(int? contestId)
-            => !contestId.HasValue
-                ? throw new BusinessServiceException(ValidationMessages.Contest.NotFound)
-                : await this.participantsData
-                    .GetAllOfficialByContest(contestId.Value)
-                    .Select(participant => participant.User.Email)
-                    .ToListAsync();
+        public async Task<IEnumerable<string?>> GetEmailsOfParticipantsInContest(int contestId)
+            => await this.participantsData
+                .GetAllOfficialByContest(contestId)
+                .Select(participant => participant.User.Email!)
+                .ToListAsync();
 
         private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
             IQueryable<Participant> participants)

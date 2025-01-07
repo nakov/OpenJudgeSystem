@@ -47,8 +47,8 @@ namespace OJS.Services.Ui.Data.Implementations
                 .ThenInclude(s => s.Problem)
                 .ThenInclude(p => p.ProblemGroup);
 
-        public IQueryable<Participant> GetAllOfficialByContest(int contestId) =>
-            this.GetAllByContest(contestId)
+        public IQueryable<Participant> GetAllOfficialByContest(int contestId)
+            => this.GetAllByContest(contestId)
                 .Where(p => p.IsOfficial);
 
         public Task<bool> ExistsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
