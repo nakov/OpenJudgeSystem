@@ -6,11 +6,14 @@ using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Contests;
+using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OJS.Servers.Infrastructure.ServerConstants.Authorization;
 
 public class ContestsController : BaseApiController
 {
@@ -88,5 +91,19 @@ public class ContestsController : BaseApiController
         => await this.contestsBusinessService
             .GetParticipatedByUserByFiltersAndSorting(username, model?.Map<ContestFiltersServiceModel>())
             .Map<PagedResultResponse<ContestForListingResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Gets the emails of all participants in a given contest.
+    /// </summary>
+    /// <param name="apiKey">Suls platform api key.</param>
+    /// <param name="contestId">The id of the contest.</param>
+    /// <returns>Results in json format.</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<UserPercentageResultsServiceModel>), Status200OK)]
+    [Authorize(ApiKeyPolicyName)]
+    public async Task<IActionResult> GetEmailsOfParticipantsInContest(string apiKey, int? contestId)
+        => await this.contestsBusinessService
+            .GetEmailsOfParticipantsInContest(contestId)
             .ToOkResult();
 }

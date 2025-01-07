@@ -20,6 +20,8 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Participant> GetAllByContestWithScoresAndProblems(int contestId);
 
+        IQueryable<Participant> GetAllOfficialByContest(int contestId);
+
         Task<bool> ExistsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
         Task<IDictionary<int, int>> GetParticipantsCountInContests(IEnumerable<int> contestIds, bool isOfficial);
