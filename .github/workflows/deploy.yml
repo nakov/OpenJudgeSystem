@@ -2,6 +2,10 @@ name: Z. Deploy (called)
 
 on:
   workflow_call:
+    inputs:
+      payload:
+        required: false
+        type: string
     secrets:
       webhook_url:
         required: true
@@ -24,5 +28,6 @@ jobs:
         data: |
           {
             "username": "${{ secrets.docker_username }}",
-            "password": "${{ secrets.docker_password }}"
+            "password": "${{ secrets.docker_password }}",
+            "payload": "${{ inputs.payload || '{}' }}"
           }
