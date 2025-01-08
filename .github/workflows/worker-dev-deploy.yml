@@ -20,13 +20,6 @@ jobs:
   deploy:
     needs: [build-and-push]
     uses: ./.github/workflows/deploy.yml
-    with:
-     payload: |
-        {
-          "urls": [
-            "http://217.174.159.185:9000/hooks/redeploy-worker"
-          ]
-        }
     secrets:
       webhook_url: ${{ secrets.WORKER_WEBHOOK_URL }}
       webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
