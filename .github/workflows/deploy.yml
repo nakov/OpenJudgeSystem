@@ -29,5 +29,5 @@ jobs:
           {
             "username": "${{ secrets.docker_username }}",
             "password": "${{ secrets.docker_password }}",
-            "payload": "${{ inputs.payload || '{}' }}"
+            "payload": "${{ toJson(inputs.payload) || '{}' }}"
           }
