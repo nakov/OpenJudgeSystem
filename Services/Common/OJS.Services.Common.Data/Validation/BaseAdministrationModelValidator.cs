@@ -1,11 +1,11 @@
-﻿namespace OJS.Services.Common.Validation;
+﻿namespace OJS.Services.Common.Data.Validation;
 
 using FluentValidation;
 using OJS.Common;
 using OJS.Common.Enumerations;
-using OJS.Services.Common.Data;
-using OJS.Services.Common.Models;
 using OJS.Data.Models.Common;
+using OJS.Services.Common.Models;
+using OJS.Services.Common.Validation;
 
 public class BaseAdministrationModelValidator<TAdministrationModel, TId, TEntity> : BaseValidator<TAdministrationModel>
     where TAdministrationModel : BaseAdministrationModel<TId>

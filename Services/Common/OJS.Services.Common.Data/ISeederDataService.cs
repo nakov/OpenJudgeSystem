@@ -1,10 +1,9 @@
-﻿namespace OJS.Services.Common;
+﻿namespace OJS.Services.Common.Data;
 
+using OJS.Data.Models.Common;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using OJS.Data.Models.Common;
-using OJS.Services.Common.Data;
 
 public interface ISeederDataService<TEntity> : IDataService<TEntity>
     where TEntity : class, IEntity

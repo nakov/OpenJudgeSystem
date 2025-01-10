@@ -6,7 +6,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemResources;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 public class ProblemResourceAdministrationModelValidator : BaseAdministrationModelValidator<ProblemResourceAdministrationModel, int, ProblemResource>
 {
@@ -32,7 +32,7 @@ public class ProblemResourceAdministrationModelValidator : BaseAdministrationMod
         this.RuleFor(model => model)
             .Must(ContainEitherLinkOrFile)
             .WithMessage("The resource should contain either a file or a link.")
-            .When(x => x is { OperationType: CrudOperationType.Create or CrudOperationType.Update });
+            .When(x => x is { OperationType: CrudOperationType.Create });
     }
 
     private static bool NotContainBothLinkAndFile(ProblemResourceAdministrationModel model)

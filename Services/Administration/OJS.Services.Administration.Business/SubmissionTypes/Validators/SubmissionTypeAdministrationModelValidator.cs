@@ -6,7 +6,7 @@ using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 using OJS.Workers.Common.Models;
 
 public class SubmissionTypeAdministrationModelValidator : BaseAdministrationModelValidator<SubmissionTypeAdministrationModel, int, SubmissionType>

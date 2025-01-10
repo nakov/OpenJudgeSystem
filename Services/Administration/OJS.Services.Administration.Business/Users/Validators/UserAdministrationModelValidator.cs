@@ -5,7 +5,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Users;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 using static OJS.Data.Validation.ConstraintConstants.User;
 
 public class UserAdministrationModelValidator : BaseAdministrationModelValidator<UserAdministrationModel, string, UserProfile>

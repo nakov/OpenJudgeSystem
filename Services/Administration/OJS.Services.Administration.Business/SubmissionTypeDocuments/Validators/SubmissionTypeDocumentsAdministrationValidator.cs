@@ -5,7 +5,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Models.SubmissionTypeDocuments;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 using static OJS.Data.Validation.ConstraintConstants.SubmissionTypeDocuments;
 public class SubmissionTypeDocumentsAdministrationValidator : BaseAdministrationModelValidator<SubmissionTypeDocumentAdministrationModel, int, SubmissionTypeDocument>

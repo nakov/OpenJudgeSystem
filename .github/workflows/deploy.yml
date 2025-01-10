@@ -21,4 +21,8 @@ jobs:
       with:
         webhook_url: ${{ secrets.webhook_url }}
         webhook_secret: ${{ secrets.webhook_secret }}
-        data: '{ "username": "${{ secrets.docker_username }}", "password": "${{ secrets.docker_password }}" }'
+        data: |
+          {
+            "username": "${{ secrets.docker_username }}",
+            "password": "${{ secrets.docker_password }}"
+          }

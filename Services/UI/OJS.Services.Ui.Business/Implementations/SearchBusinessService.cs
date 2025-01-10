@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
 using OJS.Services.Common;
+using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
