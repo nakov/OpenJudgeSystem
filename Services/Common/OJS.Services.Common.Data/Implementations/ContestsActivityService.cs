@@ -1,18 +1,17 @@
-namespace OJS.Services.Common.Implementations;
+namespace OJS.Services.Common.Data.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
-using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class ContestsActivityService : IContestsActivityService
 {

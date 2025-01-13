@@ -7,8 +7,8 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemGroups;
-using OJS.Services.Common;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data;
+using OJS.Services.Common.Data.Validation;
 using System;
 using System.Threading.Tasks;
 

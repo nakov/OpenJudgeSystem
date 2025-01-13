@@ -5,7 +5,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Mentor;
 using OJS.Services.Administration.Models.MentorPromptTemplates;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 using static OJS.Data.Validation.ConstraintConstants.MentorPromptTemplate;
 

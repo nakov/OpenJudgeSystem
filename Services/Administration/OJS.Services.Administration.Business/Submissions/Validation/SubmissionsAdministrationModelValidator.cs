@@ -3,7 +3,7 @@
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Submissions;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 
 public class SubmissionsAdministrationModelValidator : BaseAdministrationModelValidator<SubmissionAdministrationServiceModel, int, Submission>
 {

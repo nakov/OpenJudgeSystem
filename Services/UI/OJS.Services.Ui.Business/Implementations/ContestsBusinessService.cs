@@ -10,6 +10,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
@@ -514,6 +515,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             return pagedContests;
         }
+
+        public async Task<IEnumerable<string?>> GetEmailsOfParticipantsInContest(int contestId)
+            => await this.participantsData
+                .GetAllOfficialByContest(contestId)
+                .Select(participant => participant.User.Email!)
+                .ToListAsync();
 
         private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
             IQueryable<Participant> participants)

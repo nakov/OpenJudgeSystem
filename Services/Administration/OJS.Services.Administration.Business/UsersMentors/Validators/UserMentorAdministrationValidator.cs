@@ -9,7 +9,7 @@ using OJS.Data.Models.Mentor;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Models.UsersMentors;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data.Validation;
 using static OJS.Common.GlobalConstants.Settings;
 
 public class UserMentorAdministrationValidator : BaseAdministrationModelValidator<UserMentorAdministrationModel, string, UserMentor>
@@ -37,7 +37,7 @@ public class UserMentorAdministrationValidator : BaseAdministrationModelValidato
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _) => await this.HaveValidQuotaResetTime(model))
-            .WithMessage($"The quota reset time must not exceed {MentorQuotaResetTimeInMinutes} minutes beyond the current reset time.")
+            .WithMessage($"The new quota reset time must not be before the current quota reset time and must not exceed {MentorQuotaResetTimeInMinutes} minutes beyond the current reset time.")
             .When(model => model is { OperationType: CrudOperationType.Update });
     }
 
@@ -52,6 +52,7 @@ public class UserMentorAdministrationValidator : BaseAdministrationModelValidato
             return false;
         }
 
-        return model.QuotaResetTime <= userMentor.QuotaResetTime.AddMinutes(MentorQuotaResetTimeInMinutes);
+        return model.QuotaResetTime >= userMentor.QuotaResetTime &&
+               model.QuotaResetTime <= userMentor.QuotaResetTime.AddMinutes(MentorQuotaResetTimeInMinutes);
     }
 }

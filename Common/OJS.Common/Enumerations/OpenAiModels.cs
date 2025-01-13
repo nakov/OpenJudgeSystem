@@ -10,5 +10,5 @@ public enum OpenAIModels
     TextEmbedding3Small,
     TextEmbedding3Large,
     DallE3,
-    Whisper
+    Whisper,
 }

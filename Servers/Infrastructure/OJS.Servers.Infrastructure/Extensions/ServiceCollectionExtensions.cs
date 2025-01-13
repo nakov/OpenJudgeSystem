@@ -22,15 +22,11 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Exceptions;
-    using OJS.Data;
-    using OJS.Data.Implementations;
     using OJS.Servers.Infrastructure.Configurations;
     using OJS.Servers.Infrastructure.Handlers;
     using OJS.Servers.Infrastructure.Health;
     using OJS.Servers.Infrastructure.Policy;
     using OJS.Services.Common;
-    using OJS.Services.Common.Data;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Implementations;
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
@@ -39,6 +35,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using OJS.Services.Infrastructure.ResilienceStrategies;
+    using OJS.Services.Infrastructure.ResilienceStrategies.Implementations;
     using OJS.Services.Infrastructure.ResilienceStrategies.Listeners;
     using Polly;
     using Polly.CircuitBreaker;
@@ -74,9 +72,8 @@ namespace OJS.Servers.Infrastructure.Extensions
             services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddConventionServices<TStartup>()
-                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
                 .AddHttpContextServices()
-                .AddHttpClients(configuration)
+                .AddLokiHttpClient(configuration)
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<HealthCheckConfig>();
 
@@ -121,8 +118,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddDbContext<TDbContext>(options =>
                 {
                     options.UseSqlServer(connectionString);
-                })
-                .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
+                });
 
             services
                 .AddIdentity<TIdentityUser, TIdentityRole>()
@@ -310,6 +306,8 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddResiliencePipelines(this IServiceCollection services)
         {
+            services.AddSingleton<IResilienceStrategiesService, ResilienceStrategiesService>();
+
             services
                 .AddOptionsWithValidation<CircuitBreakerResilienceStrategyConfig>()
                 .AddOptionsWithValidation<RetryResilienceStrategyConfig>()
@@ -364,18 +362,25 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
+        private static IServiceCollection AddLokiHttpClient(this IServiceCollection services, IConfiguration configuration)
         {
             var applicationConfig = configuration.GetSectionWithValidation<ApplicationConfig>();
-            var svnConfig = configuration.GetSectionWithValidation<SvnConfig>();
 
-            services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
-            services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
             services.AddHttpClient(ServerConstants.LokiHttpClientName, client =>
             {
                 client.BaseAddress = new Uri(applicationConfig.OtlpCollectorBaseUrl);
                 client.DefaultRequestHeaders.Add(HeaderNames.Authorization, applicationConfig.OtlpCollectorBasicAuthHeaderValue);
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            var svnConfig = configuration.GetSectionWithValidation<SvnConfig>();
+
+            services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
+            services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
             services.AddHttpClient(ServerConstants.SvnHttpClientName, client =>
             {
                 client.BaseAddress = new Uri(svnConfig.BaseUrl);

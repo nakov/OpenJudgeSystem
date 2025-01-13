@@ -6,6 +6,7 @@ using OJS.Data;
 using OJS.Services.Administration.Data;
 using System.Threading.Tasks;
 using OJS.Data.Models.Participants;
+using OJS.Services.Common.Data;
 using System.Data;
 
 public class ParticipantScoresBusinessService : IParticipantScoresBusinessService

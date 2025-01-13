@@ -1,4 +1,4 @@
-namespace OJS.Data.Implementations
+namespace OJS.Services.Common.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using System;

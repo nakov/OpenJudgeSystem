@@ -8,7 +8,7 @@
   right: spacings.$sp-16;
   z-index: 1000;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     bottom: spacings.$sp-8;
     right: spacings.$sp-8;
   }
@@ -32,12 +32,12 @@
     position: relative;
   }
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     width: 32px;
     height: 32px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     width: 28px;
     height: 28px;
   }
@@ -48,11 +48,11 @@
   align-items: center;
   gap: 1rem;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     gap: 0.75rem;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     gap: 0.5rem;
   }
 }
@@ -67,11 +67,11 @@
   font-weight: bold;
   color: colors.$white-color;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     font-size: 20px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     font-size: 18px;
   }
 }
@@ -81,11 +81,11 @@
   color: colors.$light-base-color-100;
   font-weight: bold;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     font-size: 14px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     font-size: 12px;
   }
 }
@@ -108,12 +108,12 @@
     position: relative;
   }
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     width: 48px;
     height: 48px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     width: 42px;
     height: 42px;
   }
@@ -201,22 +201,22 @@
     position: relative;
   }
 
-  @media (max-width <= 1200px) {
+  @media (width <= 1200px) {
     width: 80px !important;
     height: 80px !important;
   }
 
-  @media (max-width <= 1000px) {
+  @media (width <= 1000px) {
     width: 70px !important;
     height: 70px !important;
   }
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     width: 60px !important;
     height: 60px !important;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     width: 50px !important;
     height: 50px !important;
   }
@@ -239,45 +239,45 @@
   bottom: 7.5rem !important;
   margin: 0 !important;
 
-  @media (max-height <= 800px) {
+  @media (height <= 800px) {
     height: 550px;
   }
 
-  @media (max-height <= 700px) {
+  @media (height <= 700px) {
     height: 500px;
   }
 
-  @media (max-height <= 600px) {
+  @media (height <= 600px) {
     height: 400px;
   }
 
-  @media (max-height <= 500px) {
+  @media (height <= 500px) {
     height: 300px !important;
   }
 
-  @media (max-height <= 400px) {
+  @media (height <= 400px) {
     height: 200px !important;
   }
 
-  @media (max-width <= 1200px) {
+  @media (width <= 1200px) {
     height: 550px;
     width: 590px;
     bottom: 7rem !important;
   }
 
-  @media (max-width <= 1000px) {
+  @media (width <= 1000px) {
     height: 550px;
     width: 590px;
     bottom: 6rem !important;
   }
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     height: 450px;
     width: 480px;
     bottom: 5rem !important;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     height: 350px;
     width: 100%;
     bottom: 4rem !important;
@@ -296,13 +296,13 @@
   max-height: 50px;
   font-size: 24px !important;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     font-size: 20px !important;
     padding: spacings.$sp-12;
     max-height: 80px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     font-size: 18px !important;
     padding: spacings.$sp-8;
     max-height: 70px;
@@ -316,11 +316,11 @@
   display: flex;
   flex-direction: column;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     padding: spacings.$sp-12 !important;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     padding: spacings.$sp-8 !important;
   }
 
@@ -345,7 +345,7 @@
   flex-grow: 1;
   margin-bottom: spacings.$sp-16;
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     margin-bottom: spacings.$sp-8;
   }
 }
@@ -356,12 +356,12 @@
   margin-bottom: spacings.$sp-12;
   gap: 1rem;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     margin-bottom: spacings.$sp-8;
     gap: 0.75rem;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     margin-bottom: spacings.$sp-8;
     gap: 0.5rem;
   }
@@ -375,12 +375,12 @@
   color: colors.$light-base-color-100;
   font-size: 14px;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     margin-bottom: spacings.$sp-12;
     font-size: 12px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     margin-bottom: spacings.$sp-8;
     font-size: 11px;
   }
@@ -396,13 +396,13 @@
   word-wrap: break-word;
   line-height: 1.4rem;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     padding: spacings.$sp-8 spacings.$sp-12;
     line-height: 1.3rem;
     font-size: 16px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     padding: spacings.$sp-4 spacings.$sp-8;
     line-height: 1.2rem;
     font-size: 14px;
@@ -427,12 +427,12 @@
   border-top: 1px solid colors.$wrappers-border-color;
   max-height: 70px;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     padding: spacings.$sp-12 !important;
     max-height: 65px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     padding: spacings.$sp-8 !important;
     max-height: 60px;
     gap: spacings.$sp-4;
@@ -457,13 +457,13 @@
     font-size: 18px;
     max-height: 70px;
 
-    @media (max-width <= 768px) {
+    @media (width <= 768px) {
       padding: 6px 10px;
       font-size: 16px;
       max-height: 65px;
     }
 
-    @media (max-width <= 480px) {
+    @media (width <= 480px) {
       padding: 4px 8px;
       font-size: 14px;
       max-height: 60px;
@@ -480,11 +480,11 @@
   align-items: center;
   gap: 8px;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     gap: 6px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     gap: 4px;
   }
 
@@ -494,12 +494,12 @@
     border-radius: 50%;
     animation: grow-shrink 1.2s infinite ease-in-out;
 
-    @media (max-width <= 768px) {
+    @media (width <= 768px) {
       width: 6px;
       height: 6px;
     }
 
-    @media (max-width <= 480px) {
+    @media (width <= 480px) {
       width: 4px;
       height: 4px;
     }
@@ -530,11 +530,11 @@
   color: colors.$primary-blue;
   font-size: 28px;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     font-size: 24px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     font-size: 20px;
   }
 }
@@ -543,11 +543,11 @@
   color: rgba(colors.$primary-blue, 0.5);
   font-size: 28px;
 
-  @media (max-width <= 768px) {
+  @media (width <= 768px) {
     font-size: 24px;
   }
 
-  @media (max-width <= 480px) {
+  @media (width <= 480px) {
     font-size: 20px;
   }
 }

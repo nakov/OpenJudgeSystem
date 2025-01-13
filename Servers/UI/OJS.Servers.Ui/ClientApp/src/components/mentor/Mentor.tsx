@@ -52,8 +52,7 @@ const Mentor = (props: IMentorProps) => {
     const [ startConversation, { data: conversationData, error, isLoading } ] = useStartConversationMutation();
 
     const isInputLengthExceeded = useMemo(
-        () => conversationData &&
-            inputMessage.length > conversationData.maxUserInputLength,
+        () => inputMessage.length > (conversationData?.maxUserInputLength ?? 4096),
         [ conversationData, inputMessage ],
     );
 
@@ -147,7 +146,9 @@ const Mentor = (props: IMentorProps) => {
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSendMessage();
+            if (!isChatDisabled) {
+                handleSendMessage();
+            }
         }
     };
 
