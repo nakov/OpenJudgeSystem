@@ -32,7 +32,13 @@
         protected override void ExecuteBeforeTests(
             IDbConnection connection,
             IExecutionContext<TestsInputModel> executionContext)
-            => this.ExecuteNonQuery(connection, executionContext.Input.TaskSkeletonAsString);
+        {
+            var command = executionContext.Input.TaskSkeletonAsString;
+            if (!string.IsNullOrWhiteSpace(command))
+            {
+                this.ExecuteNonQuery(connection, command);
+            }
+        }
 
         protected override void ExecuteBeforeEachTest(
             IDbConnection connection,
