@@ -406,16 +406,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             return;
         }
 
-        if (submissionType.ExecutionStrategyType
-            is ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy
-            or ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests
-            or ExecutionStrategyType.NodeJsV20RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests)
-        {
-            problem.AdditionalFiles = await this.problemsDataService
-                .GetByIdQuery(model.ProblemId)
-                .Select(p => p.AdditionalFiles)
-                .FirstAsync();
-        }
+        problem.AdditionalFiles = await this.problemsDataService
+            .GetByIdQuery(model.ProblemId)
+            .Select(p => p.AdditionalFiles)
+            .FirstAsync();
 
         SubmissionForProcessing? submissionForProcessing = null;
         await this.transactionsProvider.ExecuteInTransaction(async () =>
