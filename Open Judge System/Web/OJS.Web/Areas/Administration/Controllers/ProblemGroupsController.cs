@@ -86,7 +86,7 @@
                 return this.GridOperation(request, model);
             }
 
-            if (!this.contestsData.IsOnlineById(model.ContestId))
+            if (!this.contestsData.IsWithRandomTasksById(model.ContestId))
             {
                 this.ModelState.AddModelError(
                     string.Empty,
@@ -119,7 +119,7 @@
             }
 
             if (existingProblemGroup.OrderBy != model.OrderBy &&
-                !this.contestsData.IsOnlineById(model.ContestId))
+                !this.contestsData.IsWithRandomTasksById(model.ContestId))
             {
                 this.ModelState.AddModelError(
                     string.Empty,

@@ -51,7 +51,7 @@
 
         bool IsActiveById(int id);
 
-        bool IsOnlineById(int id);
+        bool IsWithRandomTasksById(int id);
 
         bool ExistsById(int id);
 

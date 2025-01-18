@@ -65,7 +65,7 @@
             var problemsInContest = this.problemsData.GetAllByContest(submission.ContestId);
 
             if (isFromActiveContest &&
-                this.contestsData.IsOnlineById(submission.ContestId) &&
+                this.contestsData.IsWithRandomTasksById(submission.ContestId) &&
                 !userHasAdminPermissions)
             {
                 problemsInContest = problemsInContest
