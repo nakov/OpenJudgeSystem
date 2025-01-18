@@ -16,6 +16,6 @@
         Lab = 3,
 
         [LocalizedDescription("Random_tasks_onsite_practical_exam", typeof(Resource))]
-        RandomTasksOnsitePracticalExam = 4,
+        OnsitePracticalExamWithRandomTasks = 4,
     }
 }

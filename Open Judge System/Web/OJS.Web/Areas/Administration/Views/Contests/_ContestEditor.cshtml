@@ -6,6 +6,7 @@
 
 @{
     const string OnlineOnlyContainersClassName = "online-contest-editor-container";
+    const string RandomTasksContainersClassName = "random-tasks-contest-editor-container";
 
     var isEditForm = (this.ViewBag.CallerAction ?? string.Empty) == "Edit";
     var isActiveContest = this.ViewBag.IsActive ?? false;
@@ -49,7 +50,7 @@
         </div>
     </div>
     <br />
-    <div class="@OnlineOnlyContainersClassName hidden">
+    <div class="@RandomTasksContainersClassName hidden">
         <div class="row">
             <div class="editor-label col-xs-3">
                 <div class="pull-right">
@@ -431,8 +432,9 @@ function setDefaultWorkerType(e) {
             var problemGroupsCount = $('#ProblemGroupsCount');
             var problemGroupsCountInput = problemGroupsCount.parent().children(':first-child');
             var onlineContestFields = $(".@OnlineOnlyContainersClassName");
+            var randomTasksContestFields = $(".@RandomTasksContainersClassName");
 
-            if (contestType == @((int)ContestType.OnlinePracticalExam)) {
+            if (contestType == @((int)ContestType.OnlinePracticalExam) || contestType == @((int)ContestType.OnsitePracticalExamWithRandomTasks)) {
                 if (@Model.ProblemGroupsCount === 0) {
                     var defaultProblemGroupsCount = @GlobalConstants.DefaultProblemGroupsCountForOnlineContest;
                     problemGroupsCountHidden.val(defaultProblemGroupsCount);
@@ -440,9 +442,16 @@ function setDefaultWorkerType(e) {
                     problemGroupsCountInput.val(defaultProblemGroupsCount);
                 }
 
-                onlineContestFields.removeClass('hidden');
+                if (contestType == @((int)ContestType.OnlinePracticalExam)) {
+                    onlineContestFields.removeClass('hidden');
+                    randomTasksContestFields.removeClass('hidden');
+                } else if (contestType == @((int)ContestType.OnsitePracticalExamWithRandomTasks)) {
+                    onlineContestFields.addClass('hidden');
+                    randomTasksContestFields.removeClass('hidden');
+                }
             } else {
                 onlineContestFields.addClass('hidden');
+                randomTasksContestFields.addClass('hidden');
 
                 var problemGroupsCountValue = @Model.ProblemGroupsCount;
                 problemGroupsCountHidden.val(problemGroupsCountValue);
