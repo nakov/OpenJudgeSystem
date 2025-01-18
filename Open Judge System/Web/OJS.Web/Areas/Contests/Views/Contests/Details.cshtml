@@ -80,7 +80,7 @@
         <h3>@Resource.Problems</h3>
         @{
             var canShowProblemsInPractice = !Model.HasPracticePassword;
-            var canShowProblemsInCompete = !Model.HasContestPassword && !Model.IsActive && !Model.IsOnline;
+            var canShowProblemsInCompete = !Model.HasContestPassword && !Model.IsActive && !Model.IsWithRandomTasks;
 
             if ((Model.CanBePracticed && canShowProblemsInPractice) ||
                 (Model.CanBeCompeted && canShowProblemsInCompete) ||
@@ -192,7 +192,7 @@
                 new { area = GlobalConstants.AdministrationAreaName },
                 new { @class = "btn btn-sm btn-primary bottom-buffer-sm right-buffer-sm" }))
 
-            if (Model.IsOnline)
+            if (Model.IsWithRandomTasks)
             {
                 @(Html.ActionLink<ProblemGroupsController>(
                     Resource.Problem_groups,

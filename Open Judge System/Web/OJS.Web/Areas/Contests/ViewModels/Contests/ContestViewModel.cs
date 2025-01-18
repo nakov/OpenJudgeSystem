@@ -33,6 +33,8 @@
                 IsVisible = contest.IsVisible,
                 VisibleFrom = contest.VisibleFrom,
                 IsOnline = contest.Type == ContestType.OnlinePracticalExam,
+                IsWithRandomTasks = contest.Type == ContestType.OnlinePracticalExam ||
+                                    contest.Type == ContestType.OnsitePracticalExamWithRandomTasks,
                 ContestPassword = contest.ContestPassword,
                 PracticePassword = contest.PracticePassword,
                 HasContestQuestions = contest.Questions.Any(x => x.AskOfficialParticipants),
@@ -93,6 +95,8 @@
         public DateTime? VisibleFrom { get; set; }
         
         public bool IsOnline { get; set; }
+
+        public bool IsWithRandomTasks { get; set; }
 
         public string ContestPassword { private get; set; }
 

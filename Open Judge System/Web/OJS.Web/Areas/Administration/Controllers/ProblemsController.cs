@@ -399,7 +399,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             existingProblem.ProblemGroup.Type = ((ProblemGroupType?)problem.ProblemGroupType).GetValidTypeOrNull();
             existingProblem.DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId;
 
-            if (!existingProblem.ProblemGroup.Contest.IsOnline)
+            if (!existingProblem.ProblemGroup.Contest.IsWithRandomTasks)
             {
                 existingProblem.ProblemGroup.OrderBy = problem.OrderBy;
             }
