@@ -192,4 +192,7 @@
   <data name="Subtracted_time_from_single_participant_online" xml:space="preserve">
     <value>Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}</value>
   </data>
+  <data name="Required_field_for_contest_with_random_tasks" xml:space="preserve">
+    <value>The field is required for a contest with random tasks</value>
+  </data>
 </root>

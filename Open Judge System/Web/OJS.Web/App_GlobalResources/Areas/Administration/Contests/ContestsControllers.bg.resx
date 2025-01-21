@@ -192,4 +192,7 @@
   <data name="Subtracted_time_from_single_participant_online" xml:space="preserve">
     <value>Успешно отнехте {0} минути от времето на участник с потребителско име: {1},  в състезанието {2}</value>
   </data>
+  <data name="Required_field_for_contest_with_random_tasks" xml:space="preserve">
+    <value>Полето е задължително за състезание с рандом задачи</value>
+  </data>
 </root>

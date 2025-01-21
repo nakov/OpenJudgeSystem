@@ -135,6 +135,9 @@
   <data name="Contest_visibility" xml:space="preserve">
     <value>Изберете дали състезанието да бъде видимо</value>
   </data>
+  <data name="Contest_visible_from" xml:space="preserve">
+    <value>Изберете време и час от които състезанието става видимо</value>
+  </data>
   <data name="Duration_info" xml:space="preserve">
     <value>Времетраене</value>
   </data>
@@ -165,6 +168,9 @@
   <data name="Submissions_limit" xml:space="preserve">
     <value>Въведете лимит между изпращане на две последователни решения</value>
   </data>
+  <data name="Users_cant_submit_concurrently" xml:space="preserve">
+    <value>Изберете дали потребителите могат да предават решения за различни задачи от състезанието едновременно</value>
+  </data>
   <data name="Submission_types" xml:space="preserve">
     <value>Видове решения</value>
   </data>
@@ -172,19 +178,13 @@
     <value>Изберете дали тестовете да имат детайлна обратна връзка според типа на съзтезанието (съзтезание/упражнение)</value>
   </data>
   <data name="Number_of_problem_groups" xml:space="preserve">
-    <value>Въведете броя на групи от задачи за онлайн състезание</value>
+    <value>Въведете броя на групи от задачи за състезание с рандом задачи</value>
   </data>
   <data name="Duration" xml:space="preserve">
     <value>Въведете продължителността на изпита в часове</value>
   </data>
   <data name="Problem_groups_edit_from_administration" xml:space="preserve">
     <value>Може да променяте броя на групите от Администрацията за Групи Проблеми</value>
-  </data>
-  <data name="Users_cant_submit_concurrently" xml:space="preserve">
-    <value>Изберете дали потребителите могат да предават решения за различни задачи от състезанието едновременно</value>
-  </data>
-  <data name="Contest_visible_from" xml:space="preserve">
-    <value>Изберете време и час от които състезанието става видимо</value>
   </data>
   <data name="Ensure_valid_author_submisions" xml:space="preserve">
     <value>Покажи/скрий нотификации за стратегии без текущо минаващ събмит с максимален брой точки</value>
