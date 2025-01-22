@@ -685,7 +685,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             {
                 if (model.ProblemGroupsCount <= 0)
                 {
-                    this.ModelState.AddModelError(nameof(model.ProblemGroupsCount), Resource.Required_field_for_online);
+                    this.ModelState.AddModelError(nameof(model.ProblemGroupsCount), Resource.Required_field_for_contest_with_random_tasks);
                 }
                 else if (model.ProblemGroupsCount > ProblemGroupsCountLimit)
                 {
