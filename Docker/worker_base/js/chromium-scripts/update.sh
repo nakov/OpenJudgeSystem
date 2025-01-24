@@ -7,7 +7,7 @@ echo $FULL_PATH_TO_SCRIPT
 
 JS_RESOURCES_ROOT_DIR="${FULL_PATH_TO_SCRIPT%/chromium-scripts/*}"
 
-CHROMIUM_SCRIPTS_DIR=$JS_RESOURCES_ROOT_DIR/node_modules/playwright/chromium-854489
+CHROMIUM_SCRIPTS_DIR=$JS_RESOURCES_ROOT_DIR/v20/node_modules/playwright/chromium-854489
 echo $CHROMIUM_SCRIPTS_DIR
 
 LASTCHANGE_URL="https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2FLAST_CHANGE?alt=media"

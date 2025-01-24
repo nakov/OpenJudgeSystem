@@ -19,6 +19,7 @@ namespace OJS.Workers.ExecutionStrategies
     public class RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<TSettings> : PythonExecuteAndCheckExecutionStrategy<TSettings>
         where TSettings : RunSpaAndExecuteMochaTestsExecutionStrategySettings
     {
+        private readonly ILogger<BaseExecutionStrategy<TSettings>> logger;
         private const string UserApplicationHttpPortPlaceholder = "#userApplicationHttpPort#";
         private const string MochaTestsPlaceholder = "#mochaTests#";
         private const string MochaTestsFullTitlePrefix = "E2E tests";
@@ -37,8 +38,7 @@ namespace OJS.Workers.ExecutionStrategies
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
             : base(submission, processExecutorFactory, settingsProvider, logger)
-        {
-        }
+            => this.logger = logger;
 
         private static string NginxFileContent => $@"
 worker_processes  1;
@@ -282,6 +282,7 @@ finally:
             {
                 result.IsCompiledSuccessfully = false;
                 result.CompilerComment = "Failed running strategy pre execute step, please contact an Administrator";
+                this.logger.LogUnexpectedProcessOutput(preExecutionResult);
 
                 return result;
             }

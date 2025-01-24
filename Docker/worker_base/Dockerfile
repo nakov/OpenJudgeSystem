@@ -21,6 +21,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
+# Add restricted_user
+RUN useradd -m -s /bin/bash restricted_user && \
+    passwd -d restricted_user
+
+USER restricted_user
+
 # Install node.js 12 and 20 via nvm
 RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
     export NVM_DIR="$HOME/.nvm" && \
@@ -29,6 +35,11 @@ RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | ba
     nvm install 20.12.0 && \
     nvm alias default 20.12.0 && \
     nvm use default
+
+USER root
+
+ # Symlink node to /usr/bin/node
+RUN ln -sf /home/restricted_user/.nvm/versions/node/v20.12.0/bin/node /usr/bin/node
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
@@ -75,8 +86,12 @@ RUN ./gradlew getDeps21
 WORKDIR /judge-resources/js
 COPY ./js .
 RUN chmod +x ./setup_node.sh ./chromium-scripts/update-and-run.sh && \
-    ./setup_node.sh && \
-    ./chromium-scripts/update-and-run.sh
+    chown -R restricted_user:restricted_user /judge-resources && \
+    chmod -R u+rwx,g+rwx /judge-resources && \
+    chmod g+s /judge-resources && \
+    sudo -u restricted_user ./setup_node.sh
+
+RUN ./chromium-scripts/update-and-run.sh
 
 # Python 11 with Django support
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -99,7 +114,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
-ENV PYENV_ROOT /root/.pyenv
+USER restricted_user
+
+ENV PYENV_ROOT "/home/restricted_user/.pyenv"
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN curl https://pyenv.run | bash && \
     pyenv update && \
@@ -111,6 +128,8 @@ COPY ./python/requirements.txt /tmp/
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+
+USER root
 
 WORKDIR /judge-resources/java/java-spring-and-hibernate
 COPY ./java-spring-and-hibernate .
@@ -131,6 +150,11 @@ RUN mvn clean install
 
 # Go
 ENV GO111MODULE=off
+
+# Grant read and execute permissions only
+RUN chown -R restricted_user:restricted_user /judge-resources && \
+    chmod -R u=rx,g=rx,o= /judge-resources && \
+    chmod g+s /judge-resources
 
 # Clean up
 RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
