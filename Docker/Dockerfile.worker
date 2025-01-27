@@ -21,8 +21,6 @@ COPY --from=build-env /app .
 
 ENV IS_IN_DOCKER=TRUE
 
-RUN apt-get update && apt-get install -y acl
-
 # Grant restricted_user permissions for ExecutionStrategies directory and preserve them for new files
 # This is needed for the worker to be able to execute the strategies as the restricted_user
 # As the ExecutionStrategies directory is part of a volume, the permissions are overwritten by docker,

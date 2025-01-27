@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       lsb-release \
       build-essential \
       locales \
+      acl \
       unzip && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
