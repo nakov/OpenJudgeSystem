@@ -19,6 +19,8 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
 
     public byte[]? AdditionalFiles { get; set; }
 
+    public bool HasAdditionalFiles { get; set; }
+
     public int? SourceCodeSizeLimit { get; set; }
 
     public bool ShowResults { get; set; }
@@ -34,6 +36,7 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<Problem, ProblemForSubmitCacheModel>()
+            .ForMember(m => m.HasAdditionalFiles, opt => opt.MapFrom(s => s.AdditionalFiles != null))
             .ForMember(m => m.Tests, opt => opt.Ignore())
             .ForMember(m => m.AdditionalFiles, opt => opt.Ignore())
             .ReverseMap();
