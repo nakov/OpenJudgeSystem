@@ -332,7 +332,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.GetNodeResourcePath(executionStrategyType, this.settings.JsProjNodeModules),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.ChaiModulePath),
-                    this.GetNodeResourcePath(executionStrategyType, this.settings.PlaywrightChromiumModulePath))
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.PlaywrightChromiumModulePath),
+                    this.settings.PlaywrightBrowsersPath)
 
                 as TSettings,
             ExecutionStrategyType.GolangCompileExecuteAndCheck => new

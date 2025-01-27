@@ -98,6 +98,9 @@ public class OjsWorkersConfig : BaseConfig
     public string PlaywrightChromiumModulePath { get; set; } = string.Empty;
 
     [Required]
+    public string PlaywrightBrowsersPath { get; set; } = string.Empty;
+
+    [Required]
     public string JsDomModulePath { get; set; } = string.Empty;
 
     [Required]

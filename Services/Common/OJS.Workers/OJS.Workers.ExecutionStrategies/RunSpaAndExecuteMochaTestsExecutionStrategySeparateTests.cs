@@ -30,6 +30,7 @@ namespace OJS.Workers.ExecutionStrategies
         private const string TestsDirectoryName = "test";
         private const string UserApplicationDirectoryName = "app";
         private const string NginxConfFileName = "nginx.conf";
+        private const string PlaywrightBrowsersPathEnvVar = "PLAYWRIGHT_BROWSERS_PATH";
         private readonly Regex testTimeoutRegex = new Regex(@"Timeout (?:of )?\d+ms exceeded\.");
 
         public RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests(
@@ -269,7 +270,8 @@ finally:
             this.SaveNginxFile();
 
             var preExecuteCodeSavePath = this.SavePythonCodeTemplateToTempFile(this.PythonPreExecuteCodeTemplate);
-            var executor = this.CreateExecutor();
+            var executor = this.CreateStandardExecutor();
+            executor.EnvironmentVariables.Add(PlaywrightBrowsersPathEnvVar, this.Settings.PlaywrightBrowsersPath);
             var checker = executionContext.Input.GetChecker();
             var preExecutionResult = await this.Execute(executionContext, executor, preExecuteCodeSavePath);
             var match = Regex.Match(preExecutionResult.ReceivedOutput, @"Container port: (\d+);Container name: ([a-zA-Z-_]+);");

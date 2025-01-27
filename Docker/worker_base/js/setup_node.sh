@@ -1,6 +1,5 @@
 #!/bin/bash
 export NVM_DIR="$HOME/.nvm"
-export PLAYWRIGHT_BROWSERS_PATH="$HOME/.cache/ms-playwright"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # Load nvm into the shell.
 
 # The order in which dependencies are installed matters:

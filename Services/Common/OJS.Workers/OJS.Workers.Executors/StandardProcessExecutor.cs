@@ -22,8 +22,9 @@
             int baseMemoryUsed,
             ITasksService tasksService,
             ILogger<StandardProcessExecutor> logger,
-            bool runAsRestrictedUser = false)
-            : base(baseTimeUsed, baseMemoryUsed, tasksService)
+            bool runAsRestrictedUser = false,
+            IDictionary<string, string>? environmentVariables = null)
+            : base(baseTimeUsed, baseMemoryUsed, tasksService, environmentVariables)
         {
             this.logger = logger;
             this.runAsRestrictedUser = runAsRestrictedUser;
@@ -63,6 +64,11 @@
             // the process will inherit the environment variables of the current process, which is a security risk
             // If any env variables are needed, they should be set explicitly
             processStartInfo.EnvironmentVariables.Clear();
+
+            foreach (var environmentVariable in this.EnvironmentVariables)
+            {
+                processStartInfo.EnvironmentVariables.Add(environmentVariable.Key, environmentVariable.Value);
+            }
 
             using var process = Process.Start(processStartInfo);
             if (process == null)
