@@ -40,7 +40,14 @@ RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | ba
 USER root
 
  # Symlink node to /usr/bin/node
-RUN ln -sf /home/restricted_user/.nvm/versions/node/v20.12.0/bin/node /usr/bin/node
+RUN ln -sf /home/restricted_user/.nvm/versions/node/v20.12.0/bin/node /usr/bin/node && \
+    ln -sf /home/restricted_user/.nvm /root/.nvm && \
+    ln -sf /home/restricted_user/.nvm/nvm.sh /usr/local/bin/nvm && \
+    chmod -R a+rx /home/restricted_user/.nvm
+
+# Export environment variables for root
+ENV NVM_DIR="/home/restricted_user/.nvm"
+ENV PATH="$NVM_DIR/versions/node/20.12.0/bin:$PATH"
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
@@ -48,7 +55,6 @@ RUN apt-get update && apt-get install -y \
       dotnet-sdk-6.0 \
       openjdk-11-jdk \
       openjdk-21-jdk \
-      python3.9 \
       python3-pip \
       golang-go \
       libgtk-3-0 \
@@ -86,11 +92,14 @@ RUN ./gradlew getDeps21
 # JS and JS SPA
 WORKDIR /judge-resources/js
 COPY ./js .
-RUN chmod +x ./setup_node.sh ./chromium-scripts/update-and-run.sh && \
-    chown -R restricted_user:restricted_user /judge-resources && \
-    chmod -R u+rwx,g+rwx /judge-resources && \
-    chmod g+s /judge-resources && \
-    sudo -u restricted_user ./setup_node.sh
+
+# Install dependencies for Node.js 12 and 20
+RUN export NVM_DIR="/home/restricted_user/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && \
+    nvm use 12.22.12 && npm install && npm install --prefix /judge-resources/js/v12 && \
+    nvm use 12.22.12 && npm install npm install --prefix /judge-resources/js/v12/js-run-spa-in-docker-and-execute-mocha-tests && \
+    nvm use default && npm install --prefix /judge-resources/js/v20 && \
+    nvm use default && npm install --prefix /judge-resources/js/v20/js-run-spa-in-docker-and-execute-mocha-tests
 
 RUN ./chromium-scripts/update-and-run.sh
 
@@ -131,6 +140,13 @@ RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
 USER root
+
+# Grant root access to restricted_user's pyenv directory
+RUN chmod -R a+rx /home/restricted_user/.pyenv
+
+# Set pyenv environment for root
+ENV PYENV_ROOT="/home/restricted_user/.pyenv"
+ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:$PATH"
 
 WORKDIR /judge-resources/java/java-spring-and-hibernate
 COPY ./java-spring-and-hibernate .
