@@ -290,7 +290,7 @@ const ContestSolutionSubmitPage = () => {
         const intervalId = setInterval(() => {
             const currentTime = moment();
             const elapsedTimeInSeconds = moment.utc(currentTime).diff(moment.utc(lastSubmissionTime), 'seconds');
-            const newRemainingTime = userSubmissionsTimeLimit - elapsedTimeInSeconds;
+            const newRemainingTime = Math.min(userSubmissionsTimeLimit - elapsedTimeInSeconds, userSubmissionsTimeLimit);
 
             if (newRemainingTime <= 0) {
                 handleSubmitButtonShouldBeDisabled();
