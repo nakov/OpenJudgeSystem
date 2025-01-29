@@ -8,7 +8,7 @@
 
     using Kendo.Mvc.Extensions;
     using Kendo.Mvc.UI;
-
+    using Newtonsoft.Json;
     using OJS.Data;
     using OJS.Web.Areas.Administration.Controllers.Common;
 
@@ -38,6 +38,30 @@
         public ActionResult Index()
         {
             return this.View();
+        }
+
+        [HttpPost]
+        public ActionResult Deactivate([DataSourceRequest] DataSourceRequest request, ViewModelType model)
+        {
+            var list = new List<ViewModelType>();
+
+            if (model != null && this.ModelState.IsValid)
+            {
+                var userProfile = this.Data.Users.All().FirstOrDefault(u => u.Id == model.Id);
+                var userProfileJson = JsonConvert.SerializeObject(userProfile);
+                this.Data.Users.Delete(userProfile);
+                this.Data.AccessLogs.Add(new Data.Models.AccessLog
+                {
+                    UserId = this.UserProfile.Id,
+                    RequestType = "Deactivate User",
+                    IpAddress = this.Request.UserHostAddress,
+                    PostParams = $"Deactivated user: {userProfileJson}",
+                });
+                this.Data.SaveChanges();
+                list.Add(model);
+            }
+
+            return this.Json(list.ToDataSourceResult(request));
         }
 
         [HttpPost]
