@@ -14,6 +14,7 @@
             {
                 Id = participant.Id,
                 ParticipantUsername = participant.User.UserName,
+                ParticipantEmail = participant.User.Email,
                 ParticipantFirstName = participant.User.UserSettings.FirstName,
                 ParticipantLastName = participant.User.UserSettings.LastName,
                 ParticipantProblemIds = participant.Problems.Select(p => p.Id),
@@ -22,6 +23,8 @@
         public int Id { get; set; }
 
         public string ParticipantUsername { get; set; }
+
+        public string ParticipantEmail { get; set; }
 
         public string ParticipantFirstName { get; set; }
 
