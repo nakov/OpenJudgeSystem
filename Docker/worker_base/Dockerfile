@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y \
       dotnet-sdk-6.0 \
       openjdk-11-jdk \
       openjdk-21-jdk \
+      python3.9 \
       python3-pip \
       golang-go \
       libgtk-3-0 \
@@ -70,8 +71,13 @@ RUN ./gradlew getDeps21
 # JS and JS SPA
 WORKDIR /judge-resources/js
 COPY ./js .
-RUN ./setup_node.sh && \
+RUN chmod +x ./setup_node.sh ./chromium-scripts/update-and-run.sh && \
+    ./setup_node.sh && \
     ./chromium-scripts/update-and-run.sh
+
+# Grant restricted user access to Node.js
+RUN chgrp -R restricted_user /root/.nvm && \
+    chmod -R g+rx /root/.nvm
 
 # Python 11 with Django support
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -94,7 +100,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
-ENV PYENV_ROOT "/root/.pyenv"
+ENV PYENV_ROOT /root/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN curl https://pyenv.run | bash && \
     pyenv update && \
