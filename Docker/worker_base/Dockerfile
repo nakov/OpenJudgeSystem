@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Add restricted_user
 RUN useradd -m -s /bin/bash restricted_user && \
-    passwd -d restricted_user
+    passwd -d restricted_user && \
+    usermod -aG restricted_user restricted_user
 
 USER restricted_user
 
@@ -167,11 +168,6 @@ RUN mvn clean install
 
 # Go
 ENV GO111MODULE=off
-
-# Grant read and execute permissions only
-RUN chown -R restricted_user:restricted_user /judge-resources && \
-    chmod -R u=rx,g=rx,o= /judge-resources && \
-    chmod g+s /judge-resources
 
 # Clean up
 RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
