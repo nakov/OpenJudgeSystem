@@ -65,6 +65,7 @@
             // If any env variables are needed, they should be set explicitly
             processStartInfo.EnvironmentVariables.Clear();
 
+            // Add custom environment variables
             foreach (var environmentVariable in this.EnvironmentVariables)
             {
                 processStartInfo.EnvironmentVariables.Add(environmentVariable.Key, environmentVariable.Value);
