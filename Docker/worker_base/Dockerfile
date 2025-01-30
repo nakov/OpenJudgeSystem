@@ -75,10 +75,6 @@ RUN chmod +x ./setup_node.sh ./chromium-scripts/update-and-run.sh && \
     ./setup_node.sh && \
     ./chromium-scripts/update-and-run.sh
 
-# Grant restricted user access to Node.js
-RUN chgrp -R restricted_user /root/.nvm && \
-    chmod -R g+rx /root/.nvm
-
 # Python 11 with Django support
 RUN apt-get update && apt-get install -y --no-install-recommends \
       make \
@@ -132,6 +128,10 @@ RUN mvn clean install
 
 # Go
 ENV GO111MODULE=off
+
+# Grant restricted user access to Node.js and Python env
+RUN chgrp -R restricted_user /root/.nvm && \
+    chmod +x /root && chmod -R g+rx /root/.nvm && chmod -R g+rx /root/.pyenv
 
 # Clean up
 RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
