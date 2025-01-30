@@ -99,7 +99,7 @@
                     : processExecutionResult.ErrorOutput,
             };
 
-        protected IExecutor CreateExecutor()
+        protected IExecutor CreateRestrictedExecutor()
             => this.ProcessExecutorFactory
                 .CreateProcessExecutor(this.Settings.BaseTimeUsed, this.Settings.BaseMemoryUsed, ProcessExecutorType.Restricted);
 

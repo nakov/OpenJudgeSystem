@@ -64,7 +64,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             }
 
             var standardExecutor = this.CreateStandardExecutor().KeepEnvironmentVariables("PATH", "PYENV_ROOT");
-            var restrictedExecutor = this.CreateExecutor();
+            var restrictedExecutor = this.CreateRestrictedExecutor();
             var checker = executionContext.Input.GetChecker();
 
             try
