@@ -13,7 +13,7 @@ import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { ProblemGroupTypes } from '../../../../common/enums';
-import { CHECKER, CONTEST_NAME, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../common/labels';
+import { CHECKER, CONTEST_NAME, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../common/labels';
 import { IProblemAdministration, IProblemGroupDropdownModel } from '../../../../common/types';
 import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
