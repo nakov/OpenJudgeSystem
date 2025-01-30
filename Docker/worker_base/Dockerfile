@@ -109,6 +109,9 @@ RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
+# Java 11 and 21 with Spring and Hibernate
+USER restricted_user
+
 WORKDIR /judge-resources/java/java-spring-and-hibernate
 COPY ./java-spring-and-hibernate .
 RUN mvn dependency:go-offline
@@ -125,6 +128,8 @@ RUN mvn dependency:go-offline
 # Otherwise maven resolves only 1 dependency
 RUN mvn dependency:get -DgroupId=org.codehaus.plexus -DartifactId=plexus-utils -Dversion=3.0.10
 RUN mvn clean install
+
+USER root
 
 # Go
 ENV GO111MODULE=off
