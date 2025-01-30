@@ -32,4 +32,5 @@ nvm use default
 npm install --prefix /judge-resources/js/v20
 npm install --prefix /judge-resources/js/v20/js-run-spa-in-docker-and-execute-mocha-tests
 
+# Update /usr/bin/node to point to the currently active Node.js version:
 ln -sf "$(which node)" /usr/bin/node
