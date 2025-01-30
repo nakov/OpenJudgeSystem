@@ -13,7 +13,6 @@ public class ProblemResultPairViewModel
         {
             ParticipantId = score.ParticipantId,
             ProblemId = score.ProblemId,
-            ShowResult = score.Problem.ShowResults,
             BestSubmission = new BestSubmissionViewModel { Id = score.SubmissionId, Points = score.Points },
         };
 
@@ -22,7 +21,6 @@ public class ProblemResultPairViewModel
         {
             ParticipantId = score.ParticipantId,
             ProblemId = score.ProblemId,
-            ShowResult = score.Problem.ShowResults,
             MaximumPoints = score.Problem.MaximumPoints,
             BestSubmission = new BestSubmissionViewModel
             {
@@ -44,7 +42,6 @@ public class ProblemResultPairViewModel
         {
             ParticipantId = score.ParticipantId,
             ProblemId = score.ProblemId,
-            ShowResult = score.Problem.ShowResults,
             IsExcludedFromHomework = score.Problem.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework,
             BestSubmission = new BestSubmissionViewModel { Id = score.SubmissionId, Points = score.Points },
         };
@@ -52,8 +49,6 @@ public class ProblemResultPairViewModel
     public int ParticipantId { get; set; }
 
     public int ProblemId { get; set; }
-
-    public bool ShowResult { get; set; }
 
     public bool IsExcludedFromHomework { get; set; }
 

@@ -201,16 +201,6 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           name="showDetailedFeedback"
                           onChange={(e) => onChange(e)}
                         />
-                        <FormControlLabel
-                          control={(
-                              <Checkbox
-                                checked={currentProblem.showResults}
-                              />
-                            )}
-                          name="showResults"
-                          onChange={(e) => onChange(e)}
-                          label={SHOW_RESULTS}
-                        />
                     </Box>
                 </Box>
             </Box>

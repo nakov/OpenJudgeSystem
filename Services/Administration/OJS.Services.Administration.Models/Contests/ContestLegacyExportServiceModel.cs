@@ -123,8 +123,6 @@ public class LegacyProblem
 
     public byte[]? AdditionalFiles { get; set; }
 
-    public bool ShowResults { get; set; }
-
     public bool ShowDetailedFeedback { get; set; }
 
     public double OrderBy { get; set; }

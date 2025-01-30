@@ -60,47 +60,5 @@ namespace OJS.Services.Ui.Business.Implementations
                     participant);
             }
         }
-
-        public async Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(
-            int problemId,
-            bool isOfficial)
-        {
-            var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
-
-            if (problem == null)
-            {
-                throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotFound);
-            }
-
-            var user = this.userProviderService.GetCurrentUser();
-
-            var userHasParticipation = await this.participantsData
-                .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial);
-
-            if (!userHasParticipation)
-            {
-                throw new BusinessServiceException(Resources.ContestsGeneral.UserIsNotRegisteredForExam);
-            }
-
-            if (!problem.ShowResults)
-            {
-                throw new BusinessServiceException(Resources.ContestsGeneral.ProblemResultsNotAvailable);
-            }
-
-            var participant =
-                await this.participantsData.GetByContestByUserAndByIsOfficial(
-                    problem.ProblemGroup.ContestId,
-                    user.Id!,
-                    isOfficial);
-
-            var results = await this.participantScoresData
-                .GetAll()
-                .Where(ps =>
-                    ps.ProblemId == problem.Id && ps.IsOfficial == isOfficial && ps.ParticipantId == participant!.Id)
-                .MapCollection<ProblemResultServiceModel>()
-                .ToListAsync();
-
-            return results;
-        }
     }
 }

@@ -23,8 +23,6 @@ public class ProblemForSubmitCacheModel : IMapExplicitly
 
     public int? SourceCodeSizeLimit { get; set; }
 
-    public bool ShowResults { get; set; }
-
     public int? CheckerId { get; set; }
 
     public CheckerCacheModel? Checker { get; set; }
