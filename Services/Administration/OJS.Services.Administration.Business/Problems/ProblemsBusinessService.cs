@@ -240,7 +240,7 @@ public class ProblemsBusinessService : AdministrationOperationService<Problem, i
 
         problem.ProblemGroup.Type = (ProblemGroupType)Enum.Parse(typeof(ProblemGroupType), model.ProblemGroupType!);
 
-        if (!problem.ProblemGroup.Contest.IsExamWithRandomTasks)
+        if (!problem.ProblemGroup.Contest.IsWithRandomTasks)
         {
             problem.ProblemGroup.OrderBy = model.OrderBy;
         }

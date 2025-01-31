@@ -130,7 +130,10 @@ namespace OJS.Data.Models.Contests
         public bool HasPracticePassword => this.PracticePassword != null;
 
         [NotMapped]
-        public bool IsExamWithRandomTasks => this.Type is ContestType.OnlinePracticalExam or ContestType.OnsitePracticalExamWithRandomTasks;
+        public bool IsOnlineExam => this.Type is ContestType.OnlinePracticalExam;
+
+        [NotMapped]
+        public bool IsWithRandomTasks => this.Type is ContestType.OnlinePracticalExam or ContestType.OnsitePracticalExamWithRandomTasks;
 
         [NotMapped]
         public bool IsOnsiteExam => this.Type == ContestType.OnsitePracticalExam;
