@@ -88,7 +88,7 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
 
     private static bool ValidateOnlineContestProblemGroups(ContestAdministrationModel model)
     {
-        if (model.IsOnlineExam)
+        if (model.IsWithRandomTasks)
         {
             if (model.NumberOfProblemGroups <= 0)
             {

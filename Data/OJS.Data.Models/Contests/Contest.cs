@@ -136,7 +136,7 @@ namespace OJS.Data.Models.Contests
         public bool IsWithRandomTasks => this.Type is ContestType.OnlinePracticalExam or ContestType.OnsitePracticalExamWithRandomTasks;
 
         [NotMapped]
-        public bool IsOnsiteExam => this.Type == ContestType.OnsitePracticalExam;
+        public bool IsOnsiteExam => this.Type is ContestType.OnsitePracticalExam;
 
         public static IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
