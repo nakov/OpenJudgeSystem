@@ -95,10 +95,10 @@ path_to_project = '{this.UserApplicationPath}'
 path_to_nginx_conf = '{this.NginxConfFileDirectory}/nginx.conf'
 path_to_node_modules = '{this.Settings.JsProjNodeModulesPath}'
 
-
 class DockerExecutor:
     def __init__(self):
         self.client = docker.from_env()
+        self.network_name = self.__get_default_network()
         self.__ensure_image_is_present()
         self.container = self.client.containers.create(
             image=image_name,
@@ -114,7 +114,19 @@ class DockerExecutor:
                     'mode': 'rw',
                 }},
             }},
+            network=self.network_name
         )
+
+    def __get_default_network(self):
+        networks = self.client.networks.list()
+        default_network = next((net.name for net in networks if net.name.endswith(""_default"")), None)
+
+        if default_network:
+            return default_network
+
+        available_networks = [net.name for net in networks] or ""[]""
+        raise RuntimeError(f""No network found with '_default' suffix. Available networks: {{available_networks}}"")
+
 
     def start(self):
         self.container.start()
