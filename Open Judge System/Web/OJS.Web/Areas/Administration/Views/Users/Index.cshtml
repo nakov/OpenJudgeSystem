@@ -60,7 +60,6 @@
             .Sort(sort => sort.Add(x => x.UserName))
             .Read(read => read.Action("Read", ControllerName))
             .Update(update => update.Action("Update", ControllerName))
-            .Destroy(destroy => destroy.Action("Deactivate", ControllerName))
             .Events(ev => ev.Error("validateModelStateErrors"))
         )
     )
