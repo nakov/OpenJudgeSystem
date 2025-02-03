@@ -131,6 +131,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EnumTranslations.bg.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Enums</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Enums\EnumTranslations.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

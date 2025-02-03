@@ -107,7 +107,8 @@
                         {
                             if (!participant.ParticipantProblemIds.Contains(problem.Id) &&
                                 Model.IsCompete &&
-                                Model.ContestType == ContestType.OnlinePracticalExam)
+                                (Model.ContestType == ContestType.OnlinePracticalExam ||
+                                    Model.ContestType == ContestType.OnsitePracticalExamWithRandomTasks))
                             {
                                 <td>-</td>
                             }                   

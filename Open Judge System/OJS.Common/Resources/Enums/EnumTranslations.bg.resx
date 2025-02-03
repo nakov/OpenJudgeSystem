@@ -168,4 +168,7 @@
   <data name="Video" xml:space="preserve">
     <value>Видео</value>
   </data>
+  <data name="Random_tasks_onsite_practical_exam" xml:space="preserve">
+    <value>Практически изпит на място с произволни задачи</value>
+  </data>
 </root>

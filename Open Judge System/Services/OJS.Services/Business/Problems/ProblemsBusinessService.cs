@@ -101,7 +101,7 @@
                 this.problems.Delete(id);
                 this.problems.SaveChanges();
 
-                if (!this.contestsData.IsOnlineById(problem.ContestId))
+                if (!this.contestsData.IsWithRandomTasksById(problem.ContestId))
                 {
                     this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
                 }

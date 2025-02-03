@@ -21,7 +21,7 @@
 
             if (official &&
                 !isAdminOrLecturer &&
-                this.Contest.IsOnline)
+                this.Contest.IsWithRandomTasks)
             {
                 this.Contest.Problems = participant.Problems
                     .AsQueryable()

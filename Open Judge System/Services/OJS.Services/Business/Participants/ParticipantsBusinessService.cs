@@ -37,12 +37,15 @@ namespace OJS.Services.Business.Participants
         {
             var participant = new Participant(contest.Id, userId, isOfficial);
 
-            if (contest.IsOnline && isOfficial)
+            if (isOfficial)
             {
-                participant.ParticipationStartTime = DateTime.Now;
-                participant.ParticipationEndTime = DateTime.Now + contest.Duration;
+                if (contest.IsOnline)
+                {
+                    participant.ParticipationStartTime = DateTime.Now;
+                    participant.ParticipationEndTime = DateTime.Now + contest.Duration;
+                }
 
-                if (!isAdmin &&
+                if (contest.IsWithRandomTasks && !isAdmin &&
                     !this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId))
                 {
                     this.AssignRandomProblemsToParticipant(participant, contest);

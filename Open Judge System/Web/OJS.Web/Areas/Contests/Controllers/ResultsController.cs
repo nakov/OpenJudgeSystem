@@ -399,7 +399,7 @@
             var fromPoints = 0;
             var toPoints = 0;
 
-            if (contest.IsOnline && official)
+            if (contest.IsWithRandomTasks && official)
             {
                 statsModel.IsGroupedByProblemGroup = true;
 
@@ -581,6 +581,7 @@
             var columnNumber = 0;
             headerRow.CreateCell(columnNumber++).SetCellValue("Username");
             headerRow.CreateCell(columnNumber++).SetCellValue("Name");
+            headerRow.CreateCell(columnNumber++).SetCellValue("Email");
 
             foreach (var problem in contestResults.Problems)
             {
@@ -610,6 +611,7 @@
                 var row = sheet.CreateRow(rowNumber++);
                 row.CreateCell(colNumber++).SetCellValue(result.ParticipantUsername);
                 row.CreateCell(colNumber++).SetCellValue(result.ParticipantFullName);
+                row.CreateCell(colNumber++).SetCellValue(result.ParticipantEmail);
 
                 foreach (var problem in contestResults.Problems)
                 {

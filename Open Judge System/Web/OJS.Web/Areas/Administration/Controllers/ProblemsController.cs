@@ -399,7 +399,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             existingProblem.ProblemGroup.Type = ((ProblemGroupType?)problem.ProblemGroupType).GetValidTypeOrNull();
             existingProblem.DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId;
 
-            if (!existingProblem.ProblemGroup.Contest.IsOnline)
+            if (!existingProblem.ProblemGroup.Contest.IsWithRandomTasks)
             {
                 existingProblem.ProblemGroup.OrderBy = problem.OrderBy;
             }
@@ -930,7 +930,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             this.AddCheckersAndProblemGroupsToProblemViewModel(
                 problem,
                 contest.ProblemGroups.Count,
-                contest.IsOnline);
+                contest.IsWithRandomTasks);
             return problem;
         }
 
@@ -946,7 +946,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             this.AddCheckersAndProblemGroupsToProblemViewModel(
                 problem,
                 contest.ProblemGroups.Count,
-                contest.IsOnline);
+                contest.IsWithRandomTasks);
 
             problem.SubmissionTypes = this.submissionTypesData
                 .GetAll()
@@ -959,7 +959,7 @@ namespace OJS.Web.Areas.Administration.Controllers
         private void AddCheckersAndProblemGroupsToProblemViewModel(
             ViewModelType problem,
             int numberOfProblemGroups,
-            bool isOnlineContest)
+            bool isContestWithRandomTasks)
         {
             problem.AvailableCheckers = this.checkersData
                 .GetAll()
@@ -970,7 +970,7 @@ namespace OJS.Web.Areas.Administration.Controllers
                     Selected = checker.Name.Contains("Trim")
                 });
 
-            if (isOnlineContest && numberOfProblemGroups > 0)
+            if (isContestWithRandomTasks && numberOfProblemGroups > 0)
             {
                 this.ViewBag.ProblemGroupIdData = this.problemGroupsData
                     .GetAllByContest(problem.ContestId)
