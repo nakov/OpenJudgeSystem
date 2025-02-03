@@ -31,6 +31,7 @@
                 columns.Bound(model => model.CreatedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
                 columns.Bound(model => model.ModifiedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
                 columns.Command(command => command.Edit().Text(" ").UpdateText(GeneralResource.Change).CancelText(GeneralResource.Cancel)).Width(80);
+                columns.Template(@<text></text>).ClientTemplate($"<a class='k-button' href='Users/Delete/#=Id#'>Delete</a>").Width(80).Title("");
             })
         .ToolBar(toolbar =>
         {
