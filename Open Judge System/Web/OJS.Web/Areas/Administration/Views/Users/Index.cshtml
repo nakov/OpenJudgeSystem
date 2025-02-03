@@ -17,31 +17,31 @@
     .Name("DataGrid")
     .Columns(columns =>
     {
-    columns.Bound(model => model.UserName);
-    columns.Bound(model => model.Email);
-    columns.Bound(model => model.FirstName);
-    columns.Bound(model => model.LastName);
-    columns.Bound(model => model.City);
-    columns.Bound(model => model.EducationalInstitution).Hidden();
-    columns.Bound(model => model.FacultyNumber).Hidden();
-    columns.Bound(model => model.DateOfBirth);
-    columns.Bound(model => model.Company).Hidden();
-    columns.Bound(model => model.JobTitle).Hidden();
-    columns.Bound(model => model.Age).Filterable(false);
-    columns.Bound(model => model.CreatedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
-    columns.Bound(model => model.ModifiedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
-    columns.Command(command => command.Edit().Text(" ").UpdateText(GeneralResource.Change).CancelText(GeneralResource.Cancel)).Width(80);
-    columns.Command(command => command.Destroy().Text(" ")).Width(80).Title(GeneralResource.Delete);
+        columns.Bound(model => model.UserName);
+        columns.Bound(model => model.Email);
+        columns.Bound(model => model.FirstName);
+        columns.Bound(model => model.LastName);
+        columns.Bound(model => model.City);
+        columns.Bound(model => model.EducationalInstitution).Hidden();
+        columns.Bound(model => model.FacultyNumber).Hidden();
+        columns.Bound(model => model.DateOfBirth);
+        columns.Bound(model => model.Company).Hidden();
+        columns.Bound(model => model.JobTitle).Hidden();
+        columns.Bound(model => model.Age).Filterable(false);
+        columns.Bound(model => model.CreatedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
+        columns.Bound(model => model.ModifiedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
+        columns.Command(command => command.Edit().Text(" ").UpdateText(GeneralResource.Change).CancelText(GeneralResource.Cancel)).Width(80);
+        columns.Template(@<text></text>).ClientTemplate($"<a class='k-button' href='Users/Delete/#=Id#'>Delete</a>").Width(80).Title("");
     })
     .ToolBar(toolbar =>
     {
-    toolbar.Custom().Text(GeneralResource.Back_to_navigation).Action("Index", "Navigation", new { Area = GlobalConstants.AdministrationAreaName }).Name("custom-toolbar-button");
-    toolbar.Custom().Text(GeneralResource.Export_to_excel).Name("custom-toolbar-button").HtmlAttributes(new { id = "export" }).Url(Url.Action("ExportToExcel", ControllerName, new { page = 1, pageSize = "~", filter = "!!", sort = "~" }));
+        toolbar.Custom().Text(GeneralResource.Back_to_navigation).Action("Index", "Navigation", new { Area = GlobalConstants.AdministrationAreaName }).Name("custom-toolbar-button");
+        toolbar.Custom().Text(GeneralResource.Export_to_excel).Name("custom-toolbar-button").HtmlAttributes(new { id = "export" }).Url(Url.Action("ExportToExcel", ControllerName, new { page = 1, pageSize = "~", filter = "!!", sort = "~" }));
     })
     .Editable(editable =>
     {
-    editable.Mode(GridEditMode.PopUp);
-    editable.Window(w => w.Title(ViewBag.Title));
+        editable.Mode(GridEditMode.PopUp);
+        editable.Window(w => w.Title(ViewBag.Title));
     })
     .ColumnMenu()
     .Events(e => e.DataBound("onDataBound"))
@@ -55,7 +55,7 @@
     .ServerOperation(true)
     .Model(model =>
     {
-    model.Id(m => m.Id);
+        model.Id(m => m.Id);
     })
     .Sort(sort => sort.Add(x => x.UserName))
     .Read(read => read.Action("Read", ControllerName))

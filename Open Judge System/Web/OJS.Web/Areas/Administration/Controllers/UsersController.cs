@@ -8,9 +8,9 @@
 
     using Kendo.Mvc.Extensions;
     using Kendo.Mvc.UI;
-    using Newtonsoft.Json;
     using OJS.Data;
     using OJS.Web.Areas.Administration.Controllers.Common;
+    using OJS.Web.Common.Extensions;
 
     using ViewModelType = OJS.Web.Areas.Administration.ViewModels.User.UserProfileAdministrationViewModel;
 
@@ -40,28 +40,48 @@
             return this.View();
         }
 
-        [HttpPost]
-        public ActionResult Deactivate([DataSourceRequest] DataSourceRequest request, ViewModelType model)
+        [HttpGet]
+        public ActionResult Delete(string id)
         {
-            var list = new List<ViewModelType>();
+            var user = this.Data.Users.All().Where(u => u.Id == id).Select(ViewModelType.ViewModel).FirstOrDefault();
 
-            if (model != null && this.ModelState.IsValid)
+            if (user == null)
             {
-                var userProfile = this.Data.Users.All().FirstOrDefault(u => u.Id == model.Id);
-                var userProfileJson = JsonConvert.SerializeObject(userProfile);
+                this.TempData.AddDangerMessage("User not found.");
+                return this.RedirectToAction(nameof(this.Index));
+            }
+
+            this.ViewBag.ReturnUrl = this.Request.UrlReferrer?.AbsolutePath.ToString() ?? "/";
+
+            return this.View(user);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(ViewModelType model)
+        {
+            var userProfile = this.Data.Users.All().FirstOrDefault(u => u.Id == model.Id);
+
+            if (userProfile != null)
+            {
+                // Store user info in variables for temp message, because after Delete, they are modified.
+                var username = userProfile.UserName;
+                var email = userProfile.Email;
+
                 this.Data.Users.Delete(userProfile);
                 this.Data.AccessLogs.Add(new Data.Models.AccessLog
                 {
                     UserId = this.UserProfile.Id,
-                    RequestType = "Deactivate User",
                     IpAddress = this.Request.UserHostAddress,
-                    PostParams = $"Deactivated user: {userProfileJson}",
+                    RequestType = "DELETE",
+                    PostParams = $"Deleted user with Id {userProfile.Id}. New username is: {userProfile.UserName} and email is: {userProfile.Email}",
                 });
+
                 this.Data.SaveChanges();
-                list.Add(model);
+
+                this.TempData.AddWarningMessage($"User {username} with email {email} deleted successfully. If this was a mistake, contact support immediately.");
             }
 
-            return this.Json(list.ToDataSourceResult(request));
+            return this.RedirectToAction(nameof(this.Index));
         }
 
         [HttpPost]

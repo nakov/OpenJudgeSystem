@@ -2609,6 +2609,7 @@
     <Content Include="Areas\Administration\Views\Contests\_ChangeParticipationEndTimeByTimeInterval.cshtml" />
     <Content Include="Areas\Administration\Views\Shared\_CopyAllProblemGroupsToAnotherContest.cshtml" />
     <Content Include="Areas\Administration\Views\Contests\CalculateContestLoad.cshtml" />
+    <Content Include="Areas\Administration\Views\Users\Delete.cshtml" />
     <None Include="Properties\PublishProfiles\Dev Suls Judge System.pubxml" />
     <None Include="Properties\PublishProfiles\File System.pubxml" />
     <None Include="Properties\PublishProfiles\Judge Global.pubxml" />

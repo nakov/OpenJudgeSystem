@@ -1,0 +1,36 @@
+﻿@using OJS.Web.Areas.Administration.Controllers
+@using OJS.Web.Areas.Administration.ViewModels.User
+
+@using SharedResource = Resources.Areas.Administration.AdministrationGeneral;
+
+@model UserProfileAdministrationViewModel
+
+@{
+    ViewBag.Title = $"Delete user {Model.UserName}";
+}
+
+<h1 class="text-danger">&nbsp;<span class="glyphicon glyphicon-warning-sign"></span> @ViewBag.Title</h1>
+<div class="container ">
+    @using (Html.BeginForm<UsersController>(c => c.Delete((UserProfileAdministrationViewModel)null), FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationMessage(GlobalConstants.DateTimeError)
+        @Html.HiddenFor(u => u.Id)
+
+    <div class="alert" style="font-size: 2em">
+        <p>Are you sure you want to delete profile?</p>
+        <p><b>Username: @Model.UserName</b></p>
+        <p><b>Email: @Model.Email</b></p>
+        <p>This will delete the user and all its related information, including submissions, scores and participations in contests.</p>
+        <p class="text-danger">The action cannot be reverted!!!</p>
+    </div>
+        <div class="editor-label">
+            <div>
+                <input type="submit" class="btn btn-danger pull-left" value="@SharedResource.Delete" onclick="this.disabled = true; this.form.submit();" />
+            </div>
+            <div class="col-xs-4">
+                <a href=@ViewBag.ReturnUrl class="btn btn-primary">@SharedResource.Cancel</a>
+            </div>
+        </div>
+    }
+</div>
