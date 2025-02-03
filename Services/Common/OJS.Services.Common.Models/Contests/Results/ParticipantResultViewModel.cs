@@ -15,6 +15,7 @@ public class ParticipantResultViewModel
             ParticipantUsername = participant.User.UserName,
             ParticipantFirstName = participant.User.UserSettings.FirstName,
             ParticipantLastName = participant.User.UserSettings.LastName,
+            ParticipantEmail = participant.User.Email,
             ParticipantProblemIds = participant.ProblemsForParticipants.Select(p => p.ProblemId),
         };
 
@@ -25,6 +26,8 @@ public class ParticipantResultViewModel
     public string? ParticipantFirstName { get; set; }
 
     public string? ParticipantLastName { get; set; }
+
+    public string? ParticipantEmail { get; set; }
 
     public IEnumerable<ProblemResultPairViewModel> ProblemResults { get; set; }
         = Enumerable.Empty<ProblemResultPairViewModel>();

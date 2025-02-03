@@ -406,6 +406,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             return;
         }
 
+        if (problem.HasAdditionalFiles)
+        {
+            problem.AdditionalFiles = await this.problemsDataService
+                .GetByIdQuery(model.ProblemId)
+                .Select(p => p.AdditionalFiles)
+                .FirstOrDefaultAsync();
+        }
+
         SubmissionForProcessing? submissionForProcessing = null;
         await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
