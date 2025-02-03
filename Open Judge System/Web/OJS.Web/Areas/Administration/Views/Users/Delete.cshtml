@@ -7,7 +7,7 @@
 
 @{
     ViewBag.Title = $"Delete user {Model.Username}";
-    var returnUrl = Request.UrlReferrer?.ToString() ?? Url.Action("Index", "Home");
+    var returnUrl = Url.Action("Index", "Home");
 }
 
 <h1 class="text-danger">&nbsp;<span class="glyphicon glyphicon-warning-sign"></span> @ViewBag.Title</h1>
