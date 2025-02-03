@@ -2757,6 +2757,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ContestsControllers.bg.designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Areas.Administration.Contests</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Areas\Administration\Contests\ViewModels\TransferContestParticipants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -2884,11 +2885,13 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ContestEditor.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Areas.Administration.Contests.Views.Partials</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Areas\Administration\Contests\Views\Partials\ContestEditor.bg.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ContestEditor.bg.designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Areas.Administration.Contests.Views.Partials</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Areas\Administration\ExamGroups\ExamGroupsControllers.bg.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

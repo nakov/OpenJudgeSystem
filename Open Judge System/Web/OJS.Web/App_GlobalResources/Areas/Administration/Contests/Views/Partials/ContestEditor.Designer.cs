@@ -188,7 +188,7 @@ namespace Resources.Areas.Administration.Contests.Views.Partials {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the count of the problem groups for online contest.
+        ///   Looks up a localized string similar to Enter the count of the problem groups for contest with random tasks.
         /// </summary>
         public static string Number_of_problem_groups {
             get {

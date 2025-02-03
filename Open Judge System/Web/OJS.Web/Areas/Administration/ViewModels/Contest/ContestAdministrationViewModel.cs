@@ -218,6 +218,8 @@ namespace OJS.Web.Areas.Administration.ViewModels.Contest
 
         public bool IsOnline => this.Type == (int)ContestType.OnlinePracticalExam;
 
+        public bool IsWithRandomTasks => this.IsOnline || this.Type == (int)ContestType.OnsitePracticalExamWithRandomTasks;
+
         public override Contest GetEntityModel(Contest model = null)
         {
             model = model ?? new Contest();

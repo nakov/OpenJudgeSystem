@@ -168,4 +168,7 @@
   <data name="Video" xml:space="preserve">
     <value>Video</value>
   </data>
+  <data name="Random_tasks_onsite_practical_exam" xml:space="preserve">
+    <value>Onsite Practical Exam With Random Tasks</value>
+  </data>
 </root>

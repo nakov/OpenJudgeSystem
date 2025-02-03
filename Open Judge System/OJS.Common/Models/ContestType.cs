@@ -14,5 +14,8 @@
 
         [LocalizedDescription("Lab", typeof(Resource))]
         Lab = 3,
+
+        [LocalizedDescription("Random_tasks_onsite_practical_exam", typeof(Resource))]
+        OnsitePracticalExamWithRandomTasks = 4,
     }
 }

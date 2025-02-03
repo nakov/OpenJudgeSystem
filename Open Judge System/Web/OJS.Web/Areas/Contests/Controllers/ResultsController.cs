@@ -399,7 +399,7 @@
             var fromPoints = 0;
             var toPoints = 0;
 
-            if (contest.IsOnline && official)
+            if (contest.IsWithRandomTasks && official)
             {
                 statsModel.IsGroupedByProblemGroup = true;
 

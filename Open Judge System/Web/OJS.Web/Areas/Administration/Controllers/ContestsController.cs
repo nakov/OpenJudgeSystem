@@ -235,7 +235,7 @@ namespace OJS.Web.Areas.Administration.Controllers
 
             contest = model.GetEntityModel(contest);
 
-            if (contest.IsOnline && contest.ProblemGroups.Count == 0)
+            if (contest.IsWithRandomTasks && contest.ProblemGroups.Count == 0)
             {
                 this.AddProblemGroupsToContest(contest, model.ProblemGroupsCount);
             }
@@ -679,10 +679,13 @@ namespace OJS.Web.Areas.Administration.Controllers
                 {
                     this.ModelState.AddModelError(nameof(model.Duration), Resource.Duration_invalid_format);
                 }
+            }
 
+            if (model.IsWithRandomTasks)
+            {
                 if (model.ProblemGroupsCount <= 0)
                 {
-                    this.ModelState.AddModelError(nameof(model.ProblemGroupsCount), Resource.Required_field_for_online);
+                    this.ModelState.AddModelError(nameof(model.ProblemGroupsCount), Resource.Required_field_for_contest_with_random_tasks);
                 }
                 else if (model.ProblemGroupsCount > ProblemGroupsCountLimit)
                 {

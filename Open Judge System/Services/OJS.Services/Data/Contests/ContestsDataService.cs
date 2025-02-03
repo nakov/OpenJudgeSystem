@@ -123,10 +123,15 @@
             return contest != null && contest.IsActive;
         }
 
-        public bool IsOnlineById(int id) =>
-            this.GetByIdQuery(id)
+        public bool IsWithRandomTasksById(int id)
+        {
+            var contestType = this.GetByIdQuery(id)
                 .Select(c => c.Type)
-                .FirstOrDefault() == ContestType.OnlinePracticalExam;
+                .FirstOrDefault();
+
+            return  contestType == ContestType.OnlinePracticalExam ||
+                    contestType == ContestType.OnsitePracticalExamWithRandomTasks;
+        }
 
         public bool ExistsById(int id) => this.GetAll().Any(c => c.Id == id);
 
