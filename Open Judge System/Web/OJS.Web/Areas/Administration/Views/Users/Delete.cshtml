@@ -7,6 +7,7 @@
 
 @{
     ViewBag.Title = $"Delete user {Model.Username}";
+    var returnUrl = Request.UrlReferrer?.ToString() ?? Url.Action("Index", "Home");
 }
 
 <h1 class="text-danger">&nbsp;<span class="glyphicon glyphicon-warning-sign"></span> @ViewBag.Title</h1>
@@ -43,7 +44,7 @@
                 <input type="submit" class="btn btn-danger pull-left" value="@SharedResource.Delete" disabled onclick="this.disabled = true; this.form.submit();" />
             </div>
             <div class="col-xs-4">
-                <a href=@ViewBag.ReturnUrl class="btn btn-primary">@SharedResource.Cancel</a>
+                <a href=@returnUrl class="btn btn-primary">@SharedResource.Cancel</a>
             </div>
         </div>
     }

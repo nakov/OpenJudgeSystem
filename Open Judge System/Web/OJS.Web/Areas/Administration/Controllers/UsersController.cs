@@ -53,8 +53,6 @@
                 return this.RedirectToAction(nameof(this.Index));
             }
 
-            this.ViewBag.ReturnUrl = this.Request.UrlReferrer?.AbsolutePath.ToString() ?? "/";
-
             return this.View(user);
         }
 
