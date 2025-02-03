@@ -10,6 +10,7 @@
     using Kendo.Mvc.UI;
     using OJS.Data;
     using OJS.Web.Areas.Administration.Controllers.Common;
+    using OJS.Web.Areas.Administration.ViewModels.User;
     using OJS.Web.Common.Extensions;
 
     using ViewModelType = OJS.Web.Areas.Administration.ViewModels.User.UserProfileAdministrationViewModel;
@@ -43,7 +44,7 @@
         [HttpGet]
         public ActionResult Delete(string id)
         {
-            var user = this.Data.Users.All().Where(u => u.Id == id).Select(ViewModelType.ViewModel).FirstOrDefault();
+            var user = this.Data.Users.All().Where(u => u.Id == id).Select(UserProfileDeleteViewModel.FromUserProfile).FirstOrDefault();
 
             if (user == null)
             {
@@ -57,8 +58,14 @@
         }
 
         [HttpPost]
-        public ActionResult Delete(ViewModelType model)
+        public ActionResult Delete(UserProfileDeleteViewModel model)
         {
+            if (model.InitiatorUsername != this.UserProfile.UserName)
+            {
+                this.ModelState.AddModelError(nameof(model.InitiatorUsername), "You must enter your username.");
+                return this.View(model);
+            }
+
             var userProfile = this.Data.Users.All().FirstOrDefault(u => u.Id == model.Id);
 
             if (userProfile != null)

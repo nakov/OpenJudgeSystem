@@ -1845,6 +1845,7 @@
     <Compile Include="Areas\Administration\ViewModels\TestRun\TestRunViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Test\TestViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\User\UserProfileAdministrationViewModel.cs" />
+    <Compile Include="Areas\Administration\ViewModels\User\UserProfileDeleteViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\User\UserProfileSimpleAdministrationViewModel.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
     <Compile Include="Areas\Api\Controllers\ApiController.cs" />

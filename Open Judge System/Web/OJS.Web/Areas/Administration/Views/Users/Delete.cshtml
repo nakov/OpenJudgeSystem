@@ -3,30 +3,44 @@
 
 @using SharedResource = Resources.Areas.Administration.AdministrationGeneral;
 
-@model UserProfileAdministrationViewModel
+@model UserProfileDeleteViewModel
 
 @{
-    ViewBag.Title = $"Delete user {Model.UserName}";
+    ViewBag.Title = $"Delete user {Model.Username}";
 }
 
 <h1 class="text-danger">&nbsp;<span class="glyphicon glyphicon-warning-sign"></span> @ViewBag.Title</h1>
 <div class="container ">
-    @using (Html.BeginForm<UsersController>(c => c.Delete((UserProfileAdministrationViewModel)null), FormMethod.Post))
+    @using (Html.BeginForm<UsersController>(c => c.Delete((UserProfileDeleteViewModel)null), FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-        @Html.ValidationMessage(GlobalConstants.DateTimeError)
         @Html.HiddenFor(u => u.Id)
 
-    <div class="alert" style="font-size: 2em">
-        <p>Are you sure you want to delete profile?</p>
-        <p><b>Username: @Model.UserName</b></p>
-        <p><b>Email: @Model.Email</b></p>
-        <p>This will delete the user and all its related information, including submissions, scores and participations in contests.</p>
-        <p class="text-danger">The action cannot be reverted!!!</p>
-    </div>
+        <div class="alert" style="font-size: 2em">
+            <p>Are you sure you want to delete profile?</p>
+            <p><b>Username: @Model.Username</b></p>
+            <p><b>Email: @Model.Email</b></p>
+            <p>This will delete the user and all its related information, including submissions, scores and participations in contests.</p>
+            <p class="text-danger">The action cannot be reverted!!!</p>
+        </div>
+
+        <div class="row">
+            <div class="editor-label col-xs-3">
+                <div class="pull-right">
+                    @Html.LabelFor(m => m.InitiatorUsername)
+                </div>
+            </div>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.InitiatorUsername, new { @class = "form-control pull-left full-editor" })
+            </div>
+            <div class="editor-field col-xs-4">
+                @Html.ValidationMessageFor(m => m.InitiatorUsername)
+            </div>
+        </div>
+        <br />
         <div class="editor-label">
             <div>
-                <input type="submit" class="btn btn-danger pull-left" value="@SharedResource.Delete" onclick="this.disabled = true; this.form.submit();" />
+                <input type="submit" class="btn btn-danger pull-left" value="@SharedResource.Delete" disabled onclick="this.disabled = true; this.form.submit();" />
             </div>
             <div class="col-xs-4">
                 <a href=@ViewBag.ReturnUrl class="btn btn-primary">@SharedResource.Cancel</a>
@@ -34,3 +48,22 @@
         </div>
     }
 </div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            // Attach an event listener to the initiator username input field.
+            $('#InitiatorUsername').on('input', function () {
+                var enteredUsername = $(this).val().trim();
+                var deleteButton = $("input[type='submit'].btn-danger");
+
+                // Enable the delete button only when the initiator has entered username.
+                if (enteredUsername) {
+                    deleteButton.prop('disabled', false);
+                } else {
+                    deleteButton.prop('disabled', true);
+                }
+            });
+        })
+    </script>
+}
