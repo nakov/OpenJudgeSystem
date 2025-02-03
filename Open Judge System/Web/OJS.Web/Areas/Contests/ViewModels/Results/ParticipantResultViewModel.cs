@@ -16,6 +16,7 @@
                 ParticipantUsername = participant.User.UserName,
                 ParticipantFirstName = participant.User.UserSettings.FirstName,
                 ParticipantLastName = participant.User.UserSettings.LastName,
+                ParticipantEmail = participant.User.Email,
                 ParticipantProblemIds = participant.Problems.Select(p => p.Id),
             };
 
@@ -26,6 +27,8 @@
         public string ParticipantFirstName { get; set; }
 
         public string ParticipantLastName { get; set; }
+
+        public string ParticipantEmail { get; set; }
 
         public IEnumerable<ProblemResultPairViewModel> ProblemResults { get; set; }
 
