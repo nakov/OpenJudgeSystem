@@ -54,10 +54,6 @@ namespace OJS.Data.Models.Problems
         /// </summary>
         public byte[]? AdditionalFiles { get; set; }
 
-        [DefaultValue(true)]
-        public bool ShowResults { get; set; }
-
-        [DefaultValue(false)]
         public bool ShowDetailedFeedback { get; set; }
 
         public int? DefaultSubmissionTypeId { get; set; }
