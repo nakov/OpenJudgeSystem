@@ -3,7 +3,7 @@
     using OJS.Data.Contracts;
     using OJS.Data.Models;
 
-    public interface IUsersRepository : IRepository<UserProfile>
+    public interface IUsersRepository : IDeletableEntityRepository<UserProfile>
     {
         UserProfile GetByUsername(string username);
 
