@@ -1,5 +1,6 @@
 ﻿namespace OJS.Web.Controllers
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
@@ -202,13 +203,14 @@
 
         private void AddOrUpdateUser(UserProfile user)
         {
-            var existingUser = this.Data.Users.GetById(user.Id);
+            var existingUser = this.Data.Users.AllWithDeleted().Where(u => u.Id == user.Id).FirstOrDefault();
             if (existingUser == null)
             {
                 this.Data.Users.Add(user);
             }
             else
             {
+                existingUser.UserName = user.UserName;
                 existingUser.PasswordHash = user.PasswordHash;
                 existingUser.SecurityStamp = user.SecurityStamp;
                 existingUser.Email = user.Email;
