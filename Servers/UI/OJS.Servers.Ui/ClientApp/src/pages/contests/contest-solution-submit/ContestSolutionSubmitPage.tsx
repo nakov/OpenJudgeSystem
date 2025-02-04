@@ -288,8 +288,7 @@ const ContestSolutionSubmitPage = () => {
         }
 
         const intervalId = setInterval(() => {
-            const currentTime = moment();
-            const elapsedTimeInSeconds = moment.utc(currentTime).diff(moment.utc(lastSubmissionTime), 'seconds');
+            const elapsedTimeInSeconds = moment.utc().diff(moment.utc(lastSubmissionTime), 'seconds');
             const newRemainingTime = userSubmissionsTimeLimit - elapsedTimeInSeconds;
 
             if (newRemainingTime <= 0) {
