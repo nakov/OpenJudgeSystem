@@ -8,7 +8,7 @@
     using OJS.Data.Repositories.Base;
     using OJS.Data.Repositories.Contracts;
 
-    public class UsersRepository : EfGenericRepository<UserProfile>, IUsersRepository
+    public class UsersRepository : EfDeletableEntityRepository<UserProfile>, IUsersRepository
     {
         public UsersRepository(DbContext context)
             : base(context)
@@ -27,7 +27,11 @@
 
         public override void Delete(UserProfile entity)
         {
-            throw new NotImplementedException();
+            var guid = Guid.NewGuid().ToString();
+            entity.UserName = guid;
+            entity.Email = guid + "@deleted.com";
+            entity.UserSettings = new UserSettings();
+            base.Delete(entity);
         }
     }
 }
