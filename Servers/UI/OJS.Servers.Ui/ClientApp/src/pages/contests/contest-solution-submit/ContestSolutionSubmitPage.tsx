@@ -268,25 +268,19 @@ const ContestSolutionSubmitPage = () => {
                 !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
             const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
 
+            const elapsedSecondsFromLastSubmission = Math.abs(moment.utc().diff(moment.utc(lastSubmissionTime), 'seconds'));
+            const secondsUntilTimerEnds = Math.max((userSubmissionsTimeLimit || 0) - elapsedSecondsFromLastSubmission, 0);
+
             const shouldSubmitBeDisabled = isCodeStrategyAndCodeIsEmptyOrTooShort ||
                 isFileUploadAndFileIsEmpty ||
-                !selectedSubmissionType;
+                !selectedSubmissionType ||
+                secondsUntilTimerEnds > 0;
 
-            if (!lastSubmissionTime || !userSubmissionsTimeLimit) {
-                setIsSubmitButtonDisabled(shouldSubmitBeDisabled);
-                return;
-            }
+            setRemainingTime(secondsUntilTimerEnds);
+            setIsSubmitButtonDisabled(shouldSubmitBeDisabled);
 
-            const elapsedTimeInSeconds = moment.utc().diff(moment.utc(lastSubmissionTime), 'seconds');
-            const newRemainingTime = Math.min(userSubmissionsTimeLimit - elapsedTimeInSeconds, userSubmissionsTimeLimit);
-
-            if (newRemainingTime <= 0) {
-                setRemainingTime(0);
-                setIsSubmitButtonDisabled(shouldSubmitBeDisabled);
+            if (secondsUntilTimerEnds <= 0) {
                 clearInterval(intervalId);
-            } else {
-                setRemainingTime(newRemainingTime);
-                setIsSubmitButtonDisabled(true);
             }
         };
 
