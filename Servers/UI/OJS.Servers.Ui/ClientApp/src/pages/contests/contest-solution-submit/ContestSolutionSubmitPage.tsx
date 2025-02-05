@@ -73,7 +73,7 @@ const ContestSolutionSubmitPage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType, slug } = useParams();
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
-    const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
+    const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(true);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -200,31 +200,6 @@ const ContestSolutionSubmitPage = () => {
         getSubmissionsData();
     };
 
-    const handleSubmitButtonShouldBeDisabled = useCallback((force?: boolean) => {
-        if (force) {
-            // Submit button is forcefully disabled when timer is active
-            setIsSubmitButtonDisabled(true);
-            return;
-        }
-
-        if (!selectedSubmissionType) {
-            return;
-        }
-
-        const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
-
-        const isCodeStrategyAndCodeIsEmptyOrTooShort =
-            !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
-        const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
-
-        if (isCodeStrategyAndCodeIsEmptyOrTooShort || isFileUploadAndFileIsEmpty) {
-            setIsSubmitButtonDisabled(true);
-            return;
-        }
-
-        setIsSubmitButtonDisabled(false);
-    }, [ selectedSubmissionType, submissionCode, uploadedFile ]);
-
     useSuccessMessageEffect({
         data: [
             { message: SUBMISSION_SENT, shouldGet: submitSolutionSuccess },
@@ -283,28 +258,45 @@ const ContestSolutionSubmitPage = () => {
 
     // Disable submit button based on submission time limits
     useEffect(() => {
-        if (!lastSubmissionTime || !userSubmissionsTimeLimit) {
-            return;
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let intervalId: any;
 
-        const intervalId = setInterval(() => {
+        const updateSubmitButtonState = () => {
+            const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
+
+            const isCodeStrategyAndCodeIsEmptyOrTooShort =
+                !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
+            const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
+
+            const shouldSubmitBeDisabled = isCodeStrategyAndCodeIsEmptyOrTooShort ||
+                isFileUploadAndFileIsEmpty ||
+                !selectedSubmissionType;
+
+            if (!lastSubmissionTime || !userSubmissionsTimeLimit) {
+                setIsSubmitButtonDisabled(shouldSubmitBeDisabled);
+                return;
+            }
+
             const elapsedTimeInSeconds = moment.utc().diff(moment.utc(lastSubmissionTime), 'seconds');
             const newRemainingTime = Math.min(userSubmissionsTimeLimit - elapsedTimeInSeconds, userSubmissionsTimeLimit);
 
             if (newRemainingTime <= 0) {
-                handleSubmitButtonShouldBeDisabled();
                 setRemainingTime(0);
+                setIsSubmitButtonDisabled(shouldSubmitBeDisabled);
                 clearInterval(intervalId);
             } else {
                 setRemainingTime(newRemainingTime);
-                handleSubmitButtonShouldBeDisabled(true);
+                setIsSubmitButtonDisabled(true);
             }
-        });
+        };
+
+        updateSubmitButtonState();
+        intervalId = setInterval(updateSubmitButtonState, 1000);
 
         return () => {
             clearInterval(intervalId);
         };
-    }, [ lastSubmissionTime, userSubmissionsTimeLimit, handleSubmitButtonShouldBeDisabled ]);
+    }, [ lastSubmissionTime, selectedSubmissionType, submissionCode, uploadedFile, userSubmissionsTimeLimit ]);
 
     // Manage remaining time for compete contest
     useEffect(() => {
@@ -312,15 +304,17 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
 
-        const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
+        const remainingTimeForParticipantOrContest = moment.utc().diff(moment.utc(endDateTimeForParticipantOrContest));
         if (remainingTimeForParticipantOrContest > 0) {
             // Positive time means time is past end time for contest or participant
             return;
         }
 
-        const intervalId = setInterval(() => {
-            const currentTime = moment();
-            const remainingCompeteTime = moment.utc(endDateTimeForParticipantOrContest).diff(moment.utc(currentTime));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let intervalId: any;
+
+        const updateRemainingTime = () => {
+            const remainingCompeteTime = moment.utc(endDateTimeForParticipantOrContest).diff(moment.utc());
 
             if (remainingCompeteTime > 0) {
                 const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'milliseconds'));
@@ -329,7 +323,10 @@ const ContestSolutionSubmitPage = () => {
                 setRemainingTimeForCompete(calculatedTimeFormatted(moment.duration(0, 'milliseconds')));
                 clearInterval(intervalId);
             }
-        });
+        };
+
+        updateRemainingTime();
+        intervalId = setInterval(updateRemainingTime, 1000);
 
         return () => {
             clearInterval(intervalId);
@@ -369,12 +366,6 @@ const ContestSolutionSubmitPage = () => {
             }));
         }
     }, [ contestDetails, contestId, data, dispatch ]);
-
-    // Fetch submissions when the selected problem changes
-    useEffect(() => {
-        // Disable submit button when code is updated
-        handleSubmitButtonShouldBeDisabled();
-    }, [ handleSubmitButtonShouldBeDisabled, selectedSubmissionType, submissionCode, uploadedFile ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
