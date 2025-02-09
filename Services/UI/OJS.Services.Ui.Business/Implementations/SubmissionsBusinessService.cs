@@ -426,7 +426,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submissionServiceModel =
             this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem.Map<Problem>(),
-                submissionType);
+                submissionType, model.Verbosely);
 
         await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel,
             submissionForProcessing!);

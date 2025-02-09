@@ -2,6 +2,7 @@
 namespace OJS.Services.Worker.Business.Implementations
 {
     using Microsoft.Extensions.Logging;
+    using OJS.Services.Worker.Business.Extensions;
     using System;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
@@ -38,8 +39,12 @@ namespace OJS.Services.Worker.Business.Implementations
         public IExecutionStrategy CreateExecutionStrategy(IOjsSubmission submission)
         {
             IExecutionStrategy executionStrategy;
+            var submissionId = submission.Id.ToString()!;
+            var verbosely = submission.Verbosely;
             var tasksService = new TasksService();
-            var processExecutorFactory = new ProcessExecutorFactory(tasksService, this.loggerFactory.CreateLogger<StandardProcessExecutor>());
+            var processExecutorFactory = new ProcessExecutorFactory(
+                tasksService,
+                this.loggerFactory.CreateLogger<StandardProcessExecutor>());
 
             switch (submission.ExecutionStrategyType)
             {
@@ -49,7 +54,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<CompileExecuteAndCheckExecutionStrategy<CompileExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<CompileExecuteAndCheckExecutionStrategy<CompileExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy:
                     executionStrategy = new CPlusPlusCompileExecuteAndCheckExecutionStrategy<CPlusPlusCompileExecuteAndCheckExecutionStrategySettings>(
@@ -57,7 +62,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<CPlusPlusCompileExecuteAndCheckExecutionStrategy<CPlusPlusCompileExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<CPlusPlusCompileExecuteAndCheckExecutionStrategy<CPlusPlusCompileExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.CPlusPlusZipFileExecutionStrategy:
                     executionStrategy = new CPlusPlusZipFileExecutionStrategy<CPlusPlusZipFileExecutionStrategySettings>(
@@ -65,7 +70,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<CPlusPlusZipFileExecutionStrategy<CPlusPlusZipFileExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<CPlusPlusZipFileExecutionStrategy<CPlusPlusZipFileExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck:
                 case ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck:
@@ -75,7 +80,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<DotNetCoreCompileExecuteAndCheckExecutionStrategy<DotNetCoreCompileExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<DotNetCoreCompileExecuteAndCheckExecutionStrategy<DotNetCoreCompileExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.GolangCompileExecuteAndCheck:
                     executionStrategy = new GolangCompileExecuteAndCheckExecutionStrategy<GolangCompileExecuteAndCheckExecutionStrategySettings>(
@@ -83,7 +88,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<GolangCompileExecuteAndCheckExecutionStrategy<GolangCompileExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<GolangCompileExecuteAndCheckExecutionStrategy<GolangCompileExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.DotNetCoreUnitTestsExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore5UnitTestsExecutionStrategy:
@@ -93,7 +98,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<DotNetCoreUnitTestsExecutionStrategy<DotNetCoreUnitTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<DotNetCoreUnitTestsExecutionStrategy<DotNetCoreUnitTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.DotNetCoreProjectExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore5ProjectExecutionStrategy:
@@ -103,7 +108,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<DotNetCoreProjectExecutionStrategy<DotNetCoreProjectExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<DotNetCoreProjectExecutionStrategy<DotNetCoreProjectExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy:
@@ -113,7 +118,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<DotNetCoreProjectTestsExecutionStrategy<DotNetCoreProjectTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<DotNetCoreProjectTestsExecutionStrategy<DotNetCoreProjectTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
                 case ExecutionStrategyType.Java21PreprocessCompileExecuteAndCheck:
@@ -122,7 +127,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<JavaPreprocessCompileExecuteAndCheckExecutionStrategy<JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<JavaPreprocessCompileExecuteAndCheckExecutionStrategy<JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck:
                 case ExecutionStrategyType.Java21ZipFileCompileExecuteAndCheck:
@@ -131,7 +136,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<JavaZipFileCompileExecuteAndCheckExecutionStrategy<JavaZipFileCompileExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<JavaZipFileCompileExecuteAndCheckExecutionStrategy<JavaZipFileCompileExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.JavaProjectTestsExecutionStrategy:
                 case ExecutionStrategyType.Java21ProjectTestsExecutionStrategy:
@@ -140,7 +145,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<JavaProjectTestsExecutionStrategy<JavaProjectTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<JavaProjectTestsExecutionStrategy<JavaProjectTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.JavaUnitTestsExecutionStrategy:
                 case ExecutionStrategyType.Java21UnitTestsExecutionStrategy:
@@ -149,7 +154,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<JavaUnitTestsExecutionStrategy<JavaUnitTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<JavaUnitTestsExecutionStrategy<JavaUnitTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy:
                 case ExecutionStrategyType.Java21SpringAndHibernateProjectExecution:
@@ -158,7 +163,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.compilerFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<JavaSpringAndHibernateProjectExecutionStrategy<JavaSpringAndHibernateProjectExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<JavaSpringAndHibernateProjectExecutionStrategy<JavaSpringAndHibernateProjectExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck:
                 case ExecutionStrategyType.NodeJsV20PreprocessExecuteAndCheck:
@@ -166,7 +171,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<NodeJsPreprocessExecuteAndCheckExecutionStrategy<NodeJsPreprocessExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<NodeJsPreprocessExecuteAndCheckExecutionStrategy<NodeJsPreprocessExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha:
                 case ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunUnitTestsWithMocha:
@@ -174,7 +179,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests:
                 case ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunJsDomUnitTests:
@@ -182,7 +187,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy:
                 case ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy:
@@ -190,14 +195,14 @@ namespace OJS.Services.Worker.Business.Implementations
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy:
                     executionStrategy = new NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy:
                 case ExecutionStrategyType.NodeJsV20ZipExecuteHtmlAndCssStrategy:
@@ -205,14 +210,14 @@ namespace OJS.Services.Worker.Business.Implementations
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<NodeJsZipExecuteHtmlAndCssStrategy<NodeJsZipExecuteHtmlAndCssStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<NodeJsZipExecuteHtmlAndCssStrategy<NodeJsZipExecuteHtmlAndCssStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy:
                     executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategy<RunSpaAndExecuteMochaTestsExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<RunSpaAndExecuteMochaTestsExecutionStrategy<RunSpaAndExecuteMochaTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<RunSpaAndExecuteMochaTestsExecutionStrategy<RunSpaAndExecuteMochaTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NodeJsV20RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
                 case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
@@ -220,117 +225,117 @@ namespace OJS.Services.Worker.Business.Implementations
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<RunSpaAndExecuteMochaTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<RunSpaAndExecuteMochaTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PythonExecuteAndCheck:
                     executionStrategy = new PythonExecuteAndCheckExecutionStrategy<PythonExecuteAndCheckExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PythonExecuteAndCheckExecutionStrategy<PythonExecuteAndCheckExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PythonExecuteAndCheckExecutionStrategy<PythonExecuteAndCheckExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PythonUnitTests:
                     executionStrategy = new PythonUnitTestsExecutionStrategy<PythonUnitTestsExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PythonUnitTestsExecutionStrategy<PythonUnitTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PythonUnitTestsExecutionStrategy<PythonUnitTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PythonCodeExecuteAgainstUnitTests:
                     executionStrategy = new PythonCodeExecuteAgainstUnitTestsExecutionStrategy<PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PythonCodeExecuteAgainstUnitTestsExecutionStrategy<PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PythonCodeExecuteAgainstUnitTestsExecutionStrategy<PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PythonProjectTests:
                     executionStrategy = new PythonProjectTestsExecutionStrategy<PythonProjectTestsExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PythonProjectTestsExecutionStrategy<PythonProjectTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PythonProjectTestsExecutionStrategy<PythonProjectTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PythonProjectUnitTests:
                     executionStrategy = new PythonProjectUnitTestsExecutionStrategy<PythonProjectUnitTestsExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PythonProjectUnitTestsExecutionStrategy<PythonProjectUnitTestsExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PythonProjectUnitTestsExecutionStrategy<PythonProjectUnitTestsExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.SqlServerSingleDatabasePrepareDatabaseAndRunQueries:
                     executionStrategy = new SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy<SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy<SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy<SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.SqlServerSingleDatabaseRunQueriesAndCheckDatabase:
                     executionStrategy = new SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabase:
                     executionStrategy = new SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.MySqlPrepareDatabaseAndRunQueries:
                     executionStrategy = new MySqlPrepareDatabaseAndRunQueriesExecutionStrategy<MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<MySqlPrepareDatabaseAndRunQueriesExecutionStrategy<MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<MySqlPrepareDatabaseAndRunQueriesExecutionStrategy<MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.MySqlRunQueriesAndCheckDatabase:
                     executionStrategy = new MySqlRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<MySqlRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<MySqlRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.MySqlRunSkeletonRunQueriesAndCheckDatabase:
                     executionStrategy = new MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.DoNothing:
                     executionStrategy = new DoNothingExecutionStrategy<DoNothingExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<DoNothingExecutionStrategy<DoNothingExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<DoNothingExecutionStrategy<DoNothingExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.CheckOnly:
                     executionStrategy = new CheckOnlyExecutionStrategy<CheckOnlyExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<CheckOnlyExecutionStrategy<CheckOnlyExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<CheckOnlyExecutionStrategy<CheckOnlyExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries:
                     executionStrategy = new PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy<PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy<PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy<PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PostgreSqlRunQueriesAndCheckDatabase:
                     executionStrategy = new PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings>(
                         submission,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PostgreSqlRunSkeletonRunQueriesAndCheckDatabase:
                     executionStrategy =
                         new PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>(
                             submission,
                             this.executionStrategySettingsProvider,
-                            this.loggerFactory.CreateLogger<PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>>());
+                            this.loggerFactory.CreateStrategyLogger<PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.PythonDjangoOrmExecutionStrategy:
                     executionStrategy = new PythonDjangoOrmExecutionStrategy<PythonDjangoOrmExecutionStrategySettings>(
                         submission,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider,
-                        this.loggerFactory.CreateLogger<PythonDjangoOrmExecutionStrategy<PythonDjangoOrmExecutionStrategySettings>>());
+                        this.loggerFactory.CreateStrategyLogger<PythonDjangoOrmExecutionStrategy<PythonDjangoOrmExecutionStrategySettings>>(submissionId, verbosely));
                     break;
                 case ExecutionStrategyType.NotFound:
                 default:
