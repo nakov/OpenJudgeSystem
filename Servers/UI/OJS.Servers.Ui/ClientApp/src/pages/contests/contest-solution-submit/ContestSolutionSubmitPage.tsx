@@ -629,7 +629,8 @@ const ContestSolutionSubmitPage = () => {
                         {(allowedFileExtensions || []).join(', ')}
                     </div>
                     {fileUploadError && <div className={styles.fileUploadError}>{fileUploadError}</div>}
-                    <CheckBox label="Verbose" onChange={setExecuteVerbosely} id="verbose-checkbox" />
+                    {contest?.userIsAdminOrLecturerInContest &&
+                        <CheckBox label="Execute verbosely" onChange={setExecuteVerbosely} id="execute-verbosely-checkbox" />}
                     <FileUploader
                       file={uploadedFile}
                       problemId={selectedContestDetailsProblem?.id}
@@ -681,7 +682,8 @@ const ContestSolutionSubmitPage = () => {
                   onCodeChange={(inputCode) => setSubmissionCode(inputCode)}
                 />
                 <div className={styles.submitSettings}>
-                    <CheckBox id="verbose-checkbox" label="Verbose" onChange={setExecuteVerbosely} />
+                    {contest?.userIsAdminOrLecturerInContest &&
+                        <CheckBox label="Execute verbosely" onChange={setExecuteVerbosely} id="execute-verbosely-checkbox" />}
                     <Dropdown<ISubmissionTypeType>
                       dropdownItems={strategyDropdownItems || []}
                       value={selectedSubmissionType}
@@ -730,7 +732,7 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFileIsLoading,
         submitSolutionFileHasError,
         submitSolutionFileError,
-        setExecuteVerbosely,
+        contest?.userIsAdminOrLecturerInContest,
     ]);
 
     if (isLoading) {
