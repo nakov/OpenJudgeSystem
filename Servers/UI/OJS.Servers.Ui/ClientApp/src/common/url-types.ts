@@ -86,6 +86,7 @@ interface ISubmitContestSolutionParams {
     submissionTypeId: number;
     contestId: number;
     isOnlineExam?: boolean;
+    verbosely?: boolean;
 }
 
 interface IRegisterUserForContestParams {
