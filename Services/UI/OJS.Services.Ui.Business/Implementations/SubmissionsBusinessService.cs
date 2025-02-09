@@ -115,7 +115,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.contestCategoriesCache = contestCategoriesCache;
     }
 
-    public async Task Retest(int submissionId)
+    public async Task Retest(int submissionId, bool verbosely = false)
     {
         var submission = await this.submissionsData.GetSubmissionById<SubmissionForRetestServiceModel>(submissionId)
             ?? throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
@@ -135,7 +135,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = submissionId });
+        verbosely = verbosely && userIsAdminOrLecturerInContest;
+        await this.publisher.Publish(new RetestSubmissionPubSubModel { Id = submissionId, Verbosely = verbosely });
     }
 
     public async Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId)

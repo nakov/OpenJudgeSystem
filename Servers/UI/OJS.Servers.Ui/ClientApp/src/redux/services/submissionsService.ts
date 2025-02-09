@@ -80,9 +80,9 @@ const submissionsService = createApi({
         retestSubmission: builder.query<
             void,
             IRetestSubmissionUrlParams>({
-                query: ({ id }) => (
+                query: ({ id, verbosely }) => (
                     {
-                        url: `Compete/Retest/${id}`,
+                        url: `Compete/Retest/${id}?verbosely=${verbosely}`,
                         method: 'POST',
                     }),
             }),

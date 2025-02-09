@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
+import CheckBox from 'src/components/guidelines/checkbox/CheckBox';
 import Mentor from 'src/components/mentor/Mentor';
 
 import { sortTestRunsByTrialTest } from '../../../common/submissions-utils';
@@ -39,6 +40,7 @@ const SubmissionDetailsPage = () => {
     const { submissionId } = useParams();
     const { themeColors, getColorClassName, isDarkMode } = useTheme();
     const [ isRetestingStarted, setIsRetestingStarted ] = useState(false);
+    const [ retestVerbosely, setRetestVerbosely ] = useState(false);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
     const { contestDetails, breadcrumbItems } = useAppSelector((state) => state.contests);
@@ -103,8 +105,8 @@ const SubmissionDetailsPage = () => {
 
     const handleRetestSubmission = useCallback(() => {
         setIsRetestingStarted(true);
-        retestSubmission({ id: solutionId! });
-    }, [ retestSubmission, solutionId ]);
+        retestSubmission({ id: solutionId!, verbosely: retestVerbosely });
+    }, [ retestSubmission, solutionId, retestVerbosely ]);
 
     const handleDownloadFile = useCallback(async () => {
         try {
@@ -178,6 +180,7 @@ const SubmissionDetailsPage = () => {
                           type={ButtonType.secondary}
                           onClick={() => handleRetestSubmission()}
                         />
+                        <CheckBox id="retest-verbosely-checkbox" onChange={setRetestVerbosely} label="Retest verbosely" />
                     </>
                 )}
             </div>

@@ -69,6 +69,7 @@ interface IGetContestResultsParams {
 
 interface IRetestSubmissionUrlParams {
     id: number;
+    verbosely?: boolean;
 }
 
 interface IProblemUrlById {
