@@ -20,6 +20,7 @@ import useTheme from '../../../hooks/use-theme';
 import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
 import {
     useGetSubmissionDetailsQuery,
+    useLazyGetSubmissionLogFileQuery,
     useLazyGetSubmissionUploadedFileQuery,
     useLazyRetestSubmissionQuery,
 } from '../../../redux/services/submissionsService';
@@ -49,6 +50,12 @@ const SubmissionDetailsPage = () => {
     const [ downloadSolutionErrorMessage, setDownloadSolutionErrorMessage ] = useState<string>('');
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
+    const [
+        downloadLogFile,
+        {
+            isError: isDownloadLogsError,
+            error: downloadLogsError,
+        } ] = useLazyGetSubmissionLogFileQuery();
     const [
         retestSubmission,
         {
@@ -121,6 +128,14 @@ const SubmissionDetailsPage = () => {
         }
     }, [ downloadUploadedFile, solutionId ]);
 
+    const handleDownloadLogsFile = useCallback(async () => {
+        const response = await downloadLogFile({ id: solutionId! });
+
+        if (response.data) {
+            downloadFile(response.data.blob, `submission-${solutionId}-log.txt`);
+        }
+    }, [ downloadLogFile, solutionId ]);
+
     const renderSolutionTitle = useCallback(() => (
         <div className={styles.solutionTitle}>
             Solution #
@@ -164,6 +179,12 @@ const SubmissionDetailsPage = () => {
                 <Button text="View Code" type={ButtonType.secondary} size={ButtonSize.small} onClick={onViewCodeClick} />
                 { userIsInRoleForContest && (
                     <>
+                        <Button
+                          text="Download logs"
+                          type={ButtonType.secondary}
+                          size={ButtonSize.small}
+                          onClick={handleDownloadLogsFile}
+                        />
                         <AdministrationLink
                           text="Open In Administration"
                           to={`/submissions?filter=id~equals~${solutionId}`}
@@ -181,11 +202,21 @@ const SubmissionDetailsPage = () => {
                           onClick={() => handleRetestSubmission()}
                         />
                         <CheckBox id="retest-verbosely-checkbox" onChange={setRetestVerbosely} label="Retest verbosely" />
+                        {isDownloadLogsError &&
+                            (<div className={styles.logsDownloadFileErrorWrapper}>{getErrorMessage(downloadLogsError)}</div>)}
                     </>
                 )}
             </div>
         );
-    }, [ handleRetestSubmission, problem, solutionId, userIsInRoleForContest ]);
+    }, [
+        handleRetestSubmission,
+        problem,
+        solutionId,
+        userIsInRoleForContest,
+        handleDownloadLogsFile,
+        isDownloadLogsError,
+        downloadLogsError,
+    ]);
 
     const renderSubmissionExecutionDetails = useCallback(() => {
         if (!isProcessed || isRetestingStarted) {

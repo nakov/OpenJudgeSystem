@@ -77,6 +77,10 @@ const submissionsService = createApi({
             query: ({ id }) => (
                 { url: `Submissions/Download/${id}` }),
         }),
+        getSubmissionLogFile: builder.query<{ blob: Blob }, { id: number }>({
+            query: ({ id }) => (
+                { url: `Submissions/DownloadLogs/${id}` }),
+        }),
         retestSubmission: builder.query<
             void,
             IRetestSubmissionUrlParams>({
@@ -97,6 +101,7 @@ const {
     useGetUserSubmissionsQuery,
     useGetSubmissionDetailsQuery,
     useLazyGetSubmissionUploadedFileQuery,
+    useLazyGetSubmissionLogFileQuery,
     useLazyRetestSubmissionQuery,
 } = submissionsService;
 
@@ -108,6 +113,7 @@ export {
     useGetSubmissionResultsByProblemQuery,
     useGetUserSubmissionsQuery,
     useLazyGetSubmissionUploadedFileQuery,
+    useLazyGetSubmissionLogFileQuery,
     useLazyRetestSubmissionQuery,
 };
 

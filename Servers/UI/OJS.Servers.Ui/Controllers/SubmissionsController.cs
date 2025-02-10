@@ -14,16 +14,15 @@ using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Submissions;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Threading.Tasks;
-using static OJS.Common.GlobalConstants.Submissions;
+using static OJS.Common.GlobalConstants.MimeTypes;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 
 public class SubmissionsController(
     ISubmissionsBusinessService submissionsBusiness,
-    IFileSystemService fileSystemService)
+    IFileSystemService fileSystem)
     : BaseApiController
 {
     /// <summary>
@@ -164,14 +163,22 @@ public class SubmissionsController(
             .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
             .ToOkResult();
 
-    [HttpGet("logs/{id:int}")]
+    /// <summary>
+    /// Downloads the logs for a specific submission, if they exist.
+    /// </summary>
+    /// <param name="id">The id of the submission</param>
+    /// <returns>The log file for the submission</returns>
+    [HttpGet("{id:int}")]
     [Authorize(Roles = AdministratorOrLecturer)]
-    public IActionResult DownloadVerboseLogs(int id)
+    [ProducesResponseType(typeof(FileContentResult), Status200OK)]
+    public IActionResult DownloadLogs(int id)
     {
         var filePath = submissionsBusiness.GetLogFilePath(id);
 
-        return fileSystemService.FileExists(filePath)
-            ? this.PhysicalFile(filePath, "text/plain", $"submission-{id}-log.txt")
-            : this.NotFound($"Logs for submission #{id} not found.");
+        return fileSystem.FileExists(filePath)
+            ? this.PhysicalFile(filePath, ApplicationOctetStream)
+            : this.NotFound(
+                $"Logs for submission #{id} not found." +
+                $"Execute or retest the submission in verbose mode to generate logs.");
     }
 }
