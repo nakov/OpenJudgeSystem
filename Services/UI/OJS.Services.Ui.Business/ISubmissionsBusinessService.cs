@@ -36,5 +36,7 @@
         Task<SubmissionFileDownloadServiceModel> GetSubmissionFile(int submissionId);
 
         Task<Dictionary<SubmissionProcessingState, int>> GetAllUnprocessedCount();
+
+        string GetLogFilePath(int submissionId);
     }
 }

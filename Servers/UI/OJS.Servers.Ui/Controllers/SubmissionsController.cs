@@ -7,24 +7,25 @@ using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
+using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Submissions;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading.Tasks;
+using static OJS.Common.GlobalConstants.Submissions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 
-public class SubmissionsController : BaseApiController
+public class SubmissionsController(
+    ISubmissionsBusinessService submissionsBusiness,
+    IFileSystemService fileSystemService)
+    : BaseApiController
 {
-    private readonly ISubmissionsBusinessService submissionsBusiness;
-
-    public SubmissionsController(ISubmissionsBusinessService submissionsBusiness)
-        => this.submissionsBusiness = submissionsBusiness;
-
     /// <summary>
     /// Gets all user submissions. Prepared for the user's profile page.
     /// </summary>
@@ -38,7 +39,7 @@ public class SubmissionsController : BaseApiController
         [FromQuery] string username,
         [FromQuery] int page,
         [FromQuery] int itemsPerPage = DefaultSubmissionResultsPerPage)
-        => await this.submissionsBusiness
+        => await submissionsBusiness
             .GetByUsername<FullDetailsPublicSubmissionsServiceModel>(username, page, itemsPerPage)
             .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
             .ToOkResult();
@@ -56,7 +57,7 @@ public class SubmissionsController : BaseApiController
         Justification = "Base API controller Route handles different actions names.")]
     public async Task<IActionResult> Download(int id)
     {
-        var submissionDownloadServiceModel = await this.submissionsBusiness.GetSubmissionFile(id);
+        var submissionDownloadServiceModel = await submissionsBusiness.GetSubmissionFile(id);
 
         return this.File(
             submissionDownloadServiceModel.Content!,
@@ -82,7 +83,7 @@ public class SubmissionsController : BaseApiController
         int problemId,
         [FromQuery] bool isOfficial,
         [FromQuery] int page)
-        => await this.submissionsBusiness
+        => await submissionsBusiness
             .GetUserSubmissionsByProblem(problemId, isOfficial, page)
             .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
             .ToOkResult();
@@ -95,7 +96,7 @@ public class SubmissionsController : BaseApiController
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(SubmissionDetailsResponseModel), Status200OK)]
     public async Task<IActionResult> Details(int id)
-        => await this.submissionsBusiness
+        => await submissionsBusiness
             .GetDetailsById(id)
             .Map<SubmissionDetailsResponseModel>()
             .ToOkResult();
@@ -113,7 +114,7 @@ public class SubmissionsController : BaseApiController
     [ProducesResponseType(typeof(SaveExecutionResultResponseModel), Status200OK)]
     public async Task<IActionResult> SaveExecutionResult([FromBody] SubmissionExecutionResult submissionExecutionResult)
     {
-        await this.submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
+        await submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
 
         var result = new SaveExecutionResultResponseModel { SubmissionId = submissionExecutionResult.SubmissionId, };
 
@@ -126,7 +127,7 @@ public class SubmissionsController : BaseApiController
     [HttpGet]
     [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> TotalCount()
-        => await this.submissionsBusiness
+        => await submissionsBusiness
             .GetTotalCount()
             .ToOkResult();
 
@@ -137,7 +138,7 @@ public class SubmissionsController : BaseApiController
     [Authorize(Roles = Administrator)]
     [ProducesResponseType(typeof(Dictionary<SubmissionProcessingState, int>), Status200OK)]
     public async Task<IActionResult> UnprocessedTotalCount()
-        => await this.submissionsBusiness
+        => await submissionsBusiness
             .GetAllUnprocessedCount()
             .ToOkResult();
 
@@ -145,7 +146,7 @@ public class SubmissionsController : BaseApiController
     [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissions([FromQuery] SubmissionStatus status, [FromQuery] int page)
-         => await this.submissionsBusiness.GetSubmissions<PublicSubmissionsServiceModel>(status, page)
+         => await submissionsBusiness.GetSubmissions<PublicSubmissionsServiceModel>(status, page)
              .Map<PagedResultResponse<PublicSubmissionsResponseModel>>()
              .ToOkResult();
 
@@ -156,10 +157,21 @@ public class SubmissionsController : BaseApiController
         [FromQuery] SubmissionStatus status,
         [FromQuery] int page,
         int itemsPerPage = DefaultSubmissionResultsPerPage)
-        => await this.submissionsBusiness.GetSubmissions<FullDetailsPublicSubmissionsServiceModel>(
+        => await submissionsBusiness.GetSubmissions<FullDetailsPublicSubmissionsServiceModel>(
                 status,
                 page,
                 itemsPerPage)
             .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
             .ToOkResult();
+
+    [HttpGet("logs/{id:int}")]
+    [Authorize(Roles = AdministratorOrLecturer)]
+    public IActionResult DownloadVerboseLogs(int id)
+    {
+        var filePath = submissionsBusiness.GetLogFilePath(id);
+
+        return fileSystemService.FileExists(filePath)
+            ? this.PhysicalFile(filePath, "text/plain", $"submission-{id}-log.txt")
+            : this.NotFound($"Logs for submission #{id} not found.");
+    }
 }

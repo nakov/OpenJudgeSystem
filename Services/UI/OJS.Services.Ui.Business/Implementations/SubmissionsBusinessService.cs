@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
-using OJS.Data;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -32,6 +31,7 @@ using System.Threading.Tasks;
 using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Workers.Common.Extensions;
+using static OJS.Common.GlobalConstants.Submissions;
 using static OJS.Services.Common.Constants.PaginationConstants.Submissions;
 using static OJS.Services.Infrastructure.Models.ModelHelpers;
 using static OJS.Services.Ui.Business.Constants.Comments;
@@ -62,6 +62,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ITestRunsDataService testRunsDataService;
     private readonly IProblemsCacheService problemsCache;
     private readonly IContestCategoriesCacheService contestCategoriesCache;
+    private readonly IFileIoService fileIo;
+    private readonly IFileSystemService fileSystem;
 
     public SubmissionsBusinessService(
         ILogger<SubmissionsBusinessService> logger,
@@ -87,7 +89,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ICacheService cache,
         ITestRunsDataService testRunsDataService,
         IProblemsCacheService problemsCache,
-        IContestCategoriesCacheService contestCategoriesCache)
+        IContestCategoriesCacheService contestCategoriesCache,
+        IFileIoService fileIo,
+        IFileSystemService fileSystem)
     {
         this.logger = logger;
         this.submissionsData = submissionsData;
@@ -113,6 +117,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.testRunsDataService = testRunsDataService;
         this.problemsCache = problemsCache;
         this.contestCategoriesCache = contestCategoriesCache;
+        this.fileIo = fileIo;
+        this.fileSystem = fileSystem;
     }
 
     public async Task Retest(int submissionId, bool verbosely = false)
@@ -236,7 +242,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             Content = submissionDetailsServiceModel!.ByteContent,
             MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
             FileName = string.Format(
-                GlobalConstants.Submissions.SubmissionDownloadFileName,
+                SubmissionDownloadFileName,
                 submissionDetailsServiceModel.Id,
                 submissionDetailsServiceModel.FileExtension),
         };
@@ -247,6 +253,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .GetAllUnprocessed()
             .GroupBy(sfp => sfp.State)
             .ToDictionaryAsync(sfp => sfp.Key, sfp => sfp.Count());
+
+    public string GetLogFilePath(int submissionId)
+        => this.fileSystem.BuildPath(
+            this.fileSystem.GetTempDirectory("submission-logs"),
+            $"submission-{submissionId}.log");
 
     public async Task<PagedResult<TServiceModel>> GetByUsername<TServiceModel>(
         string? username,
@@ -484,6 +495,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             await this.submissionsForProcessingData.SetProcessingState(submissionForProcessing, SubmissionProcessingState.Processed);
         });
+
+        if (executionResult?.VerboseLogFile != null)
+        {
+            await this.fileIo.SaveFile(this.GetLogFilePath(submission.Id), executionResult.VerboseLogFile);
+        }
 
         this.logger.LogSubmissionProcessedSuccessfully(submission.Id, submissionForProcessing);
     }

@@ -2,13 +2,18 @@ namespace OJS.Services.Worker.Business.Extensions;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using OJS.Workers.Common.Helpers;
 using Serilog;
 using Serilog.Extensions.Logging;
 using System.Globalization;
 
 public static class LoggerFactoryExtensions
 {
-    public static ILogger<T> CreateStrategyLogger<T>(this ILoggerFactory _, string submissionId, bool verbose)
+    public static ILogger<T> CreateStrategyLogger<T>(
+        this ILoggerFactory _,
+        int submissionId,
+        bool verbose,
+        int maxLogFileSizeBytes)
     {
         if (!verbose)
         {
@@ -21,8 +26,9 @@ public static class LoggerFactoryExtensions
         var serilogLoggerConfiguration = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.File(
-                path: $"logs/submission-{submissionId}.log",
-                retainedFileCountLimit: 100,
+                path: FileHelpers.BuildSubmissionLogFilePath(submissionId),
+                fileSizeLimitBytes: maxLogFileSizeBytes,
+                rollOnFileSizeLimit: false,
                 formatProvider: CultureInfo.InvariantCulture);
 
         var serilogLogger = serilogLoggerConfiguration.CreateLogger();
