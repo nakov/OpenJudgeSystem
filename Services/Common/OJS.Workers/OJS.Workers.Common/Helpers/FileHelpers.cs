@@ -36,8 +36,11 @@
             return fullTempFilePath;
         }
 
-        public static void UnzipFile(string fileToUnzip, string outputDirectory) =>
-            Zip.ExtractToDirectory(fileToUnzip, outputDirectory);
+        public static void UnzipFile(string fileToUnzip, string outputDirectory)
+            => Zip.ExtractToDirectory(fileToUnzip, outputDirectory);
+
+        public static void UnzipFileAndOverwriteExistingFiles(string fileToUnzip, string outputDirectory)
+            => Zip.ExtractToDirectory(fileToUnzip, outputDirectory, overwriteFiles: true);
 
         public static string FindFileMatchingPattern(string workingDirectory, string pattern)
         {
@@ -160,6 +163,7 @@
                     workingDirectory,
                     pattern,
                     SearchOption.AllDirectories));
+
             if (files.Count == 0)
             {
                 throw new ArgumentException(
