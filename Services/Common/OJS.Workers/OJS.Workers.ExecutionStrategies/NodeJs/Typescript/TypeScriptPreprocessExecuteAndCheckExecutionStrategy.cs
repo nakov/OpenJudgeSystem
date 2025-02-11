@@ -60,7 +60,6 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings> : B
     }
 
     protected virtual string JsCodeRequiredModules => $@"
-// @ts-nocheck
 var EOL = require('os').EOL,
 _ = require('{this.Settings.UnderscoreModulePath}')";
 
