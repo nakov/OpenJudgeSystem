@@ -15,6 +15,8 @@ using OJS.Workers.ExecutionStrategies.Sql.MySql;
 using OJS.Workers.ExecutionStrategies.Sql.PostgreSql;
 using OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase;
 using System;
+using OJS.Workers.ExecutionStrategies.NodeJs.Typescript;
+using NodeJsPreprocessExecuteAndCheckExecutionStrategySettings = OJS.Workers.ExecutionStrategies.NodeJs.NodeJsPreprocessExecuteAndCheckExecutionStrategySettings;
 
 public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvider
 {
@@ -50,6 +52,15 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath))
 
                 as TSettings,
+            ExecutionStrategyType.TypeScriptV20PreprocessExecuteAndCheck => new
+                TypeScriptPreprocessExecuteAndCheckExecutionStrategySettings(
+                    GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds * 2),
+                    GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
+                    this.GetTypeScriptExecutablePath(),
+                    this.GetNodeJsExecutablePath(executionStrategyType),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath))
+
+            as TSettings,
             ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck or
             ExecutionStrategyType.Java21PreprocessCompileExecuteAndCheck => new
                 JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
@@ -470,6 +481,9 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         => IsNode20(strategyType)
             ? this.settings.NodeJs20ExecutablePath
             : this.settings.NodeJsExecutablePath;
+
+    private string GetTypeScriptExecutablePath()
+        => this.settings.TypeScriptExecutablePath;
 
     private string GetNodeResourcePath(ExecutionStrategyType strategyType, string template)
     {
