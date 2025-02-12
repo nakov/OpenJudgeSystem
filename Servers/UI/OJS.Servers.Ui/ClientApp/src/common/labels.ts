@@ -67,7 +67,6 @@ export const MEMORY_LIMIT = 'Memory Limit';
 export const TIME_LIMIT = 'Time Limit';
 export const PROBLEM_GROUP_TYPE = 'Problem Group Type';
 export const SHOW_DETAILED_FEEDBACK = 'Show Detailed feedback';
-export const SHOW_RESULTS = 'Show Results';
 export const SOLUTION_SKELETON = 'Solution Skeleton';
 export const ADDITIONAL_FILES = 'Additional Files';
 

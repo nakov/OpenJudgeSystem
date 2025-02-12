@@ -356,7 +356,6 @@ interface IProblemAdministration {
     maximumPoints: number;
     sourceCodeSizeLimit: number;
     orderBy: number;
-    showResults: boolean;
     showDetailedFeedback: boolean;
     checkerId: string;
     problemGroupType: string;

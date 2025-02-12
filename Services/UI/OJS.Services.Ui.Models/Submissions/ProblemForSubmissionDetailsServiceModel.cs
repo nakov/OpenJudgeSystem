@@ -11,7 +11,5 @@ public class ProblemForSubmissionDetailsServiceModel : IMapFrom<Problem>
 
     public int ProblemGroupContestId { get; set; }
 
-    public bool ShowResults { get; set; }
-
     public short MaximumPoints { get; set; }
 }

@@ -10,10 +10,6 @@
 
     public class ContestProblemServiceModel : IMapExplicitly
     {
-        private int memoryLimitInBytes;
-
-        private int timeLimitInMs;
-
         private int? fileSizeLimitInBytes;
 
         public int Id { get; set; }
@@ -29,8 +25,6 @@
         public double ProblemGroupOrderBy { get; set; }
 
         public short MaximumPoints { get; set; }
-
-        public bool ShowResults { get; set; }
 
         public int? Points { get; set; }
 

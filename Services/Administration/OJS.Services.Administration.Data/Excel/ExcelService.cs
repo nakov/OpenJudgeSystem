@@ -147,6 +147,7 @@ public class ExcelService : IExcelService
             var colNumber = 1;
             sheet.Cell(rowNumber, colNumber++).Value = result.ParticipantUsername;
             sheet.Cell(rowNumber, colNumber++).Value = result.ParticipantFullName;
+            sheet.Cell(rowNumber, colNumber++).Value = result.ParticipantEmail;
 
             foreach (var problem in contestResults.Problems)
             {
@@ -173,6 +174,7 @@ public class ExcelService : IExcelService
 
         sheet.Cell(1, columnNumber++).Value = "Username";
         sheet.Cell(1, columnNumber++).Value = "Name";
+        sheet.Cell(1, columnNumber++).Value = "Email";
 
         foreach (var problem in contestResults.Problems)
         {
