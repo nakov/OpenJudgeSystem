@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
-using OJS.Servers.Ui.Models.Problems;
 using OJS.Servers.Ui.Models.Submissions.Compete;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
@@ -13,7 +12,6 @@ using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -24,16 +22,13 @@ public class CompeteController : BaseApiController
 {
     private readonly IContestsBusinessService contestsBusiness;
     private readonly ISubmissionsBusinessService submissionsBusinessService;
-    private readonly IParticipantScoresBusinessService participantScoresBusinessService;
 
     public CompeteController(
         IContestsBusinessService contestsBusiness,
-        ISubmissionsBusinessService submissionsBusinessService,
-        IParticipantScoresBusinessService participantScoresBusinessService)
+        ISubmissionsBusinessService submissionsBusinessService)
     {
         this.contestsBusiness = contestsBusiness;
         this.submissionsBusinessService = submissionsBusinessService;
-        this.participantScoresBusinessService = participantScoresBusinessService;
     }
 
     /// <summary>
@@ -143,18 +138,5 @@ public class CompeteController : BaseApiController
     public async Task<IActionResult> Retest(int id)
         => await this.submissionsBusinessService
             .Retest(id)
-            .ToOkResult();
-
-    /// <summary>
-    /// Gets the best results for the given problem by all participants.
-    /// </summary>
-    /// <param name="id">The id of the problem.</param>
-    /// <returns>A model with the best scores for the problem from all participants.</returns>
-    [HttpGet("results/{id:int}")]
-    [ProducesResponseType(typeof(IEnumerable<ProblemResultResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetResultsByProblem(int id)
-        => await this.participantScoresBusinessService
-            .GetParticipantScoresByProblemForUser(id, true)
-            .MapCollection<ProblemResultResponseModel>()
             .ToOkResult();
 }

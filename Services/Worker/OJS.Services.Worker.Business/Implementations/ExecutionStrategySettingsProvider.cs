@@ -323,6 +323,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy or
+            ExecutionStrategyType.NodeJsV20RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests or
             ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests => new
                 RunSpaAndExecuteMochaTestsExecutionStrategySettings(
                     GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds),

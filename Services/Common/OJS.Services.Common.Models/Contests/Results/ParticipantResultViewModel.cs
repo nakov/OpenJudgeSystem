@@ -15,6 +15,7 @@ public class ParticipantResultViewModel
             ParticipantUsername = participant.User.UserName,
             ParticipantFirstName = participant.User.UserSettings.FirstName,
             ParticipantLastName = participant.User.UserSettings.LastName,
+            ParticipantEmail = participant.User.Email,
             ParticipantProblemIds = participant.ProblemsForParticipants.Select(p => p.ProblemId),
         };
 
@@ -26,20 +27,21 @@ public class ParticipantResultViewModel
 
     public string? ParticipantLastName { get; set; }
 
+    public string? ParticipantEmail { get; set; }
+
     public IEnumerable<ProblemResultPairViewModel> ProblemResults { get; set; }
         = Enumerable.Empty<ProblemResultPairViewModel>();
 
     public string ParticipantFullName => $"{this.ParticipantFirstName?.Trim()} {this.ParticipantLastName?.Trim()}";
 
     public int Total => this.ProblemResults
-        .Where(pr => pr.ShowResult)
         .Sum(pr => pr.BestSubmission.Points);
 
     public int AdminTotal => this.ProblemResults
         .Sum(pr => pr.BestSubmission.Points);
 
     public int ExportTotal => this.ProblemResults
-        .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
+        .Where(pr => !pr.IsExcludedFromHomework)
         .Sum(pr => pr.BestSubmission.Points);
 
     public IEnumerable<int> ParticipantProblemIds { get; set; } = Enumerable.Empty<int>();

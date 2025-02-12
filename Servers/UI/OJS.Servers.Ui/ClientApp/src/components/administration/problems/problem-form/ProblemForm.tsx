@@ -86,7 +86,6 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         orderBy: 0,
         problemGroupType: 'None',
         showDetailedFeedback: false,
-        showResults: true,
         sourceCodeSizeLimit: defaultSourceCodeSizeLimit,
         submissionTypes: [],
         timeLimit: defaultTimeLimit,
@@ -222,7 +221,6 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         formData.append('problemGroupType', currentProblem.problemGroupType?.toString());
         formData.append('checkerId', currentProblem.checkerId?.toString() || '');
         formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
-        formData.append('showResults', currentProblem.showResults?.toString() || '');
         formData.append('problemGroupId', currentProblem.problemGroupId?.toString() || '');
         formData.append('defaultSubmissionTypeId', currentProblem.defaultSubmissionTypeId?.toString() || '');
         currentProblem.submissionTypes?.forEach((type, index) => {

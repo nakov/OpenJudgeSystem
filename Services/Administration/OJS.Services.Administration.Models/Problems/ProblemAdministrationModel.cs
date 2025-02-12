@@ -20,8 +20,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public int OrderBy { get; set; }
 
-    public bool ShowResults { get; set; }
-
     public bool ShowDetailedFeedback { get; set; }
 
     public int? DefaultSubmissionTypeId { get; set; }

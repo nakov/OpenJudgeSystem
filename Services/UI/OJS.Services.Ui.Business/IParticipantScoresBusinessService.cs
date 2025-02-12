@@ -10,7 +10,5 @@ namespace OJS.Services.Ui.Business
     public interface IParticipantScoresBusinessService : IService
     {
         Task SaveForSubmission(Participant participant, Submission submission);
-
-        Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(int problemId, bool isOfficial);
     }
 }
