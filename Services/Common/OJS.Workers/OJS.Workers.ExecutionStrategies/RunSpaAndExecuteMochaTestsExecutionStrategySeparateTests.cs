@@ -425,7 +425,7 @@ finally:
             {
                 var additionalFilesPath = FileHelpers.BuildPath(this.WorkingDirectory, "additionalFiles");
                 File.WriteAllBytes(additionalFilesPath, executionContext.AdditionalFiles);
-                FileHelpers.UnzipFile(additionalFilesPath, this.UserApplicationPath);
+                FileHelpers.UnzipFileAndOverwriteExistingFiles(additionalFilesPath, this.UserApplicationPath);
             }
 
             Directory.CreateDirectory(this.TestsPath);
