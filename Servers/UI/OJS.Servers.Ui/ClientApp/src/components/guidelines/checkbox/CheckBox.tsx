@@ -5,15 +5,7 @@ import styles from './CheckBox.module.scss';
 interface ICheckBoxProps {
     id: string;
     label?: string;
-    /**
-     * The initial state of the checkbox.
-     * Defaults to false if not provided.
-     */
     initialChecked?: boolean;
-    /**
-     * Callback function that is called whenever the checkbox value changes.
-     * Receives the new checked value (true/false) as its parameter.
-     */
     onChange: (checked: boolean) => void;
 }
 

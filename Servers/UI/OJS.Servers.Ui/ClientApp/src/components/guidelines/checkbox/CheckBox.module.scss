@@ -7,7 +7,6 @@
     align-self: center;
     margin: 0;
 
-    // Style the checkbox itself.
     input[type="checkbox"] {
         // Remove default appearance so we can customize it.
         appearance: none;
@@ -21,13 +20,11 @@
         position: relative;
         transition: background-color 0.2s, border-color 0.2s;
 
-        // When checked, change background and border color.
         &:checked {
             background-color: colors.$light-blue-color;
             border-color: colors.$light-blue-color;
         }
 
-        // Create a checkmark for the checked state.
         &:checked::after {
             content: '';
             position: absolute;
@@ -41,7 +38,6 @@
         }
     }
 
-    // Style the label text next to the checkbox.
     label {
         cursor: pointer;
         font-size: inherit;
