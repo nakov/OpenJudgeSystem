@@ -16,7 +16,6 @@ using OJS.Workers.ExecutionStrategies.Sql.PostgreSql;
 using OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase;
 using System;
 using OJS.Workers.ExecutionStrategies.NodeJs.Typescript;
-using NodeJsPreprocessExecuteAndCheckExecutionStrategySettings = OJS.Workers.ExecutionStrategies.NodeJs.NodeJsPreprocessExecuteAndCheckExecutionStrategySettings;
 
 public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvider
 {
