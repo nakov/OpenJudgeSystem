@@ -75,7 +75,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             Problems = problems,
             CategoryId = contest.CategoryId.GetValueOrDefault(),
             Official = official,
-            IsUserAdminOrLecturer = user.IsAdminOrLecturer,
+            IsUserAdminOrLecturer = isUserAdminOrLecturer,
             IsFullResults = isFullResults,
             TotalResultsCount = null,
             IsExportResults = false,
