@@ -27,6 +27,16 @@ RUN useradd -m -s /bin/bash restricted_user && \
     passwd -d restricted_user && \
     usermod -aG restricted_user restricted_user
 
+# Install Node.js 12 and 20 via nvm and TypeScript via npm
+RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
+    export NVM_DIR="$HOME/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && \
+    nvm install 12.22.12 && \
+    nvm install 20.12.0 && \
+    nvm alias default 20.12.0 && \
+    nvm use default && \
+    npm install -g typescript
+
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
       dotnet-sdk-8.0 \
