@@ -108,6 +108,9 @@
             }
         }
 
+        public static string ReadFile(string filePath)
+            => File.ReadAllText(filePath);
+
         public static string ExtractFileFromZip(string pathToArchive, string fileName, string destinationDirectory)
         {
             using var zip = new ZipFile(pathToArchive);
