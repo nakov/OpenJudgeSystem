@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
 import { NavigateOptions, URLSearchParamsInit } from 'react-router-dom';
 import { IDropdownItem } from 'src/common/types';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
-import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/store';
 import Dropdown from '../../guidelines/dropdown/Dropdown';
 
 import styles from './ContestStrategies.module.scss';
@@ -13,12 +11,12 @@ import styles from './ContestStrategies.module.scss';
 interface IContestStrategiesProps {
     setSearchParams: (newParams: URLSearchParamsInit, navigateOpts?: NavigateOptions) => void;
     searchParams: URLSearchParams;
+    setSelectedStrategy: (item: IContestStrategyFilter | null) => void;
+    selectedStrategy: IContestStrategyFilter | null;
 }
 
-const ContestStrategies = ({ setSearchParams, searchParams }: IContestStrategiesProps) => {
-    const dispatch = useAppDispatch();
-    const { selectedCategory, selectedStrategy } = useAppSelector((state) => state.contests);
-    const [ currentStrategy, setCurrentStrategy ] = useState<IContestStrategyFilter | null>(null);
+const ContestStrategies = ({ setSearchParams, searchParams, setSelectedStrategy, selectedStrategy }: IContestStrategiesProps) => {
+    const { selectedCategory } = useAppSelector((state) => state.contests);
 
     const {
         data: contestStrategies,
@@ -30,22 +28,18 @@ const ContestStrategies = ({ setSearchParams, searchParams }: IContestStrategies
         if (item) {
             const strategy = contestStrategies?.find((s) => s.id === item.id);
             if (strategy) {
-                dispatch(setContestStrategy(strategy));
-                setCurrentStrategy(strategy);
+                setSelectedStrategy(strategy);
                 searchParams.set('page', '1');
                 setSearchParams(searchParams);
             }
         } else {
-            dispatch(setContestStrategy(null));
+            setSelectedStrategy(null);
         }
     };
 
-    // Used to reset the selected strategy when the user goes to another page
-    useEffect(() => {
-        if (selectedStrategy !== currentStrategy) {
-            dispatch(setContestStrategy(currentStrategy));
-        }
-    }, [ selectedStrategy, currentStrategy, dispatch ]);
+    const handleStrategyClear = () => {
+        setSelectedStrategy(null);
+    };
 
     if (strategiesError) {
         return <div>Error loading strategies...</div>;
@@ -59,10 +53,11 @@ const ContestStrategies = ({ setSearchParams, searchParams }: IContestStrategies
         <div className={styles.selectWrapper}>
             <Dropdown<IContestStrategyFilter>
               dropdownItems={contestStrategies || []}
-              value={currentStrategy ?? { id: 0, name: '' }}
+              value={selectedStrategy ?? { id: 0, name: '' }}
               placeholder="Select strategy"
               noOptionsFoundText="No strategies found"
               handleDropdownItemClick={handleStrategySelect}
+              handleDropdownItemClear={handleStrategyClear}
               isSearchable
             />
         </div>

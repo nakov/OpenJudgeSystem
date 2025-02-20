@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { SortType } from '../../common/contest-types';
+import { IContestStrategyFilter, SortType } from '../../common/contest-types';
 import { IContestsSortAndFilterOptions, IIndexContestsType } from '../../common/types';
 import MetaTags from '../../components/common/MetaTags';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
@@ -33,10 +33,10 @@ const ContestsPage = () => {
         contests,
         contestsCacheIsReset,
         selectedCategory,
-        selectedStrategy,
     } = useAppSelector((state) => state.contests);
 
-    const [ searchParams, setSearchParams ] = usePreserveScrollOnSearchParamsChange([ 'page' ]);
+    const [ searchParams, setSearchParams ] = usePreserveScrollOnSearchParamsChange();
+    const [ selectedStrategy, setSelectedStrategy ] = useState<IContestStrategyFilter | null>(null);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
@@ -70,6 +70,10 @@ const ContestsPage = () => {
         error: allContestsError,
         isFetching: areContestsFetching,
     } = useGetAllContestsQuery({ ...contestParams });
+
+    useEffect(() => {
+        setSelectedStrategy(null);
+    }, [ categoryId ]);
 
     useEffect(() => {
         if (!categoryId && breadcrumbItems.length > 0) {
@@ -151,7 +155,12 @@ const ContestsPage = () => {
                             ? selectedCategory.name
                             : 'All Categories'}
                     </div>
-                    <ContestStrategies searchParams={searchParams} setSearchParams={setSearchParams} />
+                    <ContestStrategies
+                      setSearchParams={setSearchParams}
+                      searchParams={searchParams}
+                      setSelectedStrategy={setSelectedStrategy}
+                      selectedStrategy={selectedStrategy}
+                    />
                 </div>
                 <div className={styles.contestsListContainer}>
                     <PaginationControls
