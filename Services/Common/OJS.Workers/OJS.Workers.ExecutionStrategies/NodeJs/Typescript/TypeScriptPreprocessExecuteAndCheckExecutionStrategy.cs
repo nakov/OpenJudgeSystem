@@ -39,12 +39,13 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings> : N
         IExecutionContext<TestsInputModel> executionContext,
         IExecutionResult<TestResult> result)
     {
-        var executor = this.CreateRestrictedExecutor();
+        var standardExecutor = this.CreateStandardExecutor();
+        var restrictedExecutor = this.CreateRestrictedExecutor();
 
         string jsCodeSavePath;
         try
         {
-            jsCodeSavePath = await this.SaveAndTranspileTypeScriptCodeAndGetJavaScriptCodePath(executionContext, executor);
+            jsCodeSavePath = await this.SaveAndTranspileTypeScriptCodeAndGetJavaScriptCodePath(executionContext, standardExecutor);
         }
         catch (InvalidProcessExecutionOutputException exception)
         {
@@ -61,7 +62,7 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings> : N
 
         var checker = executionContext.Input.GetChecker();
 
-        var testResults = await this.ProcessTests(executionContext, executor, checker, jsCodeSavePath);
+        var testResults = await this.ProcessTests(executionContext, restrictedExecutor, checker, jsCodeSavePath);
 
         result.Results.AddRange(testResults);
 
@@ -72,12 +73,13 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings> : N
         IExecutionContext<SimpleInputModel> executionContext,
         IExecutionResult<OutputResult> result)
     {
-        var executor = this.CreateRestrictedExecutor();
+        var standardExecutor = this.CreateStandardExecutor();
+        var restrictedExecutor = this.CreateRestrictedExecutor();
 
         string jsCodeSavePath;
         try
         {
-            jsCodeSavePath = await this.SaveAndTranspileTypeScriptCodeAndGetJavaScriptCodePath(executionContext, executor);
+            jsCodeSavePath = await this.SaveAndTranspileTypeScriptCodeAndGetJavaScriptCodePath(executionContext, standardExecutor);
         }
         catch (InvalidProcessExecutionOutputException exception)
         {
@@ -94,7 +96,7 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings> : N
 
         var processExecutionResult = await this.ExecuteCode(
             executionContext,
-            executor,
+            restrictedExecutor,
             jsCodeSavePath,
             executionContext.Input.Input);
 
