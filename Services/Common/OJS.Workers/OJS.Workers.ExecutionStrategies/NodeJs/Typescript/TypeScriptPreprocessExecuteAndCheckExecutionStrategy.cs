@@ -39,7 +39,7 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings> : N
         IExecutionContext<TestsInputModel> executionContext,
         IExecutionResult<TestResult> result)
     {
-        var executor = this.CreateExecutor();
+        var executor = this.CreateRestrictedExecutor();
 
         string jsCodeSavePath;
         try
@@ -72,7 +72,7 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings> : N
         IExecutionContext<SimpleInputModel> executionContext,
         IExecutionResult<OutputResult> result)
     {
-        var executor = this.CreateExecutor();
+        var executor = this.CreateRestrictedExecutor();
 
         string jsCodeSavePath;
         try
