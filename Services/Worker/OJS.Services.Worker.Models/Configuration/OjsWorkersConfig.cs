@@ -224,6 +224,8 @@ public class OjsWorkersConfig : BaseConfig
 
     public int GolangCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
 
+    public int TypeScriptCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
+
     public int JavaCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
 
     public int JavaInPlaceCompilerProcessExitTimeOutMultiplier { get; set; } = 1;

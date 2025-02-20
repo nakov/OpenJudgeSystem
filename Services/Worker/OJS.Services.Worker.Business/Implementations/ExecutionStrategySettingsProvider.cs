@@ -55,7 +55,6 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 TypeScriptPreprocessExecuteAndCheckExecutionStrategySettings(
                     GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds * 2),
                     GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
-                    this.GetTypeScriptExecutablePath(),
                     this.GetNodeJsExecutablePath(executionStrategyType),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath))
 
@@ -478,9 +477,6 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         => IsNode20(strategyType)
             ? this.settings.NodeJs20ExecutablePath
             : this.settings.NodeJsExecutablePath;
-
-    private string GetTypeScriptExecutablePath()
-        => this.settings.TypeScriptExecutablePath;
 
     private string GetNodeResourcePath(ExecutionStrategyType strategyType, string template)
     {
