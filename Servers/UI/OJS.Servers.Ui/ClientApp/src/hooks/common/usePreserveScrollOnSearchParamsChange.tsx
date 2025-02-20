@@ -1,14 +1,13 @@
 import { NavigateOptions, URLSearchParamsInit, useSearchParams } from 'react-router-dom';
 
-const usePreserveScrollOnSearchParamsChange = ():
-    [URLSearchParams, (newParams: URLSearchParamsInit, navigateOpts?: NavigateOptions) => void] => {
-    const [ searchParams, setSearchParams ] = useSearchParams();
+const usePreserveScrollOnSearchParamsChange = () => {
+    const [ searchParams, updateSearchParams ] = useSearchParams();
 
-    const updateSearchParams = (newParams: URLSearchParamsInit, navigateOpts?: NavigateOptions) => {
-        setSearchParams(newParams, { preventScrollReset: true, ...navigateOpts });
+    const setSearchParams = (newParams: URLSearchParamsInit, navigateOpts?: NavigateOptions) => {
+        updateSearchParams(newParams, { preventScrollReset: true, ...navigateOpts });
     };
 
-    return [ searchParams, updateSearchParams ];
+    return { searchParams, setSearchParams };
 };
 
 export default usePreserveScrollOnSearchParamsChange;

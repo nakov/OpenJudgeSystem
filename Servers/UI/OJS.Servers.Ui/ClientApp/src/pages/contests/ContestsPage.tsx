@@ -35,7 +35,7 @@ const ContestsPage = () => {
         selectedCategory,
     } = useAppSelector((state) => state.contests);
 
-    const [ searchParams, setSearchParams ] = usePreserveScrollOnSearchParamsChange();
+    const { searchParams, setSearchParams } = usePreserveScrollOnSearchParamsChange();
     const [ selectedStrategy, setSelectedStrategy ] = useState<IContestStrategyFilter | null>(null);
 
     const textColorClassName = getColorClassName(themeColors.textColor);

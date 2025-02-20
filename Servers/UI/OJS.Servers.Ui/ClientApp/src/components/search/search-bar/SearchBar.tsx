@@ -23,7 +23,7 @@ const CHECKBOXES: Array<CheckboxSearchValues> = [
 const SearchBar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [ setSearchParams ] = usePreserveScrollOnSearchParamsChange();
+    const { setSearchParams } = usePreserveScrollOnSearchParamsChange();
     const dispatch = useAppDispatch();
     const { isDarkMode, themeColors, getColorClassName } = useTheme();
     const [ inputValue, setInputValue ] = useState<string>('');
@@ -38,9 +38,11 @@ const SearchBar = () => {
 
     const updateSearchParams = useCallback(() => {
         const params = new URLSearchParams();
+
         if (searchValue) {
             params.set('searchTerm', searchValue);
         }
+
         selectedTerms.forEach((term) => params.set(term, 'true'));
         setSearchParams(params);
     }, [ searchValue, selectedTerms, setSearchParams ]);
