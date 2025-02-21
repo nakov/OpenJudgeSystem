@@ -8,7 +8,7 @@
 
         string AdditionalCompilerArguments { get; }
 
-        string ProcessingComment { get; set; }
+        string? ProcessingComment { get; set; }
 
         int MemoryLimit { get; }
 

@@ -11,6 +11,8 @@ public class ExecutionResult<TResult> : IExecutionResult<TResult>
 
     public string? CompilerComment { get; set; }
 
+    public string? ProcessingComment { get; set; }
+
     public ICollection<TResult> Results { get; set; } = [];
 
     public DateTime? StartedExecutionOn { get; set; }

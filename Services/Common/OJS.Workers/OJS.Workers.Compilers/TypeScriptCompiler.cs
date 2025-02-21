@@ -8,5 +8,4 @@ public class TypeScriptCompiler(int processExitTimeOutMultiplier) : Compiler(pro
     public override string RenameInputFile(string inputFile) => inputFile + ".ts";
 
     public override string GetOutputFileName(string inputFileName) => inputFileName.Replace(".ts", ".js");
-
 }

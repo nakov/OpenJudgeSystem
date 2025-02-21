@@ -480,6 +480,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             if (executionResult != null)
             {
+                submission.ProcessingComment = executionResult.ProcessingComment;
                 ProcessTestsExecutionResult(submission, executionResult);
                 await this.SaveParticipantScore(participant, submission);
                 CacheTestRuns(submission);

@@ -10,6 +10,8 @@ public interface IExecutionResult<TResult>
 
     string CompilerComment { get; set; }
 
+    string? ProcessingComment { get; set; }
+
     ICollection<TResult> Results { get; }
 
     DateTime? StartedExecutionOn { get; set; }

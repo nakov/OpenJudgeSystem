@@ -178,7 +178,8 @@ public class SubmissionsController(
         return fileSystem.FileExists(filePath)
             ? this.PhysicalFile(filePath, ApplicationOctetStream)
             : this.NotFound(
-                $"Logs for submission #{id} not found." +
-                $"Execute or retest the submission in verbose mode to generate logs.");
+                $"Logs for submission #{id} not found. " +
+                $"Execute or retest the submission in verbose mode to generate logs, " +
+                $"then download them immediately, as they might be deleted soon.");
     }
 }

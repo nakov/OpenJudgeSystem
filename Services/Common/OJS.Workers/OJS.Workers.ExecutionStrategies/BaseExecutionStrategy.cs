@@ -56,6 +56,10 @@
                     {
                         result.VerboseLogFile = await FileHelpers.ReadFileUpToBytes(logFilePath, executionContext.VerboseLogFileMaxBytes);
                     }
+                    else
+                    {
+                        result.ProcessingComment = $"No verbose log file found in {logFilePath}";
+                    }
                 }
 
                 return result;

@@ -13,6 +13,8 @@
 
         public string CompilerComment { get; set; } = string.Empty;
 
+        public string? ProcessingComment { get; set; }
+
         public TaskResultServiceModel? TaskResult { get; set; }
 
         public OutputResult? OutputResult { get; set; }

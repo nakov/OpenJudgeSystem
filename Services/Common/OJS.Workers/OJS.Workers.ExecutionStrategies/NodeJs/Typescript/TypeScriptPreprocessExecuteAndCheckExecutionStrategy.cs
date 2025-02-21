@@ -78,8 +78,8 @@ public class TypeScriptPreprocessExecuteAndCheckExecutionStrategy<TSettings>(
         var tsCodeSavePath = FileHelpers.SaveStringToTempFile(this.WorkingDirectory, executionContext.Code.Trim(TrimCharacter));
 
         var compiler = compilerFactory.CreateCompiler(executionContext.CompilerType, this.Type);
-        var compilePath = compilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
-        var compilerResult = compiler.Compile(compilePath, tsCodeSavePath, executionContext.AdditionalCompilerArguments);
+        var compilerPath = compilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
+        var compilerResult = compiler.Compile(compilerPath, tsCodeSavePath, executionContext.AdditionalCompilerArguments);
 
         return compilerResult;
     }
