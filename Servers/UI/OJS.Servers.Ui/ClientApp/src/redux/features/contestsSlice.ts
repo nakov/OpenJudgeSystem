@@ -4,7 +4,7 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
+import { ContestBreadcrumb } from '../../common/contest-types';
 import {
     IContestCategory,
     IContestDetailsResponseType,
@@ -17,7 +17,6 @@ interface IContestState {
     contests: IPagedResultType<IIndexContestsType> | null;
     contestsCacheIsReset: boolean;
     selectedCategory: IContestCategory | null;
-    selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
     contestDetails: IContestDetailsSliceType | null;
     contestCategories: Array<IContestCategory>;
@@ -28,7 +27,6 @@ const initialState: IContestState = {
     contests: null,
     contestsCacheIsReset: false,
     selectedCategory: null,
-    selectedStrategy: null,
     breadcrumbItems: [],
     contestDetails: null,
     contestCategories: [],
@@ -48,9 +46,6 @@ export const contestSlice = createSlice({
         },
         setContestCategory: (state, action: PayloadAction<IContestCategory | null>) => {
             state.selectedCategory = action.payload;
-        },
-        setContestStrategy: (state, action: PayloadAction<IContestStrategyFilter | null>) => {
-            state.selectedStrategy = action.payload;
         },
         updateContestCategoryBreadcrumbItem: (state, action: PayloadAction<{ elements: Array<ContestBreadcrumb> | undefined}>) => {
             const { elements } = action.payload;
@@ -88,7 +83,6 @@ export const {
     setContestsCacheIsReset,
     setContestDetails,
     setContestCategory,
-    setContestStrategy,
     updateContestCategoryBreadcrumbItem,
     clearContestCategoryBreadcrumbItems,
     setSelectedContestDetailsProblem,
