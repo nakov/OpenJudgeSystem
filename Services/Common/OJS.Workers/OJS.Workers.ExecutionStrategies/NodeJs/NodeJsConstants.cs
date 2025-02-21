@@ -9,15 +9,6 @@
         public const string DelayFlag = "--delay";
         public const string LatestEcmaScriptFeaturesEnabledFlag = "--harmony";
 
-        // TypeScript Flags
-        public const string StrictFlag = "--strict";
-        public const string TargetFlag = "--target";
-        public const string TargetValue = "es2017";
-        public const string ModuleFlag = "--module";
-        public const string ModuleValue = "commonjs";
-        public const string LibFlag = "--lib";
-        public const string LibValue = "es2017,dom";
-
         // Other
         public const string JsonReportName = "json";
 
