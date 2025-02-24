@@ -1,48 +1,44 @@
-import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { NavigateOptions, URLSearchParamsInit } from 'react-router-dom';
 import { IDropdownItem } from 'src/common/types';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
-import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/store';
 import Dropdown from '../../guidelines/dropdown/Dropdown';
 
 import styles from './ContestStrategies.module.scss';
 
-const ContestStrategies = () => {
-    const dispatch = useAppDispatch();
-    const [ searchParams ] = useSearchParams();
-    const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
+interface IContestStrategiesProps {
+    setSearchParams: (newParams: URLSearchParamsInit, navigateOpts?: NavigateOptions) => void;
+    searchParams: URLSearchParams;
+    setSelectedStrategy: (item: IContestStrategyFilter | null) => void;
+    selectedStrategy: IContestStrategyFilter | null;
+}
 
-    const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
+const ContestStrategies = ({ setSearchParams, searchParams, setSelectedStrategy, selectedStrategy }: IContestStrategiesProps) => {
+    const { selectedCategory } = useAppSelector((state) => state.contests);
+
     const {
         data: contestStrategies,
         isLoading: areStrategiesLoading,
         error: strategiesError,
     } = useGetContestStrategiesQuery({ contestCategoryId: selectedCategory?.id ?? 0 });
 
-    useEffect(() => {
-        if (selectedId && contestStrategies) {
-            const selected = contestStrategies.find((s) => s.id.toString() === selectedId);
-
-            if (selected) {
-                dispatch(setContestStrategy(selected));
-            } else {
-                dispatch(setContestStrategy(null));
-            }
-        }
-    }, [ selectedId, contestStrategies, dispatch ]);
-
     const handleStrategySelect = (item: IDropdownItem | undefined) => {
         if (item) {
             const strategy = contestStrategies?.find((s) => s.id === item.id);
             if (strategy) {
-                dispatch(setContestStrategy(strategy));
+                setSelectedStrategy(strategy);
+                searchParams.set('page', '1');
+                setSearchParams(searchParams);
             }
         } else {
-            dispatch(setContestStrategy(null));
+            setSelectedStrategy(null);
         }
+    };
+
+    const handleStrategyClear = () => {
+        setSelectedStrategy(null);
     };
 
     if (strategiesError) {
@@ -61,6 +57,7 @@ const ContestStrategies = () => {
               placeholder="Select strategy"
               noOptionsFoundText="No strategies found"
               handleDropdownItemClick={handleStrategySelect}
+              handleDropdownItemClear={handleStrategyClear}
               isSearchable
             />
         </div>
