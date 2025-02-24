@@ -167,9 +167,6 @@ public class OjsWorkersConfig : BaseConfig
     public string PythonExecutablePathV311 { get; set; } = string.Empty;
 
     [Required]
-    public string PipExecutablePathV311 { get; set; } = string.Empty;
-
-    [Required]
     public string PostgreSqlMasterDbConnectionString { get; set; } = string.Empty;
 
     [Required]
@@ -214,8 +211,6 @@ public class OjsWorkersConfig : BaseConfig
 
     public int PythonV311BaseTimeUsedInMilliseconds { get; set; }
 
-    public int PythonV311InstallPackagesTimeUsedInMilliseconds { get; set; }
-
     public int PythonV311BaseMemoryUsedInBytes { get; set; }
 
     // Compiler time out multipliers
@@ -228,6 +223,8 @@ public class OjsWorkersConfig : BaseConfig
     public int DotNetCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
 
     public int GolangCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
+
+    public int TypeScriptCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
 
     public int JavaCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
 

@@ -164,7 +164,7 @@ public class DotNetCoreCompileExecuteAndCheckExecutionStrategy<TSettings> : Base
         CompileResult compileResult,
         out string[] arguments)
     {
-        var executor = this.CreateExecutor();
+            var executor = this.CreateRestrictedExecutor();
 
         arguments =
         [

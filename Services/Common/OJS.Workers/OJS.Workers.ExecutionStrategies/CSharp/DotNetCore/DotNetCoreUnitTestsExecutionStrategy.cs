@@ -55,7 +55,7 @@ public class DotNetCoreUnitTestsExecutionStrategy<TSettings> : DotNetCoreProject
 
         this.nUnitLiteConsoleAppCsProjTemplate = nunitLiteConsoleApp.csProjTemplate;
 
-        var executor = this.CreateExecutor();
+            var executor = this.CreateRestrictedExecutor();
 
         return await this.RunUnitTests(
             nunitLiteConsoleApp.csProjPath,

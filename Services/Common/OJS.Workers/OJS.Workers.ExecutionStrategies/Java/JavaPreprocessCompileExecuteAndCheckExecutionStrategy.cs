@@ -218,7 +218,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             return result;
         }
 
-        var executor = this.CreateExecutor();
+        var executor = this.CreateRestrictedExecutor();
 
         var checker = executionContext.Input.GetChecker();
 
@@ -253,7 +253,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             return result;
         }
 
-        var executor = this.CreateExecutor();
+            var executor = this.CreateRestrictedExecutor();
 
         var processExecutionResult = await this.Execute(
             executor,

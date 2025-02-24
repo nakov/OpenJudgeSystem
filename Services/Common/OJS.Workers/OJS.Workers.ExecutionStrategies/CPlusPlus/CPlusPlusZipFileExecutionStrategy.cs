@@ -59,7 +59,7 @@ public class CPlusPlusZipFileExecutionStrategy<TSettings> : BaseCompiledCodeExec
             return result;
         }
 
-        var executor = this.CreateExecutor();
+            var executor = this.CreateRestrictedExecutor();
 
         var checker = executionContext.Input.GetChecker();
 

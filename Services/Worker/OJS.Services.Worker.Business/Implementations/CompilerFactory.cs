@@ -23,6 +23,7 @@ public class CompilerFactory : ICompilerFactory
             CompilerType.Java or CompilerType.JavaZip or CompilerType.JavaInPlaceCompiler => this.GetJavaCompilerPath(strategyType),
             CompilerType.DotNetCompiler or CompilerType.CSharpDotNetCore => this.settings.DotNetCompilerPath,
             CompilerType.GolangCompiler => this.settings.GolangCompilerPath,
+            CompilerType.TypeScriptCompiler => this.settings.TypeScriptExecutablePath,
             _ => throw new ArgumentException($"Unsupported compiler type: {compilerType}."),
         };
 
@@ -44,6 +45,7 @@ public class CompilerFactory : ICompilerFactory
                 .CPlusPlusZipCompilerProcessExitTimeOutMultiplier),
             CompilerType.DotNetCompiler => new DotNetCompiler(this.settings.DotNetCompilerProcessExitTimeOutMultiplier),
             CompilerType.GolangCompiler => new GolangCompiler(this.settings.GolangCompilerProcessExitTimeOutMultiplier),
+            CompilerType.TypeScriptCompiler => new TypeScriptCompiler(this.settings.TypeScriptCompilerProcessExitTimeOutMultiplier),
             _ => throw new ArgumentException($"Unsupported compiler: {compilerType}"),
         };
 

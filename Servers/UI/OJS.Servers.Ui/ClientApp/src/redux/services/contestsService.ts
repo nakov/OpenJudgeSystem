@@ -103,14 +103,14 @@ export const contestsService = createApi({
             keepUnusedDataFor: 0,
         }),
         submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, problemId, submissionTypeId, contestId, isWithRandomTasks }) => ({
+            query: ({ content, official, problemId, submissionTypeId, contestId, isWithRandomTasks, verbosely }) => ({
                 url: '/Compete/Submit',
                 method: 'POST',
-                body: { content, official, problemId, submissionTypeId, contestId, isWithRandomTasks },
+                body: { content, official, problemId, submissionTypeId, contestId, isWithRandomTasks, verbosely },
             }),
         }),
         submitContestSolutionFile: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, submissionTypeId, problemId, contestId, isWithRandomTasks }) => {
+            query: ({ content, official, submissionTypeId, problemId, contestId, isWithRandomTasks, verbosely }) => {
                 const formData = new FormData();
                 formData.append('content', content);
                 formData.append('official', official
@@ -120,6 +120,9 @@ export const contestsService = createApi({
                 formData.append('submissionTypeId', submissionTypeId.toString());
                 formData.append('contestId', contestId.toString());
                 formData.append('isWithRandomTasks', isWithRandomTasks
+                    ? 'true'
+                    : 'false');
+                formData.append('verbosely', verbosely
                     ? 'true'
                     : 'false');
 

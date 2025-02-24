@@ -101,7 +101,7 @@ public class JavaSpringAndHibernateProjectExecutionStrategy<TSettings> : JavaPro
 
         var mavenArgs = new[] { MavenBuild };
 
-        var mavenExecutor = this.CreateExecutor();
+            var mavenExecutor = this.CreateRestrictedExecutor();
 
         var packageExecutionResult = await mavenExecutor.Execute(
           this.Settings.MavenPath,
@@ -120,7 +120,7 @@ public class JavaSpringAndHibernateProjectExecutionStrategy<TSettings> : JavaPro
             return result;
         }
 
-        var executor = this.CreateExecutor();
+            var executor = this.CreateRestrictedExecutor();
 
         var checker = executionContext.Input.GetChecker();
         var testIndex = 0;

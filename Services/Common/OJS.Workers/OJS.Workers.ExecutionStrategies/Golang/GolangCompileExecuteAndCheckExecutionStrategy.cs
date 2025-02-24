@@ -28,7 +28,7 @@ public class GolangCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseComp
         => this.CompileExecuteAndCheck(
             executionContext,
             result,
-            this.CreateExecutor(),
+                this.CreateRestrictedExecutor(),
             useSystemEncoding: true,
             dependOnExitCodeForRunTimeError: false,
             useWorkingDirectoryForProcess: true);
