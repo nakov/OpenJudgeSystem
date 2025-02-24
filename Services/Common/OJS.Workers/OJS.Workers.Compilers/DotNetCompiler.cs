@@ -23,7 +23,8 @@ namespace OJS.Workers.Compilers
 
             if (rootDir is null)
             {
-                throw new FileNotFoundException("The compiled submission file was not found!");
+                throw new FileNotFoundException(
+                    $"The compiled file '{outputFile}' was not found or does not have a valid directory path. Ensure the compilation process generated the expected output file with a full path.");
             }
 
             var compiledFile = FileHelpers.FindFileMatchingPattern(

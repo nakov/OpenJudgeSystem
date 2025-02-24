@@ -234,7 +234,7 @@ public class _$TestRunner {{
 
         var combinedArguments = executionContext.AdditionalCompilerArguments + this.ClassPathArgument;
 
-            var executor = this.CreateRestrictedExecutor();
+        var executor = this.CreateRestrictedExecutor();
 
         if (!string.IsNullOrWhiteSpace(executionContext.Input.TaskSkeletonAsString))
         {
@@ -261,7 +261,7 @@ public class _$TestRunner {{
                 return result;
             }
 
-                var preprocessExecutor = this.CreateRestrictedExecutor();
+            var preprocessExecutor = this.CreateRestrictedExecutor();
 
             var preprocessArguments = new List<string>
             {
@@ -291,7 +291,7 @@ public class _$TestRunner {{
 
                 if (path is null)
                 {
-                    throw new InvalidProcessExecutionOutputException();
+                    throw new InvalidProcessExecutionOutputException($"Invalid file path detected for '{file}'. Expected a valid directory in the process output.");
                 }
 
                 FileHelpers.AddFilesToZipArchive(

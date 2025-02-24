@@ -108,7 +108,7 @@ public class PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings> : Pyt
 
     protected void FixReceivedOutput(ProcessExecutionResult processExecutionResult)
     {
-        var output = processExecutionResult.ErrorOutput;
+        var output = processExecutionResult.ErrorOutput ?? string.Empty;
 
         if (this.TestsRegex.IsMatch(output))
         {
