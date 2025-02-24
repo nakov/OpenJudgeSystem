@@ -202,9 +202,9 @@ kill_container = {KillContainerPlaceholder}
 try:
     docker_client = docker.from_env()
     container = docker_client.containers.get(container_name)
-    
+
     commands = [mocha_path, tests_path, '-R', 'json']
-    
+
     process = subprocess.run(
         commands,
     )
@@ -251,7 +251,7 @@ finally:
             this.SaveNginxFile();
 
             var preExecuteCodeSavePath = this.SavePythonCodeTemplateToTempFile(this.PythonPreExecuteCodeTemplate);
-            var executor = this.CreateExecutor();
+            var executor = this.CreateStandardExecutor();
             var checker = executionContext.Input.GetChecker();
             var preExecutionResult = await this.Execute(executionContext, executor, preExecuteCodeSavePath);
             var output = preExecutionResult.ReceivedOutput.Trim().Split(',');
@@ -265,6 +265,8 @@ finally:
             {
                 result.IsCompiledSuccessfully = false;
                 result.CompilerComment = "Failed running strategy pre execute step, please contact an Administrator";
+                this.Logger.LogUnexpectedProcessOutput(preExecutionResult);
+
                 return result;
             }
 
@@ -406,7 +408,7 @@ finally:
             {
                 var additionalFilesPath = FileHelpers.BuildPath(this.WorkingDirectory, "additionalFiles");
                 File.WriteAllBytes(additionalFilesPath, executionContext.AdditionalFiles);
-                FileHelpers.UnzipFile(additionalFilesPath, this.UserApplicationPath);
+                FileHelpers.UnzipFileAndOverwriteExistingFiles(additionalFilesPath, this.UserApplicationPath);
             }
 
             Directory.CreateDirectory(this.TestsPath);

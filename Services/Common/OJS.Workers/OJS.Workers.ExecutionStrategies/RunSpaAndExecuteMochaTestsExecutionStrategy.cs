@@ -243,7 +243,7 @@ finally:
             this.SaveNginxFile();
 
             var preExecuteCodeSavePath = this.SavePythonCodeTemplateToTempFile(this.PythonPreExecuteCodeTemplate);
-            var executor = this.CreateExecutor();
+            var executor = this.CreateStandardExecutor();
             var checker = executionContext.Input.GetChecker();
             var preExecutionResult = await this.Execute(executionContext, executor, preExecuteCodeSavePath);
             var output = preExecutionResult.ReceivedOutput.Trim().Split(',');
@@ -375,7 +375,7 @@ finally:
             {
                 var additionalFilesPath = FileHelpers.BuildPath(this.WorkingDirectory, "additionalFiles");
                 File.WriteAllBytes(additionalFilesPath, executionContext.AdditionalFiles);
-                FileHelpers.UnzipFile(additionalFilesPath, this.UserApplicationPath);
+                FileHelpers.UnzipFileAndOverwriteExistingFiles(additionalFilesPath, this.UserApplicationPath);
             }
 
             Directory.CreateDirectory(this.TestsPath);

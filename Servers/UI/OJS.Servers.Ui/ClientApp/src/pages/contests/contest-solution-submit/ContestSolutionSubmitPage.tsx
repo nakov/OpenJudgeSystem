@@ -10,6 +10,7 @@ import Popover from '@mui/material/Popover';
 import isNil from 'lodash/isNil';
 import moment from 'moment';
 import { SUBMISSION_SENT } from 'src/common/messages';
+import CheckBox from 'src/components/guidelines/checkbox/CheckBox';
 import Dropdown from 'src/components/guidelines/dropdown/Dropdown';
 import Mentor from 'src/components/mentor/Mentor';
 import useSuccessMessageEffect from 'src/hooks/common/use-success-message-effect';
@@ -73,7 +74,7 @@ const ContestSolutionSubmitPage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType, slug } = useParams();
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
-    const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
+    const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(true);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -83,6 +84,7 @@ const ContestSolutionSubmitPage = () => {
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
     const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
+    const [ executeVerbosely, setExecuteVerbosely ] = useState<boolean>(false);
     const [ submissionTypesPerProblem, setSubmissionTypesPerProblem ] =
         useState<AdjacencyList<number, ISubmissionTypeType>>({});
 
@@ -200,31 +202,6 @@ const ContestSolutionSubmitPage = () => {
         getSubmissionsData();
     };
 
-    const handleSubmitButtonShouldBeDisabled = useCallback((force?: boolean) => {
-        if (force) {
-            // Submit button is forcefully disabled when timer is active
-            setIsSubmitButtonDisabled(true);
-            return;
-        }
-
-        if (!selectedSubmissionType) {
-            return;
-        }
-
-        const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
-
-        const isCodeStrategyAndCodeIsEmptyOrTooShort =
-            !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
-        const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
-
-        if (isCodeStrategyAndCodeIsEmptyOrTooShort || isFileUploadAndFileIsEmpty) {
-            setIsSubmitButtonDisabled(true);
-            return;
-        }
-
-        setIsSubmitButtonDisabled(false);
-    }, [ selectedSubmissionType, submissionCode, uploadedFile ]);
-
     useSuccessMessageEffect({
         data: [
             { message: SUBMISSION_SENT, shouldGet: submitSolutionSuccess },
@@ -283,28 +260,39 @@ const ContestSolutionSubmitPage = () => {
 
     // Disable submit button based on submission time limits
     useEffect(() => {
-        if (!lastSubmissionTime || !userSubmissionsTimeLimit) {
-            return;
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let intervalId: any;
 
-        const intervalId = setInterval(() => {
-            const elapsedTimeInSeconds = moment.utc().diff(moment.utc(lastSubmissionTime), 'seconds');
-            const newRemainingTime = Math.min(userSubmissionsTimeLimit - elapsedTimeInSeconds, userSubmissionsTimeLimit);
+        const updateSubmitButtonState = () => {
+            const isStrategyFileUpload = selectedSubmissionType?.allowBinaryFilesUpload;
 
-            if (newRemainingTime <= 0) {
-                handleSubmitButtonShouldBeDisabled();
-                setRemainingTime(0);
+            const isCodeStrategyAndCodeIsEmptyOrTooShort =
+                !isStrategyFileUpload && (isNilOrEmpty(submissionCode) || submissionCode!.length < 5);
+            const isFileUploadAndFileIsEmpty = isStrategyFileUpload && isNil(uploadedFile);
+
+            const elapsedSecondsFromLastSubmission = Math.abs(moment.utc().diff(moment.utc(lastSubmissionTime), 'seconds'));
+            const secondsUntilTimerEnds = Math.max((userSubmissionsTimeLimit || 0) - elapsedSecondsFromLastSubmission, 0);
+
+            const shouldSubmitBeDisabled = isCodeStrategyAndCodeIsEmptyOrTooShort ||
+                isFileUploadAndFileIsEmpty ||
+                !selectedSubmissionType ||
+                secondsUntilTimerEnds > 0;
+
+            setRemainingTime(secondsUntilTimerEnds);
+            setIsSubmitButtonDisabled(shouldSubmitBeDisabled);
+
+            if (secondsUntilTimerEnds <= 0) {
                 clearInterval(intervalId);
-            } else {
-                setRemainingTime(newRemainingTime);
-                handleSubmitButtonShouldBeDisabled(true);
             }
-        });
+        };
+
+        updateSubmitButtonState();
+        intervalId = setInterval(updateSubmitButtonState, 1000);
 
         return () => {
             clearInterval(intervalId);
         };
-    }, [ lastSubmissionTime, userSubmissionsTimeLimit, handleSubmitButtonShouldBeDisabled ]);
+    }, [ lastSubmissionTime, selectedSubmissionType, submissionCode, uploadedFile, userSubmissionsTimeLimit ]);
 
     // Manage remaining time for compete contest
     useEffect(() => {
@@ -312,15 +300,17 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
 
-        const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
+        const remainingTimeForParticipantOrContest = moment.utc().diff(moment.utc(endDateTimeForParticipantOrContest));
         if (remainingTimeForParticipantOrContest > 0) {
             // Positive time means time is past end time for contest or participant
             return;
         }
 
-        const intervalId = setInterval(() => {
-            const currentTime = moment();
-            const remainingCompeteTime = moment.utc(endDateTimeForParticipantOrContest).diff(moment.utc(currentTime));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let intervalId: any;
+
+        const updateRemainingTime = () => {
+            const remainingCompeteTime = moment.utc(endDateTimeForParticipantOrContest).diff(moment.utc());
 
             if (remainingCompeteTime > 0) {
                 const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'milliseconds'));
@@ -329,7 +319,10 @@ const ContestSolutionSubmitPage = () => {
                 setRemainingTimeForCompete(calculatedTimeFormatted(moment.duration(0, 'milliseconds')));
                 clearInterval(intervalId);
             }
-        });
+        };
+
+        updateRemainingTime();
+        intervalId = setInterval(updateRemainingTime, 1000);
 
         return () => {
             clearInterval(intervalId);
@@ -365,16 +358,10 @@ const ContestSolutionSubmitPage = () => {
                 id: data!.contest!.id,
                 name: data.contest.name,
                 categoryId: data!.contest!.categoryId,
-                isOnlineExam: data?.contest?.isOnlineExam,
+                isWithRandomTasks: data?.contest?.isWithRandomTasks,
             }));
         }
     }, [ contestDetails, contestId, data, dispatch ]);
-
-    // Fetch submissions when the selected problem changes
-    useEffect(() => {
-        // Disable submit button when code is updated
-        handleSubmitButtonShouldBeDisabled();
-    }, [ handleSubmitButtonShouldBeDisabled, selectedSubmissionType, submissionCode, uploadedFile ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -396,7 +383,8 @@ const ContestSolutionSubmitPage = () => {
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
             contestId: Number(contestId!),
-            isOnlineExam: contestDetails?.isOnlineExam,
+            isWithRandomTasks: contestDetails?.isWithRandomTasks,
+            verbosely: executeVerbosely,
         }).then((d) => {
             if (!(d as any).error) {
                 refetch();
@@ -412,7 +400,8 @@ const ContestSolutionSubmitPage = () => {
         submissionCode,
         submitSolution,
         contestId,
-        contestDetails?.isOnlineExam,
+        contestDetails?.isWithRandomTasks,
+        executeVerbosely,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
@@ -428,7 +417,8 @@ const ContestSolutionSubmitPage = () => {
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
             contestId: Number(contestId!),
-            isOnlineExam: contestDetails?.isOnlineExam,
+            isWithRandomTasks: contestDetails?.isWithRandomTasks,
+            verbosely: executeVerbosely,
         });
         refetch();
         getSubmissionsData();
@@ -441,7 +431,8 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFile,
         uploadedFile,
         contestId,
-        contestDetails?.isOnlineExam,
+        contestDetails?.isWithRandomTasks,
+        executeVerbosely,
     ]);
 
     const sumMyPoints = useMemo(() => contest
@@ -638,6 +629,8 @@ const ContestSolutionSubmitPage = () => {
                         {(allowedFileExtensions || []).join(', ')}
                     </div>
                     {fileUploadError && <div className={styles.fileUploadError}>{fileUploadError}</div>}
+                    {contest?.userIsAdminOrLecturerInContest &&
+                        <CheckBox label="Execute verbosely" onChange={setExecuteVerbosely} id="execute-verbosely-checkbox" />}
                     <FileUploader
                       file={uploadedFile}
                       problemId={selectedContestDetailsProblem?.id}
@@ -689,6 +682,8 @@ const ContestSolutionSubmitPage = () => {
                   onCodeChange={(inputCode) => setSubmissionCode(inputCode)}
                 />
                 <div className={styles.submitSettings}>
+                    {contest?.userIsAdminOrLecturerInContest &&
+                        <CheckBox label="Execute verbosely" onChange={setExecuteVerbosely} id="execute-verbosely-checkbox" />}
                     <Dropdown<ISubmissionTypeType>
                       dropdownItems={strategyDropdownItems || []}
                       value={selectedSubmissionType}
@@ -737,6 +732,7 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFileIsLoading,
         submitSolutionFileHasError,
         submitSolutionFileError,
+        contest?.userIsAdminOrLecturerInContest,
     ]);
 
     if (isLoading) {
