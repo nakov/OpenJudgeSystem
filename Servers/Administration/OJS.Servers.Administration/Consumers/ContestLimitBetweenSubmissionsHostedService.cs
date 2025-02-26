@@ -2,37 +2,39 @@ namespace OJS.Servers.Administration.Consumers;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models;
 using OJS.Services.Infrastructure.HttpClients;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static OJS.Common.Constants.ServiceConstants;
 
 public class ContestLimitBetweenSubmissionsHostedService(
     IOptions<ApplicationConfig> applicationConfigAccessor,
-    IRabbitMqHttpClient rabbitMqClient)
+    IRabbitMqHttpClient rabbitMqClient,
+    IWorkersBusyRatioMonitor workersBusyRatioMonitor)
     : IHostedService
 {
-    private const string WorkersQueueName = "OJS.Servers.Worker.Consumers.SubmissionsForProcessingConsumer";
     private readonly TimeSpan timeBetweenContestLimitsAdjustment =
         TimeSpan.FromSeconds(applicationConfigAccessor.Value.SecondsBetweenContestLimitsAdjustment);
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        workersBusyRatioMonitor.StartMonitoring(cancellationToken);
+
         while (!cancellationToken.IsCancellationRequested)
         {
-            var consumers = await rabbitMqClient.GetConsumers();
-            var channels = await rabbitMqClient.GetChannels();
             var queue = await rabbitMqClient.GetQueue(WorkersQueueName);
-            var workerConsumers = consumers.Where(c => c is { Active: true, PrefetchCount: 1, Queue.Name: WorkersQueueName }).ToList();
-            var workerChannels = channels.Where(ch => workerConsumers.Select(w => w.ChannelDetails.Name).Contains(ch.Name)).ToList();
-            var totalWorkers = workerConsumers.Count;
-            var busyWorkers = workerChannels.Count(ch => ch.MessagesUnacknowledged > 0);
+            var (busyRatioEma, busyRatioRollingAverage) = workersBusyRatioMonitor.GetWorkersBusyRatio();
+            var messagesAwaitingExecution = queue?.MessagesReady ?? 0;
             await Task.Delay(this.timeBetweenContestLimitsAdjustment, cancellationToken);
         }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
-        => Task.CompletedTask;
+    {
+        workersBusyRatioMonitor.StopMonitoring();
+        return Task.CompletedTask;
+    }
 }
