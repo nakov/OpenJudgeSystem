@@ -14,27 +14,27 @@ public class ContestLimitBetweenSubmissionsHostedService(
     IOptions<ApplicationConfig> applicationConfigAccessor,
     IRabbitMqHttpClient rabbitMqClient,
     IWorkersBusyRatioMonitor workersBusyRatioMonitor)
-    : IHostedService
+    : BackgroundService
 {
     private readonly TimeSpan timeBetweenContestLimitsAdjustment =
         TimeSpan.FromSeconds(applicationConfigAccessor.Value.SecondsBetweenContestLimitsAdjustment);
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        workersBusyRatioMonitor.StartMonitoring(cancellationToken);
+        workersBusyRatioMonitor.StartMonitoring(stoppingToken);
 
-        while (!cancellationToken.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
             var queue = await rabbitMqClient.GetQueue(WorkersQueueName);
             var (busyRatioEma, busyRatioRollingAverage) = workersBusyRatioMonitor.GetWorkersBusyRatio();
             var messagesAwaitingExecution = queue?.MessagesReady ?? 0;
-            await Task.Delay(this.timeBetweenContestLimitsAdjustment, cancellationToken);
+            await Task.Delay(this.timeBetweenContestLimitsAdjustment, stoppingToken);
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public override Task StopAsync(CancellationToken cancellationToken)
     {
         workersBusyRatioMonitor.StopMonitoring();
-        return Task.CompletedTask;
+        return base.StopAsync(cancellationToken);
     }
 }
