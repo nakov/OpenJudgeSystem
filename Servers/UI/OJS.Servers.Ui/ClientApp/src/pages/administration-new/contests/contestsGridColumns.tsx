@@ -7,6 +7,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import {
     ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS,
+    AUTO_CHANGE_LIMIT_BETWEEN_SUBMISSIONS,
     CATEGORY,
     CATEGORY_ID,
     COMPETE_END_TIME,
@@ -149,6 +150,14 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
         flex: 0,
         type: 'number',
         align: 'center',
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'autoChangeLimitBetweenSubmissions',
+        headerName: `${AUTO_CHANGE_LIMIT_BETWEEN_SUBMISSIONS}`,
+        type: 'boolean',
+        flex: 0,
         filterable: false,
         sortable: false,
     },

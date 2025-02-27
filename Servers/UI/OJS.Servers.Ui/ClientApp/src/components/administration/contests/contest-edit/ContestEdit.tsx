@@ -8,7 +8,7 @@ import isNaN from 'lodash/isNaN';
 import { ContestVariation } from '../../../../common/contest-types';
 import {
     ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS,
-    ALLOWED_IPS,
+    ALLOWED_IPS, AUTO_CHANGE_LIMIT_BETWEEN_SUBMISSIONS,
     COMPETE_END_TIME,
     COMPETE_PASSWORD,
     COMPETE_START_TIME,
@@ -105,6 +105,7 @@ const ContestEdit = (props:IContestEditProps) => {
         isVisible: false,
         visibleFrom: null,
         limitBetweenSubmissions: 0,
+        autoChangeLimitBetweenSubmissions: false,
         newIpPassword: null,
         orderBy: 0,
         practiceEndTime: null,
@@ -739,6 +740,12 @@ const ContestEdit = (props:IContestEditProps) => {
                               helperText={(contestValidations.isLimitBetweenSubmissionsTouched &&
                                     !contestValidations.isLimitBetweenSubmissionsValid) &&
                                 CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION}
+                            />
+                            <FormControlLabel
+                              control={<Checkbox checked={contest.autoChangeLimitBetweenSubmissions} />}
+                              label={AUTO_CHANGE_LIMIT_BETWEEN_SUBMISSIONS}
+                              name="autoChangeLimitBetweenSubmissions"
+                              onChange={(e) => onChange(e)}
                             />
                             <TextField
                               className={formStyles.inputRow}
