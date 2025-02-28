@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 
 public class ContestLimitBetweenSubmissionsHostedService(
     IOptions<ApplicationConfig> applicationConfigAccessor,
-    IWorkersBusyRatioMonitor workersBusyRatioMonitor,
     IServiceProvider serviceProvider,
+    IWorkersBusyRatioMonitor workersBusyRatioMonitor,
     ILogger<ContestLimitBetweenSubmissionsHostedService> logger)
     : BackgroundService
 {

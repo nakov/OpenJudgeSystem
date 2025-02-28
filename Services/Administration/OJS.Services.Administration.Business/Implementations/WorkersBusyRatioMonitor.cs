@@ -19,7 +19,7 @@ public class WorkersBusyRatioMonitor(
     ILogger<WorkersBusyRatioMonitor> logger)
     : IWorkersBusyRatioMonitor
 {
-    private readonly RollingAverage rollingAverage = new(TimeSpan.FromSeconds(applicationConfigAccessor.Value.SecondsBetweenContestLimitsAdjustment));
+    private readonly RollingAverage busyRatioRollingAverage = new(TimeSpan.FromSeconds(applicationConfigAccessor.Value.SecondsBetweenContestLimitsAdjustment));
     private readonly RollingAverage totalWorkersCountRollingAverage = new(TimeSpan.FromSeconds(applicationConfigAccessor.Value.SecondsBetweenContestLimitsAdjustment));
     private readonly RollingAverage submissionsAwaitingExecutionCountRollingAverage = new(TimeSpan.FromSeconds(applicationConfigAccessor.Value.SecondsBetweenContestLimitsAdjustment));
     private readonly ExponentialMovingAverage ema = new(applicationConfigAccessor.Value.BusyRatioMonitorAlpha);
@@ -70,7 +70,7 @@ public class WorkersBusyRatioMonitor(
         var busyRatio = (double)busyWorkers / workersTotalCount;
 
         this.ema.AddDataPoint(busyRatio);
-        this.rollingAverage.AddMeasurement(busyRatio);
+        this.busyRatioRollingAverage.AddMeasurement(busyRatio);
         this.totalWorkersCountRollingAverage.AddMeasurement(workersTotalCount);
         this.submissionsAwaitingExecutionCountRollingAverage.AddMeasurement(queue.MessagesReady);
     }
@@ -78,11 +78,9 @@ public class WorkersBusyRatioMonitor(
     public void StopMonitoring() => this.IsMonitoringRunning = false;
 
     public WorkersBusyRatioServiceModel GetWorkersBusyRatio()
-        => new()
-        {
-            ExponentialMovingAverageRatio = this.ema.CurrentValue,
-            RollingAverageRatio = this.rollingAverage.GetAverage(),
-            WorkersTotalCount = (int)this.totalWorkersCountRollingAverage.GetAverage(),
-            SubmissionsAwaitingExecution = (int)this.submissionsAwaitingExecutionCountRollingAverage.GetAverage(),
-        };
+        => new(
+            ExponentialMovingAverageRatio: this.ema.CurrentValue,
+            RollingAverageRatio: this.busyRatioRollingAverage.GetAverage(),
+            WorkersTotalCount: (int)this.totalWorkersCountRollingAverage.GetAverage(),
+            SubmissionsAwaitingExecution: (int)this.submissionsAwaitingExecutionCountRollingAverage.GetAverage());
 }
