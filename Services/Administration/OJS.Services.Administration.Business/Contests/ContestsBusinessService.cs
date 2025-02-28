@@ -377,9 +377,69 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         await this.participantsData.SaveChanges();
     }
 
-    public Task AdjustLimitBetweenSubmissions(WorkersBusyRatioServiceModel model)
+    public async Task AdjustLimitBetweenSubmissions(WorkersBusyRatioServiceModel model)
     {
-        return Task.CompletedTask;
+        var combinedRatio = (model.ExponentialMovingAverageRatio + model.RollingAverageRatio) / 2.0;
+        var maxLimitBetweenSubmissionsInSeconds = 5 * 60; // 5 minutes
+        var ratioMultiplier = 1.5;
+        var queueFactor = ComputeQueueFactor(
+            model.SubmissionsAwaitingExecution,
+            model.WorkersTotalCount * 2,
+            model.WorkersTotalCount * 5,
+            3.0);
+
+        var ratioFactor = 1.0;
+        if (combinedRatio > 0.8)
+        {
+            // Increase the limit between submissions
+            ratioFactor = ratioMultiplier;
+        }
+        else if (combinedRatio < 0.3)
+        {
+            // Decrease the limit between submissions
+            ratioFactor = 1.0 / ratioMultiplier;
+        }
+
+        var adjustingFactor = ratioFactor * queueFactor;
+
+        await this.contestsData
+            .GetAllVisible()
+            .Where(c => c.AutoChangeLimitBetweenSubmissions)
+            .UpdateFromQueryAsync(c => new Contest
+            {
+                // Will be clamped between 0 and max allowed limit
+                LimitBetweenSubmissions = Math.Clamp(
+                    (int)((c.LimitBetweenSubmissions <= 0 && adjustingFactor > 1
+                              ? 1
+                              : c.LimitBetweenSubmissions) // If the limit is 0, and we want to increase it, start from 1
+                        * adjustingFactor),
+                    0,
+                    maxLimitBetweenSubmissionsInSeconds),
+            });
+    }
+
+    // Smoothly scale from factor=1.0 up to maxFactor as queue length
+    // grows between moderateThreshold and criticalThreshold.
+    private static double ComputeQueueFactor(
+        int queueLength,
+        int moderateThreshold,
+        int criticalThreshold,
+        double maxFactor)
+    {
+        if (queueLength <= moderateThreshold)
+        {
+            return 1.0; // no slowdown
+        }
+
+        if (queueLength >= criticalThreshold)
+        {
+            return maxFactor; // max slowdown
+        }
+
+        // Linear interpolation
+        var fraction = (double)(queueLength - moderateThreshold)
+                        / (criticalThreshold - moderateThreshold);
+        return 1.0 + (fraction * (maxFactor - 1.0));
     }
 
     private static void RemoveCircularReferences(Contest contest)
