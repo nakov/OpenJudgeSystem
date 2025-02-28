@@ -49,11 +49,11 @@ internal static class ServiceCollectionExtensions
             .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
             .AddResiliencePipelines()
             .AddMemoryCache()
-            .AddHostedService<ContestLimitBetweenSubmissionsHostedService>()
             .AddDistributedCaching(configuration)
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()
+            .AddHostedService<ContestLimitBetweenSubmissionsHostedService>()
             .AddHealthChecksDashboard(environment, configuration)
             .AddControllers()
             .ConfigureApiBehaviorOptions(options =>

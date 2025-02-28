@@ -160,6 +160,7 @@ const contestFilterableColumns: AdministrationGridColDef[] = [
         flex: 0,
         filterable: false,
         sortable: false,
+        hidden: true,
     },
     {
         field: 'allowParallelSubmissionsInTasks',
