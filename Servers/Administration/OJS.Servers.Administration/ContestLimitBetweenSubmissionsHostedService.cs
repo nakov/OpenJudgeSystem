@@ -1,19 +1,22 @@
-namespace OJS.Servers.Administration.Consumers;
+namespace OJS.Servers.Administration;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Models;
-using OJS.Services.Infrastructure.HttpClients;
+using OJS.Services.Infrastructure.Constants;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using static OJS.Common.Constants.ServiceConstants;
 
 public class ContestLimitBetweenSubmissionsHostedService(
     IOptions<ApplicationConfig> applicationConfigAccessor,
-    IRabbitMqHttpClient rabbitMqClient,
-    IWorkersBusyRatioMonitor workersBusyRatioMonitor)
+    IWorkersBusyRatioMonitor workersBusyRatioMonitor,
+    IServiceProvider serviceProvider,
+    ILogger<ContestLimitBetweenSubmissionsHostedService> logger)
     : BackgroundService
 {
     private readonly TimeSpan timeBetweenContestLimitsAdjustment =
@@ -25,9 +28,19 @@ public class ContestLimitBetweenSubmissionsHostedService(
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            var queue = await rabbitMqClient.GetQueue(WorkersQueueName);
-            var (busyRatioEma, busyRatioRollingAverage) = workersBusyRatioMonitor.GetWorkersBusyRatio();
-            var messagesAwaitingExecution = queue?.MessagesReady ?? 0;
+            var busyRatio = workersBusyRatioMonitor.GetWorkersBusyRatio();
+
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                var contestsBusiness = scope.ServiceProvider.GetRequiredService<IContestsBusinessService>();
+                await contestsBusiness.AdjustLimitBetweenSubmissions(busyRatio);
+            }
+            catch (Exception ex)
+            {
+                logger.LogErrorAdjustingContestsLimitBetweenSubmissions(ex);
+            }
+
             await Task.Delay(this.timeBetweenContestLimitsAdjustment, stoppingToken);
         }
     }

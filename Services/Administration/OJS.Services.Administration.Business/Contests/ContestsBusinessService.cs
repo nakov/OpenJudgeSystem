@@ -12,6 +12,7 @@ using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Excel;
+using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Administration.Models.Problems;
@@ -374,6 +375,11 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
         this.participantsData.DeleteMany(participantsForDeletion);
         await this.participantsData.SaveChanges();
+    }
+
+    public Task AdjustLimitBetweenSubmissions(WorkersBusyRatioServiceModel model)
+    {
+        return Task.CompletedTask;
     }
 
     private static void RemoveCircularReferences(Contest contest)

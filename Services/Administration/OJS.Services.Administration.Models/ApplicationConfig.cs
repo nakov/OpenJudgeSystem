@@ -6,7 +6,7 @@ public class ApplicationConfig : Infrastructure.Configurations.ApplicationConfig
 
     public int SecondsBetweenContestLimitsAdjustment { get; set; } = 3 * 60;
 
-    public int SecondsBetweenWorkersBusyRatioPolling { get; set; } = 10;
+    public int SecondsBetweenWorkersBusyRatioPolling { get; set; } = 20;
 
     // Alpha for the exponential moving average of the busy ratio.
     // Formula for alpha is 2 / (N + 1), where N is the number of samples in the moving average.

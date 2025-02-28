@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Business;
 
+using OJS.Services.Administration.Models;
 using OJS.Services.Infrastructure;
 using System.Threading;
 
@@ -9,5 +10,5 @@ public interface IWorkersBusyRatioMonitor : ISingletonService
 
     void StopMonitoring();
 
-    (double ema, double rollingAverage) GetWorkersBusyRatio();
+    WorkersBusyRatioServiceModel GetWorkersBusyRatio();
 }
